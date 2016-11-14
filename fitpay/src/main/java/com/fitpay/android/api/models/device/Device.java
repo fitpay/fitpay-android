@@ -209,6 +209,7 @@ public final class Device extends DeviceModel implements Parcelable {
     }
 
     public static final class Builder {
+        private String deviceIdentifier;
         @DeviceTypes.Type
         private String deviceType;
         private String manufacturerName;
@@ -244,6 +245,7 @@ public final class Device extends DeviceModel implements Parcelable {
          */
         public Device build() {
             Device device = new Device();
+            device.deviceIdentifier = deviceIdentifier;
             device.deviceType = deviceType;
             device.manufacturerName = manufacturerName;
             device.deviceName = deviceName;
@@ -261,6 +263,17 @@ public final class Device extends DeviceModel implements Parcelable {
             device.notificationToken = notificationToken;
             device.casd = casd;
             return device;
+        }
+
+        /**
+         * Set device identifier
+         *
+         * @param deviceIdentifier The device identifier parameter is used to read or write the identifier key of the device
+         * @return a reference to this {@code Builder} object to fulfill the "Builder" pattern
+         */
+        public Builder setDeviceIdentifier(@NonNull String deviceIdentifier) {
+            this.deviceIdentifier = deviceIdentifier;
+            return this;
         }
 
         /**
@@ -418,12 +431,21 @@ public final class Device extends DeviceModel implements Parcelable {
         }
 
         /**
+         * Set notification token use {@link #setNotificationToken(String)}
+         */
+        @Deprecated
+        public Builder setNotificaitonToken(String notificationToken) {
+            this.notificationToken = notificationToken;
+            return this;
+        }
+
+        /**
          * Set notification token
          *
          * @param notificationToken The hardware revision for the hardware within the device.
          * @return a reference to this {@code Builder} object to fulfill the "Builder" pattern
          */
-        public Builder setNotificaitonToken(String notificationToken) {
+        public Builder setNotificationToken(String notificationToken) {
             this.notificationToken = notificationToken;
             return this;
         }

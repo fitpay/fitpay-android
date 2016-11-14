@@ -109,6 +109,11 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
     @Override
     public void close() {
         disconnect();
+
+        if (null != apduExecutionListener) {
+            NotificationManager.getInstance().removeListener(apduExecutionListener);
+            apduExecutionListener = null;
+        }
     }
 
     @Override
@@ -158,7 +163,7 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
     public void syncInit() {
         if (null == apduExecutionListener) {
             apduExecutionListener = getApduExecutionListener();
-            NotificationManager.getInstance().addListener(this.apduExecutionListener);
+            NotificationManager.getInstance().addListenerToCurrentThread(this.apduExecutionListener);
         }
         mErrorRepeats = null;
     }
@@ -267,7 +272,6 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
      * @param result apdu execution result
      */
     private void sendApduExecutionResult(final ApduExecutionResult result) {
-
         if (null != currentCommit) {
             currentCommit.confirm(result, new ApiCallback<Void>() {
                 @Override

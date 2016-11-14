@@ -426,7 +426,8 @@ public class Steps {
         address.setState(state);
 
         CreditCard creditCard = new CreditCard.Builder()
-                .setAddress(address)
+//                .setAddress(address)
+                .setName("Hello")
                 .build();
 
         currentCard.updateCard(creditCard, new ApiCallback<CreditCard>() {
@@ -535,6 +536,8 @@ public class Steps {
 
     public void selfCard() throws InterruptedException {
         Assert.assertNotNull(currentCard);
+
+        TestConstants.waitSomeActionsOnServer();
 
         final CountDownLatch latch = new CountDownLatch(1);
         final boolean[] isRequestSuccess = {false};

@@ -6,7 +6,7 @@ apply plugin: 'maven'
 apply from: '../jacoco.gradle'
 
 group = 'com.fitpay.android'
-version = '0.4.11'
+version = '0.4.12'
 archivesBaseName = "android_sdk"
 
 uploadArchives {
@@ -150,8 +150,16 @@ bintray {
         vcsUrl = 'https://github.com/fitpay/fitpay-android-sdk.git'
 
         version {
-            name = '0.4.10'
+            name = '0.4.12'
         }
     }
     configurations = ['archives']
 }
+
+// Test Logging
+tasks.withType(Test) {
+    testLogging {
+        events "started", "passed", "skipped", "failed"
+    }
+}
+

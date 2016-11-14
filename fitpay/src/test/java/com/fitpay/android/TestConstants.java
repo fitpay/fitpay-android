@@ -25,4 +25,8 @@ public final class TestConstants {
         config.put(ApiManager.PROPERTY_REDIRECT_URI, redirectURI != null ? redirectURI : "https://webapp.fit-pay.com");
         return config;
     }
+
+    static void waitSomeActionsOnServer() throws InterruptedException {
+        Thread.sleep(1000);
+    }
 }

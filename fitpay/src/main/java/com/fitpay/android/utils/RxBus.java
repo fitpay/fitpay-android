@@ -42,10 +42,10 @@ public class RxBus {
         return mBus
                 .asObservable()
                 .onBackpressureBuffer()
-                .subscribeOn(Schedulers.from(Constants.getExecutor()))
-                .observeOn(scheduler)
                 .filter(event -> eventClass.isAssignableFrom(event.getClass()))
                 .map(obj -> (T) obj)
+                .subscribeOn(Schedulers.from(Constants.getExecutor()))
+                .observeOn(scheduler)
                 .subscribe(onNext, throwable -> Logger.e(throwable.toString() + ", " + getStackTrace(throwable)));
     }
 

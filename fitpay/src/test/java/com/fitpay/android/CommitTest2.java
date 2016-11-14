@@ -80,8 +80,7 @@ public class CommitTest2 extends TestActions {
         Collections.CommitsCollection commits = getCommits(createdDevice, null);
         assertNotNull("commits collection", commits);
         int totalResults = commits.getTotalResults();
-        assertTrue("number of commits should be 2 or more.  Got: " + commits.getTotalResults(), commits.getTotalResults() >= 2);
-
+        assertTrue("number of commits should be 2 or more.  Got: " + totalResults, totalResults >= 2);
     }
 
     @Test
@@ -122,8 +121,6 @@ public class CommitTest2 extends TestActions {
             Collections.CommitsCollection lastCommits = getAllCommits(createdDevice, commit.getCommitId());
             assertEquals("number of commits with lastId", --totalResults, lastCommits.getTotalResults());
         }
-
-
     }
 
     @Test
@@ -169,8 +166,5 @@ public class CommitTest2 extends TestActions {
         commits = getAllCommits(createdDevice, null);
         assertNotNull("allCommits collection", commits);
         assertEquals("number of allCommits", totalResults, commits.getTotalResults());
-
     }
-
-
 }

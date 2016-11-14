@@ -36,7 +36,6 @@ import java.io.StringReader;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import me.alexrs.prefs.lib.Prefs;
@@ -96,11 +95,7 @@ public final class DeviceService extends Service {
     @Override
     public boolean onUnbind(Intent intent) {
         super.onUnbind(intent);
-
-        if (paymentDeviceConnector != null) {
-            paymentDeviceConnector.disconnect();
-        }
-
+        stopSelf();
         return true;
     }
 
@@ -111,20 +106,14 @@ public final class DeviceService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        int value = super.onStartCommand(intent, flags, startId);
-        Log.d(TAG, "onStartCommand.  intent: " + intent);
-        if (null == intent) {
-            configure(intent);
-        }
-
-        return value;
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        if (paymentDeviceConnector != null) {
+        if (null != paymentDeviceConnector) {
             paymentDeviceConnector.close();
             paymentDeviceConnector = null;
         }
@@ -285,10 +274,10 @@ public final class DeviceService extends Service {
             Log.d(TAG, "Starting execution of disconnect");
             if (null != paymentDeviceConnector) {
                 paymentDeviceConnector.disconnect();
+                paymentDeviceConnector = null;
             }
             NotificationManager.getInstance().removeListener(mSyncListener);
         });
-
     }
 
     /**
@@ -319,8 +308,7 @@ public final class DeviceService extends Service {
             throw new IllegalStateException("No payment device connection");
         }
 
-        if (mSyncEventState != null &&
-                (mSyncEventState == States.STARTED || mSyncEventState == States.IN_PROGRESS)) {
+        if (mSyncEventState != null && (mSyncEventState == States.STARTED || mSyncEventState == States.IN_PROGRESS)) {
             Logger.w("Sync already in progress. Try again later");
             throw new IllegalStateException("Another sync is currently active.  Please try again later");
         }
@@ -334,8 +322,9 @@ public final class DeviceService extends Service {
     }
 
     private void syncDevice() {
+        RxBus.getInstance().post(new DeviceStatusMessage(getString(R.string.sync_started), DeviceStatusMessage.PROGRESS));
 
-        if(paymentDeviceConnector.getState() == States.DISCONNECTED || paymentDeviceConnector.getState() == States.DISCONNECTING){
+        if (paymentDeviceConnector.getState() == States.DISCONNECTED || paymentDeviceConnector.getState() == States.DISCONNECTING) {
             RxBus.getInstance().post(new DeviceStatusMessage(getString(R.string.disconnected), DeviceStatusMessage.PENDING));
             RxBus.getInstance().post(new Sync(States.FAILED));
             return;
@@ -420,7 +409,13 @@ public final class DeviceService extends Service {
             mCommands.put(CommitSuccess.class, data -> onCommitSuccess((CommitSuccess) data));
             mCommands.put(CommitFailed.class, data -> onCommitFailed((CommitFailed) data));
             mCommands.put(CommitSkipped.class, data -> onCommitSkipped((CommitSkipped) data));
-            mCommands.put(AppMessage.class, data -> syncData(user, device));
+            mCommands.put(AppMessage.class, data -> {
+                try {
+                    syncData(user, device);
+                } catch (Exception e) {
+                    //don't remove try/catch. syncData can throw an exception when it busy.
+                }
+            });
         }
 
         @Override
@@ -433,6 +428,7 @@ public final class DeviceService extends Service {
                 //However, a listener should not unregister itself so we will leave it
                 //NotificationManager.getInstance().removeListener(mSyncListener);
                 Log.d(TAG, "sync has ended");
+                paymentDeviceConnector.syncComplete();
             }
 
             if (mSyncEventState == States.COMMIT_COMPLETED) {

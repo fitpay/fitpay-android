@@ -47,14 +47,12 @@ public class CreditCardTest2 extends TestActions {
         assertNotNull("devices collection should not be null", devices);
         assertEquals("should have one device", 1, devices.getTotalResults());
 
-        String pan = "5454545454545454";
+        String pan = "9999504454545450";
         CreditCard creditCard = getTestCreditCard(pan);
 
         CreditCard createdCard = createCreditCard(user, creditCard);
 
         verifyCardContents(creditCard, createdCard);
-
-
 
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<Image> callback = new ResultProvidingCallback<>(latch);
@@ -63,7 +61,6 @@ public class CreditCardTest2 extends TestActions {
 
         //TODO enable test for image retrieval
         //assertEquals(-1, callback.getErrorCode());
-
     }
 
     protected void verifyCardContents(CreditCard creditCard, CreditCard createdCard) {
@@ -352,6 +349,8 @@ public class CreditCardTest2 extends TestActions {
 
         selectedMethod = verifyVerificationMethod(selectedMethod, "12345");
         assertEquals("post verification state", "VERIFIED", selectedMethod.getState());
+
+        TestConstants.waitSomeActionsOnServer();
 
         retrievedCard = getCreditCard(retrievedCard);
         assertEquals("post verification card state", "ACTIVE", retrievedCard.getState());

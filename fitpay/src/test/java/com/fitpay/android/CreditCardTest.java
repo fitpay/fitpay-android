@@ -64,7 +64,7 @@ public class CreditCardTest {
     }
 
     @Test
-    @Ignore  //TODO determine source of failure and correct
+    @Ignore
     public void test08_updateCard() throws InterruptedException {
         steps.updateCard();
     }
@@ -79,48 +79,44 @@ public class CreditCardTest {
         steps.reactivateCard();
     }
 
-
     @Test
-    public void test111_createCard() throws InterruptedException {
+    public void test11_createCard() throws InterruptedException {
         steps.createCard("9999545454545455");
     }
 
-
     @Test
-    public void test112_acceptCard() throws InterruptedException {
+    public void test12_acceptCard() throws InterruptedException {
         steps.acceptTerms();
         steps.selfCard();
     }
 
-
     @Test
-    public void test113_selectCard() throws InterruptedException {
+    public void test13_selectCard() throws InterruptedException {
         steps.selectCard();
         steps.selfCard();
     }
 
     @Test
-    public void test114_verifyCard() throws InterruptedException {
+    public void test14_verifyCard() throws InterruptedException {
         steps.verifyCard();
         steps.selfCard();
     }
 
 
     @Test
-    public void test116_makeDefault() throws InterruptedException {
+    public void test15_makeDefault() throws InterruptedException {
         steps.makeDefault();
     }
 
     @Test
-    public void test12_declineTerms() throws InterruptedException {
-        steps.createCard("9999545454545456");
-        steps.declineTerms();
+    public void test16_getTransactions() throws InterruptedException {
+        steps.getTransactions();
     }
 
-
     @Test
-    public void test13_getTransactions() throws InterruptedException {
-        steps.getTransactions();
+    public void test16_declineTerms() throws InterruptedException {
+        steps.createCard("9999545454545456");
+        steps.declineTerms();
     }
 
     @Test
@@ -133,5 +129,4 @@ public class CreditCardTest {
         steps.destroy();
         steps = null;
     }
-
 }

@@ -25,7 +25,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 
 import java.security.Security;
-import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -273,11 +272,25 @@ public class TestActions {
     }
 
     protected CreditCard acceptTerms(CreditCard creditCard) throws Exception {
-        final CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(2);
         ResultProvidingCallback<CreditCard> callback = new ResultProvidingCallback<>(latch);
         creditCard.acceptTerms(callback);
         latch.await(TIMEOUT, TimeUnit.SECONDS);
-        return callback.getResult();
+
+        CreditCard acceptedCard = callback.getResult();
+
+        if (acceptedCard == null) {
+            return null;
+        }
+
+        TestConstants.waitSomeActionsOnServer();
+
+        //getSelf
+        ResultProvidingCallback<CreditCard> callbackSelf = new ResultProvidingCallback<>(latch);
+        acceptedCard.self(callbackSelf);
+        latch.await(TIMEOUT, TimeUnit.SECONDS);
+
+        return callbackSelf.getResult();
     }
 
     protected CreditCard declineTerms(CreditCard creditCard) throws Exception {
@@ -381,7 +394,7 @@ public class TestActions {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<Collections.CommitsCollection> callback = new ResultProvidingCallback<>(latch);
         device.getAllCommits(lastCommitId, callback);
-        latch.await(TIMEOUT, TimeUnit.SECONDS);
+        latch.await(TIMEOUT * 3, TimeUnit.SECONDS);
         assertEquals("get commits error code.  (message: " + callback.getErrorMessage() + ")", -1, callback.getErrorCode());
         return callback.getResult();
     }

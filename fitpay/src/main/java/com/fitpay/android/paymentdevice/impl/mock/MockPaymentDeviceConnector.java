@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
@@ -198,7 +199,9 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
     }
 
     private Device loadDefaultDevice() {
+
         return new Device.Builder()
+                .setDeviceIdentifier(UUID.randomUUID().toString())
                 .setDeviceType(DeviceTypes.WATCH)
                 .setManufacturerName("Fitpay")
                 .setDeviceName("PSPS")
