@@ -73,6 +73,9 @@ class DeviceSyncManager {
         }
 
         currentRequest = requests.poll();
+        if (null == currentRequest) {
+            return;
+        }
         mExecutor.execute(this::sync);
     }
 
@@ -230,7 +233,9 @@ class DeviceSyncManager {
 
             if (mSyncEventState == States.COMPLETED || mSyncEventState == States.FAILED || mSyncEventState == States.COMPLETED_NO_UPDATES) {
                 FPLog.i(SYNC_DATA, "\\EndSync\\: " + (mSyncEventState != States.FAILED ? "Success" : "Failed"));
-                currentRequest.getConnector().syncComplete();
+                if (null != currentRequest) {
+                    currentRequest.getConnector().syncComplete();
+                }
             }
 
             if (mSyncEventState == States.COMMIT_COMPLETED) {
