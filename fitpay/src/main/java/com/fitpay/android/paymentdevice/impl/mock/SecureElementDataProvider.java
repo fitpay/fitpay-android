@@ -1,4 +1,4 @@
-package com.fitpay.android.test.utils;
+package com.fitpay.android.paymentdevice.impl.mock;
 
 import com.fitpay.android.utils.Hex;
 import com.fitpay.android.utils.StringUtils;

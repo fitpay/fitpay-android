@@ -21,8 +21,8 @@ uploadArchives {
             pom.project {
                 name 'android_sdk'
                 packaging 'aar'
-                description 'Android SDK'
-                url 'http://private-git-url'
+                description 'FitPay Android SDK'
+                url 'https://github.com/fitpay/fitpay-android-sdk'
 
                 licenses {
                     license {
@@ -33,9 +33,9 @@ uploadArchives {
 
                 developers {
                     developer {
-                        id '123'
-                        name 'yourName'
-                        email 'your@email.com'
+                        id 'fitpay_developer'
+                        name 'FitPay Developer'
+                        email 'sdk@fit-pay.com'
                     }
                 }
             }
@@ -55,6 +55,13 @@ android {
     buildTypes {
         debug {
             testCoverageEnabled = true
+        }
+
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                    'proguard-rules.pro'
         }
     }
 
@@ -156,10 +163,6 @@ bintray {
         name = 'com.fitpay'
         licenses = ['MIT']
         vcsUrl = 'https://github.com/fitpay/fitpay-android-sdk.git'
-
-//        version {
-//            name = '0.4.13'
-//        }
     }
     configurations = ['archives']
 }

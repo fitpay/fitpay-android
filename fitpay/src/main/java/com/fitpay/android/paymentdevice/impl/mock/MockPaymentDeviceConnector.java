@@ -195,10 +195,10 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
 
         if (config != null) {
             serialNumber = config.getProperty(CONFIG_DEVICE_SERIAL_NUMBER, UUID.randomUUID().toString());
-            seID = config.getProperty(CONFIG_DEVICE_SECURE_ELEMENT_ID, UUID.randomUUID().toString());
+            seID = config.getProperty(CONFIG_DEVICE_SECURE_ELEMENT_ID, SecureElementDataProvider.generateRandomSecureElementId());
         } else {
             serialNumber = UUID.randomUUID().toString();
-            seID = UUID.randomUUID().toString();
+            seID = SecureElementDataProvider.generateRandomSecureElementId();
         }
 
         return new Device.Builder()
@@ -206,7 +206,7 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
                 .setDeviceType(DeviceTypes.WATCH)
                 .setManufacturerName("Fitpay")
                 .setDeviceName("PSPS")
-                .setSerialNumber(serialNumber)//"6e660ad5-7b06-4dec-ba4c-53b72a770f86"
+                .setSerialNumber(serialNumber)
                 .setModelNumber("FB404")
                 .setHardwareRevision("1.0.0.0")
                 .setFirmwareRevision("1030.6408.1309.0001")
@@ -214,8 +214,9 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
                 .setSystemId("0x123456FFFE9ABCDE")
                 .setOSName("ANDROID")
                 .setLicenseKey("6b413f37-90a9-47ed-962d-80e6a3528036")
-                .setBdAddress("96c37b2c-7848-406f-97b7-16d995c5f5a3")//(UUID.randomUUID().toString())
-                .setSecureElementId(seID)//"4691b9a0-45d6-4268-8b78-8708c5163019")
+                .setBdAddress("00:00:00:00:00:00")
+                .setSecureElementId(seID)
+                .setCASD(SecureElementDataProvider.generateCasd())
                 .build();
     }
 
