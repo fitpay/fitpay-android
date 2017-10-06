@@ -1,7 +1,6 @@
 package com.fitpay.android.api.services;
 
 import com.fitpay.android.BuildConfig;
-import com.fitpay.android.api.models.security.OAuthToken;
 import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.KeysManager;
@@ -17,8 +16,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 final public class UserService extends BaseClient {
-
-    private OAuthToken authToken;
 
     private UserClient mClient;
 
@@ -68,14 +65,4 @@ final public class UserService extends BaseClient {
     public UserClient getClient() {
         return mClient;
     }
-
-    public void updateToken(OAuthToken token) {
-        authToken = token;
-    }
-
-    public boolean isAuthorized() {
-        return authToken != null;
-    }
-
-
 }
