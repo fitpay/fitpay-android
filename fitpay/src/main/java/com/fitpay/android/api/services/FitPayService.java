@@ -48,7 +48,7 @@ final public class FitPayService extends BaseClient {
                         if (mAuthTokenUpdatedTs + (mAuthToken.getExpiresIn()*1000) < System.currentTimeMillis()) {
                             FPLog.w("current access token is expired, using anyways");
                             RxBus.getInstance().post(AccessDenied.builder()
-                                    .reason(AccessDenied.EXPIRED_TOKEN)
+                                    .reason(AccessDenied.Reason.EXPIRED_TOKEN)
                                     .build());
                         }
                     }
@@ -68,7 +68,7 @@ final public class FitPayService extends BaseClient {
                     response = chain.proceed(builder.build());
                     if (response.code() == AccessDenied.INVALID_TOKEN_RESPONSE_CODE) {
                         RxBus.getInstance().post(AccessDenied.builder()
-                                .reason(AccessDenied.UNAUTHORIZED)
+                                .reason(AccessDenied.Reason.UNAUTHORIZED)
                                 .build());
                     }
 

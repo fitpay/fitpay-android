@@ -8,19 +8,17 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * Created by ssteveli on 10/5/17.
  */
-
 public class AccessDenied {
     public final static int INVALID_TOKEN_RESPONSE_CODE = 400;
 
-    public final static int EXPIRED_TOKEN = 1;
-    public final static int UNAUTHORIZED = 2;
-
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
-            AccessDenied.EXPIRED_TOKEN,
-            AccessDenied.UNAUTHORIZED
+            Reason.EXPIRED_TOKEN,
+            Reason.UNAUTHORIZED
     })
     public @interface Reason {
+        int EXPIRED_TOKEN = 1;
+        int UNAUTHORIZED = 2;
     }
 
     @Reason
@@ -30,6 +28,7 @@ public class AccessDenied {
         this.reason = reason;
     }
 
+    @Reason
     public int getReason() {
         return reason;
     }
