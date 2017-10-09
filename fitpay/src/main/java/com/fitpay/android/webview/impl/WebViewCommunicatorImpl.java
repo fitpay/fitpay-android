@@ -206,7 +206,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
         OAuthToken oAuthToken = new OAuthToken.Builder()
                 .accessToken(token)
-                .userId(userId)
                 .build();
 
         ApiManager.getInstance().setAuthToken(oAuthToken);
