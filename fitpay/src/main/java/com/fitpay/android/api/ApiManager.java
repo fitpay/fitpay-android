@@ -136,11 +136,7 @@ public class ApiManager {
     public void setAuthToken(OAuthToken token) {
         apiService.updateToken(token);
     }
-
-    public void setAuthToken(OAuthToken token, long receivedTs) {
-        apiService.updateToken(token, receivedTs);
-    }
-
+    
     public FitPayClient getClient() {
         return apiService.getClient();
     }

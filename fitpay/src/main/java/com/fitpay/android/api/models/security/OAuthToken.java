@@ -51,6 +51,14 @@ final public class OAuthToken {
         return userId;
     }
 
+    public boolean isExpired() {
+        if (expiresTs != null && expiresTs.before(new Date())) {
+            return expiresTs.getTime() < System.currentTimeMillis();
+        }
+
+        return false;
+    }
+
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("OAuthToken{");
