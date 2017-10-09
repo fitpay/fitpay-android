@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
  * Created by ssteveli on 10/5/17.
  */
 public class AccessDenied {
-    public final static int INVALID_TOKEN_RESPONSE_CODE = 400;
+    public final static int INVALID_TOKEN_RESPONSE_CODE = 401;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
