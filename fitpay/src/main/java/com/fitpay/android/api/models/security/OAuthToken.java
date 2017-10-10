@@ -56,6 +56,10 @@ final public class OAuthToken {
             return expiresTs.getTime() < System.currentTimeMillis();
         }
 
+        if (expiresIn != -1 && issuedTs != null) {
+            return (issuedTs.getTime() + (expiresIn*1000)) < System.currentTimeMillis();
+        }
+
         return false;
     }
 
@@ -75,7 +79,7 @@ final public class OAuthToken {
     public static class Builder {
         private String tokenType;
         private String accessToken;
-        private long expiresIn;
+        private long expiresIn = -1;
         private String userId = null;
         private Date expiresTs = null;
         private Date issuedTs = new Date();
