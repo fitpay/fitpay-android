@@ -52,14 +52,19 @@ final public class OAuthToken {
     }
 
     public boolean isExpired() {
+        // used the expired date/time contained in the bearer token if set
         if (expiresTs != null && expiresTs.before(new Date())) {
             return expiresTs.getTime() < System.currentTimeMillis();
         }
 
+        // if expired date/time is not in the bearer token (it's optional), then use
+        // the expires_in value from the authentication request itself
         if (expiresIn != -1 && issuedTs != null) {
             return (issuedTs.getTime() + (expiresIn*1000)) < System.currentTimeMillis();
         }
 
+        // if we get here, then we don't have the information necessary to determine if a token
+        // is expired or not
         return false;
     }
 
@@ -108,6 +113,11 @@ final public class OAuthToken {
 
         public Builder userId(String userId) {
             this.userId = userId;
+            return this;
+        }
+
+        public Builder expiredTs(Date expiredTs) {
+            this.expiresTs = expiredTs;
             return this;
         }
 
