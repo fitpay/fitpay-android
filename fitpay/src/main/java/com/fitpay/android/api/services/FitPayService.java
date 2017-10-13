@@ -26,6 +26,7 @@ final public class FitPayService extends BaseClient {
 
     private FitPayClient mAPIClient;
     private OAuthToken mAuthToken;
+    private boolean expiredNotificationSent;
 
     public FitPayService(String apiBaseUrl) {
 
@@ -43,11 +44,13 @@ final public class FitPayService extends BaseClient {
                 }
 
                 if (mAuthToken != null) {
-                    if (mAuthToken.isExpired()) {
+                    if (!expiredNotificationSent && mAuthToken.isExpired()) {
                         FPLog.w("current access token is expired, using anyways");
                         RxBus.getInstance().post(AccessDenied.builder()
                                 .reason(AccessDenied.Reason.EXPIRED_TOKEN)
                                 .build());
+
+                        expiredNotificationSent = true;
                     }
 
                     final String value = new StringBuilder()
@@ -103,6 +106,7 @@ final public class FitPayService extends BaseClient {
 
     public void updateToken(OAuthToken token) {
         mAuthToken = token;
+        expiredNotificationSent = false;
     }
 
     public String getUserId() {
