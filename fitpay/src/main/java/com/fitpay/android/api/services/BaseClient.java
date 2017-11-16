@@ -5,24 +5,14 @@ import android.os.Build;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.utils.FPLog;
 
-import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
 
 import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.TlsVersion;
 import okhttp3.logging.HttpLoggingInterceptor;
-
-import static okhttp3.internal.Util.assertionError;
 
 /**
  * Created by tgs on 5/20/16.
@@ -65,10 +55,6 @@ public class BaseClient {
             try {
                 FPLog.i("pre lollipop ssl configuraiton being used");
 
-                SSLContext sc = SSLContext.getInstance("TLSv1.2");
-                sc.init(null, null, null);
-                client.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()), determineTrustManager());
-
                 ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
                         .tlsVersions(TlsVersion.TLS_1_2)
                         .build();
@@ -87,21 +73,5 @@ public class BaseClient {
         }
 
         return client;
-    }
-
-    private static X509TrustManager determineTrustManager() {
-        try {
-            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
-                    TrustManagerFactory.getDefaultAlgorithm());
-            trustManagerFactory.init((KeyStore) null);
-            TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
-            if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
-                throw new IllegalStateException("Unexpected default trust managers:"
-                        + Arrays.toString(trustManagers));
-            }
-            return (X509TrustManager) trustManagers[0];
-        } catch (GeneralSecurityException e) {
-            throw assertionError("No System TLS", e); // The system has no TLS. Just give up.
-        }
     }
 }
