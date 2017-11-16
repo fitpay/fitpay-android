@@ -9,9 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.SSLContext;
+
 import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.TlsVersion;
+import okhttp3.internal.platform.Platform;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
@@ -55,6 +58,9 @@ public class BaseClient {
             try {
                 FPLog.i("pre lollipop ssl configuraiton being used");
 
+                SSLContext sc = SSLContext.getDefault();
+                client.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()), Platform.get().trustManager(sc.getSocketFactory()));
+
                 ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
                         .tlsVersions(TlsVersion.TLS_1_2)
                         .build();
@@ -66,7 +72,7 @@ public class BaseClient {
 
                 client.connectionSpecs(specs);
             } catch (Exception exc) {
-                FPLog.e("Error while setting TLS 1.2", exc);
+                FPLog.e("Error while setting up TLS 1.2 support on a pre-lollipop device, SDK " + Build.VERSION.SDK_INT, exc);
 
                 throw new RuntimeException(exc);
             }
