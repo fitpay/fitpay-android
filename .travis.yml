@@ -6,8 +6,8 @@ android:
     - tools #latest for "builtin" sdk
     - tools #latest
     - platform-tools #latest
-    - build-tools-26.0.1
-    - android-25
+    - build-tools-26.0.2
+    - android-26
     - extra-android-m2repository
 
 before_install:
