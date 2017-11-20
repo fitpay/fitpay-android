@@ -283,6 +283,7 @@ public final class DeviceService extends Service {
     }
 
     /**
+     * @deprecated Please send {@link SyncRequest} via {@link com.fitpay.android.utils.RxBus}
      * Sync data between FitPay server and payment device
      * <p>
      * This is an asynchronous operation.
@@ -291,6 +292,7 @@ public final class DeviceService extends Service {
      * @param device    device object with hypermedia data
      * @param connector payment device connector
      */
+    @Deprecated
     public void syncData(@NonNull User user, @NonNull Device device, @NonNull IPaymentDeviceConnector connector) {
         if (syncManager != null) {
             SyncRequest request = new SyncRequest.Builder()
