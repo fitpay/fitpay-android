@@ -361,7 +361,7 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
                         case ResponseState.EXPIRED:
                         case ResponseState.FAILED:
                         case ResponseState.ERROR:
-                            commitProcessed(CommitResult.SKIPPED, null);
+                            commitProcessed(CommitResult.FAILED, null);
                             break;
                     }
                 }
