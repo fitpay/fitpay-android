@@ -211,11 +211,11 @@ final public class KeysManager {
 
     public String getKeyId(@KeyType int type) {
         ECCKeyPair keyPair = getPairForType(type);
+        return keyPair != null ? keyPair.getKeyId() : null;
+    }
 
-        if (keyPair != null) {
-            return keyPair.getKeyId();
-        }
-
-        return null;
+    public boolean keyRequireUpdate(@KeyType int type, long ttl) {
+        ECCKeyPair keyPair = getPairForType(type);
+        return keyPair == null || keyPair.isExpired(ttl);
     }
 }

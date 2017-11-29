@@ -76,6 +76,10 @@ public class ECCKeyPair {
         this.serverPublicKey = serverPublicKey;
     }
 
+    public boolean isExpired(long ttl){
+        return (System.currentTimeMillis() - createdTsEpoch) > ttl;
+    }
+
     @Override
     public String toString(){
         return "ECCKeyPair";
