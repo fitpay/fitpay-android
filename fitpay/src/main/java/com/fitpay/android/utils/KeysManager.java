@@ -10,11 +10,6 @@ import com.fitpay.android.api.callbacks.CallbackWrapper;
 import com.fitpay.android.api.enums.ResultCode;
 import com.fitpay.android.api.models.security.ECCKeyPair;
 
-import org.bouncycastle.jce.interfaces.ECPrivateKey;
-import org.bouncycastle.jce.interfaces.ECPublicKey;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.util.encoders.Hex;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.security.KeyFactory;
@@ -23,7 +18,8 @@ import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.security.Security;
+import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -59,18 +55,6 @@ final public class KeysManager {
     public @interface KeyType {
     }
 
-    private static BouncyCastleProvider provider;
-
-    static {
-        try {
-            Security.removeProvider("BC");
-            provider = new BouncyCastleProvider();
-            Security.insertProviderAt(provider, 1);
-        } catch (Exception e) {
-            FPLog.e(TAG, e);
-        }
-    }
-
     static KeysManager sInstance;
 
     public static KeysManager getInstance() {
@@ -89,7 +73,7 @@ final public class KeysManager {
 
     // Create the public and private keys
     private ECCKeyPair createECCKeyPair() throws Exception {
-        KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance(ALGORITHM, provider);
+        KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance(ALGORITHM);
         keyGenerator.initialize(new ECGenParameterSpec(EC_CURVE), new SecureRandom());
 
         KeyPair keyPair = keyGenerator.generateKeyPair();
@@ -100,21 +84,21 @@ final public class KeysManager {
         ECCKeyPair eccKeyPair = new ECCKeyPair();
         eccKeyPair.setKeyId(UUID.randomUUID().toString());
 
-        eccKeyPair.setPrivateKey(Hex.toHexString(privateKey.getEncoded()));
-        eccKeyPair.setPublicKey(Hex.toHexString(publicKey.getEncoded()));
+        eccKeyPair.setPrivateKey(Hex.bytesToHexString(privateKey.getEncoded()));
+        eccKeyPair.setPublicKey(Hex.bytesToHexString(publicKey.getEncoded()));
 
         return eccKeyPair;
     }
 
     // methods for ASN.1 encoded keys
     private PrivateKey getPrivateKey(byte[] privateKey) throws Exception {
-        KeyFactory kf = KeyFactory.getInstance(ALGORITHM, provider);
+        KeyFactory kf = KeyFactory.getInstance(ALGORITHM);
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKey);
         return kf.generatePrivate(keySpec);
     }
 
     private PublicKey getPublicKey(byte[] publicKey) throws Exception {
-        KeyFactory kf = KeyFactory.getInstance(ALGORITHM, provider);
+        KeyFactory kf = KeyFactory.getInstance(ALGORITHM);
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKey);
         return kf.generatePublic(keySpec);
     }
@@ -135,16 +119,10 @@ final public class KeysManager {
     private SecretKey createSecretKey(String privateKeyStr, String publicKeyStr) {
 
         try {
-            PrivateKey privateKey = getPrivateKey(Hex.decode(privateKeyStr));
-            PublicKey publicKey = getPublicKey(Hex.decode(publicKeyStr));
+            PrivateKey privateKey = getPrivateKey(Hex.hexStringToBytes(privateKeyStr));
+            PublicKey publicKey = getPublicKey(Hex.hexStringToBytes(publicKeyStr));
 
-            KeyAgreement keyAgreement = null;
-            try {
-                keyAgreement = KeyAgreement.getInstance(ALGORITHM, provider);
-            } catch (Exception e) {
-                //hack for unit tests
-                keyAgreement = KeyAgreement.getInstance(ALGORITHM);
-            }
+            KeyAgreement keyAgreement = KeyAgreement.getInstance(ALGORITHM);
 
             keyAgreement.init(privateKey);
             keyAgreement.doPhase(publicKey, true);
