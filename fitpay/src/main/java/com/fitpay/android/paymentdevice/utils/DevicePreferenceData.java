@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.fitpay.android.paymentdevice.DeviceService;
+import com.fitpay.android.paymentdevice.interfaces.IRemoteCommitPtrHandler;
 import com.fitpay.android.utils.StringUtils;
 
 import java.util.Arrays;
@@ -18,6 +19,7 @@ import me.alexrs.prefs.lib.Prefs;
 public class DevicePreferenceData {
 
     private static final String[] KEY_VALUES = {"lastCommitId", "paymentDeviceServiceType", "paymentDeviceConfig"};
+    private static IRemoteCommitPtrHandler remoteCommitPtrHandler;
 
     private String deviceId;
     private String lastCommitId;
@@ -29,6 +31,10 @@ public class DevicePreferenceData {
         additionalValues = new HashMap<>();
     }
 
+    public static void setRemoteCommitPtrHandler(IRemoteCommitPtrHandler commitPointerHandler){
+        remoteCommitPtrHandler = commitPointerHandler;
+    }
+
     public static DevicePreferenceData load(Context context, String deviceId) {
         SharedPreferences prefs = getPreferences(context, deviceId);
         Map<String, String> values = new HashMap<>();
@@ -38,9 +44,12 @@ public class DevicePreferenceData {
             }
         }
 
+        String lastCommitId = remoteCommitPtrHandler != null ?
+                remoteCommitPtrHandler.getLastCommitId(deviceId) : prefs.getString("lastCommitId", null);
+
         DevicePreferenceData data = new Builder()
                 .deviceId(deviceId)
-                .lastCommitId(prefs.getString("lastCommitId", null))
+                .lastCommitId(lastCommitId)
                 .paymentDeviceServiceType(prefs.getString("paymentDeviceServiceType", null))
                 .paymentDeviceConfig(prefs.getString("paymentDeviceConfig", null))
                 .additionalValues(values)
@@ -67,6 +76,11 @@ public class DevicePreferenceData {
         if (null == data.deviceId) {
             return;
         }
+
+        if(remoteCommitPtrHandler != null){
+            remoteCommitPtrHandler.setLastCommitId(data.deviceId, data.lastCommitId);
+        }
+
         SharedPreferences prefs = getPreferences(context, data.deviceId);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("lastCommitId", data.lastCommitId);
