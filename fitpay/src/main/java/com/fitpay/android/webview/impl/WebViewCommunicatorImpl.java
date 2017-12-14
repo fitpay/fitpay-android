@@ -60,7 +60,9 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     private String deviceId = null;
 
     private DeviceStatusListener deviceStatusListener;
+
     private DeviceSyncListener listenerForAppCallbacks;
+    private DeviceSyncListener listenerForAppCallbacksNoCallbackId;
 
     private RtmMessageListener rtmMessageListener;
 
@@ -108,6 +110,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
         NotificationManager.getInstance().removeListener(deviceStatusListener);
         NotificationManager.getInstance().removeListener(rtmMessageListener);
         NotificationManager.getInstance().removeListener(listenerForAppCallbacks);
+        NotificationManager.getInstance().removeListener(listenerForAppCallbacksNoCallbackId);
     }
 
     /**
@@ -190,9 +193,9 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
         }
 
         NotificationManager.getInstance().removeListener(listenerForAppCallbacks);
+        NotificationManager.getInstance().removeListener(listenerForAppCallbacksNoCallbackId);
 
-        listenerForAppCallbacks = new DeviceSyncListener(callbackId);
-        NotificationManager.getInstance().addListener(listenerForAppCallbacks);
+        NotificationManager.getInstance().addListener(listenerForAppCallbacks = new DeviceSyncListener(callbackId));
 
         deviceService.syncData(user, device);
     }
@@ -356,23 +359,40 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
             this.callbackId = callbackId;
             mCommands.put(Sync.class, data -> onSyncStateChanged((Sync) data));
 
-            FPLog.d("new DeviceSyncListener for callbackId (" + callbackId + ")");
+            if (callbackId != null) {
+                FPLog.d("new DeviceSyncListener for callbackId (" + callbackId + ")");
+            }
         }
 
         private void onSyncStateChanged(Sync syncEvent) {
-            FPLog.d(TAG, "received on sync state changed event, callbackId (" + callbackId + "): " + syncEvent);
+            if (callbackId != null) {
+                FPLog.d(TAG, "received on sync state changed event, callbackId (" + callbackId + "): " + syncEvent);
+            }
+
             switch (syncEvent.getState()) {
                 case States.COMPLETED:
                 case States.COMPLETED_NO_UPDATES: {
-                    onTaskSuccess(EventCallback.SYNC_COMPLETED, callbackId);
+                    if (callbackId != null) {
+                        onTaskSuccess(EventCallback.SYNC_COMPLETED, callbackId);
+                    }
                     RxBus.getInstance().post(new DeviceStatusMessage(activity.getString(R.string.fp_sync_finished), deviceId, DeviceStatusMessage.SUCCESS));
+
                     NotificationManager.getInstance().removeListener(listenerForAppCallbacks);
+                    NotificationManager.getInstance().removeListener(listenerForAppCallbacksNoCallbackId);
+
+                    NotificationManager.getInstance().addListener(listenerForAppCallbacksNoCallbackId = new DeviceSyncListener(null));
                     break;
                 }
                 case States.TIMEOUT:
                 case States.FAILED: {
-                    onTaskError(EventCallback.SYNC_COMPLETED, callbackId, !StringUtils.isEmpty(syncEvent.getMessage()) ? syncEvent.getMessage() : "sync failure");
+                    if (callbackId != null) {
+                        onTaskError(EventCallback.SYNC_COMPLETED, callbackId, !StringUtils.isEmpty(syncEvent.getMessage()) ? syncEvent.getMessage() : "sync failure");
+                    }
+
                     NotificationManager.getInstance().removeListener(listenerForAppCallbacks);
+                    NotificationManager.getInstance().removeListener(listenerForAppCallbacksNoCallbackId);
+
+                    NotificationManager.getInstance().addListener(listenerForAppCallbacksNoCallbackId = new DeviceSyncListener(null));
                     break;
                 }
                 default: {
