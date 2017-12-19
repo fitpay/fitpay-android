@@ -12,13 +12,16 @@ public class ECCKeyPair {
     private String keyId;
     private Date createdTs;
     private long createdTsEpoch;
+    private Date expirationTs;
+    private long expirationTsEpoch;
     private String serverPublicKey;
     private String clientPublicKey;
 
     private transient String privateKey;
     private transient SecretKey secretKey = null;
 
-    public ECCKeyPair(){}
+    public ECCKeyPair() {
+    }
 
     public String getKeyId() {
         return keyId;
@@ -42,6 +45,14 @@ public class ECCKeyPair {
 
     public void setCreatedTsEpoch(long createdTsEpoch) {
         this.createdTsEpoch = createdTsEpoch;
+    }
+
+    public Date getExpirationTs() {
+        return expirationTs;
+    }
+
+    public long getExpirationTsEpoch() {
+        return expirationTsEpoch;
     }
 
     public String getServerPublicKey() {
@@ -72,16 +83,16 @@ public class ECCKeyPair {
         this.secretKey = secretKey;
     }
 
-    public void setServerPublicKey(String serverPublicKey){
+    public void setServerPublicKey(String serverPublicKey) {
         this.serverPublicKey = serverPublicKey;
     }
 
-    public boolean isExpired(long ttl){
-        return (System.currentTimeMillis() - createdTsEpoch) > ttl;
+    public boolean isExpired() {
+        return System.currentTimeMillis() - expirationTsEpoch > 0;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "ECCKeyPair";
     }
 }

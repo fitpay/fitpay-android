@@ -214,8 +214,8 @@ final public class KeysManager {
         return keyPair != null ? keyPair.getKeyId() : null;
     }
 
-    public boolean keyRequireUpdate(@KeyType int type, long ttl) {
+    public boolean keyRequireUpdate(@KeyType int type) {
         ECCKeyPair keyPair = getPairForType(type);
-        return keyPair == null || keyPair.isExpired(ttl);
+        return keyPair == null || keyPair.isExpired();
     }
 }

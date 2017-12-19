@@ -53,7 +53,6 @@ public class ApiManager {
     public static final String PROPERTY_HTTP_CONNECT_TIMEOUT = "httpConnectTimeout";
     public static final String PROPERTY_HTTP_READ_TIMEOUT = "httpReadTimeout";
     public static final String PROPERTY_HTTP_WRITE_TIMEOUT = "httpWriteTimeout";
-    public static final String PROPERTY_ENCRYPTION_KEY_TTL = "encryptionKeyTTL";
 
     private static Map<String, String> config = new HashMap<>();
 
@@ -67,7 +66,6 @@ public class ApiManager {
         config.put(PROPERTY_HTTP_CONNECT_TIMEOUT, "60");
         config.put(PROPERTY_HTTP_READ_TIMEOUT, "60");
         config.put(PROPERTY_HTTP_WRITE_TIMEOUT, "60");
-        config.put(PROPERTY_ENCRYPTION_KEY_TTL, String.valueOf(TimeUnit.MINUTES.toMillis(30)));
     }
 
     private static ApiManager sInstance;
@@ -218,7 +216,7 @@ public class ApiManager {
     }
 
     private void checkKeyAndMakeCall(@NonNull Runnable successRunnable, @NonNull ApiCallback callback) {
-        if (KeysManager.getInstance().keyRequireUpdate(KeysManager.KEY_API, Long.valueOf(config.get(PROPERTY_ENCRYPTION_KEY_TTL)))) {
+        if (KeysManager.getInstance().keyRequireUpdate(KeysManager.KEY_API)) {
             KeysManager.getInstance().updateECCKey(KeysManager.KEY_API, successRunnable, callback);
         } else {
             successRunnable.run();
