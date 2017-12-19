@@ -32,6 +32,12 @@ import java.security.Security;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import rx.Scheduler;
+import rx.android.plugins.RxAndroidPlugins;
+import rx.android.plugins.RxAndroidSchedulersHook;
+import rx.plugins.RxJavaHooks;
+import rx.schedulers.Schedulers;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
@@ -82,6 +88,18 @@ public class TestActions {
 
         Security.insertProviderAt(new BouncyCastleProvider(), 1);
         ApiManager.init(TestConstants.getConfig());
+
+        RxAndroidPlugins.getInstance().reset();
+        RxAndroidPlugins.getInstance().registerSchedulersHook(new RxAndroidSchedulersHook(){
+            @Override
+            public Scheduler getMainThreadScheduler() {
+                return Schedulers.immediate();
+            }
+        });
+
+        RxJavaHooks.setOnIOScheduler(scheduler -> Schedulers.immediate());
+        RxJavaHooks.setOnComputationScheduler(scheduler -> Schedulers.immediate());
+        RxJavaHooks.setOnNewThreadScheduler(scheduler -> Schedulers.immediate());
     }
 
     @Before

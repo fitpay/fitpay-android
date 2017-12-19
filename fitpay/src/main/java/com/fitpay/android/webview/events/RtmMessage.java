@@ -8,7 +8,7 @@ import com.fitpay.android.webview.enums.RtmType;
  */
 public class RtmMessage {
 
-    private String jsonData;
+    private String data;
     private String type;
     private String callbackId;
 
@@ -17,15 +17,20 @@ public class RtmMessage {
         this.type = type;
         if (data != null) {
             if (data instanceof String) {
-                this.jsonData = (String) data;
+                this.data= (String) data;
             } else {
-                jsonData = Constants.getGson().toJson(data);
+                this.data = Constants.getGson().toJson(data);
             }
         }
     }
 
+    @Deprecated //see getData()
     public String getJsonData() {
-        return jsonData;
+        return data;
+    }
+
+    public String getData() {
+        return data;
     }
 
     @RtmType.Request

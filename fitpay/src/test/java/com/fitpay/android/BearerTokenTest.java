@@ -69,10 +69,11 @@ public class BearerTokenTest extends TestActions {
         Assert.assertEquals("incorrect number for response codes captured", 1, codes.size());
         Assert.assertEquals(new Integer(AccessDenied.INVALID_TOKEN_RESPONSE_CODE), codes.get(0));
 
-        Assert.assertEquals("access denied not posted to RxBus", 3, listener.getReceived().size());
+        //EXPIRED_TOKEN will be received only once after commit: limited the number of expired token events (#156)
+        Assert.assertEquals("access denied not posted to RxBus", 2, listener.getReceived().size());
         Assert.assertEquals(AccessDenied.Reason.EXPIRED_TOKEN, listener.getReceived().get(0).getReason()); // key setup
-        Assert.assertEquals(AccessDenied.Reason.EXPIRED_TOKEN, listener.getReceived().get(1).getReason()); // getting user
-        Assert.assertEquals(AccessDenied.Reason.UNAUTHORIZED, listener.getReceived().get(2).getReason()); // denied get user
+        //Assert.assertEquals(AccessDenied.Reason.EXPIRED_TOKEN, listener.getReceived().get(1).getReason()); // getting user
+        Assert.assertEquals(AccessDenied.Reason.UNAUTHORIZED, listener.getReceived().get(1).getReason()); // denied get user
 
     }
 
