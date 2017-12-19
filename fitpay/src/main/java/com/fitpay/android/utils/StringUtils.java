@@ -14,6 +14,7 @@ import com.nimbusds.jose.util.Base64URL;
 
 import java.security.MessageDigest;
 import java.text.ParseException;
+import java.util.Locale;
 
 /**
  * Created by Vlad on 26.02.2016.
@@ -121,4 +122,29 @@ public final class StringUtils {
         }
         return output.toString();
     }
+
+    /**
+     * Get readable local date (en_US)
+     * @return locale string
+     */
+    public static String getLocale(){
+        return Locale.getDefault().toString();
+    }
+
+    /**
+     * Get ISO 639 alpha-2 language code
+     * @return language (en)
+     */
+    public static String getLanguage(){
+        return Locale.getDefault().getLanguage();
+    }
+
+    /**
+     * Get ISO 3166 alpha-2 country code
+     * @return country (US)
+     */
+    public static String getCountry(){
+        return Locale.getDefault().getCountry();
+    }
+
 }
