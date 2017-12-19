@@ -1,5 +1,6 @@
 package com.fitpay.android.utils;
 
+import com.fitpay.android.BuildConfig;
 import com.fitpay.android.api.models.security.ECCKeyPair;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
@@ -124,11 +125,11 @@ public final class StringUtils {
     }
 
     /**
-     * Get readable local date (en_US)
+     * Get readable local date (en-US)
      * @return locale string
      */
     public static String getLocale(){
-        return Locale.getDefault().toString();
+        return Locale.getDefault().toString().replace("_", "-");
     }
 
     /**
