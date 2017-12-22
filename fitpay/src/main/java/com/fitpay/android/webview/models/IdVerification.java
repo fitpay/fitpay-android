@@ -8,6 +8,7 @@ import com.fitpay.android.webview.enums.RtmType;
 import com.fitpay.android.webview.events.RtmMessageResponse;
 
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * IdVerification data
@@ -38,6 +39,8 @@ public class IdVerification {
     private String billingCity;
     private String billingState;
     private String billingZip;
+
+    private String locale; //ISO 3166-1 alpha-2
 
     private IdVerification() {
     }
@@ -76,8 +79,10 @@ public class IdVerification {
         private String billingState;
         private String billingZip;
 
-        public Builder() {
+        private String locale ;
 
+        public Builder() {
+            locale = Locale.getDefault().getLanguage() + '-' + Locale.getDefault().getCountry();
         }
 
         /**
@@ -342,6 +347,17 @@ public class IdVerification {
             return this;
         }
 
+        /**
+         * Set locale
+         *
+         * @param locale
+         * @return this
+         */
+        public Builder setLocale(String locale) {
+            this.locale = locale;
+            return this;
+        }
+
         public IdVerification build() {
             IdVerification idVerification = new IdVerification();
 
@@ -369,6 +385,8 @@ public class IdVerification {
             idVerification.billingCity = billingCity;
             idVerification.billingState = billingState;
             idVerification.billingZip = billingZip;
+
+            idVerification.locale = locale;
 
             return idVerification;
         }
