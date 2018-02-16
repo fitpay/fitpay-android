@@ -94,7 +94,7 @@ public class DevicePreferenceData {
         boolean success = editor.commit();
     }
 
-    protected static SharedPreferences getPreferences(Context context, String deviceId) {
+    private static SharedPreferences getPreferences(Context context, String deviceId) {
         return context.getSharedPreferences("paymentDevice_" + deviceId, Context.MODE_PRIVATE);
     }
 

@@ -234,6 +234,17 @@ public final class User extends UserModel implements Parcelable {
      * However, if the owner already has a default then it will not change.
      * To change the default, you should update the user to have a new "default_source".
      *
+     * <p>
+     * <b>Important note:</b>
+     * When this call is made to the endpoint the platform responds with a hypermedia link for accept terms.
+     * This hypermedia link will include the sessionData parameter. However, and this is important,
+     * a call {@link #getCreditCard(String, ApiCallback)} or {@link #getCreditCards(int, int, ApiCallback)}
+     * will return a hypermedia link for accept terms, but it will NOT contain the sessionData parameter.
+     * The sessionData is only available in the object that is returned from current call.
+     * The platform is not allowed to store it. The platform may reject the POST to the acceptTerms
+     * endpoint if the sessionData is not included.
+     * </p>
+     *
      * @param creditCard credit card data:(pan, expMonth, expYear, cvv, name,
      *                   address data:(street1, street2, street3, city, state, postalCode, country))
      * @param callback   result callback

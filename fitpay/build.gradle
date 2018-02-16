@@ -1,8 +1,19 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'de.mobilej.unmock:UnMockPlugin:0.6.4'
+    }
+}
+
 apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'maven'
 apply from: '../jacoco.gradle'
+apply plugin: 'de.mobilej.unmock'
 
 group = 'com.fitpay.android'
 version = '0.4.39'
@@ -94,6 +105,12 @@ ext {
     supportLib = "27.0.2"
 }
 
+unMock {
+    keepStartingWith "libcore."
+    keepStartingWith "android.net.Uri"
+    keepAndRename "java.nio.charset.Charsets" to "xjava.nio.charset.Charsets"
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -117,6 +134,9 @@ dependencies {
     testCompile 'org.mockito:mockito-core:2.12.0'
     testCompile 'junit:junit:4.12'
     testCompile group: 'org.jmockit', name: 'jmockit', version: '1.37'
+//    testCompile 'org.powermock:powermock-core:2.0.0-beta.5'
+//    testCompile 'org.powermock:powermock-api-mockito2:2.0.0-beta.5'
+//    testCompile 'org.powermock:powermock-module-junit4:2.0.0-beta.5'
 }
 
 task generateSourcesJar(type: Jar) {
