@@ -25,24 +25,21 @@ final public class ObjectConverter {
         return resultMap;
     }
 
-    private static void iterateThroughMap(int deepLevel, String keyName, LinkedTreeMap treeMap, Map<String, Object> resultMap) {
+    private static void iterateThroughMap(int deepLevel, String initialKeyName, LinkedTreeMap treeMap, Map<String, Object> resultMap) {
         for (Map.Entry<String, Object> entry : (Iterable<Map.Entry<String, Object>>) treeMap.entrySet()) {
             if (entry.getValue() instanceof LinkedTreeMap) {
-                if (deepLevel++ > 0) {
-                    keyName = new StringBuilder()
-                            .append(keyName)
-                            .append("/")
-                            .append(entry.getKey())
-                            .append("/")
-                            .toString();
-                }
-                iterateThroughMap(deepLevel, keyName, (LinkedTreeMap) entry.getValue(), resultMap);
+                String innerLevelKey = (deepLevel++ <= 0)
+                        ? initialKeyName
+                        : constructInnerLevelKey(initialKeyName, entry.getKey());
+                iterateThroughMap(deepLevel, innerLevelKey, (LinkedTreeMap) entry.getValue(), resultMap);
             } else {
-                if (StringUtils.isEmpty(keyName)) {
-                    keyName = "/";
-                }
-                resultMap.put(keyName + entry.getKey(), entry.getValue());
+                String sameLevelKey = (StringUtils.isEmpty(initialKeyName)) ? "/" : initialKeyName;
+                resultMap.put(sameLevelKey + entry.getKey(), entry.getValue());
             }
         }
+    }
+
+    private static String constructInnerLevelKey(String initialKeyName, String currentEntryKey) {
+        return initialKeyName + "/" + currentEntryKey + "/";
     }
 }

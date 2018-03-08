@@ -206,7 +206,7 @@ public class ApiManager {
         return config.get(PROPERTY_AUTH_BASE_URL);
     }
 
-    private boolean isAuthorized(@NonNull ApiCallback callback) {
+    public boolean isAuthorized(@NonNull ApiCallback callback) {
         if (!apiService.isAuthorized()) {
             callback.onFailure(ResultCode.UNAUTHORIZED, "Unauthorized");
 

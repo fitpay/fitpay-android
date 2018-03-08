@@ -13,7 +13,7 @@ import java.util.Locale;
  * IdVerification data
  */
 
-public class IdVerification {
+public final class IdVerification {
     private Date oemAccountInfoUpdatedDate; // Most recent date this user update their: Billing Address, Name, Email, password, or other Personally Identifiable Information associated to their account.
     private Date oemAccountCreatedDate;
     private Integer suspendedCardsInOemAccount; // If this user has multiple devices, how many cards are suspended in total across all devices?
@@ -78,7 +78,7 @@ public class IdVerification {
         private String billingState;
         private String billingZip;
 
-        private String locale ;
+        private final String locale;
 
         public Builder() {
             locale = Locale.getDefault().getLanguage() + '-' + Locale.getDefault().getCountry();
@@ -343,17 +343,6 @@ public class IdVerification {
          */
         public Builder setBillingZip(String billingZip) {
             this.billingZip = billingZip;
-            return this;
-        }
-
-        /**
-         * Set locale
-         *
-         * @param locale
-         * @return this
-         */
-        public Builder setLocale(String locale) {
-            this.locale = locale;
             return this;
         }
 

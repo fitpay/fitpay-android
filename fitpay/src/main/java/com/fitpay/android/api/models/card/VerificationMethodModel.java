@@ -1,6 +1,7 @@
 package com.fitpay.android.api.models.card;
 
 import com.fitpay.android.api.models.BaseModel;
+import com.fitpay.android.webview.models.a2a.A2AContext;
 
 /**
  * Verification method model
@@ -15,6 +16,7 @@ abstract class VerificationMethodModel extends BaseModel {
     protected long createdTsEpoch;
     protected long lastModifiedTsEpoch;
     protected long verifiedTsEpoch;
+    protected A2AContext appToAppContext;
 
     public String getVerificationId() {
         return verificationId;
@@ -48,4 +50,7 @@ abstract class VerificationMethodModel extends BaseModel {
         return verifiedTsEpoch;
     }
 
+    public A2AContext getAppToAppContext() {
+        return appToAppContext;
+    }
 }

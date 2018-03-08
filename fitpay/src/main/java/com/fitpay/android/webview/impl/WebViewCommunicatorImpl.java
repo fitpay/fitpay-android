@@ -18,10 +18,9 @@ import com.fitpay.android.paymentdevice.DeviceService;
 import com.fitpay.android.paymentdevice.constants.States;
 import com.fitpay.android.paymentdevice.enums.AppMessage;
 import com.fitpay.android.paymentdevice.enums.Sync;
-import com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.events.NotificationSyncRequest;
+import com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.models.SyncInfo;
-import com.fitpay.android.paymentdevice.models.SyncRequest;
 import com.fitpay.android.utils.EventCallback;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.Listener;
@@ -31,9 +30,13 @@ import com.fitpay.android.utils.StringUtils;
 import com.fitpay.android.webview.WebViewCommunicator;
 import com.fitpay.android.webview.enums.RtmType;
 import com.fitpay.android.webview.events.DeviceStatusMessage;
+import com.fitpay.android.webview.events.IdVerificationRequest;
 import com.fitpay.android.webview.events.RtmMessage;
 import com.fitpay.android.webview.events.RtmMessageResponse;
 import com.fitpay.android.webview.events.UserReceived;
+import com.fitpay.android.webview.events.a2a.A2AVerificationFailed;
+import com.fitpay.android.webview.events.a2a.A2AVerificationRequest;
+import com.fitpay.android.webview.models.IdVerification;
 import com.fitpay.android.webview.models.RtmVersion;
 import com.google.gson.Gson;
 
@@ -74,6 +77,9 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
     private PushNotificationSyncListener pushNotificationSyncListener;
 
+    private IdVerificationListener idVerificationListener;
+    private A2AListener a2AListener;
+
     private WebView webView;
 
     private RtmVersion webAppRtmVersion = new RtmVersion(RtmType.RTM_VERSION);
@@ -81,6 +87,8 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     private final Gson gson = new Gson();
 
     private IFitPayCardScanner cardScanner;
+
+    private boolean supportsAppVerification;
 
     private boolean usedDeprecatedConstructor = false;
 
@@ -113,10 +121,14 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
         deviceStatusListener = new DeviceStatusListener(getConnectorId());
         rtmMessageListener = new RtmMessageListener();
         pushNotificationSyncListener = new PushNotificationSyncListener();
+        idVerificationListener = new IdVerificationListener();
+        a2AListener = new A2AListener();
 
         NotificationManager.getInstance().addListener(deviceStatusListener);
         NotificationManager.getInstance().addListener(rtmMessageListener);
         NotificationManager.getInstance().addListener(pushNotificationSyncListener);
+        NotificationManager.getInstance().addListener(idVerificationListener);
+        NotificationManager.getInstance().addListener(a2AListener);
 
         webView = (WebView) activity.findViewById(wId);
     }
@@ -143,6 +155,8 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
         NotificationManager.getInstance().removeListener(pushNotificationSyncListener);
         NotificationManager.getInstance().removeListener(listenerForAppCallbacks);
         NotificationManager.getInstance().removeListener(listenerForAppCallbacksNoCallbackId);
+        NotificationManager.getInstance().removeListener(idVerificationListener);
+        NotificationManager.getInstance().removeListener(a2AListener);
     }
 
     /**
@@ -486,6 +500,31 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
         }
     }
 
+    @Override
+    public IdVerification getIdVerification() {
+        return new IdVerification.Builder().build();
+    }
+    @Override
+    public boolean supportsAppVerification() {
+        return supportsAppVerification;
+    }
+
+    public void setSupportsAppVerification(boolean supportsAppVerification) {
+        this.supportsAppVerification = supportsAppVerification;
+    }
+
+    /**
+     * Get app-to-app return location
+     * <p>
+     * On completion of the issuer intent the OEM app must then open the web-view using the returnLocation.
+     * <baseUrl>/<returnLocation>?config=<base64 encoded config with a2a>
+     *
+     * @return a2a return location
+     */
+    public String getA2aReturnLocation() {
+        return a2AListener != null ? a2AListener.returnLocation : null;
+    }
+
     /**
      * Listen to RTM messages
      */
@@ -516,6 +555,27 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                     sync(null);
                 }
             });
+        }
+    }
+
+    private class IdVerificationListener extends Listener {
+        private IdVerificationListener() {
+            mCommands.put(IdVerificationRequest.class, data ->
+                    getIdVerification().send(((IdVerificationRequest) data).getCallbackId()));
+        }
+    }
+
+    private class A2AListener extends Listener {
+        private String requestCallbackId;
+        private String returnLocation;
+
+        private A2AListener() {
+            mCommands.put(A2AVerificationRequest.class, data -> {
+                returnLocation = ((A2AVerificationRequest) data).getReturnLocation();
+                requestCallbackId = ((A2AVerificationRequest) data).getCallbackId();
+            });
+            mCommands.put(A2AVerificationFailed.class, data ->
+                    RxBus.getInstance().post(new RtmMessageResponse(requestCallbackId, false, data, RtmType.APP_TO_APP_VERIFICATION)));
         }
     }
 }

@@ -9,7 +9,7 @@ import com.fitpay.android.webview.impl.WebViewCommunicatorImpl;
 import com.fitpay.android.webview.models.SdkVersion;
 
 /**
- * RtmMessage parser v3
+ * RtmMessage parser v4
  */
 public class RtmParserV4 extends RtmParserV2 {
 
