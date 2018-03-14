@@ -2,10 +2,9 @@ package com.fitpay.android.webview.models;
 
 import android.util.Base64;
 
-import com.fitpay.android.webview.models.a2a.A2AIssuerResponse;
 import com.google.gson.Gson;
 
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 
 /**
@@ -21,7 +20,7 @@ public class WvConfig {
     }
 
     public String getEncodedString() {
-        byte[] bytesToEncode = toString().getBytes(StandardCharsets.UTF_8);
+        byte[] bytesToEncode = toString().getBytes(Charset.forName("UTF-8"));
         return Base64.encodeToString(bytesToEncode, Base64.URL_SAFE);
     }
 

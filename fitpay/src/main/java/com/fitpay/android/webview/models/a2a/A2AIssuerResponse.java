@@ -6,7 +6,7 @@ import com.fitpay.android.webview.enums.A2AStepupResult;
 import com.fitpay.android.webview.events.a2a.A2AVerificationRequest;
 import com.google.gson.Gson;
 
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 
 /**
  * Issuer response data for {@link A2AVerificationRequest}
@@ -31,7 +31,7 @@ public class A2AIssuerResponse {
     }
 
     public String getEncodedString() {
-        byte[] bytesToEncode = toString().getBytes(StandardCharsets.UTF_8);
+        byte[] bytesToEncode = toString().getBytes(Charset.forName("UTF-8"));
         return Base64.encodeToString(bytesToEncode, Base64.URL_SAFE);
     }
 }
