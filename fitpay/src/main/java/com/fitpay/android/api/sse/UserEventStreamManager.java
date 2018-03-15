@@ -13,12 +13,22 @@ import retrofit2.Response;
 
 
 /**
- * Created by ssteveli on 3/15/18.
+ * This class manages the subscribing and unsubscribing from the user event stream of the FitPay platform.  The subscription
+ * is encapsulated in a {@link UserEventStream}.
  */
-
 public class UserEventStreamManager {
     private static ConcurrentHashMap<String, UserEventStream> streams = new ConcurrentHashMap<>();
 
+    /**
+     * Subscribe to a user event stream, posting SYNC events to the included connector and device when
+     * received from the FitPay platform.
+     *
+     * @param userId
+     * @param connector
+     * @param device
+     * @return
+     * @throws IOException
+     */
     public static UserEventStream subscribe(
             final String userId,
             final IPaymentDeviceConnector connector,
@@ -46,6 +56,12 @@ public class UserEventStreamManager {
         return stream;
     }
 
+    /**
+     * If subscribed, close the event stream subscription for the specified userId and device.
+     *
+     * @param userId
+     * @param device
+     */
     public static void unsubscribe(final String userId, final Device device) {
         final String streamKey = calculateStreamKey(userId, device);
         UserEventStream stream = streams.remove(streamKey);
