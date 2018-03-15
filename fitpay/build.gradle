@@ -121,7 +121,7 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
 
     compile 'com.squareup.okhttp3:logging-interceptor:3.9.0'
-    compile 'com.squareup.okhttp3:okhttp:3.9.0'
+    compile 'com.squareup.okhttp3:okhttp:3.9.1'
 
     compile 'io.reactivex:rxjava:1.3.4'
     compile 'io.reactivex:rxandroid:1.2.1'
@@ -131,12 +131,11 @@ dependencies {
     compile 'org.bouncycastle:bcprov-jdk15on:1.58'
     compile 'com.nimbusds:nimbus-jose-jwt:5.1'
 
+    compile 'com.github.heremaps:oksse:master-SNAPSHOT'
+
     testCompile 'org.mockito:mockito-core:2.12.0'
     testCompile 'junit:junit:4.12'
     testCompile group: 'org.jmockit', name: 'jmockit', version: '1.37'
-//    testCompile 'org.powermock:powermock-core:2.0.0-beta.5'
-//    testCompile 'org.powermock:powermock-api-mockito2:2.0.0-beta.5'
-//    testCompile 'org.powermock:powermock-module-junit4:2.0.0-beta.5'
 }
 
 task generateSourcesJar(type: Jar) {

@@ -5,16 +5,18 @@ import android.os.Build;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.utils.FPLog;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.X509TrustManager;
 
 import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.TlsVersion;
-import okhttp3.internal.platform.Platform;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
@@ -59,7 +61,8 @@ public class BaseClient {
                 FPLog.i("pre lollipop ssl configuraiton being used");
 
                 SSLContext sc = SSLContext.getDefault();
-                client.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()), Platform.get().trustManager(sc.getSocketFactory()));
+
+                client.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()), trustManager(sc.getSocketFactory()));
 
                 ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
                         .tlsVersions(TlsVersion.TLS_1_2)
@@ -79,5 +82,49 @@ public class BaseClient {
         }
 
         return client;
+    }
+
+    /**
+     * These are taken from okhttp {@link okhttp3.internal.platform.Platform} where the trustManager() method has now
+     * been made protected.
+     *
+     * @param sslSocketFactory
+     * @return
+     */
+    protected static X509TrustManager trustManager(SSLSocketFactory sslSocketFactory) {
+        // Attempt to get the trust manager from an OpenJDK socket factory. We attempt this on all
+        // platforms in order to support Robolectric, which mixes classes from both Android and the
+        // Oracle JDK. Note that we don't support HTTP/2 or other nice features on Robolectric.
+        try {
+            Class<?> sslContextClass = Class.forName("sun.security.ssl.SSLContextImpl");
+            Object context = readFieldOrNull(sslSocketFactory, sslContextClass, "context");
+            if (context == null) return null;
+            return readFieldOrNull(context, X509TrustManager.class, "trustManager");
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+    }
+
+    protected static <T> T readFieldOrNull(Object instance, Class<T> fieldType, String fieldName) {
+        for (Class<?> c = instance.getClass(); c != Object.class; c = c.getSuperclass()) {
+            try {
+                Field field = c.getDeclaredField(fieldName);
+                field.setAccessible(true);
+                Object value = field.get(instance);
+                if (value == null || !fieldType.isInstance(value)) return null;
+                return fieldType.cast(value);
+            } catch (NoSuchFieldException ignored) {
+            } catch (IllegalAccessException e) {
+                throw new AssertionError();
+            }
+        }
+
+        // Didn't find the field we wanted. As a last gasp attempt, try to find the value on a delegate.
+        if (!fieldName.equals("delegate")) {
+            Object delegate = readFieldOrNull(instance, Object.class, "delegate");
+            if (delegate != null) return readFieldOrNull(delegate, fieldType, fieldName);
+        }
+
+        return null;
     }
 }

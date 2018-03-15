@@ -18,7 +18,6 @@ import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.security.Security;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECGenParameterSpec;
@@ -94,15 +93,21 @@ final public class KeysManager {
     }
 
     // methods for ASN.1 encoded keys
-    private PrivateKey getPrivateKey(byte[] privateKey) throws Exception {
+
+
+    public PrivateKey getPrivateKey(byte[] privateKey) throws Exception {
         KeyFactory kf = KeyFactory.getInstance(ALGORITHM,
                 SecurityProvider.getInstance().getProvider());
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKey);
         return kf.generatePrivate(keySpec);
     }
 
-    private PublicKey getPublicKey(byte[] publicKey) throws Exception {
-        KeyFactory kf = KeyFactory.getInstance(ALGORITHM,
+    public PublicKey getPublicKey(byte[] publicKey) throws Exception {
+        return getPublicKey(ALGORITHM, publicKey);
+    }
+
+    public PublicKey getPublicKey(String algorithm, byte[] publicKey) throws Exception {
+        KeyFactory kf = KeyFactory.getInstance(algorithm,
                 SecurityProvider.getInstance().getProvider());
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKey);
         return kf.generatePublic(keySpec);
