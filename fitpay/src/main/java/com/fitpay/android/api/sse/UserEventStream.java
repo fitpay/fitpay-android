@@ -1,5 +1,6 @@
 package com.fitpay.android.api.sse;
 
+import com.fitpay.android.api.enums.SyncInitiator;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector;
@@ -68,13 +69,16 @@ public class UserEventStream {
             @Override
             public void onMessage(ServerSentEvent sse, String id, String event, String message) {
                 lastEventTs = System.currentTimeMillis();
-                FPLog.d("event stream for user " + user.getId() + " received: " + message);
                 String payload = StringUtils.getDecryptedString(KeysManager.KEY_API, message);
 
                 Gson gson = Constants.getGson();
                 JsonObject fitpayEvent = gson.fromJson(payload, JsonObject.class);
+
+
+                FPLog.d("event stream for user " + user.getId() + " received: " + fitpayEvent.get("type").getAsString());
                 if ("SYNC".equals(fitpayEvent.get("type").getAsString())) {
                     SyncInfo syncInfo = gson.fromJson(fitpayEvent.get("payload"), SyncInfo.class);
+                    syncInfo.setInitiator(SyncInitiator.PLATFORM);
 
                     SyncRequest syncRequest = new SyncRequest.Builder()
                             .setSyncId(syncInfo.getSyncId())
