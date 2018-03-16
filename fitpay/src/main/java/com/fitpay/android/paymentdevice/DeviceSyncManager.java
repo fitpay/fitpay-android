@@ -118,7 +118,7 @@ public class DeviceSyncManager {
             return;
         }
 
-        // if we have a syncId, dedupe it to avoid syncs arriving through multiple channels
+        // if we have a syncId, dedupe it to avoid re-running syncs arriving through multiple channels
         if (request.getSyncId() != null) {
             if (dedupeSyncIds.contains(request.getSyncId())) {
                 FPLog.i("duplicated sync received, skipping: " + request);
