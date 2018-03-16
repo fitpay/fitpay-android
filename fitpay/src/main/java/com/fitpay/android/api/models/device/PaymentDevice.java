@@ -45,6 +45,10 @@ public class PaymentDevice extends BaseModel {
         return deviceName;
     }
 
+    public String getDeviceState() {
+        return state;
+    }
+
     public String getSecureElementId() {
         return secureElement != null ? secureElement.secureElementId : null;
     }
