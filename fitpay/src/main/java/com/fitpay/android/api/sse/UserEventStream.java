@@ -36,6 +36,7 @@ public class UserEventStream {
     private final ServerSentEvent sse;
 
     private long lastEventTs = -1;
+    private boolean connected = false;
 
     public UserEventStream(User user, IPaymentDeviceConnector connector, Device device) {
         FPLog.d(TAG, "connecting to user event stream for user: " + user.getId());
@@ -59,11 +60,16 @@ public class UserEventStream {
         }
     }
 
+    public boolean isConnected() {
+        return connected;
+    }
+
     private ServerSentEvent.Listener getListener() {
         return new ServerSentEvent.Listener() {
             @Override
             public void onOpen(ServerSentEvent sse, Response response) {
                 FPLog.d(TAG,"connected to event stream for user " + user.getId());
+                connected = true;
             }
 
             @Override
@@ -73,7 +79,6 @@ public class UserEventStream {
 
                 Gson gson = Constants.getGson();
                 JsonObject fitpayEvent = gson.fromJson(payload, JsonObject.class);
-
 
                 FPLog.d("event stream for user " + user.getId() + " received: " + fitpayEvent.get("type").getAsString());
                 if ("SYNC".equals(fitpayEvent.get("type").getAsString())) {

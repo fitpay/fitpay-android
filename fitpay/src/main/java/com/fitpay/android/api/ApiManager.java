@@ -145,6 +145,10 @@ public class ApiManager {
         return config;
     }
 
+    public FitPayService getApiService() {
+        return apiService;
+    }
+
     public void setAuthToken(OAuthToken token) {
         apiService.updateToken(token);
     }

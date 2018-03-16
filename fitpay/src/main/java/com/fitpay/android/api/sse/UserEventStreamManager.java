@@ -19,6 +19,17 @@ import retrofit2.Response;
 public class UserEventStreamManager {
     private static ConcurrentHashMap<String, UserEventStream> streams = new ConcurrentHashMap<>();
 
+    public static boolean isSubscribed(String userId, Device device) {
+        final String streamKey = calculateStreamKey(userId, device);
+        UserEventStream stream = streams.get(streamKey);
+
+        if (stream != null) {
+            return stream.isConnected();
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Subscribe to a user event stream, posting SYNC events to the included connector and device when
      * received from the FitPay platform.
