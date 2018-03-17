@@ -20,6 +20,11 @@ public class PaymentDevice extends BaseModel {
     protected String manufacturerName;
 
     /**
+     * The initialization state of the device.
+     */
+    protected String state;
+
+    /**
      * The name of the device model.
      */
     protected String deviceName;
@@ -43,6 +48,10 @@ public class PaymentDevice extends BaseModel {
 
     public String getDeviceName() {
         return deviceName;
+    }
+
+    public String getDeviceState() {
+        return state;
     }
 
     public String getSecureElementId() {
