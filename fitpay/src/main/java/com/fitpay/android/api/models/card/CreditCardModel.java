@@ -93,6 +93,14 @@ abstract class CreditCardModel extends BaseModel {
         return verificationMethods;
     }
 
+    /**
+     * Terms & Conditions references
+     * @return T&C links
+     */
+    public List<AssetReference> getTermsAssetReferences() {
+        return termsAssetReferences;
+    }
+
     public String getName() {
         return creditCardInfo.name;
     }
