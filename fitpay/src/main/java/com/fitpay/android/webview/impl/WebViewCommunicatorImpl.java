@@ -303,10 +303,17 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
                         final Runnable onSuccess = () -> onTaskSuccess(EventCallback.GET_USER_AND_DEVICE, callbackId);
 
-                        try {
-                            UserEventStreamManager.subscribe(user.getId(), deviceService.getPaymentDeviceConnector(), device);
-                        } catch (IOException e) {
-                            FPLog.e(e);
+                        boolean automaticSyncThroughUserEventStream = true;
+                        if (ApiManager.getConfig().containsKey(ApiManager.PROPERTY_AUTOMATIC_SYNC_THROUGH_USER_EVENT_STREAM_ENABLED)) {
+                            automaticSyncThroughUserEventStream = "true".equals(ApiManager.getConfig().get(ApiManager.PROPERTY_AUTOMATIC_SYNC_THROUGH_USER_EVENT_STREAM_ENABLED));
+                        }
+
+                        if (automaticSyncThroughUserEventStream) {
+                            try {
+                                UserEventStreamManager.subscribe(user.getId(), deviceService.getPaymentDeviceConnector(), device);
+                            } catch (IOException e) {
+                                FPLog.e(e);
+                            }
                         }
 
                         if (deviceToken == null || !deviceToken.equals(token)) {

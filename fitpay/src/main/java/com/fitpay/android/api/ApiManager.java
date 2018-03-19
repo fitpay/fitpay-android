@@ -52,6 +52,7 @@ public class ApiManager {
     public static final String PROPERTY_HTTP_CONNECT_TIMEOUT = "httpConnectTimeout";
     public static final String PROPERTY_HTTP_READ_TIMEOUT = "httpReadTimeout";
     public static final String PROPERTY_HTTP_WRITE_TIMEOUT = "httpWriteTimeout";
+    public static final String PROPERTY_AUTOMATIC_SYNC_THROUGH_USER_EVENT_STREAM_ENABLED = "userEventStreamSync";
 
     private static Map<String, String> config = new HashMap<>();
 
@@ -65,6 +66,7 @@ public class ApiManager {
         config.put(PROPERTY_HTTP_CONNECT_TIMEOUT, "60");
         config.put(PROPERTY_HTTP_READ_TIMEOUT, "60");
         config.put(PROPERTY_HTTP_WRITE_TIMEOUT, "60");
+        config.put(PROPERTY_AUTOMATIC_SYNC_THROUGH_USER_EVENT_STREAM_ENABLED, "true");
     }
 
     private static ApiManager sInstance;
