@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import mockit.Mock;
 import mockit.MockUp;
+import mockit.internal.state.SavePoint;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ExpiredKeysTest {
@@ -30,13 +31,18 @@ public class ExpiredKeysTest {
 
     @Test
     public void test01_loginUser() throws InterruptedException {
+        SavePoint sp = new SavePoint();
         emulateOneHourDelay();
+
         steps.login();
         steps.getUser();
+
+        sp.rollback();
     }
 
     private void emulateOneHourDelay() {
         final long curTime = System.currentTimeMillis();
+
         new MockUp<System>() {
             @Mock
             long currentTimeMillis() {

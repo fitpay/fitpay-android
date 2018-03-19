@@ -82,10 +82,23 @@ public class EventCallback {
     private String timestamp;
 
     private EventCallback() {
+        super();
     }
 
+    /**
+     * Send data without filter
+     */
     public void send() {
         RxBus.getInstance().post(this);
+    }
+
+    /**
+     * Send data using connectorId as a filter for RxBux
+     *
+     * @param connectorId connectorId
+     */
+    public void send(String connectorId) {
+        RxBus.getInstance().post(connectorId, this);
     }
 
     @Command

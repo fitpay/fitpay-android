@@ -122,7 +122,7 @@ final public class OAuthToken {
         }
 
         /**
-         * Number of seconds before the accessToken is considered expired, this value is not utilzed if the accessToken passed
+         * Number of seconds before the accessToken is considered expired, this value is not utilized if the accessToken passed
          * contains and expiredTs value.
          *
          * @param expiresIn

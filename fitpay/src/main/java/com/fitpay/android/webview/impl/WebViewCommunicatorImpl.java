@@ -19,8 +19,8 @@ import com.fitpay.android.paymentdevice.constants.States;
 import com.fitpay.android.paymentdevice.enums.AppMessage;
 import com.fitpay.android.paymentdevice.enums.Sync;
 import com.fitpay.android.paymentdevice.events.NotificationSyncRequest;
+import com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.models.SyncInfo;
-import com.fitpay.android.paymentdevice.models.SyncRequest;
 import com.fitpay.android.utils.EventCallback;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.Listener;
@@ -34,9 +34,9 @@ import com.fitpay.android.webview.events.IdVerificationRequest;
 import com.fitpay.android.webview.events.RtmMessage;
 import com.fitpay.android.webview.events.RtmMessageResponse;
 import com.fitpay.android.webview.events.UserReceived;
-import com.fitpay.android.webview.models.IdVerification;
 import com.fitpay.android.webview.events.a2a.A2AVerificationFailed;
 import com.fitpay.android.webview.events.a2a.A2AVerificationRequest;
+import com.fitpay.android.webview.models.IdVerification;
 import com.fitpay.android.webview.models.RtmVersion;
 import com.google.gson.Gson;
 
@@ -62,6 +62,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
     private final Activity activity;
     private DeviceService deviceService;
+    private final IPaymentDeviceConnector deviceConnector;
 
     private User user;
     private Device device;
@@ -89,10 +90,35 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
     private boolean supportsAppVerification;
 
-    public WebViewCommunicatorImpl(Activity ctx, int wId) {
-        this.activity = ctx;
+    private boolean usedDeprecatedConstructor = false;
 
-        deviceStatusListener = new DeviceStatusListener();
+    /**
+     * @deprecated Use {@link #WebViewCommunicatorImpl(Activity, IPaymentDeviceConnector, int)}
+     *
+     * @param ctx
+     * @param wId
+     */
+    @Deprecated
+    public WebViewCommunicatorImpl(Activity ctx, int wId) {
+        this(ctx, null, wId);
+        usedDeprecatedConstructor = true;
+    }
+
+    /**
+     * @deprecated Use {@link #WebViewCommunicatorImpl(Activity, IPaymentDeviceConnector, int)}
+     *
+     * @param deviceService
+     */
+    @Deprecated
+    public void setDeviceService(DeviceService deviceService) {
+        this.deviceService = deviceService;
+    }
+
+    public WebViewCommunicatorImpl(Activity ctx, IPaymentDeviceConnector deviceConnector, int wId) {
+        this.activity = ctx;
+        this.deviceConnector = deviceConnector;
+
+        deviceStatusListener = new DeviceStatusListener(getConnectorId());
         rtmMessageListener = new RtmMessageListener();
         pushNotificationSyncListener = new PushNotificationSyncListener();
         idVerificationListener = new IdVerificationListener();
@@ -105,10 +131,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
         NotificationManager.getInstance().addListener(a2AListener);
 
         webView = (WebView) activity.findViewById(wId);
-    }
-
-    public void setDeviceService(DeviceService deviceService) {
-        this.deviceService = deviceService;
     }
 
     /**
@@ -142,7 +164,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
      */
     public void logout() {
         RxBus.getInstance().post(new RtmMessageResponse("logout"));
-        RxBus.getInstance().post(new DeviceStatusMessage(activity.getString(R.string.fp_connecting), deviceId, DeviceStatusMessage.PENDING));
+        RxBus.getInstance().post(getConnectorId(), new DeviceStatusMessage(activity.getString(R.string.fp_connecting), deviceId, DeviceStatusMessage.PENDING));
     }
 
     /**
@@ -221,23 +243,26 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
             return;
         }
 
-        if (null == deviceService) {
+        if (null == deviceService && usedDeprecatedConstructor) {
             onTaskError(EventCallback.SYNC_COMPLETED, callbackId, "No DeviceService has not been configured for sync operation");
+            return;
+        }
+
+        if (null == deviceConnector && !usedDeprecatedConstructor) {
+            onTaskError(EventCallback.SYNC_COMPLETED, callbackId, "No PaymentConnector has not been configured for sync operation");
             return;
         }
 
         NotificationManager.getInstance().removeListener(listenerForAppCallbacks);
         NotificationManager.getInstance().removeListener(listenerForAppCallbacksNoCallbackId);
 
-        NotificationManager.getInstance().addListener(listenerForAppCallbacks = new DeviceSyncListener(callbackId));
+        NotificationManager.getInstance().addListener(listenerForAppCallbacks = new DeviceSyncListener(getConnectorId(), callbackId));
 
-        RxBus.getInstance().post(new SyncRequest.Builder()
-                .setSyncId(syncInfo != null ? syncInfo.getSyncId() : null)
-                .setUser(user)
-                .setDevice(device)
-                .setConnector(deviceService.getPaymentDeviceConnector())
-                .setSyncInfo(syncInfo)
-                .build());
+        if (deviceConnector != null) {
+            deviceConnector.createSyncRequest(syncInfo);
+        } else {
+            deviceService.getPaymentDeviceConnector().createSyncRequest(syncInfo);
+        }
     }
 
     @Override
@@ -282,6 +307,10 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
                 WebViewCommunicatorImpl.this.user = result;
 
+                if (deviceConnector != null) {
+                    deviceConnector.setUser(user);
+                }
+
                 RxBus.getInstance().post(new UserReceived(user.getId(), user.getUsername()));
 
                 EventCallback eventCallback = new EventCallback.Builder()
@@ -295,6 +324,10 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                     public void onSuccess(Device result) {
                         WebViewCommunicatorImpl.this.device = result;
 
+                        if (deviceConnector != null) {
+                            deviceConnector.setDevice(device);
+                        }
+
                         String token = ApiManager.getPushToken();
                         String deviceToken = device.getNotificationToken();
 
@@ -306,6 +339,11 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                                 @Override
                                 public void onSuccess(Device result) {
                                     WebViewCommunicatorImpl.this.device = result;
+
+                                    if (deviceConnector != null) {
+                                        deviceConnector.setDevice(device);
+                                    }
+
                                     onSuccess.run();
                                 }
 
@@ -365,7 +403,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
             sendMessageToJs(callbackId, false, gson.toJson(failedResponse));
         }
 
-        RxBus.getInstance().post(new DeviceStatusMessage(activity.getString(R.string.fp_sync_failed, errorMessage), deviceId, DeviceStatusMessage.ERROR));
+        RxBus.getInstance().post(getConnectorId(), new DeviceStatusMessage(activity.getString(R.string.fp_sync_failed, errorMessage), deviceId, DeviceStatusMessage.ERROR));
 
         EventCallback eventCallback = new EventCallback.Builder()
                 .setCommand(command)
@@ -375,10 +413,17 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
         eventCallback.send();
     }
 
+    public String getCurrentDeviceId() {
+        return deviceId;
+    }
+
+    public String getConnectorId() {
+        return deviceConnector != null ? deviceConnector.id() : null;
+    }
 
     private class DeviceStatusListener extends Listener {
-        private DeviceStatusListener() {
-            super();
+        private DeviceStatusListener(String connectorId) {
+            super(connectorId);
             mCommands.put(DeviceStatusMessage.class, data -> {
                 if (deviceId == null || deviceId.equals(((DeviceStatusMessage) data).getDeviceId())) {
                     sendDeviceStatusToJs((DeviceStatusMessage) data);
@@ -394,8 +439,8 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
         private String callbackId;
 
-        private DeviceSyncListener(String callbackId) {
-            super();
+        private DeviceSyncListener(String connectorId, String callbackId) {
+            super(connectorId);
             this.callbackId = callbackId;
             mCommands.put(Sync.class, data -> onSyncStateChanged((Sync) data));
 
@@ -415,12 +460,12 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                     if (callbackId != null) {
                         onTaskSuccess(EventCallback.SYNC_COMPLETED, callbackId);
                     }
-                    RxBus.getInstance().post(new DeviceStatusMessage(activity.getString(R.string.fp_sync_finished), deviceId, DeviceStatusMessage.SUCCESS));
+                    RxBus.getInstance().post(getConnectorId(), new DeviceStatusMessage(activity.getString(R.string.fp_sync_finished), deviceId, DeviceStatusMessage.SUCCESS));
 
                     NotificationManager.getInstance().removeListener(listenerForAppCallbacks);
                     NotificationManager.getInstance().removeListener(listenerForAppCallbacksNoCallbackId);
 
-                    NotificationManager.getInstance().addListener(listenerForAppCallbacksNoCallbackId = new DeviceSyncListener(null));
+                    NotificationManager.getInstance().addListener(listenerForAppCallbacksNoCallbackId = new DeviceSyncListener(getConnectorId(), null));
                     break;
                 }
                 case States.TIMEOUT:
@@ -430,7 +475,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                     NotificationManager.getInstance().removeListener(listenerForAppCallbacks);
                     NotificationManager.getInstance().removeListener(listenerForAppCallbacksNoCallbackId);
 
-                    NotificationManager.getInstance().addListener(listenerForAppCallbacksNoCallbackId = new DeviceSyncListener(null));
+                    NotificationManager.getInstance().addListener(listenerForAppCallbacksNoCallbackId = new DeviceSyncListener(getConnectorId(), null));
                     break;
                 }
                 default: {

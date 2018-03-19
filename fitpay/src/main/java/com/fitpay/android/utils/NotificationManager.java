@@ -25,7 +25,7 @@ public final class NotificationManager {
     private Map<Class, Subscription> mSubscriptions;
     private Map<Class, List<Command>> mCommands;
 
-       public static NotificationManager getInstance() {
+    public static NotificationManager getInstance() {
         if (sInstance == null) {
             synchronized (NotificationManager.class) {
                 if (sInstance == null) {
@@ -45,7 +45,8 @@ public final class NotificationManager {
 
     /**
      * Start listen to some events
-     * @param clazz type of event
+     *
+     * @param clazz     type of event
      * @param scheduler thread for result
      */
     private void subscribeTo(final Class clazz, final Scheduler scheduler) {
@@ -58,7 +59,18 @@ public final class NotificationManager {
                 mSubscriptions.put(clazz, RxBus.getInstance().register(clazz, scheduler, object -> {
                     synchronized (this) {
                         for (Command command : mCommands.get(clazz)) {
-                            command.execute(object);
+                            if (object instanceof Wrapper) {
+                                if (command instanceof FilterCommand) {
+                                    String filter = ((FilterCommand) command).filter();
+                                    if (filter != null && filter.equals(((Wrapper) object).getFilter())) {
+                                        command.execute(((Wrapper) object).getObject());
+                                    }
+                                } else {
+                                    command.execute(((Wrapper) object).getObject());
+                                }
+                            } else if (!(command instanceof FilterCommand)) {
+                                command.execute(object);
+                            }
                         }
                     }
                 }));
@@ -68,6 +80,7 @@ public final class NotificationManager {
 
     /**
      * stop listen to events
+     *
      * @param clazz
      */
     private void unsubscribeFrom(Class clazz) {

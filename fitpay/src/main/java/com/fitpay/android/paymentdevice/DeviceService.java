@@ -13,20 +13,23 @@ import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.paymentdevice.constants.States;
 import com.fitpay.android.paymentdevice.events.NotificationSyncRequest;
+import com.fitpay.android.paymentdevice.impl.PaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.impl.ble.BluetoothPaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector;
+import com.fitpay.android.paymentdevice.models.SyncInfo;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
 import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.Listener;
 import com.fitpay.android.utils.NotificationManager;
+import com.fitpay.android.utils.RxBus;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
+import static com.fitpay.android.utils.StringUtils.convertCommaSeparatedList;
 import static java.lang.Class.forName;
 
 /**
@@ -45,14 +48,21 @@ public final class DeviceService extends Service {
 
     public final static String SYNC_PROPERTY_DEVICE_ID = "syncDeviceId";
 
+    @Deprecated
     private User user;
+    @Deprecated
     private Device device;
 
+    @Deprecated
     private IPaymentDeviceConnector paymentDeviceConnector;
+
+    @Deprecated
     private String paymentDeviceConnectorType;
 
+    @Deprecated
     private String configParams;
 
+    @Deprecated
     private Executor executor = Constants.getExecutor();
 
     private DeviceSyncManager syncManager;
@@ -63,6 +73,10 @@ public final class DeviceService extends Service {
 
     public static void run(Context context) {
         context.startService(new Intent(context, DeviceService.class));
+    }
+
+    public static void stop(Context context) {
+        context.stopService(new Intent(context, DeviceService.class));
     }
 
     public class LocalBinder extends Binder {
@@ -88,7 +102,7 @@ public final class DeviceService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        syncManager = new DeviceSyncManager(this, executor);
+        syncManager = new DeviceSyncManager(this);
         syncManager.onCreate();
 
         NotificationManager.getInstance().addListenerToCurrentThread(mSyncListener);
@@ -117,10 +131,14 @@ public final class DeviceService extends Service {
     }
 
     /**
+     * @deprecated Create {@link PaymentDeviceConnector} via constructor
+     *  Set properties via {@link PaymentDeviceConnector#init(Properties)}
+     *
      * Used for retrieving connector config information
      *
      * @return name of connector class
      */
+    @Deprecated
     public String getPaymentServiceType() {
         if (null == paymentDeviceConnectorType) {
             if (null != paymentDeviceConnector) {
@@ -130,6 +148,13 @@ public final class DeviceService extends Service {
         return paymentDeviceConnectorType;
     }
 
+    /**
+     * @deprecated Create {@link PaymentDeviceConnector} via constructor
+     *  Set properties via {@link PaymentDeviceConnector#init(Properties)}
+     *
+     * @param intent
+     */
+    @Deprecated
     protected void configure(Intent intent) {
         if (null == intent) {
             FPLog.e(TAG, "DeviceService can not be configured with a null Intent.  Current connector: " + paymentDeviceConnector);
@@ -181,10 +206,14 @@ public final class DeviceService extends Service {
     }
 
     /**
-     * Get paired payment device
+     * @deprecated Create {@link PaymentDeviceConnector} via constructor
+     *  Set properties via {@link PaymentDeviceConnector#init(Properties)}
+     *
+     * Set paired payment device connector
      *
      * @param paymentDeviceConnector the payment device
      */
+    @Deprecated
     public void setPaymentDeviceConnector(IPaymentDeviceConnector paymentDeviceConnector) {
         // check to see if device has changed, if so close the existing connection
         //TODO should test on device config - more general than MacAddress which is BLE specific (or at least pertinent to Mac devices)
@@ -199,14 +228,21 @@ public final class DeviceService extends Service {
 
 
     /**
+     * @deprecated
+     *
      * Get device connector
      *
      * @return interface of payment device
      */
+    @Deprecated
     public IPaymentDeviceConnector getPaymentDeviceConnector() {
         return paymentDeviceConnector;
     }
 
+    /**
+     * @deprecated Use {@link PaymentDeviceConnector#connect()}
+     */
+    @Deprecated
     public void connectToDevice() {
 
         if (null == paymentDeviceConnector) {
@@ -236,8 +272,11 @@ public final class DeviceService extends Service {
     }
 
     /**
+     * @deprecated Use {@link PaymentDeviceConnector#readDeviceInfo()}
+     *
      * read info from your payment device
      */
+    @Deprecated
     public void readDeviceInfo() {
         if (null == paymentDeviceConnector) {
             //TODO post an error
@@ -257,8 +296,11 @@ public final class DeviceService extends Service {
 
 
     /**
+     * @deprecated Use {@link PaymentDeviceConnector#disconnect()}
+     *
      * Disconnect from payment device
      */
+    @Deprecated
     public void disconnect() {
         executor.execute(() -> {
             FPLog.d(TAG, "Starting execution of disconnect");
@@ -270,12 +312,16 @@ public final class DeviceService extends Service {
     }
 
     /**
-     * @param user   current user with hypermedia data
-     * @param device device object with hypermedia data
+     * @deprecated Please send {@link SyncRequest} via {@link RxBus} or {@link PaymentDeviceConnector#createSyncRequest(SyncInfo)}
+     *
      * Sync data between FitPay server and payment device
      * <p>
      * This is an asynchronous operation.
+     *
+     * @param user   current user with hypermedia data
+     * @param device device object with hypermedia data
      */
+    @Deprecated
     public void syncData(@NonNull User user, @NonNull Device device) {
         this.user = user;
         this.device = device;
@@ -283,18 +329,22 @@ public final class DeviceService extends Service {
     }
 
     /**
-     * @param user      current user with hypermedia data
-     * @param device    device object with hypermedia data
-     * @param connector payment device connector
+     * @deprecated Please send {@link SyncRequest} via {@link RxBus} or {@link PaymentDeviceConnector#createSyncRequest(SyncInfo)}
+     *
      * Sync data between FitPay server and payment device
-     * <p>
+     *
      * This is an asynchronous operation.
      */
+    @Deprecated
     public void syncData(@NonNull User user, @NonNull Device device, @NonNull IPaymentDeviceConnector connector) {
         syncData(user, device, connector, new NotificationSyncRequest());
     }
 
     /**
+     * @deprecated Please send {@link SyncRequest} via {@link RxBus} or {@link PaymentDeviceConnector#createSyncRequest(SyncInfo)}
+     *
+     * Sync data between FitPay server and payment device
+     *
      * @param user        current user with hypermedia data
      * @param device      device object with hypermedia data
      * @param syncRequest data provided in sync request
@@ -302,11 +352,16 @@ public final class DeviceService extends Service {
      * <p>
      * This is an asynchronous operation.
      */
+    @Deprecated
     public void syncData(@NonNull User user, @NonNull Device device, @NonNull NotificationSyncRequest syncRequest) {
         syncData(user, device, paymentDeviceConnector, syncRequest);
     }
 
     /**
+     * @deprecated Please send {@link SyncRequest} via {@link RxBus} or {@link PaymentDeviceConnector#createSyncRequest(SyncInfo)}
+     *
+     * Sync data between FitPay server and payment device
+     *
      * @param user        current user with hypermedia data
      * @param device      device object with hypermedia data
      * @param connector   payment device connector
@@ -315,6 +370,7 @@ public final class DeviceService extends Service {
      * <p>
      * This is an asynchronous operation.
      */
+    @Deprecated
     public void syncData(@NonNull User user, @NonNull Device device, @NonNull IPaymentDeviceConnector connector, @NonNull NotificationSyncRequest syncRequest) {
         if (null == syncRequest.getSyncInfo()) {
             FPLog.d(TAG, "NotificationSyncRequest did not contain sync info.");
@@ -322,7 +378,6 @@ public final class DeviceService extends Service {
 
         if (syncManager != null) {
             SyncRequest request = new SyncRequest.Builder()
-                    .setSyncId(null != syncRequest.getSyncInfo() ? syncRequest.getSyncInfo().getSyncId() : null)
                     .setUser(user)
                     .setDevice(device)
                     .setConnector(connector)
@@ -334,20 +389,22 @@ public final class DeviceService extends Service {
         }
     }
 
-    private Properties convertCommaSeparatedList(String input) throws IOException {
-        if (null == input) {
-            return null;
-        }
-        String propertiesFormat = input.replaceAll(",", "\n");
-        Properties properties = new Properties();
-        properties.load(new StringReader(propertiesFormat));
-        return properties;
-    }
-
+    /**
+     * @deprecated Use {@link PaymentDeviceConnector#getProperties()}
+     *
+     * @return config params
+     */
+    @Deprecated
     public String getConfigString() {
         return configParams;
     }
 
+    /**
+     * @deprecated Use {@link PaymentDeviceConnector#getProperties()}
+     *
+     * @return config params
+     */
+    @Deprecated
     public Properties getConfig() {
         Properties props = null;
         try {

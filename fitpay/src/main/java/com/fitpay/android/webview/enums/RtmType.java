@@ -3,7 +3,7 @@ package com.fitpay.android.webview.enums;
 import android.support.annotation.StringDef;
 
 /**
- * Rtm request & response types
+ * Rtm request &#064; response types
  */
 public class RtmType {
 

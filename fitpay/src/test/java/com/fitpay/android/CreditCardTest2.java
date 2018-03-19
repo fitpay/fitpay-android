@@ -208,7 +208,7 @@ public class CreditCardTest2 extends TestActions {
         Collections.CreditCardCollection creditCards = getCreditCards(user);
         assertNotNull("credit cards collection", creditCards);
         assertEquals("number of credit cards", 1, creditCards.getTotalResults());
-        assertEquals("credit card id", createdCard.getCreditCardId(), creditCards.getResults().get(0).getCreditCardId());
+        assertEquals("credit card connectorId", createdCard.getCreditCardId(), creditCards.getResults().get(0).getCreditCardId());
 
         verifyCardContents(creditCard, creditCards.getResults().get(0));
     }
@@ -237,7 +237,7 @@ public class CreditCardTest2 extends TestActions {
         Collections.CreditCardCollection creditCards = getCreditCards(user);
         assertNotNull("credit cards collection", creditCards);
         assertEquals("number of credit cards", 2, creditCards.getTotalResults());
-        assertTrue("credit card id", createdCard.getCreditCardId().equals(creditCards.getResults().get(0).getCreditCardId())
+        assertTrue("credit card connectorId", createdCard.getCreditCardId().equals(creditCards.getResults().get(0).getCreditCardId())
             || createdCard.getCreditCardId().equals(creditCards.getResults().get(1).getCreditCardId()));
 
     }

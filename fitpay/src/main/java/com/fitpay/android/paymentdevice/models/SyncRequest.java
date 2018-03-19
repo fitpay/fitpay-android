@@ -1,5 +1,7 @@
 package com.fitpay.android.paymentdevice.models;
 
+import android.support.annotation.NonNull;
+
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector;
@@ -98,7 +100,7 @@ public final class SyncRequest {
          * @param user current user
          * @return this
          */
-        public Builder setUser(User user) {
+        public Builder setUser(@NonNull User user) {
             this.user = user;
             return this;
         }
@@ -109,7 +111,7 @@ public final class SyncRequest {
          * @param device current device
          * @return this
          */
-        public Builder setDevice(Device device) {
+        public Builder setDevice(@NonNull Device device) {
             this.device = device;
             return this;
         }
@@ -131,7 +133,7 @@ public final class SyncRequest {
          * @param connector payment device connector
          * @return this
          */
-        public Builder setConnector(IPaymentDeviceConnector connector) {
+        public Builder setConnector(@NonNull IPaymentDeviceConnector connector) {
             this.connector = connector;
             return this;
         }
@@ -144,6 +146,11 @@ public final class SyncRequest {
          */
         public Builder setSyncInfo(SyncInfo syncInfo) {
             this.syncInfo = syncInfo;
+
+            if(syncInfo != null){
+                this.syncId = syncInfo.getSyncId();
+            }
+
             return this;
         }
 

@@ -1,6 +1,8 @@
 package com.fitpay.android.paymentdevice.impl;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.CommitTypes;
@@ -12,6 +14,7 @@ import com.fitpay.android.api.models.apdu.ApduExecutionResult;
 import com.fitpay.android.api.models.apdu.ApduPackage;
 import com.fitpay.android.api.models.card.TopOfWallet;
 import com.fitpay.android.api.models.device.Commit;
+import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.paymentdevice.CommitHandler;
 import com.fitpay.android.paymentdevice.callbacks.ApduExecutionListener;
@@ -22,6 +25,8 @@ import com.fitpay.android.paymentdevice.events.CommitFailed;
 import com.fitpay.android.paymentdevice.events.CommitSkipped;
 import com.fitpay.android.paymentdevice.events.CommitSuccess;
 import com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector;
+import com.fitpay.android.paymentdevice.models.SyncInfo;
+import com.fitpay.android.paymentdevice.models.SyncRequest;
 import com.fitpay.android.paymentdevice.utils.ApduExecException;
 import com.fitpay.android.utils.EventCallback;
 import com.fitpay.android.utils.FPLog;
@@ -38,6 +43,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
 import static com.fitpay.android.paymentdevice.constants.ApduConstants.APDU_CONTINUE_COMMAND_DATA;
 import static com.fitpay.android.paymentdevice.constants.ApduConstants.NORMAL_PROCESSING;
@@ -50,7 +56,9 @@ import static com.fitpay.android.utils.Constants.APDU_DATA;
  */
 public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector {
 
-    private final static String TAG = PaymentDeviceConnector.class.getSimpleName();
+    protected final String TAG;
+
+    protected final String connectorId;
 
     private static final int MAX_REPEATS = 0;
 
@@ -71,25 +79,55 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
     private ApduCommand curApduCommand;
     private ApduExecutionResult apduExecutionResult;
 
-    protected User user;
+    private User user;
+    private Device device;
+
+    private Properties properties;
 
     public PaymentDeviceConnector() {
-        state = States.NEW;
-        addDefaultCommitHandlers();
+        this(UUID.randomUUID().toString());
     }
 
-    public PaymentDeviceConnector(Context context) {
+    public PaymentDeviceConnector(@NonNull final String id) {
+        init();
+        connectorId = id;
+        TAG = "PaymentDeviceConnector-" + connectorId;
+    }
+
+    public PaymentDeviceConnector(@NonNull Context context) {
         this();
         mContext = context;
     }
 
-    @Override
-    public void init(Properties props) {
-        // null implementation - override concrete class as needed
+    public PaymentDeviceConnector(@NonNull Context context, @NonNull final String id) {
+        this(id);
+        mContext = context;
+    }
+
+    private void init() {
+        state = States.NEW;
+        addDefaultCommitHandlers();
+    }
+
+    public String id() {
+        return connectorId;
+    }
+
+    public String deviceId() {
+        return device != null ? device.getDeviceIdentifier() : null;
     }
 
     @Override
-    public void setContext(Context context) {
+    public void init(@NonNull Properties props) {
+        this.properties = props;
+    }
+
+    public Properties getProperties() {
+        return properties;
+    }
+
+    @Override
+    public void setContext(@NonNull Context context) {
         this.mContext = context;
     }
 
@@ -111,7 +149,7 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
     public void setState(@Connection.State int state) {
         FPLog.d(TAG, "connection state changed: " + state);
         this.state = state;
-        RxBus.getInstance().post(new Connection(state));
+        postData(new Connection(state));
     }
 
     @Override
@@ -135,7 +173,7 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
     }
 
     @Override
-    public void addCommitHandler(String commitType, CommitHandler handler) {
+    public void addCommitHandler(String commitType, @NonNull final CommitHandler handler) {
         if (null == commitHandlers) {
             commitHandlers = new HashMap<>();
         }
@@ -151,7 +189,7 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
     }
 
     @Override
-    public void processCommit(Commit commit) {
+    public void processCommit(@NonNull final Commit commit) {
         // Don't switch the current commit until we are ready to execute the new one. PGR-1240
         if (apduExecutionInProgress && currentCommit.getPayload() instanceof ApduPackage) {
             FPLog.w(TAG, "apduPackage processing is already in progress");
@@ -177,7 +215,7 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
     @Override
     public void syncInit() {
         if (null == apduExecutionListener) {
-            apduExecutionListener = new ApduPackageListener();
+            apduExecutionListener = new ApduPackageListener(connectorId);
             NotificationManager.getInstance().addListenerToCurrentThread(this.apduExecutionListener);
         }
         mErrorRepeats = null;
@@ -197,8 +235,22 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
     }
 
     @Override
-    public void setUser(User user) {
+    public void setUser(@NonNull User user) {
         this.user = user;
+    }
+
+    public final User getUser() {
+        return user;
+    }
+
+    @Override
+    public void setDevice(@NonNull Device device) {
+        this.device = device;
+    }
+
+    @Override
+    public final Device getDevice() {
+        return device;
     }
 
     /**
@@ -220,7 +272,7 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
      * 5) deviceConnector.sendApduExecutionResult(apduExecutionResult)
      */
     @Override
-    public void executeApduPackage(ApduPackage apduPackage) {
+    public void executeApduPackage(@NonNull final ApduPackage apduPackage) {
         if (apduExecutionInProgress) {
             FPLog.w(TAG, "apduPackage processing is already in progress");
             return;
@@ -234,7 +286,7 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
         curApduPackage = apduPackage;
         curApduPgkNumber = System.currentTimeMillis();
 
-        apduCommandListener = new ApduCommandListener();
+        apduCommandListener = new ApduCommandListener(connectorId);
         NotificationManager.getInstance().addListener(apduCommandListener);
 
         onPreExecuteApdu();
@@ -248,6 +300,28 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
     @Override
     public void onPostExecuteApdu() {
         completeApduPackageExecution();
+    }
+
+    /**
+     * Create sync request
+     */
+    @Override
+    public void createSyncRequest(@Nullable SyncInfo syncInfo) {
+        RxBus.getInstance().post(new SyncRequest.Builder()
+                .setSyncId(syncInfo != null ? syncInfo.getSyncId() : null)
+                .setUser(user)
+                .setDevice(device)
+                .setConnector(this)
+                .setSyncInfo(syncInfo)
+                .build());
+    }
+
+    /**
+     * Post data for everyone who is listening for current {@link #id()}
+     * @param data data
+     */
+    public void postData(@NonNull Object data) {
+        RxBus.getInstance().post(connectorId, data);
     }
 
     /**
@@ -286,22 +360,27 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
     }
 
     @Override
-    public void commitProcessed(@CommitResult.Type int type, Throwable error) {
+    public void commitProcessed(@CommitResult.Type int type, @Nullable final Throwable error) {
         switch (type) {
             case CommitResult.SUCCESS:
-                RxBus.getInstance().post(new CommitSuccess(currentCommit));
+                CommitSuccess.Builder success = new CommitSuccess.Builder().commit(currentCommit);
+                postData(success.build());
                 break;
 
             case CommitResult.SKIPPED:
-                RxBus.getInstance().post(new CommitSkipped(currentCommit));
+                CommitSkipped.Builder skipped = new CommitSkipped.Builder().commit(currentCommit);
+                if (error != null) {
+                    skipped.errorMessage(error.getMessage());
+                }
+                postData(skipped.build());
                 break;
 
             case CommitResult.FAILED:
-                CommitFailed.Builder builder = new CommitFailed.Builder().commit(currentCommit);
+                CommitFailed.Builder failed = new CommitFailed.Builder().commit(currentCommit);
                 if (error != null) {
-                    builder.errorMessage(error.getMessage());
+                    failed.errorMessage(error.getMessage());
                 }
-                RxBus.getInstance().post(builder.build());
+                postData(failed.build());
                 break;
         }
     }
@@ -325,11 +404,20 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
     }
 
     /**
+     * Send apdu command execution result
+     *
+     * @param apduCommandResult
+     */
+    public void sendApduCommandResult(@NonNull final ApduCommandResult apduCommandResult) {
+        postData(apduCommandResult);
+    }
+
+    /**
      * Send apdu execution result to the server
      *
      * @param apduExecutionResult apdu execution result
      */
-    public void sendApduExecutionResult(final ApduExecutionResult apduExecutionResult) {
+    public void sendApduExecutionResult(@NonNull final ApduExecutionResult apduExecutionResult) {
 
         EventCallback.Builder builder = new EventCallback.Builder()
                 .setCommand(EventCallback.APDU_COMMANDS_SENT)
@@ -341,7 +429,7 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
             builder.setStatus(EventCallback.STATUS_FAILED);
         }
 
-        builder.build().send();
+        builder.build().send(connectorId);
 
         if (apduExecutionResult.getState().equals(ResponseState.NOT_PROCESSED)) {
             commitProcessed(CommitResult.FAILED, new Exception("apdu command doesn't executed"));
@@ -386,6 +474,10 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
      */
     private class ApduPackageListener extends ApduExecutionListener {
 
+        public ApduPackageListener(@NonNull final String connectorId) {
+            super(connectorId);
+        }
+
         @Override
         public void onApduPackageResultReceived(ApduExecutionResult result) {
             sendApduExecutionResult(result);
@@ -424,8 +516,8 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
         final String normalResponseCode = Hex.bytesToHexString(NORMAL_PROCESSING);
         final StringBuilder longApduResponseStr = new StringBuilder();
 
-        ApduCommandListener() {
-            super();
+        ApduCommandListener(@NonNull final String connectorId) {
+            super(connectorId);
             mCommands.put(ApduCommandResult.class, data -> onApduCommandReceived((ApduCommandResult) data));
             mCommands.put(ApduExecException.class, data -> onApduExecErrorReceived((ApduExecException) data));
         }

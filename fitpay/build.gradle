@@ -16,7 +16,7 @@ apply from: '../jacoco.gradle'
 apply plugin: 'de.mobilej.unmock'
 
 group = 'com.fitpay.android'
-version = '0.4.39'
+version = '0.5.0'
 archivesBaseName = "android_sdk"
 
 uploadArchives {
@@ -103,6 +103,13 @@ android {
 
 ext {
     supportLib = "27.0.2"
+    retrofitLib = "2.3.0"
+    okhttpLib = "3.9.0"
+    rxjavaLib = "1.3.4"
+}
+
+configurations {
+    javadocDeps
 }
 
 unMock {
@@ -117,19 +124,29 @@ dependencies {
     compile "com.android.support:support-annotations:${supportLib}"
     compile "com.android.support:appcompat-v7:${supportLib}"
 
-    compile 'com.squareup.retrofit2:retrofit:2.3.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    compile "com.squareup.retrofit2:retrofit:${retrofitLib}"
+    compile "com.squareup.retrofit2:converter-gson:${retrofitLib}"
 
-    compile 'com.squareup.okhttp3:logging-interceptor:3.9.0'
-    compile 'com.squareup.okhttp3:okhttp:3.9.0'
+    compile "com.squareup.okhttp3:logging-interceptor:${okhttpLib}"
+    compile "com.squareup.okhttp3:okhttp:${okhttpLib}"
 
-    compile 'io.reactivex:rxjava:1.3.4'
+    compile "io.reactivex:rxjava:${rxjavaLib}"
     compile 'io.reactivex:rxandroid:1.2.1'
 
     compile 'me.alexrs:prefs:1.1.0'
 
     compile 'org.bouncycastle:bcprov-jdk15on:1.58'
     compile 'com.nimbusds:nimbus-jose-jwt:5.1'
+
+    javadocDeps "com.android.support:support-annotations:${supportLib}"
+    javadocDeps "com.squareup.retrofit2:retrofit:${retrofitLib}"
+    javadocDeps "com.squareup.retrofit2:converter-gson:${retrofitLib}"
+    javadocDeps "com.squareup.okhttp3:logging-interceptor:${okhttpLib}"
+    javadocDeps "com.squareup.okhttp3:okhttp:${okhttpLib}"
+    javadocDeps "io.reactivex:rxjava:${rxjavaLib}"
+    javadocDeps 'me.alexrs:prefs:1.1.0'
+    javadocDeps 'org.bouncycastle:bcprov-jdk15on:1.58'
+    javadocDeps 'com.nimbusds:nimbus-jose-jwt:5.1'
 
     testCompile 'org.mockito:mockito-core:2.12.0'
     testCompile 'junit:junit:4.12'
@@ -147,8 +164,21 @@ task generateSourcesJar(type: Jar) {
 task generateJavadocs(type: Javadoc) {
     failOnError false
     source = android.sourceSets.main.java.srcDirs
+
+    classpath += configurations.compile
+    classpath += configurations.javadocDeps
     classpath += project.files(android.getBootClasspath()
             .join(File.pathSeparator))
+
+    // exclude generated files
+    exclude '**/BuildConfig.java'
+    exclude '**/R.java'
+}
+
+afterEvaluate {
+    generateJavadocs.classpath += files(android.libraryVariants.collect { variant ->
+        variant.javaCompile.classpath.files
+    })
 }
 
 task generateJavadocsJar(type: Jar) {

@@ -9,7 +9,11 @@ import com.fitpay.android.utils.Listener;
  */
 public abstract class ApduExecutionListener extends Listener implements IListeners.ApduListener {
     public ApduExecutionListener() {
-        super();
+        this(null);
+    }
+
+    public ApduExecutionListener(String connectorId) {
+        super(connectorId);
         mCommands.put(ApduExecutionResult.class, data -> {
             ApduExecutionResult result = (ApduExecutionResult) data;
 

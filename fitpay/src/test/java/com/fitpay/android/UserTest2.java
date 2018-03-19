@@ -26,7 +26,7 @@ public class UserTest2 extends TestActions {
         assertNotNull(user);
         assertEquals("userName", userName, user.getUsername());
         assertEquals("email", userName, user.getEmail());
-        assertNotNull("user id", user.getId());
+        assertNotNull("user connectorId", user.getId());
         assertNotNull("created ts", user.getCreatedTsEpoch());
     }
 
@@ -66,7 +66,7 @@ public class UserTest2 extends TestActions {
         User user2 = callback.getResult();
 
         assertEquals("user self had error code (message: " + callback.getErrorMessage() + ")", -1, callback.getErrorCode());
-        assertEquals("user id", user.getId(), user2.getId());
+        assertEquals("user connectorId", user.getId(), user2.getId());
         assertEquals("email", user.getEmail(), user2.getEmail());
         assertEquals("user name", user.getUsername(), user2.getUsername());
         assertEquals("build ts", user.getCreatedTsEpoch(), user2.getCreatedTsEpoch());

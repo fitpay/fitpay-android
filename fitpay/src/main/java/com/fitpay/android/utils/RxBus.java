@@ -1,9 +1,6 @@
 package com.fitpay.android.utils;
 
 
-
-
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -42,7 +39,13 @@ public class RxBus {
         return mBus
                 .asObservable()
                 .onBackpressureBuffer()
-                .filter(event -> eventClass.isAssignableFrom(event.getClass()))
+                .filter(event -> {
+                    if (event instanceof Wrapper) {
+                        return eventClass.isAssignableFrom(((Wrapper) event).getClazz());
+                    } else {
+                        return eventClass.isAssignableFrom(event.getClass());
+                    }
+                })
                 .map(obj -> (T) obj)
                 .subscribeOn(Schedulers.from(Constants.getExecutor()))
                 .observeOn(scheduler)
@@ -52,6 +55,14 @@ public class RxBus {
     public void post(Object object) {
         FPLog.d("RxBus", "post event: " + object);
         mBus.onNext(object);
+    }
+
+    public <T> void post(String filter, T object) {
+        if (filter != null) {
+            post(new Wrapper<T>(filter, object));
+        } else {
+            post(object);
+        }
     }
 
     private String getStackTrace(Throwable t) {

@@ -33,17 +33,94 @@ git clone git@github.com:fitpay/fitpay-android-sdk.git
 cd fitpay-android-sdk  
 ./gradlew clean build  
 ```
-### Gotchas
+###  Migration from 0.4.x to 0.5.0
 
-#### Use [retrolambda](https://github.com/evant/android-retrolambda-lombok) over the [jack toolchain](http://tools.android.com/tech-docs/jackandjill).
+Starting from ```0.5.0``` you can use few ```PaymentDeviceConnector``` at the same time.
+The main difference between ```0.4.x``` and ```0.5.0``` that now you should use some kind of a filter with ```RxBus``` to distinguish your connectors.
 
-If you see an error similar to the following, it's due to the use of the use of the [jack toolchain](http://tools.android.com/tech-docs/jackandjill) instead of [retrolambda](https://github.com/evant/android-retrolambda-lombok).
+**Notice!** WebView implementation can communicate with only one connector.
 
+**Warning!** Please double check that your are sending ```ApduCommandResult``` from your app through ```PaymentDeviceConnector.sendApduExecutionResult(apduCommandResult);``` or using ```RxBus.post(connectorId, data);```
+
+### Implementation
+
+Before the start it's better to check the references [PebblePagarePaymentDeviceConnector](https://github.com/fitpay/Pagare_Android_WV/blob/develop/app/src/main/java/fitpay/pagare/paymentdevice/pebble/PebblePagarePaymentDeviceConnector.java) and [BaseWVActivity](https://github.com/fitpay/Pagare_Android_WV/blob/develop/app/src/wvUI/java/fitpay.pagare/activities/BaseWvActivity.java).
+
+There are some main things that you need to implement.
+
+* Start the service:
 ```
-com.fitpay.android.api.ApiManager.com_fitpay_android_api_ApiManager_lambda$createUser$0(com.fitpay.android.api.models.user.UserCreateRequest, com.fitpay.android.api.callbacks.ApiCallback)' was expected to be of type direct but instead was found to be of type virtual
+DeviceService.run(context);
+```
+* Create your connector:
+```
+MockPaymentDeviceConnector deviceConnector = new MockPaymentDeviceConnector();
+deviceConnector.setContext(this);
+PaymentDeviceConnectorManager.getInstance().addConnector("put_your_id_here", deviceConnector);
+```
+* Wait for ```Device``` info:
+```
+class DeviceListener extends ConnectionListener {
+	private WebViewOpeningPaymentDeviceListener() {
+		super();
+		mCommands.put(Device.class, data -> onDeviceInfoReceived((Device) data));
+	}
+}
+NotificationManager.getInstance().addListener(new DeviceListener());
 ```
 
-Add `classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'` to your dependencies and remove the jack toolchain.
+- ##### Continue with WebView:
+
+* Assign the connector:
+```
+WebViewCommunicatorImpl communicator = new WebViewCommunicatorImpl(activity, deviceConnector, webViewId);
+```
+* Open url link using ```WvConfig``` data:
+```
+WvPaymentDeviceInfoSecure paymentDeviceModel = new WvPaymentDeviceInfoSecure(device);
+Prefs prefs = Prefs.with(this);
+
+WvConfig wvConfig = new WvConfig.Builder()
+	.version("0.0.1")
+	.clientId(config.get(ApiManager.PROPERTY_CLIENT_ID))
+	.setCSSUrl(config.get(Constants.PROPERTY_CUSTOM_CSS_URL))
+	.email(prefs.getString(Constants.PROPERTY_EMAIL, ""))
+	.accountExist(prefs.getBoolean(Constants.PROPERTY_EXISTING_ACCOUNT, false))
+	.demoMode(prefs.getBoolean(Constants.PROPERTY_DEMO_MODE, false))
+	.demoCardGroup(prefs.getString(Constants.PROPERTY_DEMO_CARD_GROUP_SELECTED, ""))
+	.useWebCardScanner(false) //we are going to use CardIO card scanner
+	.paymentDevice(paymentDeviceModel)
+	.build();
+
+wv.loadUrl(config.get(Constants.PROPERTY_WV_URL) + "?config=" + wvConfig.getEncodedString());
+```
+
+- ##### Continue with native UI:
+
+You can have a full control on your app. In a such case it's your own responsibility to sign up/sign in user, manage devices, connectors and credit cards from code.
+Use [WalletActivity](https://github.com/fitpay/Pagare_Android_WV/blob/develop/app/src/nativeUI/java/fitpay/pagare/activities/WalletActivity.java) as a reference.
+
+#### Connector filters and listeners
+Each connector has unique ```paymentDeviceConnector.id()``` that you can use as a filter for your events.
+
+Send event with a filter through ```paymentDeviceConnector.postData(data)``` or ```RxBus.post(connectorId, data)```.
+
+Receive data for specific event:
+```
+class CustomEventListener extends Listener {
+	public CustomEventListener(String connectorId) {
+	    super(connectorId);
+	    mCommands.put(CustomData.class, data -> onEvent((CustomData) data));
+	}
+
+	private void onEvent(CustomData request) {
+	    //do something
+	}
+}
+
+NotificationManager.getInstance()
+	.addListener(new CustomEventListener(paymentDeviceConnector.id()));
+```
 
 ### Running tests using Android Studio
 
@@ -66,8 +143,10 @@ Some versions of Java come with an encryption distribution that may not be up to
 
 ### Running code coverage
 
-You can run code coverage in the android SDK (to highlight individual file results) or manually. To run manually, run:  
-gradlew testDebugUnitTestCoverage  
+You can run code coverage in the android SDK (to highlight individual file results) or manually. To run manually, run: 
+```
+gradlew testDebugUnitTestCoverage
+```
 (Filtered) results can be found in fitpay/build/reports/jacoco/testDebugUnitTestCoverage/html. You can also see per line information in fitpay/build/reports/jacoco/testDebugUnitTestCoverage/testDebugUnitTestCoverage.xml.  
 
 ## Using a pre-built version of the SDK as a dependency for your build:
@@ -143,7 +222,7 @@ Now that you've built the repository, you need to tell your Android project wher
     ```
     dependencies {
         compile fileTree(dir: 'libs', include: ['*.jar'])
-        compile 'com.fitpay.android:android_sdk:0.4.20'
+        compile 'com.fitpay.android:android_sdk:0.5.0'
     }
     ```
 

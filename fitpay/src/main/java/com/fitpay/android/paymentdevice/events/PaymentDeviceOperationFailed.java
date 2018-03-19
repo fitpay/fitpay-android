@@ -5,12 +5,11 @@ package com.fitpay.android.paymentdevice.events;
  */
 public class PaymentDeviceOperationFailed {
 
-
     private String reason;
     private int reasonCode;
 
     private PaymentDeviceOperationFailed() {
-        // Builder use only
+        super();
     }
 
     public static class Builder {

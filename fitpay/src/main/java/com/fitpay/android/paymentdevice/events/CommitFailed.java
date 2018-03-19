@@ -5,20 +5,10 @@ import com.fitpay.android.api.models.device.Commit;
 /**
  * Created by tgs on 5/15/16.
  */
-public class CommitFailed extends AbstractCommitNotProcessed {
+public class CommitFailed extends CommitNotProcessed {
 
-    public CommitFailed(Commit commit) {
+    private CommitFailed(Commit commit) {
         super(commit);
-    }
-
-    @Override
-    public String toString() {
-        return "CommitFailed{" +
-                "commitId='" + getCommitId() + '\'' +
-                ", commitType='" + getCommitType() + '\'' +
-                ", errorCode='" + getErrorCode() + '\'' +
-                ", errorMessage='" + getErrorMessage() + '\'' +
-                '}';
     }
 
     public static class Builder {
@@ -42,11 +32,10 @@ public class CommitFailed extends AbstractCommitNotProcessed {
         }
 
         public CommitFailed build() {
-            CommitFailed commit = new CommitFailed(this.commit);
-            commit.errorCode = this.errorCode;
-            commit.errorMessage = this.errorMessage;
-            return commit;
+            CommitFailed commitFailed = new CommitFailed(commit);
+            commitFailed.errorCode = this.errorCode;
+            commitFailed.errorMessage = this.errorMessage;
+            return commitFailed;
         }
-
     }
 }

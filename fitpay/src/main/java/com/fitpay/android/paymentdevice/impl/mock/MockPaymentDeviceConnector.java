@@ -66,9 +66,13 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
      */
     private Map<String, CreditCardCommit> creditCards;
 
-    private SyncCompleteListener syncCompleteListener = new SyncCompleteListener();
+    private final SyncCompleteListener syncCompleteListener;
 
     public MockPaymentDeviceConnector() {
+        super();
+
+        syncCompleteListener = new SyncCompleteListener(id());
+
         state = States.INITIALIZED;
 
         // configure commit handlers
@@ -144,7 +148,7 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
                 .map(o -> loadDefaultDevice())
                 .subscribe(deviceInfo -> {
                     FPLog.d(TAG, "device info has been read.  device: " + deviceInfo);
-                    RxBus.getInstance().post(deviceInfo);
+                    postData(deviceInfo);
                 }, throwable -> FPLog.e(TAG, "read device info error:" + throwable.toString()));
     }
 
@@ -258,7 +262,7 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
                     int duration = (int) ((System.currentTimeMillis() - apduExecutionResult.getExecutedTsEpoch()) / 1000);
                     apduExecutionResult.setExecutedDuration(duration);
                     FPLog.d(TAG, "apdu processing is complete.  Result: " + new Gson().toJson(apduExecutionResult));
-                    RxBus.getInstance().post(apduExecutionResult);
+                    postData(apduExecutionResult);
                 } else if (apduCommandNumber + 1 < apduPackage.getApduCommands().size()) {
                     getDelayObservable(100)
                             .map(x -> true)
@@ -268,7 +272,7 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
                     int duration = (int) ((System.currentTimeMillis() - apduExecutionResult.getExecutedTsEpoch()) / 1000);
                     apduExecutionResult.setExecutedDuration(duration);
                     FPLog.d(TAG, "apdu processing is complete.  Result: " + new Gson().toJson(apduExecutionResult));
-                    RxBus.getInstance().post(apduExecutionResult);
+                    postData(apduExecutionResult);
                 }
             }
 
@@ -338,7 +342,8 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
 
     private class SyncCompleteListener extends Listener {
 
-        private SyncCompleteListener() {
+        private SyncCompleteListener(String connectorId) {
+            super(connectorId);
             mCommands.put(Sync.class, data -> onSyncStateChanged((Sync) data));
         }
 
@@ -362,7 +367,7 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
             Object payload = commit.getPayload();
             if (!(payload instanceof CreditCardCommit)) {
                 FPLog.e(TAG, "Mock Wallet received a commit to process that was not a credit card commit.  Commit: " + commit);
-                RxBus.getInstance().post(new CommitFailed.Builder()
+                postData(new CommitFailed.Builder()
                         .commit(commit)
                         .errorCode(999)
                         .errorMessage("Commit does not contain a credit card")
@@ -378,7 +383,8 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
                         CreditCardCommit card = (CreditCardCommit) commit.getPayload();
                         FPLog.d(TAG, "Mock wallet has been updated. Card removed: " + card.getCreditCardId());
                         removeCardFromWallet(card.getCreditCardId());
-                        RxBus.getInstance().post(new CommitSuccess(commit));
+                        postData(new CommitSuccess.Builder()
+                                .commit(commit).build());
                     }
             );
         }
@@ -391,7 +397,7 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
             Object payload = commit.getPayload();
             if (!(payload instanceof CreditCardCommit)) {
                 FPLog.e(TAG, "Mock Wallet received a commit to process that was not a credit card commit.  Commit: " + commit);
-                RxBus.getInstance().post(new CommitFailed.Builder()
+                postData(new CommitFailed.Builder()
                         .commit(commit)
                         .errorCode(999)
                         .errorMessage("Commit does not contain a credit card")
@@ -407,7 +413,8 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
                         CreditCardCommit card = (CreditCardCommit) commit.getPayload();
                         FPLog.d(TAG, "Mock wallet has been updated. Card updated: " + card.getCreditCardId());
                         updateWallet(card);
-                        RxBus.getInstance().post(new CommitSuccess(commit));
+                        postData(new CommitSuccess.Builder()
+                                .commit(commit).build());
                     }
             );
         }

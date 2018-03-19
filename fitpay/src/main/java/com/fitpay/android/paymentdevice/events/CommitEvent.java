@@ -3,16 +3,11 @@ package com.fitpay.android.paymentdevice.events;
 import com.fitpay.android.api.enums.CommitTypes;
 import com.fitpay.android.api.models.device.Commit;
 
-/**
- * Created by tgs on 5/15/16.
- */
-public abstract class AbstractCommitNotProcessed {
+abstract class CommitEvent {
 
-    protected Commit commit;
-    protected String errorMessage;
-    protected int errorCode;
+    private Commit commit;
 
-    public AbstractCommitNotProcessed(Commit commit) {
+    CommitEvent(Commit commit) {
         this.commit = commit;
     }
 
@@ -45,12 +40,13 @@ public abstract class AbstractCommitNotProcessed {
         return -1;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
-    }
 
-    public int getErrorCode() {
-        return errorCode;
+    @Override
+    public String toString() {
+        return "CommitSuccess{" +
+                "commitId='" + getCommitId() + '\'' +
+                ", createdTs='" + getCreatedTs() + '\'' +
+                ", commitType='" + getCommitType() + '\'' +
+                '}';
     }
-
 }

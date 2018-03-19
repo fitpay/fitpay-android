@@ -13,8 +13,11 @@ import com.nimbusds.jose.crypto.AESDecrypter;
 import com.nimbusds.jose.crypto.AESEncrypter;
 import com.nimbusds.jose.util.Base64URL;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.security.MessageDigest;
 import java.text.ParseException;
+import java.util.Properties;
 import java.util.Locale;
 
 /**
@@ -122,5 +125,21 @@ public final class StringUtils {
             output.append((char) Integer.parseInt(str, 16));
         }
         return output.toString();
+    }
+
+    /**
+     * Convert config properties string into Properties
+     * @param input config string
+     * @return properties
+     * @throws IOException
+     */
+    public static Properties convertCommaSeparatedList(String input) throws IOException {
+        if (null == input) {
+            return null;
+        }
+        String propertiesFormat = input.replaceAll(",", "\n");
+        Properties properties = new Properties();
+        properties.load(new StringReader(propertiesFormat));
+        return properties;
     }
 }

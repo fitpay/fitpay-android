@@ -10,6 +10,7 @@ import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.models.user.LoginIdentity;
 import com.fitpay.android.api.models.user.UserCreateRequest;
 import com.fitpay.android.paymentdevice.DeviceSyncManager;
+import com.fitpay.android.paymentdevice.callbacks.DeviceSyncManagerCallback;
 import com.fitpay.android.paymentdevice.constants.States;
 import com.fitpay.android.paymentdevice.enums.Sync;
 import com.fitpay.android.paymentdevice.events.CommitSuccess;
@@ -22,10 +23,8 @@ import com.fitpay.android.utils.NotificationManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,6 +36,9 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by ssteveli on 7/6/17.
@@ -53,45 +55,42 @@ public class DeviceSyncManagerTest extends TestActions {
 
     private SyncCompleteListener listener;
     private CountDownLatch executionLatch;
-    private DeviceSyncManager.DeviceSyncManagerCallback syncManagerCallback;
+    private DeviceSyncManagerCallback syncManagerCallback;
 
     private String lastCommitId = null;
 
     @Before
     @Override
     public void testActionsSetup() throws Exception {
-        SharedPreferences sp = Mockito.mock(SharedPreferences.class);
-        Mockito.when(sp.getAll()).thenReturn(Collections.emptyMap());
-        Mockito.when(sp.getString(Matchers.eq("lastCommitId"), (String)Matchers.isNull())).then(new Answer<String>() {
-            @Override
-            public String answer(InvocationOnMock invocation) throws Throwable {
-                return lastCommitId;
-            }
-        });
-
-        SharedPreferences.Editor spEditor = Mockito.mock(SharedPreferences.Editor.class);
-
-        Mockito.when(sp.edit()).thenReturn(spEditor);
-        Mockito.when(spEditor.putString(Matchers.eq("lastCommitId"), Matchers.anyString())).thenAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                lastCommitId = (String)invocation.getArguments()[1];
-
-                return spEditor;
-            }
-        });
-
-        Mockito.when(spEditor.commit()).thenReturn(true);
-
         mContext = Mockito.mock(Context.class);
-        Mockito.when(mContext.getSharedPreferences(Matchers.anyString(), Matchers.eq(Context.MODE_PRIVATE))).thenReturn(sp);
+        final SharedPreferences mockPrefs = Mockito.mock(SharedPreferences.class);
+        final SharedPreferences.Editor mockEditor = Mockito.mock(SharedPreferences.Editor.class);
+
+        when(mContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockPrefs);
+        when(mockPrefs.edit()).thenReturn(mockEditor);
+
+        when(mockPrefs.getAll()).thenReturn(Collections.emptyMap());
+        when(mockPrefs.getString(ArgumentMatchers.eq("lastCommitId"), ArgumentMatchers.isNull())).then(invocation -> lastCommitId);
+        when(mockEditor.putString(ArgumentMatchers.eq("lastCommitId"), ArgumentMatchers.anyString())).thenAnswer(invocation -> {
+            lastCommitId = (String) invocation.getArguments()[1];
+            return mockEditor;
+        });
+
+        when(mockEditor.commit()).thenReturn(true);
 
         syncManager = new DeviceSyncManager(mContext);
         syncManager.onCreate();
 
-        syncManagerCallback = new DeviceSyncManager.DeviceSyncManagerCallback() {
+        syncManagerCallback = new DeviceSyncManagerCallback() {
             @Override
             public void syncRequestAdded(SyncRequest request) {
+            }
+
+            @Override
+            public void syncRequestFailed(SyncRequest request) {
+                if (executionLatch != null) {
+                    executionLatch.countDown();
+                }
             }
 
             @Override
@@ -151,7 +150,7 @@ public class DeviceSyncManagerTest extends TestActions {
 
         this.executionLatch = new CountDownLatch(1);
         this.listener = new SyncCompleteListener();
-        NotificationManager.getInstance().addListenerToCurrentThread(this.listener);
+        NotificationManager.getInstance().addListener(this.listener);
     }
 
     @After
@@ -175,6 +174,9 @@ public class DeviceSyncManagerTest extends TestActions {
 
         executionLatch.await();
 
+        //wait for new event
+        Thread.sleep(1000);
+
         assertEquals(1, listener.getSyncEvents().stream()
                 .filter(syncEvent -> syncEvent.getState() == States.SKIPPED)
                 .count());
@@ -190,6 +192,9 @@ public class DeviceSyncManagerTest extends TestActions {
 
         executionLatch.await();
 
+        //wait for new event
+        Thread.sleep(1000);
+
         assertEquals(1, listener.getSyncEvents().stream()
                 .filter(syncEvent -> syncEvent.getState() == States.SKIPPED)
                 .count());
@@ -204,6 +209,9 @@ public class DeviceSyncManagerTest extends TestActions {
                 .build());
 
         executionLatch.await();
+
+        //wait for new event
+        Thread.sleep(1000);
 
         assertEquals(1, listener.getSyncEvents().stream()
                 .filter(syncEvent -> syncEvent.getState() == States.SKIPPED)
@@ -237,10 +245,10 @@ public class DeviceSyncManagerTest extends TestActions {
     public void happyPathSyncTest() throws Exception {
         int syncCount = 10;
 
-        for (int i=0; i<syncCount; i++) {
+        for (int i = 0; i < syncCount; i++) {
             System.out.println("");
             System.out.println("###############################################################################################################");
-            System.out.println("################ sync #" + (i+1) + " of " + syncCount + " started");
+            System.out.println("################ sync #" + (i + 1) + " of " + syncCount + " started");
             System.out.println("###############################################################################################################");
             System.out.println("");
 
@@ -255,7 +263,7 @@ public class DeviceSyncManagerTest extends TestActions {
 
             System.out.println("");
             System.out.println("###############################################################################################################");
-            System.out.println("################ sync #" + (i+1) + " of " + syncCount + " completed");
+            System.out.println("################ sync #" + (i + 1) + " of " + syncCount + " completed");
             System.out.println("###############################################################################################################");
             System.out.println("");
 
@@ -288,13 +296,13 @@ public class DeviceSyncManagerTest extends TestActions {
 
         assertEquals(syncCount,
                 listener.getSyncEvents().stream()
-                    .filter(syncEvent -> syncEvent.getState() == States.COMPLETED_NO_UPDATES || syncEvent.getState() == States.COMPLETED)
-                    .count());
+                        .filter(syncEvent -> syncEvent.getState() == States.COMPLETED_NO_UPDATES || syncEvent.getState() == States.COMPLETED)
+                        .count());
 
         assertEquals(3,
                 listener.getCommits().stream()
-                    .filter(commit -> commit.getCommitType().equals("APDU_PACKAGE"))
-                    .count());
+                        .filter(commit -> commit.getCommitType().equals("APDU_PACKAGE"))
+                        .count());
     }
 
     private class SyncCompleteListener extends Listener {

@@ -59,7 +59,7 @@ public class MockPaymentDeviceTest extends TestActions {
     public void canConnect() {
         assertEquals("payment service is not initialized", States.INITIALIZED, paymentDeviceService.getState());
         CountDownLatch latch = new CountDownLatch(1);
-        ConnectPaymentDeviceListener listener = new ConnectPaymentDeviceListener(latch);
+        ConnectPaymentDeviceListener listener = new ConnectPaymentDeviceListener(paymentDeviceService.id(), latch);
         this.listener = listener;
 
         manager.addListenerToCurrentThread(listener);
@@ -83,7 +83,7 @@ public class MockPaymentDeviceTest extends TestActions {
         paymentDeviceService.init(props);
         assertEquals("payment service is not initialized", States.INITIALIZED, paymentDeviceService.getState());
         CountDownLatch latch = new CountDownLatch(1);
-        ConnectPaymentDeviceListener listener = new ConnectPaymentDeviceListener(latch);
+        ConnectPaymentDeviceListener listener = new ConnectPaymentDeviceListener(paymentDeviceService.id(), latch);
         this.listener = listener;
 
         manager.addListenerToCurrentThread(listener);
@@ -103,7 +103,7 @@ public class MockPaymentDeviceTest extends TestActions {
     @Test
     public void canReadDeviceInfo() {
         CountDownLatch latch = new CountDownLatch(1);
-        ReadDeviceInfoPaymentDeviceListener listener = new ReadDeviceInfoPaymentDeviceListener(latch);
+        ReadDeviceInfoPaymentDeviceListener listener = new ReadDeviceInfoPaymentDeviceListener(paymentDeviceService.id(), latch);
         this.listener = listener;
 
         manager.addListenerToCurrentThread(listener);
@@ -170,7 +170,8 @@ public class MockPaymentDeviceTest extends TestActions {
         protected int state;
         protected PaymentDeviceOperationFailed failure;
 
-        public ConnectPaymentDeviceListener(CountDownLatch latch) {
+        public ConnectPaymentDeviceListener(String filter, CountDownLatch latch) {
+            super(filter);
             this.latch = latch;
         }
 
@@ -221,8 +222,8 @@ public class MockPaymentDeviceTest extends TestActions {
 
         private Device device;
 
-        public ReadDeviceInfoPaymentDeviceListener(CountDownLatch latch) {
-            super(latch);
+        public ReadDeviceInfoPaymentDeviceListener(String filter, CountDownLatch latch) {
+            super(filter, latch);
         }
 
         public Device getDevice() {

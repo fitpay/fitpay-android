@@ -10,8 +10,8 @@ import com.fitpay.android.paymentdevice.interfaces.ISecureMessage;
  * Payment device callbacks
  */
 public abstract class PaymentDeviceListener extends ConnectionListener implements IListeners.PaymentDeviceListener {
-    public PaymentDeviceListener() {
-        super();
+    public PaymentDeviceListener(String filter) {
+        super(filter);
         mCommands.put(Device.class, data -> onDeviceInfoReceived((Device) data));
         mCommands.put(PaymentDeviceOperationFailed.class, data -> onDeviceOperationFailed((PaymentDeviceOperationFailed) data));
         mCommands.put(IControlMessage.class, data -> {

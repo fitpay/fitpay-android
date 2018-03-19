@@ -66,7 +66,6 @@ public final class BluetoothPaymentDeviceConnector extends PaymentDeviceConnecto
     /**
      * Connects to the GATT server hosted on the Bluetooth LE device.
      *
-     * @return Return true if the connection is initiated successfully. The
      * connection result is reported asynchronously through the
      * {@code BluetoothGattCallback#onConnectionStateChange(android.bluetooth.BluetoothGatt, int, int)}
      * callback.
@@ -148,7 +147,7 @@ public final class BluetoothPaymentDeviceConnector extends PaymentDeviceConnecto
     @Override
     public void executeApduPackage(ApduPackage apduPackage) {
         FPLog.d(TAG, "initiate executeApduPackage request");
-        GattOperation sendApduOperation = new GattApduOperation(apduPackage);
+        GattOperation sendApduOperation = new GattApduOperation(id(), apduPackage);
         mGattManager.queue(sendApduOperation);
     }
 

@@ -5,6 +5,7 @@ import android.webkit.JavascriptInterface;
 import com.fitpay.android.cardscanner.IFitPayCardScanner;
 import com.fitpay.android.paymentdevice.DeviceService;
 import com.fitpay.android.paymentdevice.models.SyncInfo;
+import com.fitpay.android.webview.impl.WebViewCommunicatorImpl;
 import com.fitpay.android.webview.models.IdVerification;
 
 import org.json.JSONException;
@@ -45,11 +46,14 @@ public interface WebViewCommunicator {
     String retrieveConfigJson();
 
     /**
+     * @deprecated See {@link WebViewCommunicatorImpl (Activity, IPaymentDeviceConnector, int)}
+     *
      * Provide a configured DeviceService to the communicator to support operations that require interaction with the payment device
      * One example is sync.
      *
      * @param deviceService
      */
+    @Deprecated
     void setDeviceService(DeviceService deviceService);
 
     /**
