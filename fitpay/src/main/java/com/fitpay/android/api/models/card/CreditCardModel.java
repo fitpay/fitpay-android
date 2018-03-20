@@ -33,6 +33,7 @@ abstract class CreditCardModel extends BaseModel {
     protected Long eligibilityExpirationEpoch;
     protected List<AssetReference> termsAssetReferences;
     protected OfflineSeActions offlineSeActions;
+    protected String tokenLastFour;
 
     protected CreditCardModel() {
         creditCardInfo = new CreditCardInfo();
@@ -93,6 +94,14 @@ abstract class CreditCardModel extends BaseModel {
         return verificationMethods;
     }
 
+    /**
+     * Terms & Conditions references
+     * @return T&C links
+     */
+    public List<AssetReference> getTermsAssetReferences() {
+        return termsAssetReferences;
+    }
+
     public String getName() {
         return creditCardInfo.name;
     }
@@ -119,5 +128,9 @@ abstract class CreditCardModel extends BaseModel {
 
     public TopOfWallet getTOW() {
         return offlineSeActions != null ? offlineSeActions.getTopOfWallet() : null;
+    }
+
+    public String getTokenLastFour(){
+        return tokenLastFour;
     }
 }
