@@ -17,6 +17,7 @@ public class VerificationMethod {
     public static final String CARDHOLDER_TO_CALL_FOR_AUTOMATED_OTP_CODE = "CARDHOLDER_TO_CALL_FOR_AUTOMATED_OTP_CODE";
     public static final String AGENT_TO_CALL_CARDHOLDER_NUMBER = "AGENT_TO_CALL_CARDHOLDER_NUMBER";
     public static final String CARDHOLDER_TO_USE_MOBILE_APP = "CARDHOLDER_TO_USE_MOBILE_APP";
+    public static final String ISSUER_TO_CALL_CARDHOLDER_NUMBER = "ISSUER_TO_CALL_CARDHOLDER_NUMBER";
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({
@@ -27,7 +28,8 @@ public class VerificationMethod {
             CARDHOLDER_TO_CALL_MANNED_NUMBER,
             CARDHOLDER_TO_CALL_FOR_AUTOMATED_OTP_CODE,
             AGENT_TO_CALL_CARDHOLDER_NUMBER,
-            CARDHOLDER_TO_USE_MOBILE_APP
+            CARDHOLDER_TO_USE_MOBILE_APP,
+            ISSUER_TO_CALL_CARDHOLDER_NUMBER
     })
     public @interface Type {
     }
