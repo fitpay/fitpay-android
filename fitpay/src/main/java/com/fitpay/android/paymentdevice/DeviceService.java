@@ -212,6 +212,7 @@ public final class DeviceService extends Service {
         if (null == paymentDeviceConnector) {
             throw new IllegalStateException("Payment device connector has not been configured");
         }
+
         executor.execute(() -> {
             FPLog.d(TAG, "Starting execution of connectToDevice");
             switch (paymentDeviceConnector.getState()) {

@@ -50,6 +50,7 @@ import static com.fitpay.android.utils.Constants.SYNC_DATA;
  */
 public class DeviceSyncManager {
     private final static String TAG = DeviceSyncManager.class.getSimpleName();
+    private final static int DEDUPE_LIMIT = 100;
 
     private final Context mContext;
     private final BlockingQueue<SyncRequest> requests;
@@ -57,6 +58,8 @@ public class DeviceSyncManager {
     private SyncWorkerThread worker = null;
 
     private List<DeviceSyncManagerCallback> syncManagerCallbacks = new ArrayList<>();
+
+    private List<String> dedupeSyncIds = new ArrayList<>(DEDUPE_LIMIT);
 
     /**
      * @param context
@@ -113,6 +116,21 @@ public class DeviceSyncManager {
     public void add(final SyncRequest request) {
         if (request == null) {
             return;
+        }
+
+        // if we have a syncId, dedupe it to avoid re-running syncs arriving through multiple channels
+        if (request.getSyncId() != null) {
+            if (dedupeSyncIds.contains(request.getSyncId())) {
+                FPLog.i("duplicated sync received, skipping: " + request);
+                return;
+            }
+
+            dedupeSyncIds.add(request.getSyncId());
+
+            // ensure the dedupe size remains consistent and doesn't grow unbounded
+            while (dedupeSyncIds.size() > DEDUPE_LIMIT) {
+                dedupeSyncIds.remove(0);
+            }
         }
 
         try {

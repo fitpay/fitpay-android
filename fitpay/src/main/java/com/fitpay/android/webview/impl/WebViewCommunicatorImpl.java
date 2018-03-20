@@ -12,6 +12,7 @@ import com.fitpay.android.api.enums.ResultCode;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.models.security.OAuthToken;
 import com.fitpay.android.api.models.user.User;
+import com.fitpay.android.api.sse.UserEventStreamManager;
 import com.fitpay.android.cardscanner.IFitPayCardScanner;
 import com.fitpay.android.cardscanner.ScannedCardInfo;
 import com.fitpay.android.paymentdevice.DeviceService;
@@ -34,15 +35,16 @@ import com.fitpay.android.webview.events.IdVerificationRequest;
 import com.fitpay.android.webview.events.RtmMessage;
 import com.fitpay.android.webview.events.RtmMessageResponse;
 import com.fitpay.android.webview.events.UserReceived;
-import com.fitpay.android.webview.models.IdVerification;
 import com.fitpay.android.webview.events.a2a.A2AVerificationFailed;
 import com.fitpay.android.webview.events.a2a.A2AVerificationRequest;
+import com.fitpay.android.webview.models.IdVerification;
 import com.fitpay.android.webview.models.RtmVersion;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.Locale;
 
 import static com.fitpay.android.utils.Constants.WV_DATA;
@@ -135,6 +137,8 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
         NotificationManager.getInstance().removeListener(listenerForAppCallbacksNoCallbackId);
         NotificationManager.getInstance().removeListener(idVerificationListener);
         NotificationManager.getInstance().removeListener(a2AListener);
+
+        UserEventStreamManager.unsubscribe(user.getId(), device);
     }
 
     /**
@@ -281,7 +285,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                 }
 
                 WebViewCommunicatorImpl.this.user = result;
-
                 RxBus.getInstance().post(new UserReceived(user.getId(), user.getUsername()));
 
                 EventCallback eventCallback = new EventCallback.Builder()
@@ -299,6 +302,19 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                         String deviceToken = device.getNotificationToken();
 
                         final Runnable onSuccess = () -> onTaskSuccess(EventCallback.GET_USER_AND_DEVICE, callbackId);
+
+                        boolean automaticSyncThroughUserEventStream = true;
+                        if (ApiManager.getConfig().containsKey(ApiManager.PROPERTY_AUTOMATIC_SYNC_THROUGH_USER_EVENT_STREAM_ENABLED)) {
+                            automaticSyncThroughUserEventStream = "true".equals(ApiManager.getConfig().get(ApiManager.PROPERTY_AUTOMATIC_SYNC_THROUGH_USER_EVENT_STREAM_ENABLED));
+                        }
+
+                        if (automaticSyncThroughUserEventStream) {
+                            try {
+                                UserEventStreamManager.subscribe(user.getId(), deviceService.getPaymentDeviceConnector(), device);
+                            } catch (IOException e) {
+                                FPLog.e(e);
+                            }
+                        }
 
                         if (deviceToken == null || !deviceToken.equals(token)) {
                             Device updatedDevice = new Device.Builder().setNotificationToken(token).build();
