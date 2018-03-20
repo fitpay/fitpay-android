@@ -12,6 +12,8 @@ import java.util.List;
 public final class CardMetaData implements Parcelable {
 
     private String labelColor;
+    private String backgroundColor;
+    private String foregroundColor;
     private String issuerName;
     private String shortDescription;
     private String longDescription;
@@ -35,6 +37,14 @@ public final class CardMetaData implements Parcelable {
 
     public void setLabelColor(String labelColor) {
         this.labelColor = labelColor;
+    }
+
+    public String getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public String getForegroundColor() {
+        return foregroundColor;
     }
 
     public String getIssuerName() {
@@ -157,6 +167,8 @@ public final class CardMetaData implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.labelColor);
+        dest.writeString(this.backgroundColor);
+        dest.writeString(this.foregroundColor);
         dest.writeString(this.issuerName);
         dest.writeString(this.shortDescription);
         dest.writeString(this.longDescription);
@@ -178,6 +190,8 @@ public final class CardMetaData implements Parcelable {
 
     protected CardMetaData(Parcel in) {
         this.labelColor = in.readString();
+        this.backgroundColor = in.readString();
+        this.foregroundColor = in.readString();
         this.issuerName = in.readString();
         this.shortDescription = in.readString();
         this.longDescription = in.readString();
