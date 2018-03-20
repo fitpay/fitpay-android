@@ -105,7 +105,7 @@ public class UserEventStreamSyncTest extends TestActions {
             }
         });
 
-        syncLatch.await(5000, TimeUnit.MILLISECONDS);
+        syncLatch.await(30000, TimeUnit.MILLISECONDS);
 
         assertTrue(syncRequests.size() > 0);
         SyncRequest syncRequest = syncRequests.get(0);
