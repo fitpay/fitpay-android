@@ -1,5 +1,6 @@
 package com.fitpay.android.api.models.card;
 
+import com.fitpay.android.api.enums.VerificationMethod;
 import com.fitpay.android.api.models.BaseModel;
 import com.fitpay.android.webview.models.a2a.A2AContext;
 
@@ -10,6 +11,7 @@ abstract class VerificationMethodModel extends BaseModel {
 
     protected String verificationId;
     protected String state;
+    @VerificationMethod.Type
     protected String methodType;
     protected String value;
     protected String verificationResult;
@@ -26,6 +28,7 @@ abstract class VerificationMethodModel extends BaseModel {
         return state;
     }
 
+    @VerificationMethod.Type
     public String getMethodType() {
         return methodType;
     }
