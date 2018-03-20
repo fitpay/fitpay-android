@@ -2,6 +2,7 @@ package com.fitpay.android.api.sse;
 
 import com.fitpay.android.api.models.UserStreamEvent;
 import com.fitpay.android.api.models.user.User;
+import com.fitpay.android.api.services.BaseClient;
 import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.KeysManager;
@@ -26,7 +27,6 @@ public class UserEventStream {
 
     private final User user;
 
-
     private final ServerSentEvent sse;
 
     private long lastEventTs = -1;
@@ -41,7 +41,7 @@ public class UserEventStream {
         assert eventStreamUrl != null;
 
         Request request = new Request.Builder().url(eventStreamUrl).build();
-        OkSse okSse = new OkSse();
+        OkSse okSse = new OkSse(BaseClient.getOkHttpClient().build());
         sse = okSse.newServerSentEvent(request, getListener());
     }
 
@@ -58,6 +58,8 @@ public class UserEventStream {
 
     private ServerSentEvent.Listener getListener() {
         return new ServerSentEvent.Listener() {
+            private int counter = 0;
+
             @Override
             public void onOpen(ServerSentEvent sse, Response response) {
                 FPLog.d(TAG,"connected to event stream for user " + user.getId());
@@ -72,22 +74,34 @@ public class UserEventStream {
                 Gson gson = Constants.getGson();
                 UserStreamEvent fitpayEvent = gson.fromJson(payload, UserStreamEvent.class);
 
-                FPLog.d("event stream for user " + user.getId() + " received: " + fitpayEvent);
+                FPLog.d(TAG,"sse onMessage " + user.getId() + " received: " + fitpayEvent);
                 RxBus.getInstance().post(fitpayEvent);
             }
 
             @Override
             public void onComment(ServerSentEvent sse, String comment) {
+                FPLog.d(TAG, "sse onComment: " + comment);
             }
 
             @Override
             public boolean onRetryTime(ServerSentEvent sse, long milliseconds) {
+                FPLog.d(TAG, "sse onRetryTime: " + milliseconds);
+
                 return true;
             }
 
             @Override
             public boolean onRetryError(ServerSentEvent sse, Throwable throwable, Response response) {
-                return false;
+                FPLog.e(TAG, "sse onRetryTime: " + response);
+                FPLog.e(TAG, throwable);
+
+                if (++counter <= 5) {
+                    FPLog.d(TAG, "still within retry parameters: " + counter + ", retrying sse connection");
+                    return true;
+                } else {
+                    FPLog.d(TAG, "outside the retry parameters: " + counter + ", retrying sse connection");
+                    return false;
+                }
             }
 
             @Override
@@ -100,5 +114,9 @@ public class UserEventStream {
                 return null;
             }
         };
+    }
+
+    public long getLastEventTs() {
+        return lastEventTs;
     }
 }
