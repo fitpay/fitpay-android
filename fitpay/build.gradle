@@ -16,7 +16,7 @@ apply from: '../jacoco.gradle'
 apply plugin: 'de.mobilej.unmock'
 
 group = 'com.fitpay.android'
-version = '0.4.39'
+version = '0.4.40'
 archivesBaseName = "android_sdk"
 
 uploadArchives {
