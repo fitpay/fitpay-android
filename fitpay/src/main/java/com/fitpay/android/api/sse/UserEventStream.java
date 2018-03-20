@@ -26,6 +26,7 @@ public class UserEventStream {
 
     private final User user;
 
+
     private final ServerSentEvent sse;
 
     private long lastEventTs = -1;

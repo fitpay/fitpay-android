@@ -47,6 +47,7 @@ public class UserEventStreamManager {
             if (user.isSuccessful()) {
                 stream = new UserEventStream(user.body());
                 UserEventStream existing = streams.putIfAbsent(userId, stream);
+
                 if (existing != null) {
                     // whoops, another thread beat us to subscribing to this event stream... no need for this new one
                     stream.close();
