@@ -12,12 +12,14 @@ import com.fitpay.android.api.models.Links;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.DeviceRef;
 import com.fitpay.android.api.models.user.User;
+import com.fitpay.android.webview.models.IdVerification;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.IllegalFormatException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -216,6 +218,8 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
         private Integer expMonth;
         private Integer expYear;
         private Address address;
+        private IdVerification riskData;
+        private final String language;
 
         /**
          * Creates a Builder instance that can be used to build Gson with various configuration
@@ -224,6 +228,7 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
          * {@link #build()}.
          */
         public Builder() {
+            language = Locale.getDefault().getLanguage();
         }
 
         /**
@@ -240,6 +245,8 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
             card.creditCardInfo.expYear = expYear;
             card.creditCardInfo.expMonth = expMonth;
             card.creditCardInfo.address = address;
+            card.creditCardInfo.riskData = riskData;
+            card.creditCardInfo.language = language;
             return card;
         }
 
@@ -315,6 +322,17 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
          */
         public Builder setAddress(@NonNull Address address) {
             this.address = address;
+            return this;
+        }
+
+        /**
+         * Set risk data {@link IdVerification}
+         *
+         * @param riskData card holder risk data
+         * @return a reference to this {@code Builder} object to fulfill the "Builder" pattern
+         */
+        public Builder setRiskData(@NonNull IdVerification riskData) {
+            this.riskData = riskData;
             return this;
         }
     }

@@ -3,6 +3,8 @@ package com.fitpay.android.api.models.card;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fitpay.android.webview.models.IdVerification;
+
 /***
  * Credit card info
  */
@@ -38,6 +40,16 @@ public final class CreditCardInfo implements Parcelable {
      */
     Address address;
 
+    /**
+     * description : Card holder risk data
+     */
+    IdVerification riskData;
+
+    /**
+     * description : Card holder language
+     */
+    String language;
+
     CreditCardInfo() {
     }
 
@@ -59,6 +71,8 @@ public final class CreditCardInfo implements Parcelable {
         dest.writeValue(this.expMonth);
         dest.writeValue(this.expYear);
         dest.writeParcelable(this.address, flags);
+        dest.writeParcelable(this.riskData, flags);
+        dest.writeString(this.language);
     }
 
     protected CreditCardInfo(Parcel in) {
@@ -68,6 +82,8 @@ public final class CreditCardInfo implements Parcelable {
         this.expMonth = (Integer) in.readValue(Integer.class.getClassLoader());
         this.expYear = (Integer) in.readValue(Integer.class.getClassLoader());
         this.address = in.readParcelable(Address.class.getClassLoader());
+        this.riskData = in.readParcelable(IdVerification.class.getClassLoader());
+        this.language = in.readString();
     }
 
     public static final Parcelable.Creator<CreditCardInfo> CREATOR = new Parcelable.Creator<CreditCardInfo>() {
