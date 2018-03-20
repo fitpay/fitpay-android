@@ -1,5 +1,6 @@
 package com.fitpay.android.paymentdevice.callbacks;
 
+import com.fitpay.android.api.models.UserStreamEvent;
 import com.fitpay.android.api.models.apdu.ApduExecutionResult;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.paymentdevice.enums.Connection;
@@ -13,6 +14,10 @@ import com.fitpay.android.paymentdevice.events.PaymentDeviceOperationFailed;
  * Collection of payment device callbacks
  */
 public final class IListeners {
+
+    public interface UserEventStreamListener {
+        void onUserEvent(final UserStreamEvent event);
+    }
 
     public interface ApduListener {
         void onApduPackageResultReceived(final ApduExecutionResult result);

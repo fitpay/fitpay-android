@@ -9,9 +9,12 @@ import com.fitpay.android.R;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.ResultCode;
+import com.fitpay.android.api.enums.SyncInitiator;
+import com.fitpay.android.api.models.UserStreamEvent;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.models.security.OAuthToken;
 import com.fitpay.android.api.models.user.User;
+import com.fitpay.android.api.sse.UserEventStreamListener;
 import com.fitpay.android.api.sse.UserEventStreamManager;
 import com.fitpay.android.cardscanner.IFitPayCardScanner;
 import com.fitpay.android.cardscanner.ScannedCardInfo;
@@ -73,7 +76,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
     private DeviceSyncListener listenerForAppCallbacks;
     private DeviceSyncListener listenerForAppCallbacksNoCallbackId;
-
+    private UserEventStreamListener userEventStreamSyncListener;
     private RtmMessageListener rtmMessageListener;
 
     private PushNotificationSyncListener pushNotificationSyncListener;
@@ -137,8 +140,11 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
         NotificationManager.getInstance().removeListener(listenerForAppCallbacksNoCallbackId);
         NotificationManager.getInstance().removeListener(idVerificationListener);
         NotificationManager.getInstance().removeListener(a2AListener);
+        NotificationManager.getInstance().removeListener(userEventStreamSyncListener);
 
-        UserEventStreamManager.unsubscribe(user.getId(), device);
+        if (user != null) {
+            UserEventStreamManager.unsubscribe(user.getId());
+        }
     }
 
     /**
@@ -303,17 +309,46 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
                         final Runnable onSuccess = () -> onTaskSuccess(EventCallback.GET_USER_AND_DEVICE, callbackId);
 
-                        boolean automaticSyncThroughUserEventStream = true;
-                        if (ApiManager.getConfig().containsKey(ApiManager.PROPERTY_AUTOMATIC_SYNC_THROUGH_USER_EVENT_STREAM_ENABLED)) {
-                            automaticSyncThroughUserEventStream = "true".equals(ApiManager.getConfig().get(ApiManager.PROPERTY_AUTOMATIC_SYNC_THROUGH_USER_EVENT_STREAM_ENABLED));
+                        boolean automaticallySubscribeToUserEventStream = true;
+                        if (ApiManager.getConfig().containsKey(ApiManager.PROPERTY_AUTOMATICALLY_SUBSCRIBE_TO_USER_EVENT_STREAM)) {
+                            automaticallySubscribeToUserEventStream = "true".equals(ApiManager.getConfig().get(ApiManager.PROPERTY_AUTOMATICALLY_SUBSCRIBE_TO_USER_EVENT_STREAM));
                         }
 
-                        if (automaticSyncThroughUserEventStream) {
+                        if (automaticallySubscribeToUserEventStream) {
                             try {
-                                UserEventStreamManager.subscribe(user.getId(), deviceService.getPaymentDeviceConnector(), device);
+                                UserEventStreamManager.subscribe(user.getId());
                             } catch (IOException e) {
                                 FPLog.e(e);
                             }
+
+                            boolean automaticSyncThroughUserEventStream = true;
+                            if (ApiManager.getConfig().containsKey(ApiManager.PROPERTY_AUTOMATICALLY_SYNC_FROM_USER_EVENT_STREAM)) {
+                                automaticSyncThroughUserEventStream = "true".equals(ApiManager.getConfig().get(ApiManager.PROPERTY_AUTOMATICALLY_SYNC_FROM_USER_EVENT_STREAM));
+                            }
+
+                            if (automaticSyncThroughUserEventStream) {
+                                userEventStreamSyncListener = new UserEventStreamListener() {
+                                    @Override
+                                    public void onUserEvent(UserStreamEvent event) {
+                                        if ("SYNC".equals(event.getType())) {
+                                            SyncInfo syncInfo = gson.fromJson(event.getPayload(), SyncInfo.class);
+                                            syncInfo.setInitiator(SyncInitiator.PLATFORM);
+
+                                            SyncRequest syncRequest = new SyncRequest.Builder()
+                                                    .setSyncId(syncInfo.getSyncId())
+                                                    .setSyncInfo(syncInfo)
+                                                    .setConnector(deviceService.getPaymentDeviceConnector())
+                                                    .setDevice(device)
+                                                    .setUser(user)
+                                                    .build();
+                                            RxBus.getInstance().post(syncRequest);
+                                        }
+                                    }
+                                };
+
+                                NotificationManager.getInstance().addListener(userEventStreamSyncListener);
+                            }
+
                         }
 
                         if (deviceToken == null || !deviceToken.equals(token)) {
