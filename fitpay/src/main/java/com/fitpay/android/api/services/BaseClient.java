@@ -5,13 +5,15 @@ import android.os.Build;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.utils.FPLog;
 
-import java.lang.reflect.Field;
+import java.security.KeyStore;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import okhttp3.ConnectionSpec;
@@ -28,6 +30,10 @@ public class BaseClient {
 
 
     public static OkHttpClient.Builder getOkHttpClient() {
+        return getOkHttpClient(FPLog.showHttpLogs());
+    }
+
+    public static OkHttpClient.Builder getOkHttpClient(boolean enabledLogging) {
         OkHttpClient.Builder builder = getDefaultOkHttpClient();
 
         int connectTimeout = Integer.valueOf(ApiManager.getConfig().get(ApiManager.PROPERTY_HTTP_CONNECT_TIMEOUT));
@@ -41,7 +47,7 @@ public class BaseClient {
             .followSslRedirects(true)
             .retryOnConnectionFailure(true);
 
-        if (FPLog.showHttpLogs()) {
+        if (enabledLogging) {
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -58,11 +64,21 @@ public class BaseClient {
     private static OkHttpClient.Builder enableTls12OnPreLollipop(OkHttpClient.Builder client) {
         if (Build.VERSION.SDK_INT >= 16 && Build.VERSION.SDK_INT < 22) {
             try {
-                FPLog.i("pre lollipop ssl configuraiton being used");
+                FPLog.i("pre lollipop ssl configuration being used");
+
+                // pulled from {@link OkHttpClient} javadoc in finding the trustmanager, which isn't really exposed!
+                TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                trustManagerFactory.init((KeyStore) null);
+                TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+                if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
+                    throw new IllegalStateException("Unexpected default trust managers:" + Arrays.toString(trustManagers));
+                }
+
+                X509TrustManager trustManager = (X509TrustManager) trustManagers[0];
 
                 SSLContext sc = SSLContext.getDefault();
 
-                client.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()), trustManager(sc.getSocketFactory()));
+                client.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()), trustManager);
 
                 ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
                         .tlsVersions(TlsVersion.TLS_1_2)
@@ -82,49 +98,5 @@ public class BaseClient {
         }
 
         return client;
-    }
-
-    /**
-     * These are taken from okhttp {@link okhttp3.internal.platform.Platform} where the trustManager() method has now
-     * been made protected.
-     *
-     * @param sslSocketFactory
-     * @return
-     */
-    protected static X509TrustManager trustManager(SSLSocketFactory sslSocketFactory) {
-        // Attempt to get the trust manager from an OpenJDK socket factory. We attempt this on all
-        // platforms in order to support Robolectric, which mixes classes from both Android and the
-        // Oracle JDK. Note that we don't support HTTP/2 or other nice features on Robolectric.
-        try {
-            Class<?> sslContextClass = Class.forName("sun.security.ssl.SSLContextImpl");
-            Object context = readFieldOrNull(sslSocketFactory, sslContextClass, "context");
-            if (context == null) return null;
-            return readFieldOrNull(context, X509TrustManager.class, "trustManager");
-        } catch (ClassNotFoundException e) {
-            return null;
-        }
-    }
-
-    protected static <T> T readFieldOrNull(Object instance, Class<T> fieldType, String fieldName) {
-        for (Class<?> c = instance.getClass(); c != Object.class; c = c.getSuperclass()) {
-            try {
-                Field field = c.getDeclaredField(fieldName);
-                field.setAccessible(true);
-                Object value = field.get(instance);
-                if (value == null || !fieldType.isInstance(value)) return null;
-                return fieldType.cast(value);
-            } catch (NoSuchFieldException ignored) {
-            } catch (IllegalAccessException e) {
-                throw new AssertionError();
-            }
-        }
-
-        // Didn't find the field we wanted. As a last gasp attempt, try to find the value on a delegate.
-        if (!fieldName.equals("delegate")) {
-            Object delegate = readFieldOrNull(instance, Object.class, "delegate");
-            if (delegate != null) return readFieldOrNull(delegate, fieldType, fieldName);
-        }
-
-        return null;
     }
 }

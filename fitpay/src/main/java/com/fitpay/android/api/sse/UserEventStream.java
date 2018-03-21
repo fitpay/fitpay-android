@@ -1,20 +1,18 @@
 package com.fitpay.android.api.sse;
 
-import com.fitpay.android.api.enums.SyncInitiator;
-import com.fitpay.android.api.models.device.Device;
+import com.fitpay.android.api.models.UserStreamEvent;
 import com.fitpay.android.api.models.user.User;
-import com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector;
-import com.fitpay.android.paymentdevice.models.SyncInfo;
-import com.fitpay.android.paymentdevice.models.SyncRequest;
+import com.fitpay.android.api.services.BaseClient;
 import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.KeysManager;
 import com.fitpay.android.utils.RxBus;
 import com.fitpay.android.utils.StringUtils;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.here.oksse.OkSse;
 import com.here.oksse.ServerSentEvent;
+
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Request;
 import okhttp3.Response;
@@ -30,26 +28,26 @@ public class UserEventStream {
     private final static String TAG = UserEventStream.class.getName();
 
     private final User user;
-    private final IPaymentDeviceConnector connector;
-    private final Device device;
 
     private final ServerSentEvent sse;
 
     private long lastEventTs = -1;
     private boolean connected = false;
 
-    public UserEventStream(User user, IPaymentDeviceConnector connector, Device device) {
+    public UserEventStream(User user) {
         FPLog.d(TAG, "connecting to user event stream for user: " + user.getId());
 
         this.user = user;
-        this.connector = connector;
-        this.device = device;
 
         String eventStreamUrl = user.getLinkUrl("eventStream");
         assert eventStreamUrl != null;
 
         Request request = new Request.Builder().url(eventStreamUrl).build();
-        OkSse okSse = new OkSse();
+        OkSse okSse = new OkSse(BaseClient
+                .getOkHttpClient(false) // don't enable logging, that interceptor doesn't work with SSE streams
+                .readTimeout(0, TimeUnit.MILLISECONDS)
+                .retryOnConnectionFailure(true)
+                .build());
         sse = okSse.newServerSentEvent(request, getListener());
     }
 
@@ -66,6 +64,8 @@ public class UserEventStream {
 
     private ServerSentEvent.Listener getListener() {
         return new ServerSentEvent.Listener() {
+            private int counter = 0;
+
             @Override
             public void onOpen(ServerSentEvent sse, Response response) {
                 FPLog.d(TAG,"connected to event stream for user " + user.getId());
@@ -78,36 +78,36 @@ public class UserEventStream {
                 String payload = StringUtils.getDecryptedString(KeysManager.KEY_API, message);
 
                 Gson gson = Constants.getGson();
-                JsonObject fitpayEvent = gson.fromJson(payload, JsonObject.class);
+                UserStreamEvent fitpayEvent = gson.fromJson(payload, UserStreamEvent.class);
 
-                FPLog.d("event stream for user " + user.getId() + " received: " + fitpayEvent.get("type").getAsString());
-                if ("SYNC".equals(fitpayEvent.get("type").getAsString())) {
-                    SyncInfo syncInfo = gson.fromJson(fitpayEvent.get("payload"), SyncInfo.class);
-                    syncInfo.setInitiator(SyncInitiator.PLATFORM);
-
-                    SyncRequest syncRequest = new SyncRequest.Builder()
-                            .setSyncId(syncInfo.getSyncId())
-                            .setSyncInfo(syncInfo)
-                            .setConnector(connector)
-                            .setDevice(device)
-                            .setUser(user)
-                            .build();
-                    RxBus.getInstance().post(syncRequest);
-                }
+                FPLog.d(TAG,"sse onMessage " + user.getId() + " received: " + fitpayEvent);
+                RxBus.getInstance().post(fitpayEvent);
             }
 
             @Override
             public void onComment(ServerSentEvent sse, String comment) {
+                FPLog.d(TAG, "sse onComment: " + comment);
             }
 
             @Override
             public boolean onRetryTime(ServerSentEvent sse, long milliseconds) {
+                FPLog.d(TAG, "sse onRetryTime: " + milliseconds);
+
                 return true;
             }
 
             @Override
             public boolean onRetryError(ServerSentEvent sse, Throwable throwable, Response response) {
-                return false;
+                FPLog.e(TAG, "sse onRetryTime: " + response);
+                FPLog.e(TAG, throwable);
+
+                if (++counter <= 5) {
+                    FPLog.d(TAG, "still within retry parameters: " + counter + ", retrying sse connection");
+                    return true;
+                } else {
+                    FPLog.d(TAG, "outside the retry parameters: " + counter + ", retrying sse connection");
+                    return false;
+                }
             }
 
             @Override
@@ -120,5 +120,9 @@ public class UserEventStream {
                 return null;
             }
         };
+    }
+
+    public long getLastEventTs() {
+        return lastEventTs;
     }
 }
