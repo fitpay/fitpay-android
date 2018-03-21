@@ -30,6 +30,10 @@ public class BaseClient {
 
 
     public static OkHttpClient.Builder getOkHttpClient() {
+        return getOkHttpClient(FPLog.showHttpLogs());
+    }
+
+    public static OkHttpClient.Builder getOkHttpClient(boolean enabledLogging) {
         OkHttpClient.Builder builder = getDefaultOkHttpClient();
 
         int connectTimeout = Integer.valueOf(ApiManager.getConfig().get(ApiManager.PROPERTY_HTTP_CONNECT_TIMEOUT));
@@ -43,7 +47,7 @@ public class BaseClient {
             .followSslRedirects(true)
             .retryOnConnectionFailure(true);
 
-        if (FPLog.showHttpLogs()) {
+        if (enabledLogging) {
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 

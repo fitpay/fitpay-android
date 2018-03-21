@@ -25,6 +25,8 @@ import retrofit2.Response;
  * is encapsulated in a {@link UserEventStream}.
  */
 public class UserEventStreamManager {
+    private final static String TAG = UserEventStreamManager.class.getName();
+
     private static ConcurrentHashMap<String, UserEventStream> streams = new ConcurrentHashMap<>();
     private static ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -45,11 +47,10 @@ public class UserEventStreamManager {
      *
      * @param userId
      *
-     * @return
+     * @return null is possible if not supported
      * @throws IOException
      */
     public static Future<UserEventStream> subscribe(final String userId) throws IOException {
-
         UserEventStream stream = streams.get(userId);
 
         // why this background execution, well android.. we don't want these network calls to

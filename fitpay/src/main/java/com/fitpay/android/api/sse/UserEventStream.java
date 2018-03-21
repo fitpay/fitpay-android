@@ -12,6 +12,8 @@ import com.google.gson.Gson;
 import com.here.oksse.OkSse;
 import com.here.oksse.ServerSentEvent;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -41,7 +43,11 @@ public class UserEventStream {
         assert eventStreamUrl != null;
 
         Request request = new Request.Builder().url(eventStreamUrl).build();
-        OkSse okSse = new OkSse(BaseClient.getOkHttpClient().build());
+        OkSse okSse = new OkSse(BaseClient
+                .getOkHttpClient(false) // don't enable logging, that interceptor doesn't work with SSE streams
+                .readTimeout(0, TimeUnit.MILLISECONDS)
+                .retryOnConnectionFailure(true)
+                .build());
         sse = okSse.newServerSentEvent(request, getListener());
     }
 
