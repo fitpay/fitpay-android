@@ -5,16 +5,20 @@ import android.os.Build;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.utils.FPLog;
 
+import java.security.KeyStore;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
 import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.TlsVersion;
-import okhttp3.internal.platform.Platform;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
@@ -26,6 +30,10 @@ public class BaseClient {
 
 
     public static OkHttpClient.Builder getOkHttpClient() {
+        return getOkHttpClient(FPLog.showHttpLogs());
+    }
+
+    public static OkHttpClient.Builder getOkHttpClient(boolean enabledLogging) {
         OkHttpClient.Builder builder = getDefaultOkHttpClient();
 
         int connectTimeout = Integer.valueOf(ApiManager.getConfig().get(ApiManager.PROPERTY_HTTP_CONNECT_TIMEOUT));
@@ -39,7 +47,7 @@ public class BaseClient {
             .followSslRedirects(true)
             .retryOnConnectionFailure(true);
 
-        if (FPLog.showHttpLogs()) {
+        if (enabledLogging) {
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -56,10 +64,21 @@ public class BaseClient {
     private static OkHttpClient.Builder enableTls12OnPreLollipop(OkHttpClient.Builder client) {
         if (Build.VERSION.SDK_INT >= 16 && Build.VERSION.SDK_INT < 22) {
             try {
-                FPLog.i("pre lollipop ssl configuraiton being used");
+                FPLog.i("pre lollipop ssl configuration being used");
+
+                // pulled from {@link OkHttpClient} javadoc in finding the trustmanager, which isn't really exposed!
+                TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                trustManagerFactory.init((KeyStore) null);
+                TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+                if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
+                    throw new IllegalStateException("Unexpected default trust managers:" + Arrays.toString(trustManagers));
+                }
+
+                X509TrustManager trustManager = (X509TrustManager) trustManagers[0];
 
                 SSLContext sc = SSLContext.getDefault();
-                client.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()), Platform.get().trustManager(sc.getSocketFactory()));
+
+                client.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()), trustManager);
 
                 ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
                         .tlsVersions(TlsVersion.TLS_1_2)

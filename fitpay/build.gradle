@@ -1,8 +1,19 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'de.mobilej.unmock:UnMockPlugin:0.6.4'
+    }
+}
+
 apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'maven'
 apply from: '../jacoco.gradle'
+apply plugin: 'de.mobilej.unmock'
 
 group = 'com.fitpay.android'
 version = '0.4.40'
@@ -94,6 +105,12 @@ ext {
     supportLib = "27.0.2"
 }
 
+unMock {
+    keepStartingWith "libcore."
+    keepStartingWith "android.net.Uri"
+    keepAndRename "java.nio.charset.Charsets" to "xjava.nio.charset.Charsets"
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -104,7 +121,7 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
 
     compile 'com.squareup.okhttp3:logging-interceptor:3.9.0'
-    compile 'com.squareup.okhttp3:okhttp:3.9.0'
+    compile 'com.squareup.okhttp3:okhttp:3.9.1'
 
     compile 'io.reactivex:rxjava:1.3.4'
     compile 'io.reactivex:rxandroid:1.2.1'
@@ -113,6 +130,8 @@ dependencies {
 
     compile 'org.bouncycastle:bcprov-jdk15on:1.58'
     compile 'com.nimbusds:nimbus-jose-jwt:5.1'
+
+    compile 'com.github.heremaps:oksse:master-SNAPSHOT'
 
     testCompile 'org.mockito:mockito-core:2.12.0'
     testCompile 'junit:junit:4.12'

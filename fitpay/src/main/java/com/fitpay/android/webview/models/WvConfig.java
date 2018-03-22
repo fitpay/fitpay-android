@@ -2,6 +2,7 @@ package com.fitpay.android.webview.models;
 
 import android.util.Base64;
 
+import com.fitpay.android.webview.models.a2a.A2AIssuerResponse;
 import com.google.gson.Gson;
 
 import java.nio.charset.StandardCharsets;

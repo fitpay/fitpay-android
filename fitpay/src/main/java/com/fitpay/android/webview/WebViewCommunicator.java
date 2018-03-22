@@ -5,6 +5,7 @@ import android.webkit.JavascriptInterface;
 import com.fitpay.android.cardscanner.IFitPayCardScanner;
 import com.fitpay.android.paymentdevice.DeviceService;
 import com.fitpay.android.paymentdevice.models.SyncInfo;
+import com.fitpay.android.webview.models.IdVerification;
 
 import org.json.JSONException;
 
@@ -52,7 +53,7 @@ public interface WebViewCommunicator {
     void setDeviceService(DeviceService deviceService);
 
     /**
-     * Provide a {@link IFitPayCardScanner} implemention to handle card image scanning within the native OS.  In order to enable
+     * Provide a {@link IFitPayCardScanner} implementation to handle card image scanning within the native OS.  In order to enable
      * the "useWebCardScanner" must be set to false in the {@link com.fitpay.android.webview.models.WvConfig} when launching the
      * webview.
      *
@@ -69,4 +70,18 @@ public interface WebViewCommunicator {
      * * @param callbackId rtm callback id
      */
     void startScan(String callbackId);
+
+    /**
+     * IdVerification response for {@link com.fitpay.android.webview.events.IdVerificationRequest}
+     * @return idVerification
+     */
+    IdVerification getIdVerification();
+
+    /**
+     * Called by the parser when it receives {#value {@link com.fitpay.android.webview.enums.RtmType#SUPPORTS_ISSUER_APP_VERIFICATION}} event
+     * By default the app-to-app verification capability should be disabled.
+     *
+     * @return Mark whether you support app-to-app verifications.
+     */
+    boolean supportsAppVerification();
 }

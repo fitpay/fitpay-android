@@ -1,8 +1,10 @@
 package com.fitpay.android.webview.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fitpay.android.utils.RxBus;
 import com.fitpay.android.utils.StringUtils;
-import com.fitpay.android.utils.TimestampUtils;
 import com.fitpay.android.webview.enums.DeviceTimeZone;
 import com.fitpay.android.webview.enums.RtmType;
 import com.fitpay.android.webview.events.RtmMessageResponse;
@@ -14,7 +16,7 @@ import java.util.Locale;
  * IdVerification data
  */
 
-public class IdVerification {
+public final class IdVerification implements Parcelable {
     private Date oemAccountInfoUpdatedDate; // Most recent date this user update their: Billing Address, Name, Email, password, or other Personally Identifiable Information associated to their account.
     private Date oemAccountCreatedDate;
     private Integer suspendedCardsInOemAccount; // If this user has multiple devices, how many cards are suspended in total across all devices?
@@ -79,7 +81,7 @@ public class IdVerification {
         private String billingState;
         private String billingZip;
 
-        private String locale ;
+        private final String locale;
 
         public Builder() {
             locale = Locale.getDefault().getLanguage() + '-' + Locale.getDefault().getCountry();
@@ -347,17 +349,6 @@ public class IdVerification {
             return this;
         }
 
-        /**
-         * Set locale
-         *
-         * @param locale
-         * @return this
-         */
-        public Builder setLocale(String locale) {
-            this.locale = locale;
-            return this;
-        }
-
         public IdVerification build() {
             IdVerification idVerification = new IdVerification();
 
@@ -391,4 +382,81 @@ public class IdVerification {
             return idVerification;
         }
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.oemAccountInfoUpdatedDate != null ? this.oemAccountInfoUpdatedDate.getTime() : -1);
+        dest.writeLong(this.oemAccountCreatedDate != null ? this.oemAccountCreatedDate.getTime() : -1);
+        dest.writeValue(this.suspendedCardsInOemAccount);
+        dest.writeLong(this.lastOemAccountActivityDate != null ? this.lastOemAccountActivityDate.getTime() : -1);
+        dest.writeLong(this.deviceLostModeDate != null ? this.deviceLostModeDate.getTime() : -1);
+        dest.writeValue(this.devicesWithIdenticalActiveToken);
+        dest.writeValue(this.activeTokensOnAllDevicesForOemAccount);
+        dest.writeValue(this.oemAccountScore);
+        dest.writeValue(this.deviceScore);
+        dest.writeValue(this.nfcCapable);
+        dest.writeString(this.billingCountryCode);
+        dest.writeString(this.oemAccountCountryCode);
+        dest.writeString(this.deviceCountry);
+        dest.writeString(this.oemAccountUserName);
+        dest.writeLong(this.devicePairedToOemAccountDate != null ? this.devicePairedToOemAccountDate.getTime() : -1);
+        dest.writeString(this.deviceTimeZone);
+        dest.writeValue(this.deviceTimeZoneSetBy);
+        dest.writeString(this.deviceIMEI);
+        dest.writeString(this.billingLine1);
+        dest.writeString(this.billingLine2);
+        dest.writeString(this.billingCity);
+        dest.writeString(this.billingState);
+        dest.writeString(this.billingZip);
+        dest.writeString(this.locale);
+    }
+
+    protected IdVerification(Parcel in) {
+        long tmpOemAccountInfoUpdatedDate = in.readLong();
+        this.oemAccountInfoUpdatedDate = tmpOemAccountInfoUpdatedDate == -1 ? null : new Date(tmpOemAccountInfoUpdatedDate);
+        long tmpOemAccountCreatedDate = in.readLong();
+        this.oemAccountCreatedDate = tmpOemAccountCreatedDate == -1 ? null : new Date(tmpOemAccountCreatedDate);
+        this.suspendedCardsInOemAccount = (Integer) in.readValue(Integer.class.getClassLoader());
+        long tmpLastOemAccountActivityDate = in.readLong();
+        this.lastOemAccountActivityDate = tmpLastOemAccountActivityDate == -1 ? null : new Date(tmpLastOemAccountActivityDate);
+        long tmpDeviceLostModeDate = in.readLong();
+        this.deviceLostModeDate = tmpDeviceLostModeDate == -1 ? null : new Date(tmpDeviceLostModeDate);
+        this.devicesWithIdenticalActiveToken = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.activeTokensOnAllDevicesForOemAccount = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.oemAccountScore = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.deviceScore = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.nfcCapable = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.billingCountryCode = in.readString();
+        this.oemAccountCountryCode = in.readString();
+        this.deviceCountry = in.readString();
+        this.oemAccountUserName = in.readString();
+        long tmpDevicePairedToOemAccountDate = in.readLong();
+        this.devicePairedToOemAccountDate = tmpDevicePairedToOemAccountDate == -1 ? null : new Date(tmpDevicePairedToOemAccountDate);
+        this.deviceTimeZone = in.readString();
+        this.deviceTimeZoneSetBy = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.deviceIMEI = in.readString();
+        this.billingLine1 = in.readString();
+        this.billingLine2 = in.readString();
+        this.billingCity = in.readString();
+        this.billingState = in.readString();
+        this.billingZip = in.readString();
+        this.locale = in.readString();
+    }
+
+    public static final Parcelable.Creator<IdVerification> CREATOR = new Parcelable.Creator<IdVerification>() {
+        @Override
+        public IdVerification createFromParcel(Parcel source) {
+            return new IdVerification(source);
+        }
+
+        @Override
+        public IdVerification[] newArray(int size) {
+            return new IdVerification[size];
+        }
+    };
 }

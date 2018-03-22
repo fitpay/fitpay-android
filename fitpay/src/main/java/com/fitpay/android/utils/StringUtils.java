@@ -1,6 +1,5 @@
 package com.fitpay.android.utils;
 
-import com.fitpay.android.BuildConfig;
 import com.fitpay.android.api.models.security.ECCKeyPair;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
@@ -8,14 +7,16 @@ import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.JWEObject;
+import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.AESDecrypter;
 import com.nimbusds.jose.crypto.AESEncrypter;
+import com.nimbusds.jose.crypto.ECDSAVerifier;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jwt.SignedJWT;
 
 import java.security.MessageDigest;
-import java.text.ParseException;
-import java.util.Locale;
+import java.security.interfaces.ECPublicKey;
 
 /**
  * Created by Vlad on 26.02.2016.
@@ -65,16 +66,36 @@ public final class StringUtils {
      * @return decrypted string
      */
     public static String getDecryptedString(@KeysManager.KeyType int type, String encryptedString) {
+        KeysManager keysManager = KeysManager.getInstance();
 
         JWEObject jweObject;
         try {
             jweObject = JWEObject.parse(encryptedString);
             JWEHeader jweHeader = jweObject.getHeader();
-            if (jweHeader.getKeyID() == null || jweHeader.getKeyID().equals(KeysManager.getInstance().getKeyId(type))) {
-                jweObject.decrypt(new AESDecrypter(KeysManager.getInstance().getSecretKey(type)));
-                return jweObject.getPayload().toString();
+            if (jweHeader.getKeyID() == null || jweHeader.getKeyID().equals(keysManager.getKeyId(type))) {
+                jweObject.decrypt(new AESDecrypter(keysManager.getSecretKey(type)));
+
+                if ("JWT".equals(jweObject.getHeader().getContentType())) {
+                    SignedJWT signedJwt = jweObject.getPayload().toSignedJWT();
+                    ECCKeyPair keyPair = keysManager.getPairForType(type);
+
+                    ECPublicKey key = null;
+                    if ("https://fit-pay.com".equals(signedJwt.getJWTClaimsSet().getIssuer())) {
+                        key = (ECPublicKey)keysManager.getPublicKey("EC", Hex.hexStringToBytes(keyPair.getServerPublicKey()));
+                    } else {
+                        key = (ECPublicKey)keysManager.getPublicKey("EC", Hex.hexStringToBytes(keyPair.getPublicKey()));
+                    }
+                    JWSVerifier verifier = new ECDSAVerifier(key);
+                    if (!signedJwt.verify(verifier)) {
+                        throw new IllegalArgumentException("jwt did not pass signature validation");
+                    }
+
+                    return signedJwt.getJWTClaimsSet().getStringClaim("data");
+                } else {
+                    return jweObject.getPayload().toString();
+                }
             }
-        } catch (ParseException | JOSEException e) {
+        } catch (Exception e) {
             FPLog.e(e);
         }
 

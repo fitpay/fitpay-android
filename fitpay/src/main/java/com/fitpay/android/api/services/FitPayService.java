@@ -109,6 +109,10 @@ final public class FitPayService extends BaseClient {
         expiredNotificationSent = false;
     }
 
+    public OAuthToken getToken() {
+        return mAuthToken;
+    }
+
     public String getUserId() {
         return mAuthToken.getUserId();
     }
@@ -116,5 +120,4 @@ final public class FitPayService extends BaseClient {
     public boolean isAuthorized() {
         return mAuthToken != null;
     }
-
 }
