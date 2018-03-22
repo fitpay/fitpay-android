@@ -10,6 +10,7 @@ import com.fitpay.android.paymentdevice.models.SyncRequest;
 import com.fitpay.android.paymentdevice.utils.sync.SyncThreadExecutor;
 import com.fitpay.android.utils.FPLog;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -20,6 +21,8 @@ import java.util.concurrent.TimeUnit;
  * Device sync manager which can work with multiple devices
  */
 public class DeviceSyncManager {
+    private final static int DEDUPE_LIMIT = 100;
+
     private final Context mContext;
 
     private final BlockingQueue<Runnable> requests;
@@ -29,6 +32,8 @@ public class DeviceSyncManager {
     private int threadsCount;
 
     private SyncThreadExecutor worker;
+
+    private List<String> dedupeSyncIds = new ArrayList<>(DEDUPE_LIMIT);
 
     public DeviceSyncManager(Context context) {
         this.mContext = context;
@@ -54,6 +59,21 @@ public class DeviceSyncManager {
     public void add(final SyncRequest request) {
         if (request == null) {
             return;
+        }
+
+        // if we have a syncId, dedupe it to avoid re-running syncs arriving through multiple channels
+        if (request.getSyncId() != null) {
+            if (dedupeSyncIds.contains(request.getSyncId())) {
+                FPLog.i("duplicated sync received, skipping: " + request);
+                return;
+            }
+
+            dedupeSyncIds.add(request.getSyncId());
+
+            // ensure the dedupe size remains consistent and doesn't grow unbounded
+            while (dedupeSyncIds.size() > DEDUPE_LIMIT) {
+                dedupeSyncIds.remove(0);
+            }
         }
 
         SyncInfo syncInfo = request.getSyncInfo();
