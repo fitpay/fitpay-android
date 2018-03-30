@@ -2,6 +2,7 @@ package com.fitpay.android.webview.impl;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
@@ -269,11 +270,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
         NotificationManager.getInstance().addListener(listenerForAppCallbacks = new DeviceSyncListener(getConnectorId(), callbackId));
 
-        if (deviceConnector != null) {
-            deviceConnector.createSyncRequest(syncInfo);
-        } else {
-            deviceService.getPaymentDeviceConnector().createSyncRequest(syncInfo);
-        }
+        createSyncRequest(syncInfo);
     }
 
     @Override
@@ -368,14 +365,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                                             SyncInfo syncInfo = gson.fromJson(event.getPayload(), SyncInfo.class);
                                             syncInfo.setInitiator(SyncInitiator.PLATFORM);
 
-                                            SyncRequest syncRequest = new SyncRequest.Builder()
-                                                    .setSyncId(syncInfo.getSyncId())
-                                                    .setSyncInfo(syncInfo)
-                                                    .setConnector(deviceService.getPaymentDeviceConnector())
-                                                    .setDevice(device)
-                                                    .setUser(user)
-                                                    .build();
-                                            RxBus.getInstance().post(syncRequest);
+                                            createSyncRequest(syncInfo);
                                         }
                                     }
                                 };
@@ -471,6 +461,16 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
     public String getConnectorId() {
         return deviceConnector != null ? deviceConnector.id() : null;
+    }
+
+    private void createSyncRequest(SyncInfo syncInfo){
+        if (deviceConnector != null) {
+            deviceConnector.createSyncRequest(syncInfo);
+        } else if(deviceService.getPaymentDeviceConnector() != null){
+            deviceService.getPaymentDeviceConnector().createSyncRequest(syncInfo);
+        } else {
+            Log.e(TAG, "Can't create syncRequest. PaymentDeviceConnector is missing");
+        }
     }
 
     private class DeviceStatusListener extends Listener {
