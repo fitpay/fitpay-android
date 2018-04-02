@@ -51,6 +51,13 @@ public class UserEventStreamManager {
      * @throws IOException
      */
     public static Future<UserEventStream> subscribe(final String userId) throws IOException {
+        // if at the platform level SSE subscriptions are turned off, then this method will simply
+        // return null
+        if (!ApiManager.getInstance().getPlatformConfig().isUserEventStreamsEnabled()) {
+            FPLog.i(TAG, "userEventStreamsEnabled has been disabled at the platform level, skipping user event stream subscription");
+            return null;
+        }
+
         UserEventStream stream = streams.get(userId);
 
         // why this background execution, well android.. we don't want these network calls to
