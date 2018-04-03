@@ -50,8 +50,8 @@ public final class IdVerification implements Parcelable {
     /**
      * send data to RTM
      */
-    public void send(String callbackId) {
-        RxBus.getInstance().post(new RtmMessageResponse(callbackId, this, RtmType.ID_VERIFICATION));
+    public void send(String connectorId, String callbackId) {
+        RxBus.getInstance().post(connectorId, new RtmMessageResponse(callbackId, this, RtmType.ID_VERIFICATION));
     }
 
     public static final class Builder {

@@ -317,7 +317,7 @@ public final class SyncWorkerTask implements Runnable {
 
                         CommitFailed.Builder builder = new CommitFailed.Builder().commit(commit);
                         builder.errorMessage(errorMessage);
-                        RxBus.getInstance().post(builder.build());
+                        RxBus.getInstance().post(connectorId, builder.build());
 
                         return null;
                     }

@@ -25,7 +25,7 @@ public class RtmParserV4 extends RtmParserV2 {
                 break;
 
             case RtmType.SDK_VERSION_REQUEST:
-                RxBus.getInstance().post(new RtmMessageResponse(msg.getCallbackId(), new SdkVersion(BuildConfig.SDK_VERSION), RtmType.SDK_VERSION));
+                impl.postMessage(new RtmMessageResponse(msg.getCallbackId(), new SdkVersion(BuildConfig.SDK_VERSION), RtmType.SDK_VERSION));
                 break;
 
             default:

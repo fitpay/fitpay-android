@@ -25,20 +25,20 @@ public class RtmParserV5 extends RtmParserV4 {
     public void parseMessage(RtmMessage msg) {
         switch (msg.getType()) {
             case RtmType.ID_VERIFICATION_REQUEST:
-                RxBus.getInstance().post(new IdVerificationRequest(msg.getCallbackId()));
+                impl.postMessage(new IdVerificationRequest(msg.getCallbackId()));
                 break;
 
             case RtmType.SUPPORTS_ISSUER_APP_VERIFICATION:
-                RxBus.getInstance().post(new RtmMessageResponse(msg.getCallbackId(), true, new A2AIssuerAppVerification(impl.supportsAppVerification()), RtmType.SUPPORTS_ISSUER_APP_VERIFICATION));
+                impl.postMessage(new RtmMessageResponse(msg.getCallbackId(), true, new A2AIssuerAppVerification(impl.supportsAppVerification()), RtmType.SUPPORTS_ISSUER_APP_VERIFICATION));
                 break;
 
             case RtmType.APP_TO_APP_VERIFICATION:
                 if (impl.supportsAppVerification()) {
                     A2AVerificationRequest appToAppVerification = Constants.getGson().fromJson(msg.getData(), A2AVerificationRequest.class);
                     appToAppVerification.setCallbackId(msg.getCallbackId());
-                    RxBus.getInstance().post(appToAppVerification);
+                    impl.postMessage(appToAppVerification);
                 } else {
-                    RxBus.getInstance().post(new RtmMessageResponse(msg.getCallbackId(), false,
+                    impl.postMessage(new RtmMessageResponse(msg.getCallbackId(), false,
                             new A2AVerificationFailed(A2AVerificationError.NOT_SUPPORTED), RtmType.APP_TO_APP_VERIFICATION));
                 }
                 break;

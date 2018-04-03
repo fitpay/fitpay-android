@@ -77,7 +77,7 @@ public class WebViewCommunicatorTest extends TestActions {
         String userId = "5750865d-b0d8-40a6-9d85-f6c863f7a6c6";
 
         Activity context = Mockito.mock(Activity.class);
-        WebViewCommunicator wvc = new WebViewCommunicatorImpl(context, new MockPaymentDeviceConnector(), -1);
+        WebViewCommunicator wvc = new WebViewCommunicatorImpl(context, new MockPaymentDeviceConnector(), null);
         wvc.sendUserData(null, deviceId, token, userId);
 
         latch.await(60, TimeUnit.SECONDS);
