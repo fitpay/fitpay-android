@@ -36,7 +36,10 @@ class GattApduOperation extends GattOperation {
     private long validUntil;
     private long mStartTime;
 
+    private String connectorId;
+
     public GattApduOperation(String connectorId, ApduPackage apduPackage) {
+        this.connectorId = connectorId;
 
         mResult = new ApduExecutionResult(apduPackage.getPackageId());
 
@@ -98,7 +101,7 @@ class GattApduOperation extends GattOperation {
             mResult.deriveState();
         }
 
-        RxBus.getInstance().post(mResult);
+        RxBus.getInstance().post(connectorId, mResult);
 
         mSequencesMap.clear();
         clear();
@@ -121,7 +124,7 @@ class GattApduOperation extends GattOperation {
 
                 if (mSequencesMap.containsKey(sId)) {
 
-                    RxBus.getInstance().post(Sync.builder()
+                    RxBus.getInstance().post(connectorId, Sync.builder()
                             .state(States.INC_PROGRESS)
                             .build());
 

@@ -210,10 +210,10 @@ final class GattManager {
 
                     if (PaymentServiceConstants.CHARACTERISTIC_SECURITY_STATE.equals(uuid)) {
                         ISecureMessage securityStateMessage = new SecurityStateMessage().withData(value);
-                        RxBus.getInstance().post(securityStateMessage);
+                        RxBus.getInstance().post(paymentDeviceConnector.id(), securityStateMessage);
                     } else if (PaymentServiceConstants.CHARACTERISTIC_NOTIFICATION.equals(uuid)) {
                         NotificationMessage notificationMessage = new NotificationMessage().withData(value);
-                        RxBus.getInstance().post(notificationMessage);
+                        RxBus.getInstance().post(paymentDeviceConnector.id(), notificationMessage);
                     } else if (PaymentServiceConstants.CHARACTERISTIC_APDU_RESULT.equals(uuid)) {
                         ApduResultMessage apduResultMessage = new ApduResultMessage().withMessage(value);
 
@@ -304,7 +304,7 @@ final class GattManager {
                     } else if (PaymentServiceConstants.CHARACTERISTIC_APPLICATION_CONTROL.equals(uuid)) {
                         ApplicationControlMessage applicationControlMessage = new ApplicationControlMessage()
                                 .withData(value);
-                        RxBus.getInstance().post(applicationControlMessage);
+                        RxBus.getInstance().post(paymentDeviceConnector.id(), applicationControlMessage);
                     }
                 }
 
@@ -359,7 +359,7 @@ final class GattManager {
         }
 
         if (parent != null && parent instanceof GattApduOperation) {
-            RxBus.getInstance().post(new ApduExecutionError(reason));
+            RxBus.getInstance().post(paymentDeviceConnector.id(), new ApduExecutionError(reason));
         } else {
             driveNext();
         }
@@ -396,7 +396,7 @@ final class GattManager {
     }
 
     private void postMessage(final ApduResultMessage message) {
-        RxBus.getInstance().post(message);
+        RxBus.getInstance().post(paymentDeviceConnector.id(), message);
 
         Observable.create(
                 subscriber -> {

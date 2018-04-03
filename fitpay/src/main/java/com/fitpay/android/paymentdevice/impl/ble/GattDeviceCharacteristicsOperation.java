@@ -15,6 +15,8 @@ import java.util.UUID;
  */
 class GattDeviceCharacteristicsOperation extends GattOperation {
 
+    private String connectorId;
+
     private String mAddress;
 
     private String manufacturerName;
@@ -27,7 +29,8 @@ class GattDeviceCharacteristicsOperation extends GattOperation {
     private String secureElementId;
     private String casd;
 
-    public GattDeviceCharacteristicsOperation(final String macAddress) {
+    public GattDeviceCharacteristicsOperation(final String connectorId, final String macAddress) {
+        this.connectorId = connectorId;
 
         mAddress = macAddress;
 
@@ -74,7 +77,7 @@ class GattDeviceCharacteristicsOperation extends GattOperation {
                 .setHardwareRevision(StringUtils.convertHexStringToAscii(hardwareRevision))
                 .build();
 
-        RxBus.getInstance().post(device);
+        RxBus.getInstance().post(connectorId, device);
     }
 
     private GattOperation createOperation(UUID characteristicUUID, GattBaseReadOperation.OnReadCallback callback) {

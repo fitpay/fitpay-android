@@ -121,7 +121,7 @@ public final class BluetoothPaymentDeviceConnector extends PaymentDeviceConnecto
     @Override
     public void readDeviceInfo() {
         FPLog.d(TAG, "initiate readDeviceInfo request");
-        GattOperation readDeviceInfoOperation = new GattDeviceCharacteristicsOperation(mAddress);
+        GattOperation readDeviceInfoOperation = new GattDeviceCharacteristicsOperation(connectorId, mAddress);
         mGattManager.queue(readDeviceInfoOperation);
     }
 
@@ -130,7 +130,7 @@ public final class BluetoothPaymentDeviceConnector extends PaymentDeviceConnecto
         GattOperation getNFCOperation = new GattCharacteristicReadOperation(
                 PaymentServiceConstants.SERVICE_UUID,
                 PaymentServiceConstants.CHARACTERISTIC_SECURITY_STATE,
-                data -> RxBus.getInstance().post(new SecurityStateMessage().withData(data)));
+                data -> postData(new SecurityStateMessage().withData(data)));
         mGattManager.queue(getNFCOperation);
     }
 
