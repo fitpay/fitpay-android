@@ -34,7 +34,7 @@ public class RtmParserTest {
     @Before
     public void init() {
         Activity context = Mockito.mock(Activity.class);
-        wvci = new WebViewCommunicatorImpl(context, -1);
+        wvci = new WebViewCommunicatorImpl(context, null);
 
     }
 

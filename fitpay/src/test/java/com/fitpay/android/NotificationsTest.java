@@ -78,7 +78,7 @@ public class NotificationsTest {
     }
 
     @Test
-    @Ignore //TODO: This test works fine on a local machine, but doesn't want to pass on travis.
+    //@Ignore //TODO: This test works fine on a local machine, but doesn't want to pass on travis.
     public void test03_checkNotification() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
         AtomicBoolean changed = new AtomicBoolean(false);

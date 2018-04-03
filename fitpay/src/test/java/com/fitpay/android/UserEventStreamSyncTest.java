@@ -13,7 +13,6 @@ import com.fitpay.android.api.sse.UserEventStreamManager;
 import com.fitpay.android.paymentdevice.DeviceService;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
-import com.fitpay.android.utils.Command;
 import com.fitpay.android.utils.Listener;
 import com.fitpay.android.utils.NotificationManager;
 import com.fitpay.android.webview.impl.WebViewCommunicatorImpl;
@@ -23,7 +22,6 @@ import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -43,13 +41,12 @@ public class UserEventStreamSyncTest extends TestActions {
         Device device = createDevice(user, getTestDevice());
 
         Activity context = Mockito.mock(Activity.class);
-        DeviceService deviceService = new DeviceService();
-        deviceService.setPaymentDeviceConnector(new MockPaymentDeviceConnector());
+
+        MockPaymentDeviceConnector connector = new MockPaymentDeviceConnector();
 
         // pretend to launch the webview and act like the user has logged into the WV, this should
         // cause the user event stream subscription to occur
-        WebViewCommunicatorImpl wvc = new WebViewCommunicatorImpl(context, -1);
-        wvc.setDeviceService(deviceService);
+        WebViewCommunicatorImpl wvc = new WebViewCommunicatorImpl(context, connector, null);
         wvc.sendUserData(
                 null,
                 device.getDeviceIdentifier(),
@@ -57,7 +54,7 @@ public class UserEventStreamSyncTest extends TestActions {
                 user.getId());
 
         boolean subscribed = false;
-        for (int i=0; i<10; i++) {
+        for (int i = 0; i < 10; i++) {
             subscribed = UserEventStreamManager.isSubscribed(user.getId());
 
             if (!subscribed) {
@@ -72,18 +69,8 @@ public class UserEventStreamSyncTest extends TestActions {
         // come out onto the RxBus
         final CountDownLatch syncLatch = new CountDownLatch(1);
         final List<SyncRequest> syncRequests = new ArrayList<>();
-        NotificationManager.getInstance().addListener(new Listener() {
-            @Override
-            public Map<Class, Command> getCommands() {
-                mCommands.put(SyncRequest.class, data -> handleSyncRequest((SyncRequest) data));
-                return mCommands;
-            }
-
-            public void handleSyncRequest(SyncRequest request) {
-                syncRequests.add(request);
-                syncLatch.countDown();
-            }
-        });
+        final SyncListener syncListener = new SyncListener(syncLatch, syncRequests);
+        NotificationManager.getInstance().addListener(syncListener);
 
         CreditCard createdCard = createCreditCard(user, getTestCreditCard("9999504454545450"));
 
@@ -166,5 +153,21 @@ public class UserEventStreamSyncTest extends TestActions {
         eventLatch.await(30000, TimeUnit.MILLISECONDS);
 
         assertTrue(events.size() > 0);
-     }
+    }
+
+    private class SyncListener extends Listener {
+        final CountDownLatch syncLatch;
+        final List<SyncRequest> syncRequests;
+
+        SyncListener(CountDownLatch latch, List<SyncRequest> requests) {
+            this.syncLatch = latch;
+            this.syncRequests = requests;
+            mCommands.put(SyncRequest.class, data -> handleSyncRequest((SyncRequest) data));
+        }
+
+        void handleSyncRequest(SyncRequest request) {
+            syncRequests.add(request);
+            syncLatch.countDown();
+        }
+    }
 }

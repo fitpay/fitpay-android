@@ -102,7 +102,7 @@ android {
 }
 
 ext {
-    supportLib = "27.0.2"
+    supportLib = "27.1.0"
     retrofitLib = "2.3.0"
     okhttpLib = "3.9.0"
     rxjavaLib = "1.3.4"
@@ -119,24 +119,24 @@ unMock {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile "com.android.support:support-annotations:${supportLib}"
-    compile "com.android.support:appcompat-v7:${supportLib}"
+    implementation "com.android.support:support-annotations:${supportLib}"
+    implementation "com.android.support:appcompat-v7:${supportLib}"
 
-    compile "com.squareup.retrofit2:retrofit:${retrofitLib}"
-    compile "com.squareup.retrofit2:converter-gson:${retrofitLib}"
+    implementation "com.squareup.retrofit2:retrofit:${retrofitLib}"
+    implementation "com.squareup.retrofit2:converter-gson:${retrofitLib}"
 
-    compile "com.squareup.okhttp3:logging-interceptor:${okhttpLib}"
-    compile "com.squareup.okhttp3:okhttp:${okhttpLib}"
+    implementation "com.squareup.okhttp3:logging-interceptor:${okhttpLib}"
+    implementation "com.squareup.okhttp3:okhttp:${okhttpLib}"
 
-    compile "io.reactivex:rxjava:${rxjavaLib}"
-    compile 'io.reactivex:rxandroid:1.2.1'
+    implementation "io.reactivex:rxjava:${rxjavaLib}"
+    implementation 'io.reactivex:rxandroid:1.2.1'
 
-    compile 'me.alexrs:prefs:1.1.0'
+    implementation 'me.alexrs:prefs:1.1.0'
 
-    compile 'org.bouncycastle:bcprov-jdk15on:1.58'
-    compile 'com.nimbusds:nimbus-jose-jwt:5.1'
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.58'
+    implementation 'com.nimbusds:nimbus-jose-jwt:5.1'
 
     javadocDeps "com.android.support:support-annotations:${supportLib}"
     javadocDeps "com.squareup.retrofit2:retrofit:${retrofitLib}"
@@ -148,11 +148,11 @@ dependencies {
     javadocDeps 'org.bouncycastle:bcprov-jdk15on:1.58'
     javadocDeps 'com.nimbusds:nimbus-jose-jwt:5.1'
 
-    compile 'com.github.heremaps:oksse:master-SNAPSHOT'
+    implementation 'com.github.heremaps:oksse:master-SNAPSHOT'
 
-    testCompile 'org.mockito:mockito-core:2.12.0'
-    testCompile 'junit:junit:4.12'
-    testCompile group: 'org.jmockit', name: 'jmockit', version: '1.37'
+    testImplementation 'org.mockito:mockito-core:2.12.0'
+    testImplementation 'junit:junit:4.12'
+    testImplementation group: 'org.jmockit', name: 'jmockit', version: '1.37'
 }
 
 task generateSourcesJar(type: Jar) {
