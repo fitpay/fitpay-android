@@ -89,6 +89,8 @@ public class UserEventStreamSyncTest extends TestActions {
 
         syncLatch.await(30000, TimeUnit.MILLISECONDS);
 
+        NotificationManager.getInstance().removeListener(syncListener);
+
         assertTrue(syncRequests.size() > 0);
         SyncRequest syncRequest = syncRequests.get(0);
         assertNotNull(syncRequest.getSyncId());

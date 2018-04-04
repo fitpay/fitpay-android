@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.callbacks.CallbackWrapper;
 import com.fitpay.android.api.enums.ResultCode;
+import com.fitpay.android.api.models.PlatformConfig;
 import com.fitpay.android.api.models.Relationship;
 import com.fitpay.android.api.models.issuer.Issuers;
 import com.fitpay.android.api.models.security.OAuthToken;
@@ -109,6 +110,10 @@ public class ApiManager {
 
     public static void setPushToken(String pushToken) {
         sPushToken = pushToken;
+    }
+
+    public PlatformConfig getPlatformConfig() {
+        return apiService.getPlatformConfig();
     }
 
     /**
