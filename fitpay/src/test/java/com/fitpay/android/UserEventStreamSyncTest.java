@@ -72,18 +72,8 @@ public class UserEventStreamSyncTest extends TestActions {
         // come out onto the RxBus
         final CountDownLatch syncLatch = new CountDownLatch(1);
         final List<SyncRequest> syncRequests = new ArrayList<>();
-        NotificationManager.getInstance().addListener(new Listener() {
-            @Override
-            public Map<Class, Command> getCommands() {
-                mCommands.put(SyncRequest.class, data -> handleSyncRequest((SyncRequest) data));
-                return mCommands;
-            }
-
-            public void handleSyncRequest(SyncRequest request) {
-                syncRequests.add(request);
-                syncLatch.countDown();
-            }
-        });
+        final SyncListener syncListener = new SyncListener(syncLatch, syncRequests);
+        NotificationManager.getInstance().addListener(syncListener);
 
         CreditCard createdCard = createCreditCard(user, getTestCreditCard("9999504454545450"));
 
@@ -101,6 +91,8 @@ public class UserEventStreamSyncTest extends TestActions {
         });
 
         syncLatch.await(30000, TimeUnit.MILLISECONDS);
+
+        NotificationManager.getInstance().removeListener(syncListener);
 
         assertTrue(syncRequests.size() > 0);
         SyncRequest syncRequest = syncRequests.get(0);
@@ -167,4 +159,20 @@ public class UserEventStreamSyncTest extends TestActions {
 
         assertTrue(events.size() > 0);
      }
+
+    private class SyncListener extends Listener {
+        final CountDownLatch syncLatch;
+        final List<SyncRequest> syncRequests;
+
+        SyncListener(CountDownLatch latch, List<SyncRequest> requests) {
+            this.syncLatch = latch;
+            this.syncRequests = requests;
+            mCommands.put(SyncRequest.class, data -> handleSyncRequest((SyncRequest) data));
+        }
+
+        void handleSyncRequest(SyncRequest request) {
+            syncRequests.add(request);
+            syncLatch.countDown();
+        }
+    }
 }
