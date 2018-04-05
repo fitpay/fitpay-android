@@ -218,6 +218,8 @@ We welcome contributions to the SDK. For your first few contributions please for
 
 This instructions are for only those that have the credentials for pushing public FitPay Android SDK releases.
 
+* Please add a release name in GitHub using the following convention: `FitPay SDK for Android vX.X.X`
+* Please also include notes in GitHub using proper markdown about each major PR in the release.
 * Create `release-X.X.X` branch, ensuring the release version used has been properly incremented from the last release.
 * If the release was not set at the end of the previous release, set the version in `fitpay/build.gradle` and commit/push the change.
 * Update `bintray.properties` with release credentials, **don't commit into git**.
