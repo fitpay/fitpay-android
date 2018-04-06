@@ -124,7 +124,7 @@ public final class NotificationManager {
                 FPLog.d(TAG, "addListener: " + listener);
                 mListeners.add(listener);
 
-                Map<Class, Command> commands = listener.getCommands();
+                Map<Class, Command> commands = listener.getCommandsForRx();
 
                 for (Map.Entry<Class, Command> map : commands.entrySet()) {
                     Class clazz = map.getKey();
@@ -157,7 +157,7 @@ public final class NotificationManager {
             FPLog.d(TAG, "removeListener " + listener + " called from thread: " + Thread.currentThread());
 
             if (mListeners.contains(listener)) {
-                Map<Class, Command> commands = listener.getCommands();
+                Map<Class, Command> commands = listener.getCommandsForRx();
                 for (Map.Entry<Class, Command> map : commands.entrySet()) {
                     Class clazz = map.getKey();
                     FPLog.d(TAG, "removeListener removing value " + map.getValue() + " from thread: " + Thread.currentThread());

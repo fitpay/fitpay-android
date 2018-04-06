@@ -22,7 +22,32 @@ public abstract class Listener {
         this.filter = filter;
     }
 
-    Map<Class, Command> getCommands() {
+    /**
+     * @deprecated
+     * Use {@link #addCommand(Class, Command)}
+     * @return all commands
+     */
+    @Deprecated
+    public Map<Class, Command> getCommands() {
+        return mCommands;
+    }
+
+    /**
+     * Add new command to the list
+     * @param clazz
+     * @param command
+     * @return
+     */
+    public Listener addCommand(Class clazz, Command command) {
+        mCommands.put(clazz, command);
+        return this;
+    }
+
+    /**
+     * Internal usage. List of commands with applied filter.
+     * @return all commands
+     */
+    Map<Class, Command> getCommandsForRx() {
         if (!StringUtils.isEmpty(filter) && !filterApplied) {
             filterApplied = true;
 
