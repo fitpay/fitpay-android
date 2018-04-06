@@ -18,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import retrofit2.Response;
+import rx.Observable;
+import rx.schedulers.Schedulers;
 
 
 /**
@@ -63,31 +65,35 @@ public class UserEventStreamManager {
         // why this background execution, well android.. we don't want these network calls to
         // occur on the UI thread, therefore they're backgrounded.
         if (stream == null) {
-            return executor.submit(new Callable<UserEventStream>() {
-                @Override
-                public UserEventStream call() throws Exception {
+            return executor.submit(() -> {
+
+                UserEventStream[] result = new UserEventStream[1];
+
+                Observable.defer(() -> {
                     try {
                         FitPayClient client = ApiManager.getInstance().getClient();
                         Response<User> user = client.getUser(userId).execute();
 
                         if (user.isSuccessful()) {
-                            UserEventStream stream = new UserEventStream(user.body());
-                            UserEventStream existing = streams.putIfAbsent(userId, stream);
+                            UserEventStream eventStream = new UserEventStream(user.body());
+                            UserEventStream existing = streams.putIfAbsent(userId, eventStream);
 
                             if (existing != null) {
                                 // whoops, another thread beat us to subscribing to this event stream... no need for this new one
-                                stream.close();;
-                                stream = existing;
+                                eventStream.close();
+                                eventStream = existing;
                             }
 
-                            return stream;
+                            result[0] = eventStream;
                         }
                     } catch (IOException e) {
                         FPLog.e(e);
                     }
 
-                    return null;
-                }
+                    return Observable.empty();
+                }).subscribeOn(Schedulers.io()).toBlocking().subscribe();
+
+                return result[0];
             });
 
         }
