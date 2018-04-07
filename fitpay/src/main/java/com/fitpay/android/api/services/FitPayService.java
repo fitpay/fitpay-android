@@ -1,5 +1,7 @@
 package com.fitpay.android.api.services;
 
+import android.util.Log;
+
 import com.fitpay.android.BuildConfig;
 import com.fitpay.android.api.models.PlatformConfig;
 import com.fitpay.android.api.models.security.AccessDenied;
@@ -18,6 +20,9 @@ import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 final public class FitPayService extends BaseClient {
@@ -31,7 +36,7 @@ final public class FitPayService extends BaseClient {
     private boolean expiredNotificationSent;
 
     private static final String PLATFORM_CONFIG_URL = "http://s3.amazonaws.com/crypto-web-prod/mobile/config.json";
-    private final PlatformConfig platformConfig;
+    private PlatformConfig platformConfig;
 
     public FitPayService(String apiBaseUrl) {
 
@@ -93,7 +98,7 @@ final public class FitPayService extends BaseClient {
         clientBuilder.addInterceptor(interceptor);
 
         mAPIClient = constructClient(apiBaseUrl, clientBuilder.build());
-        platformConfig = constructPlatformConfig();
+        constructPlatformConfig();
     }
 
     private FitPayClient constructClient(String apiBaseUrl, OkHttpClient okHttpClient) {
@@ -106,29 +111,30 @@ final public class FitPayService extends BaseClient {
         return client;
     }
 
-    private PlatformConfig constructPlatformConfig() {
+    private void constructPlatformConfig() {
         if (mAPIClient == null) {
             throw new IllegalStateException("invalid state, not okhttp client is currently set");
         }
 
-        PlatformConfig platformConfig = null;
-        try {
-            retrofit2.Response<JsonElement> result = mAPIClient.get(PLATFORM_CONFIG_URL).execute();
+        rx.Observable.defer(() -> {
+            try {
+                retrofit2.Response<JsonElement> result = mAPIClient.get(PLATFORM_CONFIG_URL).execute();
 
-            JsonElement body = result.body();
+                JsonElement body = result.body();
 
-            if (body.getAsJsonObject().has("android")) {
-                platformConfig = Constants.getGson().fromJson(body.getAsJsonObject().getAsJsonObject("android"), PlatformConfig.class);
-            } else {
-                FPLog.d("platformConfiguration " + body.toString() + " from " + PLATFORM_CONFIG_URL + " does not have an android section, using defaults");
+                if (body.getAsJsonObject().has("android")) {
+                    platformConfig = Constants.getGson().fromJson(body.getAsJsonObject().getAsJsonObject("android"), PlatformConfig.class);
+                } else {
+                    FPLog.d("platformConfiguration " + body.toString() + " from " + PLATFORM_CONFIG_URL + " does not have an android section, using defaults");
+                }
+            } catch (IOException e) {
+                FPLog.e("error getting platform configuration from " + PLATFORM_CONFIG_URL + ", using defaults", e);
+                platformConfig = new PlatformConfig();
             }
-        } catch (IOException e) {
-            FPLog.e("error getting platform configuration from " + PLATFORM_CONFIG_URL + ", using defaults", e);
-            platformConfig = new PlatformConfig();
-        }
+            return rx.Observable.empty();
+        }).subscribeOn(Schedulers.io()).toBlocking().subscribe();
 
         FPLog.d("platformConfiguration: " + platformConfig);
-        return platformConfig;
     }
 
     public FitPayClient getClient() {
