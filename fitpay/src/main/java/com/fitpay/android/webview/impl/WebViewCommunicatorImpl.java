@@ -516,11 +516,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     private class DeviceStatusListener extends Listener {
         private DeviceStatusListener() {
             super(getConnectorId());
-            mCommands.put(DeviceStatusMessage.class, data -> {
-                if (deviceId == null || deviceId.equals(((DeviceStatusMessage) data).getDeviceId())) {
-                    sendDeviceStatusToJs((DeviceStatusMessage) data);
-                }
-            });
+            mCommands.put(DeviceStatusMessage.class, data -> sendDeviceStatusToJs((DeviceStatusMessage) data));
         }
     }
 

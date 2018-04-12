@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
-import com.fitpay.android.api.callbacks.CallbackWrapper;
 import com.fitpay.android.api.enums.ResultCode;
 import com.fitpay.android.api.models.security.ECCKeyPair;
 
@@ -31,6 +30,9 @@ import javax.crypto.KeyAgreement;
 import javax.crypto.SecretKey;
 
 import retrofit2.Call;
+import retrofit2.Response;
+import rx.Observable;
+import rx.schedulers.Schedulers;
 
 /**
  * KeysManager is designed to create and manage @ECCKeyPair object.
@@ -170,38 +172,37 @@ final public class KeysManager {
     }
 
     public void updateECCKey(final @KeyType int type, @NonNull final Runnable successRunnable, final ApiCallback callback) {
-
-        try {
-
-            ECCKeyPair keyPair = createPairForType(type);
-
-            ApiCallback<ECCKeyPair> apiCallback = new ApiCallback<ECCKeyPair>() {
-                @Override
-                public void onSuccess(ECCKeyPair result) {
-                    result.setPrivateKey(mKeysMap.get(type).getPrivateKey());
-                    mKeysMap.put(type, result);
-
-                    if (successRunnable != null) {
-                        successRunnable.run();
+        Observable.defer(() -> {
+            try {
+                ECCKeyPair keyPair = createPairForType(type);
+                Call<ECCKeyPair> getKeyCall = ApiManager.getInstance().getClient().createEncryptionKey(keyPair);
+                Response<ECCKeyPair> response = getKeyCall.execute();
+                if (response.isSuccessful() && response.errorBody() == null) {
+                    return Observable.just(response.body());
+                } else if (response.errorBody() != null) {
+                    try {
+                        return Observable.error(new Throwable(response.errorBody().toString()));
+                    } catch (Exception e) {
+                        return Observable.error(e);
                     }
+                } else {
+                    return Observable.error(new Throwable(response.message()));
                 }
 
-                @Override
-                public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
-                    if (callback != null) {
-                        callback.onFailure(errorCode, errorMessage);
-                    }
-                }
-            };
+            } catch (Exception e) {
+                return Observable.error(e);
+            }
+        }).subscribeOn(Schedulers.io()).toBlocking().subscribe(eccKeyPair -> {
+            eccKeyPair.setPrivateKey(mKeysMap.get(type).getPrivateKey());
+            mKeysMap.put(type, eccKeyPair);
 
-            Call<ECCKeyPair> getKeyCall = ApiManager.getInstance().getClient().createEncryptionKey(keyPair);
-            getKeyCall.enqueue(new CallbackWrapper<>(apiCallback));
-
-        } catch (Exception e) {
-            FPLog.e(TAG, e);
-
-            callback.onFailure(ResultCode.REQUEST_FAILED, e.toString());
-        }
+            if (successRunnable != null) {
+                successRunnable.run();
+            }
+        }, throwable -> {
+            FPLog.e(TAG, throwable);
+            callback.onFailure(ResultCode.REQUEST_FAILED, throwable.toString());
+        });
     }
 
     public String getKeyId(@KeyType int type) {
