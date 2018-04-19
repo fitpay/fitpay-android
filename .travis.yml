@@ -25,5 +25,4 @@ licenses:
   - 'google-gdk-license-.+'
 
 script:
-  - ./gradlew clean
-  - ./gradlew testReleaseUnitTestCoverage
+  - ./gradlew clean test

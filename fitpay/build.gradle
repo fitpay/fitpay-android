@@ -12,7 +12,6 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'maven'
-apply from: '../jacoco.gradle'
 apply plugin: 'de.mobilej.unmock'
 
 group = 'com.fitpay.android'
@@ -79,6 +78,7 @@ android {
 
     lintOptions {
         disable 'InvalidPackage'
+        abortOnError false
     }
 
     packagingOptions {
@@ -112,8 +112,8 @@ unMock {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "com.android.support:support-annotations:${supportLib}"
     implementation "com.android.support:appcompat-v7:${supportLib}"
 
@@ -135,7 +135,7 @@ dependencies {
 
     testImplementation 'org.mockito:mockito-core:2.12.0'
     testImplementation 'junit:junit:4.12'
-    testImplementation group: 'org.jmockit', name: 'jmockit', version: '1.37'
+    testImplementation 'org.jmockit:jmockit:1.37'
 }
 
 task generateSourcesJar(type: Jar) {
