@@ -60,10 +60,6 @@ cd fitpay-android-sdk
 ./gradlew clean test
 ```
 
-### Problems with the tests?
-
-Some versions of Java come with an encryption distribution that may not be up to modern standards. If you experience problems with SSL connections, please download the [Java Cryptography Extension](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html).
-
 ### Running code coverage
 
 You can run code coverage in the android SDK (to highlight individual file results) or manually. To run manually, run:  
