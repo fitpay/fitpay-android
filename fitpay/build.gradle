@@ -15,7 +15,7 @@ apply plugin: 'maven'
 apply plugin: 'de.mobilej.unmock'
 
 group = 'com.fitpay.android'
-version = '0.4.40'
+version = '0.6.0'
 archivesBaseName = "android_sdk"
 
 uploadArchives {
@@ -170,6 +170,7 @@ bintray {
     pkg {
         repo = 'maven'
         name = 'com.fitpay'
+        userOrg = 'fit-pay'
         licenses = ['MIT']
         vcsUrl = 'https://github.com/fitpay/fitpay-android-sdk.git'
     }
