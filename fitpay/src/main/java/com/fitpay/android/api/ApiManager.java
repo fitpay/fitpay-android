@@ -87,6 +87,15 @@ public class ApiManager {
         apiService = new FitPayService(getBaseUrl());
     }
 
+    /**
+     * Clean API static variables. Required to be call in case of app URL overrides.
+     */
+    public static void clean(){
+        synchronized (ApiManager.class){
+            sInstance = null;
+        }
+    }
+
     public static ApiManager getInstance() {
         if (sInstance == null) {
             synchronized (ApiManager.class) {
