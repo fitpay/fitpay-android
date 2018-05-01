@@ -1,5 +1,6 @@
 package com.fitpay.android.utils;
 
+import com.fitpay.android.api.models.ErrorResponse;
 import com.fitpay.android.api.models.Links;
 import com.fitpay.android.api.models.Payload;
 import com.fitpay.android.api.models.card.CreditCardInfo;
@@ -47,6 +48,7 @@ public final class Constants {
                     .registerTypeAdapter(Payload.class, new ModelAdapter.PayloadDeserializer())
                     .registerTypeAdapter(UserAuthInfo.class, new ModelAdapter.DataSerializer<>())
                     .registerTypeAdapter(OAuthToken.class, new ModelAdapter.OauthTokenDeserializer())
+                    .registerTypeAdapter(ErrorResponse.ErrorMessage.class, new ModelAdapter.ErrorMessageDeserializer())
                     .create();
         }
         return gson;

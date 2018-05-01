@@ -1,6 +1,7 @@
 package com.fitpay.android.utils;
 
 
+import com.fitpay.android.api.models.ErrorResponse;
 import com.fitpay.android.api.models.Links;
 import com.fitpay.android.api.models.Payload;
 import com.fitpay.android.api.models.apdu.ApduPackage;
@@ -10,6 +11,7 @@ import com.fitpay.android.api.models.security.ECCKeyPair;
 import com.fitpay.android.api.models.security.OAuthToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -18,8 +20,10 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -133,6 +137,19 @@ final class ModelAdapter {
                     .expiresIn(jo.get("expires_in").getAsLong())
                     .tokenType(jo.get("token_type").getAsString())
                     .build();
+        }
+    }
+
+    public static final class ErrorMessageDeserializer implements JsonDeserializer<ErrorResponse.ErrorMessage> {
+        @Override
+        public ErrorResponse.ErrorMessage deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            try {
+                return new ErrorResponse.ErrorMessage(
+                        new Gson().fromJson(json.getAsString(), new TypeToken<List<ErrorResponse.ErrorMessageInfo>>(){}.getType())
+                );
+            } catch (Exception e){
+                return null;
+            }
         }
     }
 }
