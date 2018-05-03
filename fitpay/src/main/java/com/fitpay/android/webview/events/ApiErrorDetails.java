@@ -1,7 +1,11 @@
 package com.fitpay.android.webview.events;
 
+import android.support.annotation.Nullable;
+
 /**
- * API error detailed message
+ * API error detailed message. Used for RTM messages only.
+ * {@link #code}- http status code
+ * {@link #detailedMessage} and {@link #fullMessage} - reason, may be null
  */
 public class ApiErrorDetails {
     private int code;
@@ -12,11 +16,11 @@ public class ApiErrorDetails {
         return code;
     }
 
-    public String getDetailedMessage() {
+    public @Nullable String getDetailedMessage() {
         return detailedMessage;
     }
 
-    public String getFullMessage() {
+    public @Nullable String getFullMessage() {
         return fullMessage;
     }
 }

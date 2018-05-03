@@ -1,9 +1,12 @@
 package com.fitpay.android.api.models;
 
+import android.support.annotation.Nullable;
+
 import java.util.List;
 
 /**
- * Parsed error response from API errorBody
+ * Parsed API error response errorBody.
+ * Used in {@link com.fitpay.android.api.callbacks.ApiCallbackExt#onFailure(ErrorResponse)}
  */
 public class ErrorResponse {
     private int status;
@@ -47,12 +50,12 @@ public class ErrorResponse {
         return description;
     }
 
-    public String getDetails() {
-        return details != null ? details.getMessage() : "";
+    public @Nullable String getDetails() {
+        return details != null ? details.getMessage() : null;
     }
 
-    public String getMessage() {
-        return message != null ? message.getMessage() : "";
+    public @Nullable String getMessage() {
+        return message != null ? message.getMessage() : null;
     }
 
     @Override
@@ -68,7 +71,7 @@ public class ErrorResponse {
         }
 
         String getMessage(){
-            return messages != null && !messages.isEmpty() ? messages.get(0).message : "";
+            return messages != null && !messages.isEmpty() ? messages.get(0).message : null;
         }
     }
 
