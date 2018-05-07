@@ -3,8 +3,10 @@ package com.fitpay.android.api;
 import android.support.annotation.NonNull;
 
 import com.fitpay.android.api.callbacks.ApiCallback;
+import com.fitpay.android.api.callbacks.ApiCallbackExt;
 import com.fitpay.android.api.callbacks.CallbackWrapper;
 import com.fitpay.android.api.enums.ResultCode;
+import com.fitpay.android.api.models.ErrorResponse;
 import com.fitpay.android.api.models.PlatformConfig;
 import com.fitpay.android.api.models.Relationship;
 import com.fitpay.android.api.models.issuer.Issuers;
@@ -465,7 +467,7 @@ public class ApiManager {
 //
 
     private <T> void makeCall(final Call<JsonElement> call, final Type type, final ApiCallback<T> callback) {
-        call.enqueue(new CallbackWrapper<>(new ApiCallback<JsonElement>() {
+        call.enqueue(new CallbackWrapper<>(new ApiCallbackExt<JsonElement>() {
             @Override
             public void onSuccess(JsonElement result) {
                 T response = Constants.getGson().fromJson(result, type);
@@ -473,8 +475,12 @@ public class ApiManager {
             }
 
             @Override
-            public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
-                callback.onFailure(errorCode, errorMessage);
+            public void onFailure(ErrorResponse apiErrorResponse) {
+                if(callback instanceof ApiCallbackExt) {
+                    ((ApiCallbackExt)callback).onFailure(apiErrorResponse);
+                } else {
+                    callback.onFailure(apiErrorResponse.getStatus(), apiErrorResponse.getMessage());
+                }
             }
         }));
     }
