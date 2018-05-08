@@ -210,8 +210,6 @@ public class DeviceTest2 extends TestActions {
     public void testCanResetDevice() throws Exception {
         Device device = getTestDevice();
         Device createdDevice = createDevice(user, device);
-        assertNotNull("device", createdDevice);
-
         assertNotNull("created device", createdDevice);
 
         Collections.DeviceCollection devices = getDevices(user);
