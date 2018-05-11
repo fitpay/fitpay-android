@@ -8,7 +8,7 @@ import com.fitpay.android.webview.impl.WebViewCommunicatorImpl;
  * RtmMessage parser
  */
 public class RtmParser {
-    private static final String TAG = RtmParser.class.getSimpleName();
+    protected static final String TAG = RtmParser.class.getSimpleName();
 
     protected WebViewCommunicatorImpl impl;
 

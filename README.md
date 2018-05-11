@@ -1,5 +1,9 @@
 # FitPay Android SDK - README.md
 
+[![GitHub license](https://img.shields.io/github/license/fitpay/fitpay-ios-sdk.svg)](https://github.com/fitpay/fitpay-ios-sdk/blob/develop/LICENSE)
+[![Build Status](https://travis-ci.org/fitpay/fitpay-android-sdk.svg?branch=develop)](https://travis-ci.org/fitpay/fitpay-android-sdk)
+
+
 ## Building the library
 
 ### Building using Android Studio
@@ -14,9 +18,6 @@ Open an existing Android Studio project
 /home/yourname/fitpay/fitpay-android-sdk
 Click on Gradle (topright), select fitpay-android->Tasks->build, build - right click and select "Run fitpay-android[build]"
 ```
-
-Fit-Pay also utilizes a continuous integration system (travis) to build and test.
-Current Develop Branch Status: [![Build Status](https://travis-ci.org/fitpay/fitpay-android-sdk.svg?branch=develop)](https://travis-ci.org/fitpay/fitpay-android-sdk)
 
 ### Building from the commandline
 
@@ -136,10 +137,6 @@ Click on Gradle (topright), select fitpay-android->Tasks->verification, test - r
 cd fitpay-android-sdk
 ./gradlew clean test
 ```
-
-### Problems with the tests?
-
-Some versions of Java come with an encryption distribution that may not be up to modern standards. If you experience problems with SSL connections, please download the [Java Cryptography Extension](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html).
 
 ### Running code coverage
 
@@ -307,7 +304,6 @@ This instructions are for only those that have the credentials for pushing publi
 * Merge `release-X.X.X` branch into `develop` and `master`
 * Create tagged release on github with general release notes.
 * Delete `release-X.X.X` branch
-* Update `fitpay/build.gradle` with next development version and commit/push the change.
 
 ## Progaurd Setup
 

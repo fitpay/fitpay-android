@@ -21,9 +21,10 @@ public class RtmType {
     public static final String ID_VERIFICATION_REQUEST = "idVerificationRequest";
     public static final String SUPPORTS_ISSUER_APP_VERIFICATION = "supportsIssuerAppVerification";
     public static final String APP_TO_APP_VERIFICATION = "appToAppVerification";
+    public static final String API_ERROR_DETAILS = "apiErrorDetails";
 
     @StringDef({VERSION, SYNC, USER_DATA, NO_HISTORY, SCAN_REQUEST, SDK_VERSION_REQUEST, ID_VERIFICATION_REQUEST,
-            SUPPORTS_ISSUER_APP_VERIFICATION, APP_TO_APP_VERIFICATION})
+            SUPPORTS_ISSUER_APP_VERIFICATION, APP_TO_APP_VERIFICATION, API_ERROR_DETAILS})
     public @interface Request {
     }
 

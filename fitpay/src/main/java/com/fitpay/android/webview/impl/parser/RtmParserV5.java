@@ -1,9 +1,11 @@
 package com.fitpay.android.webview.impl.parser;
 
 import com.fitpay.android.utils.Constants;
+import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.RxBus;
 import com.fitpay.android.webview.enums.A2AVerificationError;
 import com.fitpay.android.webview.enums.RtmType;
+import com.fitpay.android.webview.events.ApiErrorDetails;
 import com.fitpay.android.webview.events.IdVerificationRequest;
 import com.fitpay.android.webview.events.RtmMessage;
 import com.fitpay.android.webview.events.RtmMessageResponse;
@@ -41,6 +43,14 @@ public class RtmParserV5 extends RtmParserV4 {
                     impl.postMessage(new RtmMessageResponse(msg.getCallbackId(), false,
                             new A2AVerificationFailed(A2AVerificationError.NOT_SUPPORTED), RtmType.APP_TO_APP_VERIFICATION));
                 }
+                break;
+
+            case RtmType.API_ERROR_DETAILS:
+                ApiErrorDetails apiErrorDetails = Constants.getGson().fromJson(msg.getData(), ApiErrorDetails.class);
+                if (apiErrorDetails.getDetailedMessage() != null) {
+                    FPLog.e(RtmParser.TAG, apiErrorDetails.getDetailedMessage());
+                }
+                RxBus.getInstance().post(apiErrorDetails);
                 break;
 
             default:
