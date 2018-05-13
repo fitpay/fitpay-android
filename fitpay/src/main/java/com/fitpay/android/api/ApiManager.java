@@ -364,8 +364,12 @@ public class ApiManager {
     }
 
     /**
-     * Provides the ability to manage the reset of payment devices back to a factory state.
+     * Provides the ability to initiate a reset of the secure element.
+     * This will delete all tokens and re-initialize the device.
+     * Calls the /resetDeviceTasks endpoint
      *
+     * @param userId user id
+     * @param deviceId payment device id
      * @param callback result callback
      */
     public void resetPaymentDevice(@NonNull String userId, @NonNull String deviceId, final ApiCallback<ResetDeviceResult> callback) {
@@ -383,6 +387,7 @@ public class ApiManager {
     /**
      * Get status for {@link ApiManager#resetPaymentDevice(String, String, ApiCallback)}
      *
+     * @param resetId reset id from {@link ResetDeviceResult#resetId}
      * @param callback result callback
      */
     public void getResetPaymentDeviceStatus(@NonNull String resetId, final ApiCallback<ResetDeviceResult> callback) {

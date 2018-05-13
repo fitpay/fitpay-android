@@ -249,7 +249,9 @@ public final class Device extends DeviceModel implements Parcelable {
     }
 
     /**
-     * Provides the ability to manage the reset of payment devices back to a factory state.
+     * Provides the ability to initiate a reset of the secure element.
+     * This will delete all tokens and re-initialize the device.
+     * Uses reset device hypermedia link.
      *
      * @param callback result callback
      */
@@ -259,7 +261,9 @@ public final class Device extends DeviceModel implements Parcelable {
     }
 
     /**
-     * Provides the ability to manage the reset of payment devices back to a factory state.
+     * Provides the ability to initiate a reset of the secure element.
+     * This will delete all tokens and re-initialize the device.
+     * Uses reset device hypermedia link.
      *
      * @return observable
      */
