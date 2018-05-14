@@ -1,6 +1,7 @@
 package com.fitpay.android.api.services;
 
 import com.fitpay.android.api.models.Relationship;
+import com.fitpay.android.api.models.device.ResetDeviceResult;
 import com.fitpay.android.api.models.issuer.Issuers;
 import com.fitpay.android.api.models.security.ECCKeyPair;
 import com.fitpay.android.api.models.user.User;
@@ -11,6 +12,8 @@ import java.util.Map;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
@@ -94,6 +97,24 @@ public interface FitPayClient {
      */
     @GET("issuers")
     Call<Issuers> getIssuers();
+
+    /**
+     * Reset of payment device back to a factory state.
+     *
+     * @param userId user id
+     * @param deviceId device id
+     */
+    @POST("resetDeviceTasks")
+    Call<ResetDeviceResult> resetPaymentDevice(@Query("userId") String userId,
+                                               @Query("deviceId") String deviceId);
+
+    /**
+     * Get status for {@link FitPayClient#resetPaymentDevice(String, String)}
+     *
+     * @param resetId reset id
+     */
+    @GET("resetDeviceTasks/{resetId}")
+    Call<ResetDeviceResult> getResetPaymentDeviceStatus(@Path("resetId") String resetId);
 
     @GET
     Call<JsonElement> get(@Url String url);
