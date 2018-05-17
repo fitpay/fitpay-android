@@ -9,6 +9,7 @@ import com.fitpay.android.api.enums.ResultCode;
 import com.fitpay.android.api.models.ErrorResponse;
 import com.fitpay.android.api.models.PlatformConfig;
 import com.fitpay.android.api.models.Relationship;
+import com.fitpay.android.api.models.device.ResetDeviceResult;
 import com.fitpay.android.api.models.issuer.Issuers;
 import com.fitpay.android.api.models.security.OAuthToken;
 import com.fitpay.android.api.models.user.LoginIdentity;
@@ -94,8 +95,8 @@ public class ApiManager {
     /**
      * Clean API static variables. Required to be call in case of app URL overrides.
      */
-    public static void clean(){
-        synchronized (ApiManager.class){
+    public static void clean() {
+        synchronized (ApiManager.class) {
             sInstance = null;
         }
     }
@@ -360,6 +361,45 @@ public class ApiManager {
             public void run() {
                 Call<Issuers> getIssuersCall = getClient().getIssuers();
                 getIssuersCall.enqueue(new CallbackWrapper<>(callback));
+            }
+        };
+
+        checkKeyAndMakeCall(onSuccess, callback);
+    }
+
+    /**
+     * Provides the ability to initiate a reset of the secure element.
+     * This will delete all tokens and re-initialize the device.
+     * Calls the /resetDeviceTasks endpoint
+     *
+     * @param userId user id
+     * @param deviceId payment device id
+     * @param callback result callback
+     */
+    public void resetPaymentDevice(@NonNull String userId, @NonNull String deviceId, final ApiCallback<ResetDeviceResult> callback) {
+        Runnable onSuccess = new Runnable() {
+            @Override
+            public void run() {
+                Call<ResetDeviceResult> resetDeviceCall = getClient().resetPaymentDevice(userId, deviceId);
+                resetDeviceCall.enqueue(new CallbackWrapper<>(callback));
+            }
+        };
+
+        checkKeyAndMakeCall(onSuccess, callback);
+    }
+
+    /**
+     * Get status for {@link ApiManager#resetPaymentDevice(String, String, ApiCallback)}
+     *
+     * @param resetId reset id from {@link ResetDeviceResult#resetId}
+     * @param callback result callback
+     */
+    public void getResetPaymentDeviceStatus(@NonNull String resetId, final ApiCallback<ResetDeviceResult> callback) {
+        Runnable onSuccess = new Runnable() {
+            @Override
+            public void run() {
+                Call<ResetDeviceResult> resetDeviceCall = getClient().getResetPaymentDeviceStatus(resetId);
+                resetDeviceCall.enqueue(new CallbackWrapper<>(callback));
             }
         };
 

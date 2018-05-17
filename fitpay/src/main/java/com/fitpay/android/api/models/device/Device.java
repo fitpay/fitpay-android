@@ -32,7 +32,7 @@ public final class Device extends DeviceModel implements Parcelable {
     private static final String COMMITS = "commits";
     private static final String USER = "user";
     private static final String LAST_ACK_COMMIT = "lastAckCommit";
-    //private static final String DEVICE_RESET_TASKS = "deviceResetTasks";
+    private static final String DEVICE_RESET_TASKS = "deviceResetTasks";
 
     private List<CreditCardRef> cardRelationships;
 
@@ -246,6 +246,40 @@ public final class Device extends DeviceModel implements Parcelable {
      */
     public Observable<Collections.CommitsCollection> getAllCommitsAfterLastAckCommit() {
         return getLastAckCommit().flatMap(commit -> getAllCommits(commit != null ? commit.commitId : null));
+    }
+
+    /**
+     * Provides the ability to initiate a reset of the secure element.
+     * This will delete all tokens and re-initialize the device.
+     * Uses reset device hypermedia link.
+     *
+     * @param callback result callback
+     */
+    public void resetDevice(final ApiCallback<ResetDeviceResult> callback) {
+        Map<String, Object> queryMap = new HashMap<>();
+        makePostCall(DEVICE_RESET_TASKS, queryMap, ResetDeviceResult.class, callback);
+    }
+
+    /**
+     * Provides the ability to initiate a reset of the secure element.
+     * This will delete all tokens and re-initialize the device.
+     * Uses reset device hypermedia link.
+     *
+     * @return observable
+     */
+    public Observable<ResetDeviceResult> resetDevice() {
+        return Observable.create(subscriber -> resetDevice(new ApiCallback<ResetDeviceResult>() {
+            @Override
+            public void onSuccess(ResetDeviceResult result) {
+                subscriber.onNext(result);
+                subscriber.onCompleted();
+            }
+
+            @Override
+            public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
+                subscriber.onError(new DeviceOperationException(errorMessage, errorCode));
+            }
+        }));
     }
 
     public boolean hasLastAckCommit() {

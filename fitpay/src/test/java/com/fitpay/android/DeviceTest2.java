@@ -1,13 +1,20 @@
 package com.fitpay.android;
 
 import com.fitpay.android.api.callbacks.ResultProvidingCallback;
+import com.fitpay.android.api.enums.ResetDeviceStatus;
+import com.fitpay.android.api.models.card.CreditCard;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
 
 import org.junit.Test;
 
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
+import rx.Observable;
+import rx.functions.Func1;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -78,6 +85,7 @@ public class DeviceTest2 extends TestActions {
         assertEquals("device connectorId", createdDevice.getDeviceIdentifier(), retrievedDevice.getDeviceIdentifier());
 
     }
+
     @Test
     public void testCanGetDeviceById() throws Exception {
         Device device = getTestDevice();
@@ -198,5 +206,42 @@ public class DeviceTest2 extends TestActions {
         assertEquals("remaining device in collection", anotherCreatedDevice.getDeviceIdentifier(), devices.getResults().get(0).getDeviceIdentifier());
     }
 
+    @Test
+    public void testCanResetDevice() throws Exception {
+        Device device = getTestDevice();
+        Device createdDevice = createDevice(user, device);
+        assertNotNull("created device", createdDevice);
 
+        Collections.DeviceCollection devices = getDevices(user);
+        assertNotNull("devices collection should not be null", devices);
+        assertEquals("should have one device", 1, devices.getTotalResults());
+
+        String pan = "9999504454545450";
+        CreditCard creditCard = getTestCreditCard(pan);
+
+        CreditCard createdCard = createCreditCard(user, creditCard);
+        assertNotNull("card not created",createdCard);
+
+        Collections.CreditCardCollection creditCards = getCreditCards(user);
+        assertNotNull("credit cards collection", creditCards);
+        assertEquals("number of credit cards", 1, creditCards.getTotalResults());
+
+        CountDownLatch latch = new CountDownLatch(1);
+
+        final AtomicReference<String> status = new AtomicReference<>();
+
+        createdDevice.resetDevice().flatMap(result -> result.getStatus().repeatWhen(observable -> {
+            return observable.flatMap((Func1<Void, Observable<?>>) aVoid -> {
+                if(status.get() == null || ResetDeviceStatus.IN_PROGRESS.equals(status.get())) {
+                    return Observable.timer(1, TimeUnit.SECONDS);
+                } else {
+                    return Observable.just(null);
+                }
+            }).takeWhile(Objects::nonNull);
+        })).subscribe(resetDeviceResult -> status.set(resetDeviceResult.getResetStatus()), throwable -> {
+        }, latch::countDown);
+
+        latch.await(30, TimeUnit.SECONDS);
+        assertEquals("reset device status", ResetDeviceStatus.RESET_COMPLETE, status.get());
+    }
 }
