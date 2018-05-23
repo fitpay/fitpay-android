@@ -2,6 +2,8 @@ package com.fitpay.android.api.models;
 
 import android.support.annotation.Nullable;
 
+import com.fitpay.android.utils.StringUtils;
+
 import java.util.List;
 
 /**
@@ -56,6 +58,14 @@ public class ErrorResponse {
 
     public @Nullable String getMessage() {
         return message != null ? message.getMessage() : null;
+    }
+
+    public @Nullable String getError(){
+        String error = getMessage();
+        if(StringUtils.isEmpty(error)){
+            error = getDescription();
+        }
+        return error;
     }
 
     @Override

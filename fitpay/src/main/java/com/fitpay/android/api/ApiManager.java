@@ -521,7 +521,7 @@ public class ApiManager {
                 if(callback instanceof ApiCallbackExt) {
                     ((ApiCallbackExt)callback).onFailure(apiErrorResponse);
                 } else {
-                    callback.onFailure(apiErrorResponse.getStatus(), apiErrorResponse.getMessage());
+                    callback.onFailure(apiErrorResponse.getStatus(), apiErrorResponse.getError());
                 }
             }
         }));
