@@ -338,14 +338,8 @@ public class CreditCardTest2 extends TestActions {
         assertEquals("verification state after selection", "AWAITING_VERIFICATION", method.getState());
 
         CreditCard retrievedCard = getCreditCard(createdCard);
-        assertEquals("number of verification methods", createdCard.getVerificationMethods().size(), retrievedCard.getVerificationMethods().size());
-        VerificationMethod selectedMethod = null;
-        for (VerificationMethod m : retrievedCard.getVerificationMethods()) {
-            if (m.getMethodType().equals(method.getMethodType()) && m.getState().equals("AWAITING_VERIFICATION")) {
-                selectedMethod = m;
-                break;
-            }
-        }
+
+        VerificationMethod selectedMethod = getSelectedVerificationMethod(retrievedCard);
         assertNotNull("No selected method found", selectedMethod);
 
         selectedMethod = verifyVerificationMethod(selectedMethod, "12345");

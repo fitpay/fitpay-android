@@ -426,6 +426,14 @@ public class TestActions {
         return callback.getResult();
     }
 
+    protected VerificationMethod getSelectedVerificationMethod(CreditCard card) throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+        ResultProvidingCallback<VerificationMethod> callback = new ResultProvidingCallback<>(latch);
+        card.getSelectedVerificationMethod(callback);
+        latch.await(TIMEOUT, TimeUnit.SECONDS);
+        return callback.getResult();
+    }
+
     protected Collections.TransactionCollection getCardTransactions(CreditCard card) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<Collections.TransactionCollection> callback = new ResultProvidingCallback<>(latch);
