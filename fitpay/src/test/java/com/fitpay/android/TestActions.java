@@ -9,6 +9,7 @@ import com.fitpay.android.api.models.card.Address;
 import com.fitpay.android.api.models.card.CreditCard;
 import com.fitpay.android.api.models.card.Reason;
 import com.fitpay.android.api.models.card.VerificationMethod;
+import com.fitpay.android.api.models.card.VerificationMethods;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.models.device.PaymentDevice;
@@ -399,6 +400,14 @@ public class TestActions {
         creditCard.deleteCard(callback);
         latch.await(TIMEOUT, TimeUnit.SECONDS);
         assertEquals("delete error code", -1, callback.getErrorCode());
+    }
+
+    protected VerificationMethods getVerificationMethods(String userId, String creditCardId) throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+        ResultProvidingCallback<VerificationMethods> callback = new ResultProvidingCallback<>(latch);
+        ApiManager.getInstance().getVerificationMethods(userId, creditCardId, callback);
+        latch.await(TIMEOUT, TimeUnit.SECONDS);
+        return callback.getResult();
     }
 
     protected VerificationMethod selectVerificationMethod(VerificationMethod method) throws Exception {
