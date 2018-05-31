@@ -8,6 +8,7 @@ import com.fitpay.android.api.models.Transaction;
 import com.fitpay.android.api.models.card.CreditCard;
 import com.fitpay.android.api.models.card.Reason;
 import com.fitpay.android.api.models.card.VerificationMethod;
+import com.fitpay.android.api.models.card.VerificationMethods;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
 
@@ -325,19 +326,20 @@ public class CreditCardTest2 extends TestActions {
 
         assertEquals("verification state", "AVAILABLE_FOR_SELECTION", createdCard.getVerificationMethods().get(0).getState());
 
+        //TODO: uncomment when issue with port will be fixed on backend
+        /*
+        VerificationMethods methods = getVerificationMethods(user.getId(), createdCard.getCreditCardId());
+        assertNotNull("verification methods response", methods);
+        assertNotNull("verification methods", methods.getVerificationMethods());
+        VerificationMethod method = selectVerificationMethod(methods.getVerificationMethods().get(0));
+        */
         VerificationMethod method = selectVerificationMethod(createdCard.getVerificationMethods().get(0));
 
         assertEquals("verification state after selection", "AWAITING_VERIFICATION", method.getState());
 
         CreditCard retrievedCard = getCreditCard(createdCard);
-        assertEquals("number of verification methods", createdCard.getVerificationMethods().size(), retrievedCard.getVerificationMethods().size());
-        VerificationMethod selectedMethod = null;
-        for (VerificationMethod m : retrievedCard.getVerificationMethods()) {
-            if (m.getMethodType().equals(method.getMethodType()) && m.getState().equals("AWAITING_VERIFICATION")) {
-                selectedMethod = m;
-                break;
-            }
-        }
+
+        VerificationMethod selectedMethod = getSelectedVerificationMethod(retrievedCard);
         assertNotNull("No selected method found", selectedMethod);
 
         selectedMethod = verifyVerificationMethod(selectedMethod, "12345");

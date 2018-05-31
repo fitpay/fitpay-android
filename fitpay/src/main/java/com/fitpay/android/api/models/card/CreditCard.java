@@ -33,6 +33,8 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
     private static final String DEACTIVATE = "deactivate";
     private static final String TRANSACTIONS = "transactions";
     private static final String MAKE_DEFAULT = "makeDefault";
+    private static final String SELECTED_VERIFICATION = "selectedVerification";
+    private static final String VERIFICATION_METHODS = "verificationMethods";
 
     private List<DeviceRef> deviceRelationships;
 
@@ -208,6 +210,24 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
         } else {
             throw new IllegalAccessException("The card is not in a state to accept terms anymore");
         }
+    }
+
+    /**
+     * Get selected verification method to verify the identity of the cardholder
+     *
+     * @param callback result callback
+     */
+    public void getSelectedVerificationMethod(@NonNull ApiCallback<VerificationMethod> callback) {
+        makeGetCall(SELECTED_VERIFICATION, null, VerificationMethod.class, callback);
+    }
+
+    /**
+     * Provides a fresh list of available verification methods for current credit card
+     *
+     * @param callback result callback
+     */
+    public void getVerificationMethods(@NonNull ApiCallback<VerificationMethods> callback) {
+        makeGetCall(VERIFICATION_METHODS, null, VerificationMethods.class, callback);
     }
 
     public static final class Builder {
