@@ -1,5 +1,7 @@
 package com.fitpay.android.webview.impl.parser;
 
+import android.text.TextUtils;
+
 import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.RxBus;
@@ -13,6 +15,8 @@ import com.fitpay.android.webview.events.a2a.A2AVerificationFailed;
 import com.fitpay.android.webview.events.a2a.A2AVerificationRequest;
 import com.fitpay.android.webview.impl.WebViewCommunicatorImpl;
 import com.fitpay.android.webview.models.a2a.A2AIssuerAppVerification;
+
+import java.util.Locale;
 
 /**
  * RtmMessage parser v5
@@ -47,10 +51,21 @@ public class RtmParserV5 extends RtmParserV4 {
 
             case RtmType.API_ERROR_DETAILS:
                 ApiErrorDetails apiErrorDetails = Constants.getGson().fromJson(msg.getData(), ApiErrorDetails.class);
-                if (apiErrorDetails.getDetailedMessage() != null) {
-                    FPLog.e(RtmParser.TAG, apiErrorDetails.getDetailedMessage());
+
+                int code = 0;
+                String message = "Unknown error";
+
+                if(apiErrorDetails != null) {
+                    code = apiErrorDetails.getCode();
+                    if (!TextUtils.isEmpty(apiErrorDetails.getDetailedMessage())) {
+                        message = apiErrorDetails.getDetailedMessage();
+                    }
+
+                    RxBus.getInstance().post(apiErrorDetails);
                 }
-                RxBus.getInstance().post(apiErrorDetails);
+
+                FPLog.e(RtmParser.TAG, String.format(Locale.getDefault(), "API Error - Code: %d Message:%s", code, message));
+
                 break;
 
             default:
