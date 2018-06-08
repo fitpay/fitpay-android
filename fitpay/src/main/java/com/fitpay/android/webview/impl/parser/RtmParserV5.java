@@ -59,6 +59,8 @@ public class RtmParserV5 extends RtmParserV4 {
                     code = apiErrorDetails.getCode();
                     if (!TextUtils.isEmpty(apiErrorDetails.getDetailedMessage())) {
                         message = apiErrorDetails.getDetailedMessage();
+                    } else if(!TextUtils.isEmpty(apiErrorDetails.getFullMessage())) {
+                        message = apiErrorDetails.getFullMessage();
                     }
 
                     RxBus.getInstance().post(apiErrorDetails);
