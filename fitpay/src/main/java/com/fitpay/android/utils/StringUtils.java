@@ -19,9 +19,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.security.MessageDigest;
 import java.security.interfaces.ECPublicKey;
-import java.text.ParseException;
 import java.util.Properties;
-import java.util.Locale;
 
 /**
  * Created by Vlad on 26.02.2016.
@@ -55,6 +53,7 @@ public final class StringUtils {
         JWEObject jweObject = new JWEObject(header, payload);
         try {
             JWEEncrypter encrypter = new AESEncrypter(KeysManager.getInstance().getSecretKey(type));
+            encrypter.getJCAContext().setProvider(com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton.getInstance());
             jweObject.encrypt(encrypter);
         } catch (JOSEException e) {
             FPLog.e(e);

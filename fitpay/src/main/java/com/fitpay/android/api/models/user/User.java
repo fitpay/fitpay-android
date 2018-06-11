@@ -57,8 +57,7 @@ public final class User extends UserModel implements Parcelable {
         dest.writeParcelable(this.links, flags);
     }
 
-    public static final Parcelable.Creator<User> CREATOR
-            = new Parcelable.Creator<User>() {
+    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
 
         @Override
         public User createFromParcel(Parcel in) {
