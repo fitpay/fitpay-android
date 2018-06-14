@@ -44,11 +44,6 @@ public final class Commit extends CommitModel {
         makeNoResponsePostCall(REL_CONFIRM, commitConfirm, callback);
     }
 
-    @Deprecated // see canConfirmCommit() and canConfirmApduResponse()
-    public boolean canConfirm() {
-        return hasLink(REL_APDU_RESPONSE);
-    }
-
     public boolean canConfirmCommit() {
         return hasLink(REL_CONFIRM);
     }

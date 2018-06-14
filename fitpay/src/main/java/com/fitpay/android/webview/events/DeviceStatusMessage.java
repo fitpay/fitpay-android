@@ -15,7 +15,7 @@ public class DeviceStatusMessage {
     public static final int PROGRESS = 2;
     public static final int PENDING = 3;
 
-    @Retention(RetentionPolicy.CLASS)
+    @Retention(RetentionPolicy.SOURCE)
     @IntDef({ERROR, SUCCESS, PROGRESS, PENDING})
     public @interface Code {
     }

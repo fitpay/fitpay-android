@@ -21,7 +21,6 @@ import com.fitpay.android.cardscanner.IFitPayCardScanner;
 import com.fitpay.android.cardscanner.ScannedCardInfo;
 import com.fitpay.android.paymentdevice.DeviceService;
 import com.fitpay.android.paymentdevice.constants.States;
-import com.fitpay.android.paymentdevice.enums.AppMessage;
 import com.fitpay.android.paymentdevice.enums.Sync;
 import com.fitpay.android.paymentdevice.events.NotificationSyncRequest;
 import com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector;
@@ -97,28 +96,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     private boolean supportsAppVerification;
 
     private boolean usedDeprecatedConstructor = false;
-
-    /**
-     * @deprecated Use {@link #WebViewCommunicatorImpl(Activity, IPaymentDeviceConnector, WebView)}
-     *
-     * @param ctx
-     * @param webView
-     */
-    @Deprecated
-    public WebViewCommunicatorImpl(Activity ctx, WebView webView) {
-        this(ctx, null, webView);
-        usedDeprecatedConstructor = true;
-    }
-
-    /**
-     * @deprecated Use {@link #WebViewCommunicatorImpl(Activity, IPaymentDeviceConnector, WebView)}
-     *
-     * @param deviceService
-     */
-    @Deprecated
-    public void setDeviceService(DeviceService deviceService) {
-        this.deviceService = deviceService;
-    }
 
     public WebViewCommunicatorImpl(Activity ctx, IPaymentDeviceConnector deviceConnector, WebView webView) {
         this.activity = ctx;
@@ -459,8 +436,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     private void createSyncRequest(SyncInfo syncInfo){
         if (deviceConnector != null) {
             deviceConnector.createSyncRequest(syncInfo);
-        } else if(deviceService.getPaymentDeviceConnector() != null){
-            deviceService.getPaymentDeviceConnector().createSyncRequest(syncInfo);
         } else {
             Log.e(TAG, "Can't create syncRequest. PaymentDeviceConnector is missing");
         }
@@ -603,11 +578,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     private class PushNotificationSyncListener extends Listener {
         private PushNotificationSyncListener() {
             mCommands.put(NotificationSyncRequest.class, data -> sync(null, ((NotificationSyncRequest) data).getSyncInfo()));
-            mCommands.put(AppMessage.class, data -> {
-                if (AppMessage.SYNC.equals(((AppMessage) data).getType())) {
-                    sync(null);
-                }
-            });
         }
     }
 

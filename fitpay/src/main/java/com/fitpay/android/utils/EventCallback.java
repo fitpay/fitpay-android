@@ -65,10 +65,7 @@ public class EventCallback {
     }
 
     @Retention(RetentionPolicy.SOURCE)
-    @StringDef({
-            STATUS_OK,
-            STATUS_FAILED
-    })
+    @StringDef({STATUS_OK, STATUS_FAILED})
     public @interface Status {
     }
 

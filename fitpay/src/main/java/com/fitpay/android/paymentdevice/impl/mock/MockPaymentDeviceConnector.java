@@ -167,15 +167,6 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
 
     }
 
-    @Override
-    public void executeTopOfWallet(List<TopOfWallet> towPackage) {
-        getDelayObservable()
-                .subscribe(
-                        x -> FPLog.d(TAG, "execute TOW success"),
-                        throwable -> FPLog.e(TAG, "execute TOW error" + throwable.toString()),
-                        () -> FPLog.d(TAG, "execute TOW complete"));
-    }
-
     private int getIntValue(String value) {
         int intValue = delay;
         try {

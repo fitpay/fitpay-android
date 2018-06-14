@@ -57,7 +57,7 @@ public class RtmParserV2 extends RtmParser {
                 break;
             case RtmType.VERSION:
                 try {
-                    RtmVersion webAppRtmVersion = Constants.getGson().fromJson(msg.getJsonData(), RtmVersion.class);
+                    RtmVersion webAppRtmVersion = Constants.getGson().fromJson(msg.getData(), RtmVersion.class);
                     if (webAppRtmVersion != null) {
                         impl.setWebAppRtmVersion(webAppRtmVersion);
                     } else {

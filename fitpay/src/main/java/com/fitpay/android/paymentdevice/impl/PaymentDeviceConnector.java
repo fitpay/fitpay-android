@@ -386,24 +386,6 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
     }
 
     /**
-     * @deprecated the SDK handling have TOW as commits is no longer supported, TOW data can still be pulled
-     * from the CreditCard API resource when needed.
-     * <p>
-     * Get TOW data from the server
-     */
-    protected final void getTopOfWalletData(List<String> cardOrder) {
-    }
-
-    /**
-     * @param towPackages
-     * @deprecated See {@link IPaymentDeviceConnector} - providing a do-nothing implementation to help clean up OEM integrations
-     */
-    @Override
-    public void executeTopOfWallet(List<TopOfWallet> towPackages) {
-        FPLog.w(TAG, "deprecated executeTopOfWallet() still being called, please refactor to remove usage of PaymentDeviceConnect#executeTopOfWallet()");
-    }
-
-    /**
      * Send apdu command execution result
      *
      * @param apduCommandResult
