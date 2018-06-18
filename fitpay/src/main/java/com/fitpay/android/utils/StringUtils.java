@@ -12,6 +12,7 @@ import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.AESDecrypter;
 import com.nimbusds.jose.crypto.AESEncrypter;
 import com.nimbusds.jose.crypto.ECDSAVerifier;
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.SignedJWT;
 
@@ -53,7 +54,7 @@ public final class StringUtils {
         JWEObject jweObject = new JWEObject(header, payload);
         try {
             JWEEncrypter encrypter = new AESEncrypter(KeysManager.getInstance().getSecretKey(type));
-            encrypter.getJCAContext().setProvider(com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton.getInstance());
+            encrypter.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
             jweObject.encrypt(encrypter);
         } catch (JOSEException e) {
             FPLog.e(e);
