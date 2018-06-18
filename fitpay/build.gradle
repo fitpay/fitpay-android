@@ -176,7 +176,7 @@ task generateJavadocs(type: Javadoc) {
 
 afterEvaluate {
     generateJavadocs.classpath += files(android.libraryVariants.collect { variant ->
-        variant.javaCompile.classpath.files
+        variant.javaCompiler.classpath.files
     })
 }
 
