@@ -8,7 +8,6 @@ import com.fitpay.android.api.models.Transaction;
 import com.fitpay.android.api.models.card.CreditCard;
 import com.fitpay.android.api.models.card.Reason;
 import com.fitpay.android.api.models.card.VerificationMethod;
-import com.fitpay.android.api.models.card.VerificationMethods;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
 

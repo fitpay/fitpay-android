@@ -2,7 +2,6 @@ package com.fitpay.android.paymentdevice.impl;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.fitpay.android.TestActions;
 import com.fitpay.android.TestUtils;

@@ -8,7 +8,6 @@ import com.fitpay.android.api.services.FitPayClient;
 import com.fitpay.android.utils.FPLog;
 
 import java.io.IOException;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -52,7 +51,7 @@ public class UserEventStreamManager {
      * @return null is possible if not supported
      * @throws IOException
      */
-    public static Future<UserEventStream> subscribe(final String userId) throws IOException {
+    public static Future<UserEventStream> subscribe(final String userId) {
         // if at the platform level SSE subscriptions are turned off, then this method will simply
         // return null
         if (!ApiManager.getInstance().getPlatformConfig().isUserEventStreamsEnabled()) {
@@ -115,12 +114,12 @@ public class UserEventStreamManager {
             }
 
             @Override
-            public UserEventStream get() throws InterruptedException, ExecutionException {
+            public UserEventStream get() {
                 return stream;
             }
 
             @Override
-            public UserEventStream get(long timeout, @NonNull TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+            public UserEventStream get(long timeout, @NonNull TimeUnit unit) {
                 return stream;
             }
         };

@@ -2,8 +2,6 @@ package com.fitpay.android.api.models.user;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Map;
-
 /**
  * User creation request
  */

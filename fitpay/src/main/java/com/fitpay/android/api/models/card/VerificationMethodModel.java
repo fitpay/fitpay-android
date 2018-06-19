@@ -1,8 +1,8 @@
 package com.fitpay.android.api.models.card;
 
+import com.fitpay.android.a2averification.A2AContext;
 import com.fitpay.android.api.enums.VerificationMethod;
 import com.fitpay.android.api.models.BaseModel;
-import com.fitpay.android.webview.models.a2a.A2AContext;
 
 /**
  * Verification method model

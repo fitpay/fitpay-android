@@ -14,7 +14,6 @@ import com.fitpay.android.paymentdevice.enums.SecureElement;
 import com.fitpay.android.paymentdevice.impl.PaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.impl.ble.message.SecurityStateMessage;
 import com.fitpay.android.utils.FPLog;
-import com.fitpay.android.utils.RxBus;
 import com.fitpay.android.utils.StringUtils;
 
 import java.util.List;

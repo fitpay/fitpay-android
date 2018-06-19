@@ -1,9 +1,9 @@
-package com.fitpay.android.webview.enums;
+package com.fitpay.android.a2averification;
 
 import android.support.annotation.StringDef;
 
 /**
- * Verification errors. Used in {@link com.fitpay.android.webview.events.a2a.A2AVerificationFailed}
+ * Verification errors. Used in {@link A2AVerificationFailed}
  */
 public class A2AVerificationError {
 

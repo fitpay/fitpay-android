@@ -1,6 +1,5 @@
 package com.fitpay.android.webview.impl;
 
-import com.fitpay.android.BearerTokenTest;
 import com.fitpay.android.TestActions;
 import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.FPLog;
@@ -16,7 +15,6 @@ import org.junit.Test;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import rx.Observable;
 import rx.schedulers.Schedulers;
 
 import static junit.framework.Assert.assertEquals;

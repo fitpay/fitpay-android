@@ -7,6 +7,8 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
 import com.fitpay.android.R;
+import com.fitpay.android.a2averification.A2AVerificationFailed;
+import com.fitpay.android.a2averification.A2AVerificationRequest;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.ResultCode;
@@ -39,8 +41,6 @@ import com.fitpay.android.webview.events.IdVerificationRequest;
 import com.fitpay.android.webview.events.RtmMessage;
 import com.fitpay.android.webview.events.RtmMessageResponse;
 import com.fitpay.android.webview.events.UserReceived;
-import com.fitpay.android.webview.events.a2a.A2AVerificationFailed;
-import com.fitpay.android.webview.events.a2a.A2AVerificationRequest;
 import com.fitpay.android.webview.models.IdVerification;
 import com.fitpay.android.webview.models.RtmVersion;
 import com.google.gson.Gson;

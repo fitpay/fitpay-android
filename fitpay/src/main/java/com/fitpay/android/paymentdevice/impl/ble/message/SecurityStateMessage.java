@@ -27,11 +27,7 @@ public class SecurityStateMessage extends BleMessage implements ISecureMessage {
         if (bytes.length == 0) {
             this.nfcEnabled = false;
         } else {
-            if (bytes[0] == 0x01) {
-                this.nfcEnabled = true;
-            } else {
-                this.nfcEnabled = false;
-            }
+            this.nfcEnabled = bytes[0] == 0x01;
             if (bytes.length > 1) {
                 nfcErrorCode = bytes[1];
             }

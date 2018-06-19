@@ -1,4 +1,4 @@
-package com.fitpay.android.webview.models.a2a;
+package com.fitpay.android.a2averification;
 
 /**
  * RTM response data for {@value com.fitpay.android.webview.enums.RtmType#SUPPORTS_ISSUER_APP_VERIFICATION}

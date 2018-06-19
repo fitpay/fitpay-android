@@ -1,7 +1,6 @@
 package com.fitpay.android.webview.impl.parser;
 
 import com.fitpay.android.BuildConfig;
-import com.fitpay.android.utils.RxBus;
 import com.fitpay.android.webview.enums.RtmType;
 import com.fitpay.android.webview.events.RtmMessage;
 import com.fitpay.android.webview.events.RtmMessageResponse;

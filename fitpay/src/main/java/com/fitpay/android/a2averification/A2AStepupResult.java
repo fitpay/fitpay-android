@@ -1,9 +1,9 @@
-package com.fitpay.android.webview.enums;
+package com.fitpay.android.a2averification;
 
 import android.support.annotation.StringDef;
 
 /**
- * Stepup result response enum. Used in {@link com.fitpay.android.webview.models.a2a.A2AIssuerResponse}
+ * Stepup result response enum. Used in {@link A2AIssuerResponse}
  */
 public class A2AStepupResult {
 

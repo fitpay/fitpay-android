@@ -1,9 +1,7 @@
-package com.fitpay.android.webview.models.a2a;
+package com.fitpay.android.a2averification;
 
 import android.util.Base64;
 
-import com.fitpay.android.webview.enums.A2AStepupResult;
-import com.fitpay.android.webview.events.a2a.A2AVerificationRequest;
 import com.google.gson.Gson;
 
 import java.nio.charset.StandardCharsets;
