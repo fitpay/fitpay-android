@@ -9,17 +9,14 @@ import com.fitpay.android.utils.FPLog;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import retrofit2.Response;
 import rx.Observable;
 import rx.schedulers.Schedulers;
-
 
 /**
  * This class manages the subscribing and unsubscribing from the user event stream of the FitPay platform.  The subscription
@@ -34,11 +31,7 @@ public class UserEventStreamManager {
     public static boolean isSubscribed(String userId) {
         UserEventStream stream = streams.get(userId);
 
-        if (stream != null) {
-            return stream.isConnected();
-        } else {
-            return false;
-        }
+        return stream != null && stream.isConnected();
     }
 
     /**
@@ -47,7 +40,6 @@ public class UserEventStreamManager {
      * method returns a Future for that subscription task.
      *
      * @param userId
-     *
      * @return null is possible if not supported
      * @throws IOException
      */

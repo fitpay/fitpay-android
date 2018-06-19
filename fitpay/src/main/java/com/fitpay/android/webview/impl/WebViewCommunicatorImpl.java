@@ -48,11 +48,9 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.Locale;
 
 import static com.fitpay.android.utils.Constants.WV_DATA;
-
 
 /**
  * Created by Ross Gabay on 4/13/2016.
@@ -99,10 +97,9 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     private boolean usedDeprecatedConstructor = false;
 
     /**
-     * @deprecated Use {@link #WebViewCommunicatorImpl(Activity, IPaymentDeviceConnector, WebView)}
-     *
      * @param ctx
      * @param webView
+     * @deprecated Use {@link #WebViewCommunicatorImpl(Activity, IPaymentDeviceConnector, WebView)}
      */
     @Deprecated
     public WebViewCommunicatorImpl(Activity ctx, WebView webView) {
@@ -111,9 +108,8 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     }
 
     /**
-     * @deprecated Use {@link #WebViewCommunicatorImpl(Activity, IPaymentDeviceConnector, WebView)}
-     *
      * @param deviceService
+     * @deprecated Use {@link #WebViewCommunicatorImpl(Activity, IPaymentDeviceConnector, WebView)}
      */
     @Deprecated
     public void setDeviceService(DeviceService deviceService) {
@@ -339,11 +335,8 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                         }
 
                         if (automaticallySubscribeToUserEventStream) {
-                            try {
-                                UserEventStreamManager.subscribe(user.getId());
-                            } catch (IOException e) {
-                                FPLog.e(e);
-                            }
+
+                            UserEventStreamManager.subscribe(user.getId());
 
                             boolean automaticSyncThroughUserEventStream = true;
                             if (ApiManager.getConfig().containsKey(ApiManager.PROPERTY_AUTOMATICALLY_SYNC_FROM_USER_EVENT_STREAM)) {
@@ -456,10 +449,10 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
         return deviceConnector != null ? deviceConnector.id() : null;
     }
 
-    private void createSyncRequest(SyncInfo syncInfo){
+    private void createSyncRequest(SyncInfo syncInfo) {
         if (deviceConnector != null) {
             deviceConnector.createSyncRequest(syncInfo);
-        } else if(deviceService.getPaymentDeviceConnector() != null){
+        } else if (deviceService.getPaymentDeviceConnector() != null) {
             deviceService.getPaymentDeviceConnector().createSyncRequest(syncInfo);
         } else {
             Log.e(TAG, "Can't create syncRequest. PaymentDeviceConnector is missing");
@@ -484,6 +477,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     public IdVerification getIdVerification() {
         return new IdVerification.Builder().build();
     }
+
     @Override
     public boolean supportsAppVerification() {
         return supportsAppVerification;
@@ -505,7 +499,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
         return a2AListener != null ? a2AListener.returnLocation : null;
     }
 
-    public void postMessage(Object object){
+    public void postMessage(Object object) {
         RxBus.getInstance().post(getConnectorId(), object);
     }
 

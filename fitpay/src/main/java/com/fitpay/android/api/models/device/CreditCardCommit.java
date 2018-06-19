@@ -61,7 +61,7 @@ public class CreditCardCommit {
         if (null == defaultX) {
             return false;
         }
-        return defaultX.booleanValue();
+        return defaultX;
     }
 
     public long getCreatedTsEpoch() {

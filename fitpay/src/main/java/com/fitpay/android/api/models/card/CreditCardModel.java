@@ -51,7 +51,7 @@ abstract class CreditCardModel extends BaseModel {
         if (null == defaultX) {
             return false;
         }
-        return defaultX.booleanValue();
+        return defaultX;
     }
 
     public long getCreatedTsEpoch() {
@@ -96,6 +96,7 @@ abstract class CreditCardModel extends BaseModel {
 
     /**
      * Terms & Conditions references
+     *
      * @return T&C links
      */
     public List<AssetReference> getTermsAssetReferences() {
@@ -130,7 +131,7 @@ abstract class CreditCardModel extends BaseModel {
         return offlineSeActions != null ? offlineSeActions.getTopOfWallet() : null;
     }
 
-    public String getTokenLastFour(){
+    public String getTokenLastFour() {
         return tokenLastFour;
     }
 }
