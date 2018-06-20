@@ -4,10 +4,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fitpay.android.utils.RxBus;
-import com.fitpay.android.utils.StringUtils;
 import com.fitpay.android.webview.enums.DeviceTimeZone;
 import com.fitpay.android.webview.enums.RtmType;
 import com.fitpay.android.webview.events.RtmMessageResponse;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 import java.util.Locale;
@@ -22,13 +22,12 @@ public final class IdVerification implements Parcelable {
     private Integer suspendedCardsInOemAccount; // If this user has multiple devices, how many cards are suspended in total across all devices?
     private Date lastOemAccountActivityDate; // Date this account was previously used, never today.
     private Date deviceLostModeDate; // Date this device was reported lost or stolen. Don't send if you don't have it.
-    private Integer devicesWithIdenticalActiveToken;
+    private Integer devicesWithIdenticalActiveToken; // Number of devices that the token is on
     private Integer activeTokensOnAllDevicesForOemAccount; // If this user has multiple devices, how many cards are active in total across all devices?"
     private Integer oemAccountScore; // int between 0-9
     private Integer deviceScore; // int between 0-9
     private Boolean nfcCapable; // Only needed if your device is NOT nfcCapable
 
-    private String billingCountryCode; // Country of user's billing address in ISO 3166-1 alpha-2 format, e.g., US; maximum 2 characters
     private String oemAccountCountryCode; // Country setting of account or phone in ISO 3166-1 alpha-2 format
     private String deviceCountry; // Country setting of payment device
     private String oemAccountUserName; // First and Last name of account
@@ -36,11 +35,6 @@ public final class IdVerification implements Parcelable {
     private String deviceTimeZone; // Time Zone Abbreviation. Example: PDT, MST
     private Integer deviceTimeZoneSetBy; // 1 - Time Zone Set by Network; 2 - Time Zone Set by User; 3 - Time Zone set by Device Location
     private String deviceIMEI; // Only needed if your payment device has a cell connection
-    private String billingLine1;
-    private String billingLine2;
-    private String billingCity;
-    private String billingState;
-    private String billingZip;
 
     private String locale; //ISO 3166-1 alpha-2
 
@@ -57,16 +51,20 @@ public final class IdVerification implements Parcelable {
     public static final class Builder {
         private Date oemAccountInfoUpdatedDate;
         private Date oemAccountCreatedDate;
+        @SerializedName("suspendedCardsInAccount")
         private Integer suspendedCardsInOemAccount;
+        @SerializedName("daysSinceLastAccountActivity")
         private Date lastOemAccountActivityDate;
+        @SerializedName("deviceLostMode")
         private Date deviceLostModeDate;
+        @SerializedName("deviceWithActiveTokens")
         private Integer devicesWithIdenticalActiveToken;
+        @SerializedName("activeTokenOnAllDevicesForAccount")
         private Integer activeTokensOnAllDevicesForOemAccount;
         private Integer oemAccountScore;
         private Integer deviceScore;
         private Boolean nfcCapable;
 
-        private String billingCountryCode;
         private String oemAccountCountryCode;
         private String deviceCountry;
         private String oemAccountUserName;
@@ -75,11 +73,6 @@ public final class IdVerification implements Parcelable {
         @DeviceTimeZone.SetBy
         private Integer deviceTimeZoneSetBy;
         private String deviceIMEI;
-        private String billingLine1;
-        private String billingLine2;
-        private String billingCity;
-        private String billingState;
-        private String billingZip;
 
         private final String locale;
 
@@ -204,20 +197,6 @@ public final class IdVerification implements Parcelable {
         }
 
         /**
-         * Country of user's billing address in ISO 3166-1 alpha-2 format, e.g., US; maximum 2 characters
-         *
-         * @param billingCountryCode
-         * @return this
-         */
-        public Builder setBillingCountryCode(String billingCountryCode) {
-            if (StringUtils.isEmpty(billingCountryCode) && billingCountryCode.length() > 2) {
-                throw new IllegalArgumentException("billingCountryCode maximum 2 characters");
-            }
-            this.billingCountryCode = billingCountryCode;
-            return this;
-        }
-
-        /**
          * Country setting of account or phone in ISO 3166-1 alpha-2 format
          *
          * @param oemAccountCountryCode
@@ -294,61 +273,6 @@ public final class IdVerification implements Parcelable {
             return this;
         }
 
-        /**
-         * Billing line 1
-         *
-         * @param billingLine1
-         * @return this
-         */
-        public Builder setBillingLine1(String billingLine1) {
-            this.billingLine1 = billingLine1;
-            return this;
-        }
-
-        /**
-         * Billing line 2
-         *
-         * @param billingLine2
-         * @return this
-         */
-        public Builder setBillingLine2(String billingLine2) {
-            this.billingLine2 = billingLine2;
-            return this;
-        }
-
-        /**
-         * Billing city
-         *
-         * @param billingCity
-         * @return this
-         */
-        public Builder setBillingCity(String billingCity) {
-            this.billingCity = billingCity;
-            return this;
-        }
-
-        /**
-         * Billing state
-         *
-         * @param billingState
-         * @return this
-         */
-        public Builder setBillingState(String billingState) {
-            this.billingState = billingState;
-            return this;
-        }
-
-        /**
-         * Billing zip
-         *
-         * @param billingZip
-         * @return this
-         */
-        public Builder setBillingZip(String billingZip) {
-            this.billingZip = billingZip;
-            return this;
-        }
-
         public IdVerification build() {
             IdVerification idVerification = new IdVerification();
 
@@ -363,7 +287,6 @@ public final class IdVerification implements Parcelable {
             idVerification.deviceScore = deviceScore;
             idVerification.nfcCapable = nfcCapable;
 
-            idVerification.billingCountryCode = billingCountryCode;
             idVerification.oemAccountCountryCode = oemAccountCountryCode;
             idVerification.deviceCountry = deviceCountry;
             idVerification.oemAccountUserName = oemAccountUserName;
@@ -371,11 +294,6 @@ public final class IdVerification implements Parcelable {
             idVerification.deviceTimeZone = deviceTimeZone;
             idVerification.deviceTimeZoneSetBy = deviceTimeZoneSetBy;
             idVerification.deviceIMEI = deviceIMEI;
-            idVerification.billingLine1 = billingLine1;
-            idVerification.billingLine2 = billingLine2;
-            idVerification.billingCity = billingCity;
-            idVerification.billingState = billingState;
-            idVerification.billingZip = billingZip;
 
             idVerification.locale = locale;
 
@@ -400,7 +318,6 @@ public final class IdVerification implements Parcelable {
         dest.writeValue(this.oemAccountScore);
         dest.writeValue(this.deviceScore);
         dest.writeValue(this.nfcCapable);
-        dest.writeString(this.billingCountryCode);
         dest.writeString(this.oemAccountCountryCode);
         dest.writeString(this.deviceCountry);
         dest.writeString(this.oemAccountUserName);
@@ -408,11 +325,6 @@ public final class IdVerification implements Parcelable {
         dest.writeString(this.deviceTimeZone);
         dest.writeValue(this.deviceTimeZoneSetBy);
         dest.writeString(this.deviceIMEI);
-        dest.writeString(this.billingLine1);
-        dest.writeString(this.billingLine2);
-        dest.writeString(this.billingCity);
-        dest.writeString(this.billingState);
-        dest.writeString(this.billingZip);
         dest.writeString(this.locale);
     }
 
@@ -431,7 +343,6 @@ public final class IdVerification implements Parcelable {
         this.oemAccountScore = (Integer) in.readValue(Integer.class.getClassLoader());
         this.deviceScore = (Integer) in.readValue(Integer.class.getClassLoader());
         this.nfcCapable = (Boolean) in.readValue(Boolean.class.getClassLoader());
-        this.billingCountryCode = in.readString();
         this.oemAccountCountryCode = in.readString();
         this.deviceCountry = in.readString();
         this.oemAccountUserName = in.readString();
@@ -440,11 +351,6 @@ public final class IdVerification implements Parcelable {
         this.deviceTimeZone = in.readString();
         this.deviceTimeZoneSetBy = (Integer) in.readValue(Integer.class.getClassLoader());
         this.deviceIMEI = in.readString();
-        this.billingLine1 = in.readString();
-        this.billingLine2 = in.readString();
-        this.billingCity = in.readString();
-        this.billingState = in.readString();
-        this.billingZip = in.readString();
         this.locale = in.readString();
     }
 
