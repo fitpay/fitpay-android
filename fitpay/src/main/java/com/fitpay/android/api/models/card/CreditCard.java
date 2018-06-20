@@ -150,12 +150,15 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
     /**
      * Update the details of an existing credit card.
      *
-     * @param creditCard credit card data to update:(name (Card holder name), address/street1, address/street2,
-     *                   address/city, address/state, address/postalCode, address/countryCode)
-     * @param callback   result callbacktodo
+     * @param name name
+     * @param address address {@link Address}
+     * @param callback   result callback
      */
-    public void updateCard(@NonNull CreditCard creditCard, @NonNull ApiCallback<CreditCard> callback) {
-        makePatchCall(creditCard, true, CreditCard.class, callback);
+    public void updateCard(String name, Address address, @NonNull ApiCallback<CreditCard> callback) {
+        CreditCardUpdateModel updateModel = new CreditCardUpdateModel();
+        updateModel.name = name;
+        updateModel.address = address;
+        makePatchCall(updateModel, true, CreditCard.class, callback);
     }
 
     public boolean canUpdateCard() {
@@ -425,4 +428,9 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
             return new CreditCard[size];
         }
     };
+
+    private static class CreditCardUpdateModel {
+        String name;
+        Address address;
+    }
 }

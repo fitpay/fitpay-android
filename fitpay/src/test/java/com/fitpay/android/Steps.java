@@ -431,18 +431,15 @@ public class Steps {
         final CountDownLatch latch = new CountDownLatch(1);
         final boolean[] isRequestSuccess = {false};
 
+        String name = "newName";
         String city = "New York";
         String state = "NY";
+
         Address address = new Address();
         address.setCity(city);
         address.setState(state);
 
-        CreditCard creditCard = new CreditCard.Builder()
-//                .setAddress(address)
-                .setName("Hello")
-                .build();
-
-        currentCard.updateCard(creditCard, new ApiCallback<CreditCard>() {
+        currentCard.updateCard(name, address, new ApiCallback<CreditCard>() {
             @Override
             public void onSuccess(CreditCard result) {
                 isRequestSuccess[0] = true;
