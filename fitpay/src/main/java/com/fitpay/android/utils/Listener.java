@@ -23,16 +23,6 @@ public abstract class Listener {
     }
 
     /**
-     * @deprecated
-     * Use {@link #addCommand(Class, Command)}
-     * @return all commands
-     */
-    @Deprecated
-    public Map<Class, Command> getCommands() {
-        return mCommands;
-    }
-
-    /**
      * Add new command to the list
      * @param clazz
      * @param command

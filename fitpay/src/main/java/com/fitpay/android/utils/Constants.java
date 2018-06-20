@@ -54,14 +54,5 @@ public final class Constants {
         return gson;
     }
 
-    @Deprecated
-    public static void printError(Throwable error) {
-        FPLog.e(error);
-    }
-
-    @Deprecated
-    public static void printError(String error) {
-        FPLog.e(error);
-    }
 }
 

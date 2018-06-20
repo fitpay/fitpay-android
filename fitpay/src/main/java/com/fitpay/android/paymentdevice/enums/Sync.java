@@ -42,45 +42,6 @@ public final class Sync {
         this.message = message;
     }
 
-    /**
-     * @deprecated  switch to new builder please :)
-     *
-     * @param syncId
-     * @param state
-     */
-    public Sync(String syncId, @State int state) {
-        this.state = state;
-        this.syncId = syncId;
-        this.message = null;
-        this.value = -1;
-    }
-
-    /**
-     * @deprecated  switch to new builder please :)
-     *
-     * @param syncId
-     * @param state
-     */
-    public Sync(String syncId, @State int state, int value) {
-        this.state = state;
-        this.value = value;
-        this.syncId = syncId;
-        this.message = null;
-    }
-
-    /**
-     * @deprecated  switch to new builder please :)
-     *
-     * @param syncId
-     * @param state
-     */
-    public Sync(String syncId, @State int state, String message) {
-        this.state = state;
-        this.message = message;
-        this.syncId = syncId;
-        this.value = -1;
-    }
-
     @Sync.State
     public int getState() {
         return state;

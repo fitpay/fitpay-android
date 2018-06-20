@@ -2,6 +2,9 @@ package com.fitpay.android.webview.enums;
 
 import android.support.annotation.StringDef;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 /**
  * Rtm request &#064; response types
  */
@@ -23,6 +26,7 @@ public class RtmType {
     public static final String APP_TO_APP_VERIFICATION = "appToAppVerification";
     public static final String API_ERROR_DETAILS = "apiErrorDetails";
 
+    @Retention(RetentionPolicy.SOURCE)
     @StringDef({VERSION, SYNC, USER_DATA, NO_HISTORY, SCAN_REQUEST, SDK_VERSION_REQUEST, ID_VERIFICATION_REQUEST,
             SUPPORTS_ISSUER_APP_VERIFICATION, APP_TO_APP_VERIFICATION, API_ERROR_DETAILS})
     public @interface Request {
@@ -33,6 +37,7 @@ public class RtmType {
     public static final String RESOLVE = "resolve";
     public static final String UNRECOGNIZED = "unrecognized";
 
+    @Retention(RetentionPolicy.SOURCE)
     @StringDef({DEVICE_STATUS, LOGOUT, RESOLVE, VERSION, CARD_SCANNED, SDK_VERSION, UNRECOGNIZED, ID_VERIFICATION,
             SUPPORTS_ISSUER_APP_VERIFICATION, APP_TO_APP_VERIFICATION})
     public @interface Response {
