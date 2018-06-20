@@ -15,7 +15,7 @@ apply plugin: 'maven'
 apply plugin: 'de.mobilej.unmock'
 
 group = 'com.fitpay.android'
-version = '0.6.1'
+version = '0.6.2'
 archivesBaseName = "android_sdk"
 
 uploadArchives {
@@ -176,7 +176,7 @@ task generateJavadocs(type: Javadoc) {
 
 afterEvaluate {
     generateJavadocs.classpath += files(android.libraryVariants.collect { variant ->
-        variant.javaCompile.classpath.files
+        variant.javaCompiler.classpath.files
     })
 }
 

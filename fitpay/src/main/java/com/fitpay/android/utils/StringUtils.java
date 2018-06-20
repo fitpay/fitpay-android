@@ -53,6 +53,8 @@ public final class StringUtils {
         JWEObject jweObject = new JWEObject(header, payload);
         try {
             JWEEncrypter encrypter = new AESEncrypter(KeysManager.getInstance().getSecretKey(type));
+            SecurityProvider.getInstance().initProvider();
+            encrypter.getJCAContext().setProvider(SecurityProvider.getInstance().getProvider());
             jweObject.encrypt(encrypter);
         } catch (JOSEException e) {
             FPLog.e(e);
