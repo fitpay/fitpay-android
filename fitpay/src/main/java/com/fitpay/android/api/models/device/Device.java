@@ -507,15 +507,6 @@ public final class Device extends DeviceModel implements Parcelable {
         }
 
         /**
-         * Set notification token use {@link #setNotificationToken(String)}
-         */
-        @Deprecated
-        public Builder setNotificaitonToken(String notificationToken) {
-            this.notificationToken = notificationToken;
-            return this;
-        }
-
-        /**
          * Set notification token
          *
          * @param notificationToken The hardware revision for the hardware within the device.

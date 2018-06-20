@@ -62,7 +62,7 @@ public class UnrecognizedMessageTest extends TestActions{
         }
 
         assertNotNull("unrecognized message shouldn't be null", message);
-        UnrecognizedRtmData data = Constants.getGson().fromJson(message.getJsonData(), UnrecognizedRtmData.class);
+        UnrecognizedRtmData data = Constants.getGson().fromJson(message.getData(), UnrecognizedRtmData.class);
         assertEquals("unrecognized message data should be equal", "The Truth Is Out There", data.resource);
     }
 

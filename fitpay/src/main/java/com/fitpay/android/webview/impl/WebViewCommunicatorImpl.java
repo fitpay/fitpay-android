@@ -23,7 +23,6 @@ import com.fitpay.android.cardscanner.IFitPayCardScanner;
 import com.fitpay.android.cardscanner.ScannedCardInfo;
 import com.fitpay.android.paymentdevice.DeviceService;
 import com.fitpay.android.paymentdevice.constants.States;
-import com.fitpay.android.paymentdevice.enums.AppMessage;
 import com.fitpay.android.paymentdevice.enums.Sync;
 import com.fitpay.android.paymentdevice.events.NotificationSyncRequest;
 import com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector;
@@ -93,28 +92,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     private IFitPayCardScanner cardScanner;
 
     private boolean supportsAppVerification;
-
-    private boolean usedDeprecatedConstructor = false;
-
-    /**
-     * @param ctx
-     * @param webView
-     * @deprecated Use {@link #WebViewCommunicatorImpl(Activity, IPaymentDeviceConnector, WebView)}
-     */
-    @Deprecated
-    public WebViewCommunicatorImpl(Activity ctx, WebView webView) {
-        this(ctx, null, webView);
-        usedDeprecatedConstructor = true;
-    }
-
-    /**
-     * @param deviceService
-     * @deprecated Use {@link #WebViewCommunicatorImpl(Activity, IPaymentDeviceConnector, WebView)}
-     */
-    @Deprecated
-    public void setDeviceService(DeviceService deviceService) {
-        this.deviceService = deviceService;
-    }
 
     public WebViewCommunicatorImpl(Activity ctx, IPaymentDeviceConnector deviceConnector, WebView webView) {
         this.activity = ctx;
@@ -232,8 +209,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     public void sync(String callbackId, final SyncInfo syncInfo) {
         FPLog.d(TAG, "sync received");
 
-//        postMessage(new DeviceStatusMessage(activity.getString(R.string.sync_started), DeviceStatusMessage.PROGRESS));
-
         if (null == user) {
             onTaskError(EventCallback.SYNC_COMPLETED, callbackId, "No user specified for sync operation");
             return;
@@ -244,12 +219,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
             return;
         }
 
-        if (null == deviceService && usedDeprecatedConstructor) {
-            onTaskError(EventCallback.SYNC_COMPLETED, callbackId, "No DeviceService has not been configured for sync operation");
-            return;
-        }
-
-        if (null == deviceConnector && !usedDeprecatedConstructor) {
+        if (null == deviceConnector) {
             onTaskError(EventCallback.SYNC_COMPLETED, callbackId, "No PaymentConnector has not been configured for sync operation");
             return;
         }
@@ -452,8 +422,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     private void createSyncRequest(SyncInfo syncInfo) {
         if (deviceConnector != null) {
             deviceConnector.createSyncRequest(syncInfo);
-        } else if (deviceService.getPaymentDeviceConnector() != null) {
-            deviceService.getPaymentDeviceConnector().createSyncRequest(syncInfo);
         } else {
             Log.e(TAG, "Can't create syncRequest. PaymentDeviceConnector is missing");
         }
@@ -597,11 +565,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     private class PushNotificationSyncListener extends Listener {
         private PushNotificationSyncListener() {
             mCommands.put(NotificationSyncRequest.class, data -> sync(null, ((NotificationSyncRequest) data).getSyncInfo()));
-            mCommands.put(AppMessage.class, data -> {
-                if (AppMessage.SYNC.equals(((AppMessage) data).getType())) {
-                    sync(null);
-                }
-            });
         }
     }
 

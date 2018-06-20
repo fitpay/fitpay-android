@@ -46,17 +46,6 @@ public interface WebViewCommunicator {
     String retrieveConfigJson();
 
     /**
-     * @deprecated See {@link WebViewCommunicatorImpl (Activity, IPaymentDeviceConnector, int)}
-     *
-     * Provide a configured DeviceService to the communicator to support operations that require interaction with the payment device
-     * One example is sync.
-     *
-     * @param deviceService
-     */
-    @Deprecated
-    void setDeviceService(DeviceService deviceService);
-
-    /**
      * Provide a {@link IFitPayCardScanner} implementation to handle card image scanning within the native OS.  In order to enable
      * the "useWebCardScanner" must be set to false in the {@link com.fitpay.android.webview.models.WvConfig} when launching the
      * webview.
