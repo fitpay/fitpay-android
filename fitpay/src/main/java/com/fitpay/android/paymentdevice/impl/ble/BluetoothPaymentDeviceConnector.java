@@ -155,6 +155,10 @@ public final class BluetoothPaymentDeviceConnector extends PaymentDeviceConnecto
     public void executeApduCommand(long apduPkgNumber, ApduCommand apduCommand) {
     }
 
+    @Override
+    public void executeTopOfWallet(List<TopOfWallet> towPackage) {
+    }
+
     public void sendNotification(byte[] data) {
         FPLog.d(TAG, "initiate sendNotification request.  data: " + data);
         GattOperation setTransactionOperation = new GattCharacteristicWriteOperation(
