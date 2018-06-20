@@ -3,9 +3,6 @@ package com.fitpay.android.webview.impl;
 import android.app.Activity;
 
 import com.fitpay.android.utils.Constants;
-import com.fitpay.android.utils.Listener;
-import com.fitpay.android.utils.NotificationManager;
-import com.fitpay.android.utils.RxBus;
 import com.fitpay.android.webview.enums.RtmType;
 import com.fitpay.android.webview.events.RtmMessage;
 
@@ -17,11 +14,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 
 /**
  * Created by Vlad on 19.07.2017.

@@ -1,3 +1,4 @@
+com.fitpay.android.a2averification
 com.fitpay.android.api
 com.fitpay.android.api.callbacks
 com.fitpay.android.api.enums
@@ -26,6 +27,7 @@ com.fitpay.android.paymentdevice.impl.mock
 com.fitpay.android.paymentdevice.interfaces
 com.fitpay.android.paymentdevice.models
 com.fitpay.android.paymentdevice.utils
+com.fitpay.android.paymentdevice.utils.sync
 com.fitpay.android.rtm.callbacks
 com.fitpay.android.rtm.enums
 com.fitpay.android.rtm.models
@@ -33,8 +35,6 @@ com.fitpay.android.utils
 com.fitpay.android.webview
 com.fitpay.android.webview.enums
 com.fitpay.android.webview.events
-com.fitpay.android.webview.events.a2a
 com.fitpay.android.webview.impl
 com.fitpay.android.webview.impl.parser
 com.fitpay.android.webview.models
-com.fitpay.android.webview.models.a2a

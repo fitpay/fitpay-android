@@ -19,9 +19,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.security.MessageDigest;
 import java.security.interfaces.ECPublicKey;
-import java.text.ParseException;
 import java.util.Properties;
-import java.util.Locale;
 
 /**
  * Created by Vlad on 26.02.2016.

@@ -7,6 +7,8 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
 import com.fitpay.android.R;
+import com.fitpay.android.a2averification.A2AVerificationFailed;
+import com.fitpay.android.a2averification.A2AVerificationRequest;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.ResultCode;
@@ -38,8 +40,6 @@ import com.fitpay.android.webview.events.IdVerificationRequest;
 import com.fitpay.android.webview.events.RtmMessage;
 import com.fitpay.android.webview.events.RtmMessageResponse;
 import com.fitpay.android.webview.events.UserReceived;
-import com.fitpay.android.webview.events.a2a.A2AVerificationFailed;
-import com.fitpay.android.webview.events.a2a.A2AVerificationRequest;
 import com.fitpay.android.webview.models.IdVerification;
 import com.fitpay.android.webview.models.RtmVersion;
 import com.google.gson.Gson;
@@ -47,11 +47,9 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.Locale;
 
 import static com.fitpay.android.utils.Constants.WV_DATA;
-
 
 /**
  * Created by Ross Gabay on 4/13/2016.
@@ -307,11 +305,8 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                         }
 
                         if (automaticallySubscribeToUserEventStream) {
-                            try {
-                                UserEventStreamManager.subscribe(user.getId());
-                            } catch (IOException e) {
-                                FPLog.e(e);
-                            }
+
+                            UserEventStreamManager.subscribe(user.getId());
 
                             boolean automaticSyncThroughUserEventStream = true;
                             if (ApiManager.getConfig().containsKey(ApiManager.PROPERTY_AUTOMATICALLY_SYNC_FROM_USER_EVENT_STREAM)) {

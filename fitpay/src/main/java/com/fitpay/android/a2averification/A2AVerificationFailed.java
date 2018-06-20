@@ -1,6 +1,4 @@
-package com.fitpay.android.webview.events.a2a;
-
-import com.fitpay.android.webview.enums.A2AVerificationError;
+package com.fitpay.android.a2averification;
 
 /**
  * Error event if {@link A2AVerificationRequest} failed

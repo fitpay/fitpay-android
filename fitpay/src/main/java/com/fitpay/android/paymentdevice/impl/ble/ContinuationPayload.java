@@ -4,7 +4,6 @@ import com.fitpay.android.paymentdevice.impl.ble.message.ContinuationPacketMessa
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.Hex;
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -23,7 +22,7 @@ class ContinuationPayload {
         this.targetUuid = targetUuid;
     }
 
-    public void processPacket(ContinuationPacketMessage message) throws IOException {
+    public void processPacket(ContinuationPacketMessage message) {
         if (message == null) {
             return;
         }

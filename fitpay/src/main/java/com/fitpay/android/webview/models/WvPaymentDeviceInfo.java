@@ -122,10 +122,7 @@ public class WvPaymentDeviceInfo {
             return false;
         if (bdAddress != null ? !bdAddress.equals(that.bdAddress) : that.bdAddress != null)
             return false;
-        if (notificationToken != null ? !notificationToken.equals(that.notificationToken) : that.notificationToken != null)
-            return false;
-
-        return true;
+        return notificationToken != null ? notificationToken.equals(that.notificationToken) : that.notificationToken == null;
     }
 
     @Override

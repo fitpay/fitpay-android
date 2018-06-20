@@ -3,7 +3,6 @@ package com.fitpay.android.api.sse;
 import com.fitpay.android.api.models.UserStreamEvent;
 import com.fitpay.android.paymentdevice.callbacks.IListeners;
 import com.fitpay.android.utils.Listener;
-import com.google.gson.JsonObject;
 
 /**
  * Synchronization callbacks

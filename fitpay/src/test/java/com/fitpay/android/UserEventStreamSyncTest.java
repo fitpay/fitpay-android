@@ -10,7 +10,6 @@ import com.fitpay.android.api.models.card.CreditCard;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.sse.UserEventStreamListener;
 import com.fitpay.android.api.sse.UserEventStreamManager;
-import com.fitpay.android.paymentdevice.DeviceService;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
 import com.fitpay.android.utils.Listener;

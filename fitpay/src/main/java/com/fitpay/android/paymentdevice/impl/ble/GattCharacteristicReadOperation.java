@@ -3,7 +3,6 @@ package com.fitpay.android.paymentdevice.impl.ble;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 
-
 import com.fitpay.android.utils.FPLog;
 
 import java.util.UUID;

@@ -301,7 +301,7 @@ public final class SyncWorkerTask implements Runnable {
             if (commitTimersEnabled) {
                 commitWarningTimer = timeoutWatcherExecutor.schedule(new Callable<Void>() {
                     @Override
-                    public Void call() throws Exception {
+                    public Void call() {
                         FPLog.w(TAG, "warning, commit " + commit + " has not returned within " + commitWarningTimer + "ms");
 
                         return null;
@@ -311,7 +311,7 @@ public final class SyncWorkerTask implements Runnable {
                 // this is the timeout timer that'll basically kill the sync if a commit isn't responded too
                 commitTimeoutTimer = timeoutWatcherExecutor.schedule(new Callable<Void>() {
                     @Override
-                    public Void call() throws Exception {
+                    public Void call() {
                         final String errorMessage = "error, commit timeout " + commit.getCommitId() + " has not returned within " + commitErrorTimeout + "ms";
                         FPLog.e(TAG, errorMessage);
 
