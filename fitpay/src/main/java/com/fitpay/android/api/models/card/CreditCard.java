@@ -236,7 +236,7 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
     public static final class Builder {
 
         private String name;
-        private String cvv;
+        private Integer cvv;
         private String pan;
         private Integer expMonth;
         private Integer expYear;
@@ -290,7 +290,7 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
          * @param cvv cards's cvv2 code. string with 3 digits only
          * @return a reference to this {@code Builder} object to fulfill the "Builder" pattern
          */
-        public Builder setCVV(@NonNull String cvv) {//throws IllegalFormatException{
+        public Builder setCVV(@NonNull Integer cvv) {//throws IllegalFormatException{
 
 //            String pattern = "\\d{1,3}$";
 //            if(!cvv.matches(pattern)){

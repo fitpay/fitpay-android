@@ -18,7 +18,7 @@ public final class CreditCardInfo implements Parcelable {
     /**
      * description : The credit card cvv2 code
      */
-    String cvv;
+    Integer cvv;
 
     /**
      * description : The credit card number, also known as a Primary Account Number (PAN)
@@ -66,7 +66,7 @@ public final class CreditCardInfo implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.name);
-        dest.writeString(this.cvv);
+        dest.writeValue(this.cvv);
         dest.writeString(this.pan);
         dest.writeValue(this.expMonth);
         dest.writeValue(this.expYear);
@@ -77,7 +77,7 @@ public final class CreditCardInfo implements Parcelable {
 
     protected CreditCardInfo(Parcel in) {
         this.name = in.readString();
-        this.cvv = in.readString();
+        this.cvv = (Integer) in.readValue(Integer.class.getClassLoader());
         this.pan = in.readString();
         this.expMonth = (Integer) in.readValue(Integer.class.getClassLoader());
         this.expYear = (Integer) in.readValue(Integer.class.getClassLoader());

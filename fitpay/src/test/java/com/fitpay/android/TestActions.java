@@ -327,7 +327,14 @@ public class TestActions {
     protected CreditCard createCreditCard(User user, CreditCard creditCard) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<CreditCard> callback = new ResultProvidingCallback<>(latch);
-        user.createCreditCard(creditCard, callback);
+        user.createCreditCard(
+                creditCard.getPan(),
+                creditCard.getExpMonth(),
+                creditCard.getExpYear(),
+                creditCard.getCVV(),
+                creditCard.getName(),
+                creditCard.getAddress(),
+                callback);
         latch.await(TIMEOUT, TimeUnit.SECONDS);
         return callback.getResult();
     }

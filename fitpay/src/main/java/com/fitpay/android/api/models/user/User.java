@@ -3,11 +3,13 @@ package com.fitpay.android.api.models.user;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.ResultCode;
 import com.fitpay.android.api.models.Links;
+import com.fitpay.android.api.models.card.Address;
 import com.fitpay.android.api.models.card.CreditCard;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
@@ -232,7 +234,7 @@ public final class User extends UserModel implements Parcelable {
      * If the card owner has no default card, then the new card will become the default.
      * However, if the owner already has a default then it will not change.
      * To change the default, you should update the user to have a new "default_source".
-     *
+     * <p>
      * <p>
      * <b>Important note:</b>
      * This call responds with a hypermedia link for accept terms. Getting the card again will not
@@ -241,11 +243,23 @@ public final class User extends UserModel implements Parcelable {
      * {@link CreditCard#setAcceptTermsUrl(String)} this link allowing the user to come back to the T&Cs at a later time
      * </p>
      *
-     * @param creditCard credit card data:(pan, expMonth, expYear, cvv, name,
-     *                   address data:(street1, street2, street3, city, state, postalCode, country))
-     * @param callback   result callback
+     * @param pan      pan
+     * @param expMonth expMonth
+     * @param expYear  expYear
+     * @param cvv      cvv
+     * @param name     name
+     * @param address  address data:(street1, street2, street3, city, state, postalCode, country))
+     * @param callback result callback
      */
-    public void createCreditCard(@NonNull CreditCard creditCard, @NonNull ApiCallback<CreditCard> callback) {
+    public void createCreditCard(@NonNull String pan, @NonNull Integer expMonth, @NonNull Integer expYear,
+                                 @NonNull Integer cvv, @NonNull String name, @NonNull Address address, @NonNull ApiCallback<CreditCard> callback) {
+        CreditCard creditCard = new CreditCard.Builder()
+                .setPAN(pan)
+                .setExpDate(expYear, expMonth)
+                .setCVV(cvv)
+                .setName(name)
+                .setAddress(address)
+                .build();
         makePostCall(GET_CARDS, creditCard, CreditCard.class, callback);
     }
 
