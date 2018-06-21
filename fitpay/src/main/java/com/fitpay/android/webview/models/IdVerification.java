@@ -19,10 +19,15 @@ import java.util.Locale;
 public final class IdVerification implements Parcelable {
     private Date oemAccountInfoUpdatedDate; // Most recent date this user update their: Billing Address, Name, Email, password, or other Personally Identifiable Information associated to their account.
     private Date oemAccountCreatedDate;
+    @SerializedName("suspendedCardsInAccount")
     private Integer suspendedCardsInOemAccount; // If this user has multiple devices, how many cards are suspended in total across all devices?
-    private Date lastOemAccountActivityDate; // Date this account was previously used, never today.
-    private Date deviceLostModeDate; // Date this device was reported lost or stolen. Don't send if you don't have it.
+    @SerializedName("daysSinceLastAccountActivity")
+    private Integer lastOemAccountActivityDate; // Days this account was previously used, never today.
+    @SerializedName("deviceLostMode")
+    private Integer deviceLostModeDate; // Days this device was reported lost or stolen. Don't send if you don't have it.
+    @SerializedName("deviceWithActiveTokens")
     private Integer devicesWithIdenticalActiveToken; // Number of devices that the token is on
+    @SerializedName("activeTokenOnAllDevicesForAccount")
     private Integer activeTokensOnAllDevicesForOemAccount; // If this user has multiple devices, how many cards are active in total across all devices?"
     private Integer oemAccountScore; // int between 0-9
     private Integer deviceScore; // int between 0-9
@@ -51,20 +56,14 @@ public final class IdVerification implements Parcelable {
     public static final class Builder {
         private Date oemAccountInfoUpdatedDate;
         private Date oemAccountCreatedDate;
-        @SerializedName("suspendedCardsInAccount")
         private Integer suspendedCardsInOemAccount;
-        @SerializedName("daysSinceLastAccountActivity")
-        private Date lastOemAccountActivityDate;
-        @SerializedName("deviceLostMode")
-        private Date deviceLostModeDate;
-        @SerializedName("deviceWithActiveTokens")
+        private Integer lastOemAccountActivityDate;
+        private Integer deviceLostModeDate;
         private Integer devicesWithIdenticalActiveToken;
-        @SerializedName("activeTokenOnAllDevicesForAccount")
         private Integer activeTokensOnAllDevicesForOemAccount;
         private Integer oemAccountScore;
         private Integer deviceScore;
         private Boolean nfcCapable;
-
         private String oemAccountCountryCode;
         private String deviceCountry;
         private String oemAccountUserName;
@@ -114,23 +113,23 @@ public final class IdVerification implements Parcelable {
         }
 
         /**
-         * Date this account was previously used, never today.
+         * Days this account was previously used, never today.
          *
-         * @param lastOemAccountActivityDate time in ISO 8601 format "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+         * @param lastOemAccountActivityDate days since the date
          * @return this
          */
-        public Builder setLastOemAccountActivityDate(Date lastOemAccountActivityDate) {
+        public Builder setLastOemAccountActivityDate(int lastOemAccountActivityDate) {
             this.lastOemAccountActivityDate = lastOemAccountActivityDate;
             return this;
         }
 
         /**
-         * Date this device was reported lost or stolen. Don't send if you don't have it.
+         * Days this device was reported lost or stolen. Don't send if you don't have it.
          *
-         * @param deviceLostModeDate time in ISO 8601 format "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+         * @param deviceLostModeDate days since the date
          * @return this
          */
-        public Builder setDeviceLostModeDate(Date deviceLostModeDate) {
+        public Builder setDeviceLostModeDate(int deviceLostModeDate) {
             this.deviceLostModeDate = deviceLostModeDate;
             return this;
         }
@@ -311,8 +310,8 @@ public final class IdVerification implements Parcelable {
         dest.writeLong(this.oemAccountInfoUpdatedDate != null ? this.oemAccountInfoUpdatedDate.getTime() : -1);
         dest.writeLong(this.oemAccountCreatedDate != null ? this.oemAccountCreatedDate.getTime() : -1);
         dest.writeValue(this.suspendedCardsInOemAccount);
-        dest.writeLong(this.lastOemAccountActivityDate != null ? this.lastOemAccountActivityDate.getTime() : -1);
-        dest.writeLong(this.deviceLostModeDate != null ? this.deviceLostModeDate.getTime() : -1);
+        dest.writeValue(this.lastOemAccountActivityDate);
+        dest.writeValue(this.deviceLostModeDate);
         dest.writeValue(this.devicesWithIdenticalActiveToken);
         dest.writeValue(this.activeTokensOnAllDevicesForOemAccount);
         dest.writeValue(this.oemAccountScore);
@@ -334,10 +333,8 @@ public final class IdVerification implements Parcelable {
         long tmpOemAccountCreatedDate = in.readLong();
         this.oemAccountCreatedDate = tmpOemAccountCreatedDate == -1 ? null : new Date(tmpOemAccountCreatedDate);
         this.suspendedCardsInOemAccount = (Integer) in.readValue(Integer.class.getClassLoader());
-        long tmpLastOemAccountActivityDate = in.readLong();
-        this.lastOemAccountActivityDate = tmpLastOemAccountActivityDate == -1 ? null : new Date(tmpLastOemAccountActivityDate);
-        long tmpDeviceLostModeDate = in.readLong();
-        this.deviceLostModeDate = tmpDeviceLostModeDate == -1 ? null : new Date(tmpDeviceLostModeDate);
+        this.lastOemAccountActivityDate = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.deviceLostModeDate = (Integer) in.readValue(Integer.class.getClassLoader());
         this.devicesWithIdenticalActiveToken = (Integer) in.readValue(Integer.class.getClassLoader());
         this.activeTokensOnAllDevicesForOemAccount = (Integer) in.readValue(Integer.class.getClassLoader());
         this.oemAccountScore = (Integer) in.readValue(Integer.class.getClassLoader());
