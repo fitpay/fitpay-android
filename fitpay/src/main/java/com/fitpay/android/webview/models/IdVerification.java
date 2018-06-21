@@ -17,7 +17,7 @@ import java.util.Locale;
  * IdVerification data
  */
 
-public final class IdVerification implements Parcelable {
+public final class  IdVerification implements Parcelable {
     private Date oemAccountInfoUpdatedDate; // Most recent date this user update their: Billing Address, Name, Email, password, or other Personally Identifiable Information associated to their account.
     private Date oemAccountCreatedDate;
     @SerializedName("suspendedCardsInAccount")
@@ -45,6 +45,78 @@ public final class IdVerification implements Parcelable {
     private String locale; //ISO 3166-1 alpha-2
 
     private IdVerification() {
+    }
+
+    public Date getOemAccountInfoUpdatedDate() {
+        return oemAccountInfoUpdatedDate;
+    }
+
+    public Date getOemAccountCreatedDate() {
+        return oemAccountCreatedDate;
+    }
+
+    public Integer getSuspendedCardsInOemAccount() {
+        return suspendedCardsInOemAccount;
+    }
+
+    public Integer getLastOemAccountActivityDate() {
+        return lastOemAccountActivityDate;
+    }
+
+    public Integer getDeviceLostModeDate() {
+        return deviceLostModeDate;
+    }
+
+    public Integer getDevicesWithIdenticalActiveToken() {
+        return devicesWithIdenticalActiveToken;
+    }
+
+    public Integer getActiveTokensOnAllDevicesForOemAccount() {
+        return activeTokensOnAllDevicesForOemAccount;
+    }
+
+    public Integer getOemAccountScore() {
+        return oemAccountScore;
+    }
+
+    public Integer getDeviceScore() {
+        return deviceScore;
+    }
+
+    public Boolean getNfcCapable() {
+        return nfcCapable;
+    }
+
+    public String getOemAccountCountryCode() {
+        return oemAccountCountryCode;
+    }
+
+    public String getDeviceCountry() {
+        return deviceCountry;
+    }
+
+    public String getOemAccountUserName() {
+        return oemAccountUserName;
+    }
+
+    public Date getDevicePairedToOemAccountDate() {
+        return devicePairedToOemAccountDate;
+    }
+
+    public String getDeviceTimeZone() {
+        return deviceTimeZone;
+    }
+
+    public Integer getDeviceTimeZoneSetBy() {
+        return deviceTimeZoneSetBy;
+    }
+
+    public String getDeviceIMEI() {
+        return deviceIMEI;
+    }
+
+    public String getLocale() {
+        return locale;
     }
 
     /**
