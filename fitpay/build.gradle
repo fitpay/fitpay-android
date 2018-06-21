@@ -15,7 +15,7 @@ apply plugin: 'maven'
 apply plugin: 'de.mobilej.unmock'
 
 group = 'com.fitpay.android'
-version = '0.6.2'
+version = '0.6.5'
 archivesBaseName = "android_sdk"
 
 uploadArchives {
@@ -138,6 +138,8 @@ dependencies {
     implementation 'org.bouncycastle:bcprov-jdk15on:1.58'
     implementation 'com.nimbusds:nimbus-jose-jwt:5.1'
 
+    implementation 'com.github.heremaps:oksse:c92d0556f0' //TODO: change to 0.9.0 when it will be fixed
+
     javadocDeps "com.android.support:support-annotations:${supportLib}"
     javadocDeps "com.squareup.retrofit2:retrofit:${retrofitLib}"
     javadocDeps "com.squareup.retrofit2:converter-gson:${retrofitLib}"
@@ -147,8 +149,6 @@ dependencies {
     javadocDeps 'me.alexrs:prefs:1.1.0'
     javadocDeps 'org.bouncycastle:bcprov-jdk15on:1.58'
     javadocDeps 'com.nimbusds:nimbus-jose-jwt:5.1'
-
-    implementation 'com.github.heremaps:oksse:master-SNAPSHOT'
 
     testImplementation 'org.mockito:mockito-core:2.12.0'
     testImplementation 'junit:junit:4.12'
