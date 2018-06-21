@@ -106,7 +106,7 @@ abstract class CreditCardModel extends BaseModel {
         return creditCardInfo.name;
     }
 
-    public Integer getCVV() {
+    public String getCVV() {
         return creditCardInfo.cvv;
     }
 

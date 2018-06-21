@@ -11,6 +11,7 @@ import com.fitpay.android.api.enums.ResultCode;
 import com.fitpay.android.api.models.Links;
 import com.fitpay.android.api.models.card.Address;
 import com.fitpay.android.api.models.card.CreditCard;
+import com.fitpay.android.api.models.card.CreditCardInfo;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.paymentdevice.DeviceOperationException;
@@ -243,24 +244,14 @@ public final class User extends UserModel implements Parcelable {
      * {@link CreditCard#setAcceptTermsUrl(String)} this link allowing the user to come back to the T&Cs at a later time
      * </p>
      *
-     * @param pan      pan
-     * @param expMonth expMonth
-     * @param expYear  expYear
-     * @param cvv      cvv
-     * @param name     name
-     * @param address  address data:(street1, street2, street3, city, state, postalCode, country))
+     * @param creditCardInfo credit card data:(pan, expMonth, expYear, cvv, name,
+     *                   address data:(street1, street2, street3, city, state, postalCode, country))
      * @param callback result callback
      */
-    public void createCreditCard(@NonNull String pan, @NonNull Integer expMonth, @NonNull Integer expYear,
-                                 @NonNull Integer cvv, @NonNull String name, @NonNull Address address, @NonNull ApiCallback<CreditCard> callback) {
-        CreditCard creditCard = new CreditCard.Builder()
-                .setPAN(pan)
-                .setExpDate(expYear, expMonth)
-                .setCVV(cvv)
-                .setName(name)
-                .setAddress(address)
-                .build();
-        makePostCall(GET_CARDS, creditCard, CreditCard.class, callback);
+    public void createCreditCard(@NonNull CreditCardInfo creditCardInfo, @NonNull ApiCallback<CreditCard> callback) {
+        Map<String, CreditCardInfo> cardInfoMap = new HashMap<>(1);
+        cardInfoMap.put("encryptedData", creditCardInfo);
+        makePostCall(GET_CARDS, cardInfoMap, CreditCard.class, callback);
     }
 
     /**

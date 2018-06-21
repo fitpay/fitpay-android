@@ -8,6 +8,7 @@ import com.fitpay.android.api.enums.ResultCode;
 import com.fitpay.android.api.models.Relationship;
 import com.fitpay.android.api.models.card.Address;
 import com.fitpay.android.api.models.card.CreditCard;
+import com.fitpay.android.api.models.card.CreditCardInfo;
 import com.fitpay.android.api.models.card.Reason;
 import com.fitpay.android.api.models.card.VerificationMethod;
 import com.fitpay.android.api.models.collection.Collections;
@@ -264,7 +265,7 @@ public class Steps {
         address.setCountryCode(countryCode);
         address.setStreet1(street1);
 
-        CreditCard creditCard = new CreditCard.Builder()
+        CreditCardInfo creditCardInfo = new CreditCardInfo.Builder()
                 .setCVV(cvv)
                 .setPAN(pan)
                 .setExpDate(expYear, expMonth)
@@ -273,7 +274,7 @@ public class Steps {
                 .build();
 
         final BlockingQueue<CreditCard> cards = new ArrayBlockingQueue<>(1);
-        currentUser.createCreditCard(creditCard, new ApiCallback<CreditCard>() {
+        currentUser.createCreditCard(creditCardInfo, new ApiCallback<CreditCard>() {
             @Override
             public void onSuccess(CreditCard result) {
                 cards.add(result);

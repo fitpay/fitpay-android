@@ -4,6 +4,7 @@ import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.ResponseState;
 import com.fitpay.android.api.enums.ResultCode;
 import com.fitpay.android.api.models.card.CreditCard;
+import com.fitpay.android.api.models.card.CreditCardInfo;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Commit;
 import com.fitpay.android.api.models.device.CommitConfirm;
@@ -36,16 +37,16 @@ public class CommitTest2 extends TestActions {
         assertEquals("should have one device", 1, devices.getTotalResults());
 
         String pan = "9999504454545450";
-        CreditCard creditCard = getTestCreditCard(pan);
-        CreditCard createdCard = createCreditCard(user, creditCard);
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created", createdCard);
 
         createdCard = acceptTerms(createdCard);
         waitForActivation(createdCard);
 
         pan = "9999504454545451";
-        creditCard = getTestCreditCard(pan);
-        createdCard = createCreditCard(user, creditCard);
+        creditCardInfo = getTestCreditCardInfo(pan);
+        createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created", createdCard);
 
         acceptTerms(createdCard);
@@ -94,16 +95,16 @@ public class CommitTest2 extends TestActions {
         assertEquals("should have one device", 1, devices.getTotalResults());
 
         String pan = "9999504454545450";
-        CreditCard creditCard = getTestCreditCard(pan);
-        CreditCard createdCard = createCreditCard(user, creditCard);
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created", createdCard);
 
         createdCard = acceptTerms(createdCard);
         waitForActivation(createdCard);
 
         pan = "9999504454545451";
-        creditCard = getTestCreditCard(pan);
-        createdCard = createCreditCard(user, creditCard);
+        creditCardInfo = getTestCreditCardInfo(pan);
+        createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created", createdCard);
 
         acceptTerms(createdCard);
@@ -131,16 +132,16 @@ public class CommitTest2 extends TestActions {
         assertEquals("should have one device", 1, devices.getTotalResults());
 
         String pan = "9999504454545450";
-        CreditCard creditCard = getTestCreditCard(pan);
-        CreditCard createdCard = createCreditCard(user, creditCard);
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created", createdCard);
 
         createdCard = acceptTerms(createdCard);
         waitForActivation(createdCard);
 
         pan = "9999504454545451";
-        creditCard = getTestCreditCard(pan);
-        createdCard = createCreditCard(user, creditCard);
+        creditCardInfo = getTestCreditCardInfo(pan);
+        createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created", createdCard);
 
         acceptTerms(createdCard);
@@ -163,16 +164,16 @@ public class CommitTest2 extends TestActions {
         assertEquals("should have one device", 1, devices.getTotalResults());
 
         String pan = "9999504454545450";
-        CreditCard creditCard = getTestCreditCard(pan);
-        CreditCard createdCard = createCreditCard(user, creditCard);
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created", createdCard);
 
         createdCard = acceptTerms(createdCard);
         waitForActivation(createdCard);
 
         pan = "9999504454545451";
-        creditCard = getTestCreditCard(pan);
-        createdCard = createCreditCard(user, creditCard);
+        creditCardInfo = getTestCreditCardInfo(pan);
+        createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created", createdCard);
 
         acceptTerms(createdCard);
@@ -209,8 +210,8 @@ public class CommitTest2 extends TestActions {
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 4; j++) {
                 String pan = panBase + i + j;
-                CreditCard creditCard = getTestCreditCard(pan);
-                CreditCard createdCard = createCreditCard(user, creditCard);
+                CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
+                CreditCard createdCard = createCreditCard(user, creditCardInfo);
                 assertNotNull("card not created", createdCard);
 
                 creditCardArray[count] = acceptTerms(createdCard);

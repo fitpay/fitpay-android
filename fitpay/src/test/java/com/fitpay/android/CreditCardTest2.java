@@ -6,9 +6,9 @@ import com.fitpay.android.api.callbacks.ResultProvidingCallback;
 import com.fitpay.android.api.enums.CardInitiators;
 import com.fitpay.android.api.models.Transaction;
 import com.fitpay.android.api.models.card.CreditCard;
+import com.fitpay.android.api.models.card.CreditCardInfo;
 import com.fitpay.android.api.models.card.Reason;
 import com.fitpay.android.api.models.card.VerificationMethod;
-import com.fitpay.android.api.models.card.VerificationMethods;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
 
@@ -42,11 +42,11 @@ public class CreditCardTest2 extends TestActions {
         assertEquals("should have one device", 1, devices.getTotalResults());
 
         String pan = "9999504454545450";
-        CreditCard creditCard = getTestCreditCard(pan);
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
 
-        CreditCard createdCard = createCreditCard(user, creditCard);
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
 
-        verifyCardContents(creditCard, createdCard);
+        verifyCardContents(creditCardInfo, createdCard);
 
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<Image> callback = new ResultProvidingCallback<>(latch);
@@ -57,13 +57,13 @@ public class CreditCardTest2 extends TestActions {
         //assertEquals(-1, callback.getErrorCode());
     }
 
-    protected void verifyCardContents(CreditCard creditCard, CreditCard createdCard) {
+    protected void verifyCardContents(CreditCardInfo creditCardInfo, CreditCard createdCard) {
         assertNotNull("card not created",createdCard);
         assertEquals("cvv should be masked", "###", createdCard.getCVV());
-        assertEquals("exp month", creditCard.getExpMonth(), createdCard.getExpMonth());
-        assertEquals("exp year", creditCard.getExpYear(), createdCard.getExpYear());
-        assertEquals("street 1", creditCard.getAddress().getStreet1(), createdCard.getAddress().getStreet1());
-        assertEquals("postal code", creditCard.getAddress().getPostalCode(), createdCard.getAddress().getPostalCode());
+        assertEquals("exp month", creditCardInfo.getExpMonth(), createdCard.getExpMonth());
+        assertEquals("exp year", creditCardInfo.getExpYear(), createdCard.getExpYear());
+        assertEquals("street 1", creditCardInfo.getAddress().getStreet1(), createdCard.getAddress().getStreet1());
+        assertEquals("postal code", creditCardInfo.getAddress().getPostalCode(), createdCard.getAddress().getPostalCode());
         assertNotNull("card meta data should be populated", createdCard.getCardMetaData());
         assertNotNull("brand logo should be populated", createdCard.getCardMetaData().getBrandLogo());
         assertTrue("brand logo should have at least one asset", createdCard.getCardMetaData().getBrandLogo().size() > 0);
@@ -73,18 +73,11 @@ public class CreditCardTest2 extends TestActions {
     @Test
     public void testCantAddCreditCardWithNoDevice() throws Exception {
         String pan = "9999545454545454";
-        CreditCard creditCard = getTestCreditCard(pan);
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
 
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<CreditCard> callback = new ResultProvidingCallback<>(latch);
-        user.createCreditCard(
-                creditCard.getPan(),
-                creditCard.getExpMonth(),
-                creditCard.getExpYear(),
-                creditCard.getCVV(),
-                creditCard.getName(),
-                creditCard.getAddress(),
-                callback);
+        user.createCreditCard(creditCardInfo, callback);
         latch.await(TIMEOUT, TimeUnit.SECONDS);
         CreditCard createdCard = callback.getResult();
 
@@ -104,9 +97,9 @@ public class CreditCardTest2 extends TestActions {
         assertEquals("should have one device", 1, devices.getTotalResults());
 
         String pan = "9999545454545454";
-        CreditCard creditCard = getTestCreditCard(pan);
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
 
-        CreditCard createdCard = createCreditCard(user, creditCard);
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created",createdCard);
         assertEquals("card not in expected state", "ELIGIBLE", createdCard.getState());
 
@@ -129,9 +122,9 @@ public class CreditCardTest2 extends TestActions {
         assertEquals("should have one device", 1, devices.getTotalResults());
 
         String pan = "9999545454545454";
-        CreditCard creditCard = getTestCreditCard(pan);
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
 
-        CreditCard createdCard = createCreditCard(user, creditCard);
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created",createdCard);
         assertEquals("card not in expected state", "ELIGIBLE", createdCard.getState());
 
@@ -155,9 +148,9 @@ public class CreditCardTest2 extends TestActions {
         assertEquals("should have one device", 1, devices.getTotalResults());
 
         String pan = "9999504454545457";
-        CreditCard creditCard = getTestCreditCard(pan);
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
 
-        CreditCard createdCard = createCreditCard(user, creditCard);
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created",createdCard);
         assertEquals("card not in expected state", "INELIGIBLE", createdCard.getState());
 
@@ -180,9 +173,9 @@ public class CreditCardTest2 extends TestActions {
         assertEquals("should have one device", 1, devices.getTotalResults());
 
         String pan = "9999504454545459";
-        CreditCard creditCard = getTestCreditCard(pan);
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
 
-        CreditCard createdCard = createCreditCard(user, creditCard);
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created",createdCard);
         assertEquals("card not in expected state", "ELIGIBLE", createdCard.getState());
 
@@ -208,9 +201,9 @@ public class CreditCardTest2 extends TestActions {
         assertEquals("should have one device", 1, devices.getTotalResults());
 
         String pan = "9999504454545450";
-        CreditCard creditCard = getTestCreditCard(pan);
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
 
-        CreditCard createdCard = createCreditCard(user, creditCard);
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created",createdCard);
 
         Collections.CreditCardCollection creditCards = getCreditCards(user);
@@ -218,7 +211,7 @@ public class CreditCardTest2 extends TestActions {
         assertEquals("number of credit cards", 1, creditCards.getTotalResults());
         assertEquals("credit card connectorId", createdCard.getCreditCardId(), creditCards.getResults().get(0).getCreditCardId());
 
-        verifyCardContents(creditCard, creditCards.getResults().get(0));
+        verifyCardContents(creditCardInfo, creditCards.getResults().get(0));
     }
 
     @Test
@@ -233,13 +226,13 @@ public class CreditCardTest2 extends TestActions {
         assertEquals("should have one device", 1, devices.getTotalResults());
 
         String pan = "9999504454545450";
-        CreditCard creditCard = getTestCreditCard(pan);
-        CreditCard createdCard = createCreditCard(user, creditCard);
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created",createdCard);
 
         pan = "9999504454545451";
-        creditCard = getTestCreditCard(pan);
-        createdCard = createCreditCard(user, creditCard);
+        creditCardInfo = getTestCreditCardInfo(pan);
+        createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created",createdCard);
 
         Collections.CreditCardCollection creditCards = getCreditCards(user);
@@ -262,13 +255,13 @@ public class CreditCardTest2 extends TestActions {
         assertEquals("should have one device", 1, devices.getTotalResults());
 
         String pan = "9999504454545450";
-        CreditCard creditCard = getTestCreditCard(pan);
-        CreditCard createdCard = createCreditCard(user, creditCard);
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created",createdCard);
 
         pan = "9999504454545451";
-        creditCard = getTestCreditCard(pan);
-        createdCard = createCreditCard(user, creditCard);
+        creditCardInfo = getTestCreditCardInfo(pan);
+        createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created",createdCard);
 
         Collections.CreditCardCollection creditCards = getCreditCards(user);
@@ -295,8 +288,8 @@ public class CreditCardTest2 extends TestActions {
         assertEquals("should have one device", 1, devices.getTotalResults());
 
         String pan = "9999504454545450";
-        CreditCard creditCard = getTestCreditCard(pan);
-        CreditCard createdCard = createCreditCard(user, creditCard);
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created",createdCard);
 
         deleteCard(createdCard);
@@ -319,9 +312,9 @@ public class CreditCardTest2 extends TestActions {
         assertEquals("should have one device", 1, devices.getTotalResults());
 
         String pan = "9999545454545454";
-        CreditCard creditCard = getTestCreditCard(pan);
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
 
-        CreditCard createdCard = createCreditCard(user, creditCard);
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created",createdCard);
         assertEquals("card not in expected state", "ELIGIBLE", createdCard.getState());
 
@@ -385,9 +378,9 @@ public class CreditCardTest2 extends TestActions {
         assertEquals("should have one device", 1, devices.getTotalResults());
 
         String pan = "9999545454545450";
-        CreditCard creditCard = getTestCreditCard(pan);
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
 
-        CreditCard createdCard = createCreditCard(user, creditCard);
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created",createdCard);
         assertEquals("card not in expected state", "ELIGIBLE", createdCard.getState());
 
@@ -399,8 +392,8 @@ public class CreditCardTest2 extends TestActions {
         assertTrue("should be default", createdCard.isDefault());
 
         pan = "9999504454545451";
-        creditCard = getTestCreditCard(pan);
-        CreditCard secondCard = createCreditCard(user, creditCard);
+        creditCardInfo = getTestCreditCardInfo(pan);
+        CreditCard secondCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created", secondCard);
 
         assertEquals("card not in expected state", "ELIGIBLE", secondCard.getState());
@@ -437,9 +430,9 @@ public class CreditCardTest2 extends TestActions {
         assertEquals("should have one device", 1, devices.getTotalResults());
 
         String pan = "9999411111111112";
-        CreditCard creditCard = getTestCreditCard(pan);
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
 
-        CreditCard createdCard = createCreditCard(user, creditCard);
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created",createdCard);
         assertEquals("card not in expected state", "ELIGIBLE", createdCard.getState());
 
