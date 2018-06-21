@@ -44,6 +44,11 @@ public final class CreditCardInfo implements Parcelable {
      */
     Address address;
 
+    /**
+     * description : Card holder risk data
+     */
+    IdVerification riskData;
+
     CreditCardInfo() {
     }
 
@@ -89,6 +94,7 @@ public final class CreditCardInfo implements Parcelable {
         dest.writeValue(this.expMonth);
         dest.writeValue(this.expYear);
         dest.writeParcelable(this.address, flags);
+        dest.writeParcelable(this.riskData, flags);
     }
 
     protected CreditCardInfo(Parcel in) {
@@ -98,6 +104,7 @@ public final class CreditCardInfo implements Parcelable {
         this.expMonth = (Integer) in.readValue(Integer.class.getClassLoader());
         this.expYear = (Integer) in.readValue(Integer.class.getClassLoader());
         this.address = in.readParcelable(Address.class.getClassLoader());
+        this.riskData = in.readParcelable(IdVerification.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<CreditCardInfo> CREATOR = new Parcelable.Creator<CreditCardInfo>() {
@@ -120,6 +127,7 @@ public final class CreditCardInfo implements Parcelable {
         private Integer expMonth;
         private Integer expYear;
         private Address address;
+        private IdVerification riskData;
 
         /**
          * Creates a Builder instance that can be used to build Gson with various configuration
@@ -144,6 +152,7 @@ public final class CreditCardInfo implements Parcelable {
             creditCardInfo.expYear = expYear;
             creditCardInfo.expMonth = expMonth;
             creditCardInfo.address = address;
+            creditCardInfo.riskData = riskData;
             return creditCardInfo;
         }
 
@@ -219,6 +228,18 @@ public final class CreditCardInfo implements Parcelable {
          */
         public Builder setAddress(@NonNull Address address) {
             this.address = address;
+            return this;
+        }
+
+
+        /**
+         * Set risk data {@link IdVerification}
+         *
+         * @param riskData card holder risk data
+         * @return a reference to this {@code Builder} object to fulfill the "Builder" pattern
+         */
+        public Builder setRiskData(@NonNull IdVerification riskData) {
+            this.riskData = riskData;
             return this;
         }
     }
