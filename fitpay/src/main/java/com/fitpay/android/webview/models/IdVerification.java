@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fitpay.android.utils.RxBus;
+import com.fitpay.android.utils.TimestampUtils;
 import com.fitpay.android.webview.enums.DeviceTimeZone;
 import com.fitpay.android.webview.enums.RtmType;
 import com.fitpay.android.webview.events.RtmMessageResponse;
@@ -57,8 +58,8 @@ public final class IdVerification implements Parcelable {
         private Date oemAccountInfoUpdatedDate;
         private Date oemAccountCreatedDate;
         private Integer suspendedCardsInOemAccount;
-        private Integer lastOemAccountActivityDate;
-        private Integer deviceLostModeDate;
+        private Date lastOemAccountActivityDate;
+        private Date deviceLostModeDate;
         private Integer devicesWithIdenticalActiveToken;
         private Integer activeTokensOnAllDevicesForOemAccount;
         private Integer oemAccountScore;
@@ -113,23 +114,23 @@ public final class IdVerification implements Parcelable {
         }
 
         /**
-         * Days this account was previously used, never today.
+         * Date this account was previously used, never today.
          *
-         * @param lastOemAccountActivityDate days since the date
+         * @param lastOemAccountActivityDate time in ISO 8601 format "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
          * @return this
          */
-        public Builder setLastOemAccountActivityDate(int lastOemAccountActivityDate) {
+        public Builder setLastOemAccountActivityDate(Date lastOemAccountActivityDate) {
             this.lastOemAccountActivityDate = lastOemAccountActivityDate;
             return this;
         }
 
         /**
-         * Days this device was reported lost or stolen. Don't send if you don't have it.
+         * Date this device was reported lost or stolen. Don't send if you don't have it.
          *
-         * @param deviceLostModeDate days since the date
+         * @param deviceLostModeDate time in ISO 8601 format "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
          * @return this
          */
-        public Builder setDeviceLostModeDate(int deviceLostModeDate) {
+        public Builder setDeviceLostModeDate(Date deviceLostModeDate) {
             this.deviceLostModeDate = deviceLostModeDate;
             return this;
         }
@@ -278,8 +279,8 @@ public final class IdVerification implements Parcelable {
             idVerification.oemAccountInfoUpdatedDate = oemAccountInfoUpdatedDate;
             idVerification.oemAccountCreatedDate = oemAccountCreatedDate;
             idVerification.suspendedCardsInOemAccount = suspendedCardsInOemAccount;
-            idVerification.lastOemAccountActivityDate = lastOemAccountActivityDate;
-            idVerification.deviceLostModeDate = deviceLostModeDate;
+            idVerification.lastOemAccountActivityDate = TimestampUtils.getDaysBetweenDates(lastOemAccountActivityDate);
+            idVerification.deviceLostModeDate = TimestampUtils.getDaysBetweenDates(deviceLostModeDate);
             idVerification.devicesWithIdenticalActiveToken = devicesWithIdenticalActiveToken;
             idVerification.activeTokensOnAllDevicesForOemAccount = activeTokensOnAllDevicesForOemAccount;
             idVerification.oemAccountScore = oemAccountScore;
