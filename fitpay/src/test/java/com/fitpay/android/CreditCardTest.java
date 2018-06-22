@@ -69,7 +69,6 @@ public class CreditCardTest {
     }
 
     @Test
-    @Ignore
     public void test09_updateCard() throws InterruptedException {
         steps.updateCard();
     }
