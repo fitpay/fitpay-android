@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import com.fitpay.android.TestActions;
 import com.fitpay.android.TestUtils;
 import com.fitpay.android.api.models.card.CreditCard;
+import com.fitpay.android.api.models.card.CreditCardInfo;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.models.user.LoginIdentity;
 import com.fitpay.android.api.models.user.UserCreateRequest;
@@ -129,8 +130,8 @@ public class DeviceSyncManagerTest extends TestActions {
         assertNotNull(this.device);
 
         String pan = "9999504454545450";
-        CreditCard creditCard = getTestCreditCard(pan);
-        CreditCard createdCard = createCreditCard(user, creditCard);
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created", createdCard);
 
         Properties props = new Properties();
