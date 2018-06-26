@@ -139,6 +139,7 @@ dependencies {
     implementation 'com.nimbusds:nimbus-jose-jwt:5.1'
 
     implementation 'com.github.heremaps:oksse:c92d0556f0' //TODO: change to 0.9.0 when it will be fixed
+
     implementation 'joda-time:joda-time:2.10'
 
     javadocDeps "com.android.support:support-annotations:${supportLib}"
