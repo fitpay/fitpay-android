@@ -122,7 +122,7 @@ public class Steps {
 
         Assert.assertNotNull(loginIdentity);
 
-        ApiManager.getInstance().loginUser(loginIdentity, new ApiCallback<OAuthToken>() {
+        ApiManager.getInstance().login(loginIdentity, new ApiCallback<OAuthToken>() {
             @Override
             public void onSuccess(OAuthToken result) {
                 Assert.assertNotNull("missing bearer token", result.getAccessToken());

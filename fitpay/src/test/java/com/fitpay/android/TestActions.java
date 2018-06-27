@@ -149,7 +149,7 @@ public class TestActions {
     protected boolean doLogin(LoginIdentity loginIdentity) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<OAuthToken> callback = new ResultProvidingCallback<>(latch);
-        ApiManager.getInstance().loginUser(loginIdentity, callback);
+        ApiManager.getInstance().login(loginIdentity, callback);
         boolean completed = latch.await(TIMEOUT, TimeUnit.SECONDS);
         assertTrue("login did not complete successfully", completed);
         assertEquals("login error code. (message: " + callback.getErrorMessage() + ")", -1, callback.getErrorCode());
