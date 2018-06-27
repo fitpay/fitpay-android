@@ -2,6 +2,7 @@ package com.fitpay.android.paymentdevice.utils.sync;
 
 import android.content.Context;
 
+import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.R;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
@@ -61,8 +62,8 @@ public final class SyncWorkerTask implements Runnable {
     private ScheduledFuture<Void> commitWarningTimer;
     private ScheduledFuture<Void> commitTimeoutTimer;
 
-    private final int commitWarningTimeout = Integer.parseInt(ApiManager.getConfig().get(ApiManager.PROPERTY_COMMIT_WARNING_TIMEOUT));
-    private final int commitErrorTimeout = Integer.parseInt(ApiManager.getConfig().get(ApiManager.PROPERTY_COMMIT_ERROR_TIMEOUT));
+    private final int commitWarningTimeout = FitpayConfig.getInstance().get(FitpayConfig.PROPERTY_COMMIT_WARNING_TIMEOUT);
+    private final int commitErrorTimeout = FitpayConfig.getInstance().get(FitpayConfig.PROPERTY_COMMIT_ERROR_TIMEOUT);
 
     private SyncProcess syncProcess;
 
@@ -293,11 +294,7 @@ public final class SyncWorkerTask implements Runnable {
 
             // start the watching timers, this first timer is responsible for producing a warning
             // if a commit isn't responded to in a timely manner
-            boolean commitTimersEnabled = true;
-            if (ApiManager.getConfig().containsKey(ApiManager.PROPERTY_COMMIT_TIMERS_ENABLED)) {
-                commitTimersEnabled = "true".equals(ApiManager.getConfig().get(ApiManager.PROPERTY_COMMIT_TIMERS_ENABLED));
-            }
-
+            boolean commitTimersEnabled = FitpayConfig.getInstance().<Boolean>get(FitpayConfig.PROPERTY_COMMIT_TIMERS_ENABLED, true);
             if (commitTimersEnabled) {
                 commitWarningTimer = timeoutWatcherExecutor.schedule(new Callable<Void>() {
                     @Override
