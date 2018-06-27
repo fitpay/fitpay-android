@@ -39,7 +39,7 @@ public class UserTest2 extends TestActions {
 
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<OAuthToken> callback = new ResultProvidingCallback<>(latch);
-        ApiManager.getInstance().loginUser(badCredentials, callback);
+        ApiManager.getInstance().login(badCredentials, callback);
         boolean completed = latch.await(TIMEOUT, TimeUnit.SECONDS);
         assertTrue("login did not complete successfully", completed);
         assertEquals("login error code. (message: " + callback.getErrorMessage() + ")", 401, callback.getErrorCode());
