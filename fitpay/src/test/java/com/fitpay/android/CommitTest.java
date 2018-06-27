@@ -1,6 +1,5 @@
 package com.fitpay.android;
 
-import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.configs.FitpayConfig;
 
 import org.junit.AfterClass;
