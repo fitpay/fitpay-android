@@ -262,8 +262,8 @@ public class ApiManager {
         Map<String, String> allParams = new HashMap<>();
         allParams.put("firebase_token", firebaseToken);
         allParams.put("response_type", "token");
-        allParams.put("client_id", config.get(ApiManager.PROPERTY_CLIENT_ID));
-        allParams.put("redirect_uri", config.get(ApiManager.PROPERTY_REDIRECT_URI));
+        allParams.put("client_id", FitpayConfig.getInstance().getClientId());
+        allParams.put("redirect_uri", FitpayConfig.getInstance().getRedirectUrl());
         Call<OAuthToken> getTokenCall = getAuthClient().loginToken(allParams);
 
         getTokenCall.enqueue(updateTokenCallback);
