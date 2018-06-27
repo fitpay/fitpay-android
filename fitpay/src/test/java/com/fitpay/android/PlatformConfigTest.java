@@ -1,6 +1,7 @@
 package com.fitpay.android;
 
 import com.fitpay.android.api.ApiManager;
+import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.utils.FPLog;
 
 import org.junit.BeforeClass;
@@ -49,7 +50,7 @@ public class PlatformConfigTest {
         });
         FPLog.setShowHTTPLogs(false);
 
-        ApiManager.init(TestConstants.getConfig());
+        FitpayConfig.getInstance().init(TestConstants.getConfig());
     }
 
     @Test

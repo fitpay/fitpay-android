@@ -6,6 +6,7 @@ import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
+import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.R;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
@@ -328,16 +329,9 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                             deviceConnector.setDevice(device);
                         }
 
-                        String token = ApiManager.getPushToken();
-                        String deviceToken = device.getNotificationToken();
+                        FitpayConfig fitpayConfig = FitpayConfig.getInstance();
 
-                        final Runnable onSuccess = () -> onTaskSuccess(EventCallback.GET_USER_AND_DEVICE, callbackId);
-
-                        boolean automaticallySubscribeToUserEventStream = true;
-                        if (ApiManager.getConfig().containsKey(ApiManager.PROPERTY_AUTOMATICALLY_SUBSCRIBE_TO_USER_EVENT_STREAM)) {
-                            automaticallySubscribeToUserEventStream = "true".equals(ApiManager.getConfig().get(ApiManager.PROPERTY_AUTOMATICALLY_SUBSCRIBE_TO_USER_EVENT_STREAM));
-                        }
-
+                        boolean automaticallySubscribeToUserEventStream =  fitpayConfig.<Boolean>get(FitpayConfig.PROPERTY_AUTOMATICALLY_SUBSCRIBE_TO_USER_EVENT_STREAM, true);
                         if (automaticallySubscribeToUserEventStream) {
                             try {
                                 UserEventStreamManager.subscribe(user.getId());
@@ -345,11 +339,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                                 FPLog.e(e);
                             }
 
-                            boolean automaticSyncThroughUserEventStream = true;
-                            if (ApiManager.getConfig().containsKey(ApiManager.PROPERTY_AUTOMATICALLY_SYNC_FROM_USER_EVENT_STREAM)) {
-                                automaticSyncThroughUserEventStream = "true".equals(ApiManager.getConfig().get(ApiManager.PROPERTY_AUTOMATICALLY_SYNC_FROM_USER_EVENT_STREAM));
-                            }
-
+                            boolean automaticSyncThroughUserEventStream = fitpayConfig.<Boolean>get(FitpayConfig.PROPERTY_AUTOMATICALLY_SYNC_FROM_USER_EVENT_STREAM, true);
                             if (automaticSyncThroughUserEventStream) {
                                 userEventStreamSyncListener = new UserEventStreamListener() {
                                     @Override
@@ -367,6 +357,11 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                             }
 
                         }
+
+                        String token = fitpayConfig.getPushNotificationToken();
+                        String deviceToken = device.getNotificationToken();
+
+                        final Runnable onSuccess = () -> onTaskSuccess(EventCallback.GET_USER_AND_DEVICE, callbackId);
 
                         if (deviceToken == null || !deviceToken.equals(token)) {
                             Device updatedDevice = new Device.Builder().setNotificationToken(token).build();

@@ -1,6 +1,6 @@
 package com.fitpay.android;
 
-import com.fitpay.android.api.ApiManager;
+import com.fitpay.android.configs.FitpayConfig;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,12 +10,12 @@ import java.util.Map;
  */
 public final class TestConstants {
 
-    static Map<String, String> getConfig() {
-        Map<String, String> config = new HashMap<>();
-        config.put(ApiManager.PROPERTY_API_BASE_URL, System.getProperty(ApiManager.PROPERTY_API_BASE_URL, "https://api.fit-pay.com"));
-        config.put(ApiManager.PROPERTY_AUTH_BASE_URL, System.getProperty(ApiManager.PROPERTY_AUTH_BASE_URL, "https://auth.fit-pay.com"));
-        config.put(ApiManager.PROPERTY_CLIENT_ID, System.getProperty(ApiManager.PROPERTY_CLIENT_ID, "fp_webapp_pJkVp2Rl"));
-        config.put(ApiManager.PROPERTY_REDIRECT_URI, System.getProperty(ApiManager.PROPERTY_REDIRECT_URI, "https://webapp.fit-pay.com"));
+    static Map<String, Object> getConfig() {
+        Map<String, Object> config = new HashMap<>();
+        config.put(FitpayConfig.PROPERTY_API_BASE_URL, System.getProperty(FitpayConfig.PROPERTY_API_BASE_URL, "https://api.fit-pay.com"));
+        config.put(FitpayConfig.PROPERTY_AUTH_BASE_URL, System.getProperty(FitpayConfig.PROPERTY_AUTH_BASE_URL, "https://auth.fit-pay.com"));
+        config.put(FitpayConfig.PROPERTY_CLIENT_ID, System.getProperty(FitpayConfig.PROPERTY_CLIENT_ID, "fp_webapp_pJkVp2Rl"));
+        config.put(FitpayConfig.PROPERTY_REDIRECT_URL, System.getProperty(FitpayConfig.PROPERTY_REDIRECT_URL, "https://webapp.fit-pay.com"));
 
         System.out.println("test configuration: " + config);
 
