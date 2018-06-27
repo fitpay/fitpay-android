@@ -34,14 +34,6 @@ git clone git@github.com:fitpay/fitpay-android-sdk.git
 cd fitpay-android-sdk  
 ./gradlew clean build  
 ```
-###  Migration from 0.4.x to 0.5.0
-
-Starting from ```0.5.0``` you can use few ```PaymentDeviceConnector``` at the same time.
-The main difference between ```0.4.x``` and ```0.5.0``` that now you should use some kind of a filter with ```RxBus``` to distinguish your connectors.
-
-**Notice!** WebView implementation can communicate with only one connector.
-
-**Warning!** Please double check that your are sending ```ApduCommandResult``` from your app through ```PaymentDeviceConnector.sendApduExecutionResult(apduCommandResult);``` or using ```RxBus.post(connectorId, data);```
 
 ### Implementation
 
@@ -224,68 +216,6 @@ Now that you've built the repository, you need to tell your Android project wher
     ```
 
 That's it! You are now able to build from your local repository.
-
-## Logging
-
-In order to remain flexible with the various mobile logging strategies, the SDK provides a mechanism to utilize custom logging implementations.  Providing an implementation of the `com.fitpay.android.utils.FPLog$ILog` interface to `com.fitpay.android.utils.FPLog` will allow tailoring logging output from the SDK.
-
-Example implementation using standard Android logging:
-```
-FPLog.addLogImpl(new FPLog.ILog() {
-    @Override
-    public void d(String tag, String text) {
-        Log.d(tag, text);
-    }
-
-    @Override
-    public void i(String tag, String text) {
-        Log.i(tag, text);
-    }
-
-    @Override
-    public void w(String tag, String text) {
-        Log.w(tag, text);
-    }
-
-    @Override
-    public void e(String tag, Throwable throwable) {
-        Log.e(tag, throwable.getMessage());
-    }
-
-    @Override
-    public int logLevel() {
-        return 0;
-    }
-});
-```
-
-### Logging HTTP Traffic
-
-HTTP traffic originating from the SDK can be logged by calling `FPLog.setShowHTTPLogs(true);`
-
-## Card Scanning
-
-By default the FitPay WebView utilizes a web based card scanning service which is currently being EOL'ed, that means
-the ability to scan a card during card entry no must be handled natively by the SDK implementation.  The SDK provides
-an interface `IFitPayCardScanner` where a scanning implementation can be provided.   An full working example using the
-[Card.IO](https://www.card.io/) utility can be seen in our [reference implementation](https://github.com/fitpay/Pagare_Android_WV/commit/d3d9267154b20e5a6cdb4e6e5c7a9ce5e5d87727).
-
-You will also need to communicate to the webapp that your Android app is capable of handling native card scanning by sending the RealTimeMessaging (RTM) version number of the SDK. An easy way to ensure that the webapp is always aware of this is to send the version when setting the web view client. 
-
-```
-webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                
-                if (webViewCommunicatorImpl != null) {
-                    webViewCommunicatorImpl.sendRtmVersion();
-                }
-            }
-        });
-```
-
-See an example of this in our [reference implementation](https://github.com/fitpay/Pagare_Android_WV/blob/33f6c41ae920983ab3a01d2221012e74419927d5/app/src/wvUI/java/fitpay.pagare/activities/BaseWvActivity.java#L210).
 
 ## Contributing to the SDK
 We welcome contributions to the SDK. For your first few contributions please fork the repo, make your changes and submit a pull request. Internally we branch off of develop, test, and PR-review the branch before merging to develop (moderately stable). Releases to Master happen less frequently, undergo more testing, and can be considered stable. For more information, please read:  [http://nvie.com/posts/a-successful-git-branching-model/](http://nvie.com/posts/a-successful-git-branching-model/)

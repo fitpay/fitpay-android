@@ -1,6 +1,7 @@
 package com.fitpay.android;
 
 import com.fitpay.android.api.ApiManager;
+import com.fitpay.android.configs.FitpayConfig;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -16,7 +17,7 @@ public class CommitTest {
     @BeforeClass
     public static void init() {
         steps = new Steps();
-        ApiManager.init(TestConstants.getConfig());
+        FitpayConfig.getInstance().init(TestConstants.getConfig());
     }
 
     @Test

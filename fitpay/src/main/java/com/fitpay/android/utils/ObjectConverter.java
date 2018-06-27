@@ -20,26 +20,22 @@ final public class ObjectConverter {
         LinkedTreeMap objectAsMap = gson.fromJson(objectAsJson, LinkedTreeMap.class);
 
         Map<String, Object> resultMap = new HashMap<>();
-        iterateThroughMap(0, "", objectAsMap, resultMap);
+        iterateThroughMap("", objectAsMap, resultMap);
 
         return resultMap;
     }
 
-    private static void iterateThroughMap(int deepLevel, String initialKeyName, LinkedTreeMap treeMap, Map<String, Object> resultMap) {
+    private static void iterateThroughMap(String initialKeyName, LinkedTreeMap treeMap, Map<String, Object> resultMap) {
         for (Map.Entry<String, Object> entry : (Iterable<Map.Entry<String, Object>>) treeMap.entrySet()) {
             if (entry.getValue() instanceof LinkedTreeMap) {
-                String innerLevelKey = (deepLevel++ <= 0)
-                        ? initialKeyName
-                        : constructInnerLevelKey(initialKeyName, entry.getKey());
-                iterateThroughMap(deepLevel, innerLevelKey, (LinkedTreeMap) entry.getValue(), resultMap);
+                iterateThroughMap(constructLevelKey(initialKeyName, entry.getKey()), (LinkedTreeMap) entry.getValue(), resultMap);
             } else {
-                String sameLevelKey = (StringUtils.isEmpty(initialKeyName)) ? "/" : initialKeyName;
-                resultMap.put(sameLevelKey + entry.getKey(), entry.getValue());
+                resultMap.put(constructLevelKey(initialKeyName, entry.getKey()), entry.getValue());
             }
         }
     }
 
-    private static String constructInnerLevelKey(String initialKeyName, String currentEntryKey) {
-        return initialKeyName + "/" + currentEntryKey + "/";
+    private static String constructLevelKey(String initialKeyName, String currentEntryKey) {
+        return StringUtils.isEmpty(initialKeyName) ? "/" + currentEntryKey : initialKeyName + "/" + currentEntryKey;
     }
 }

@@ -2,8 +2,8 @@ package com.fitpay.android.paymentdevice;
 
 import android.content.Context;
 
-import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
+import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.paymentdevice.callbacks.DeviceSyncManagerCallback;
 import com.fitpay.android.paymentdevice.models.SyncInfo;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
@@ -37,8 +37,8 @@ public class DeviceSyncManager {
 
     public DeviceSyncManager(Context context) {
         this.mContext = context;
-        queueSize = Integer.parseInt(ApiManager.getConfig().get(ApiManager.PROPERTY_SYNC_QUEUE_SIZE));
-        threadsCount = Integer.parseInt(ApiManager.getConfig().get(ApiManager.PROPERTY_SYNC_THREADS_COUNT));
+        queueSize = FitpayConfig.getInstance().get(FitpayConfig.PROPERTY_SYNC_QUEUE_SIZE);
+        threadsCount = FitpayConfig.getInstance().get(FitpayConfig.PROPERTY_SYNC_THREADS_COUNT);
         requests = new ArrayBlockingQueue<>(queueSize);
     }
 

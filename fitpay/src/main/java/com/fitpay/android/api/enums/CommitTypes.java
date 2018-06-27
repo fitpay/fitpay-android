@@ -19,6 +19,7 @@ public final class CommitTypes {
     public static final String APDU_PACKAGE = "APDU_PACKAGE";
     public static final String CREDITCARD_METADATA_UPDATED = "CREDITCARD_METADATA_UPDATED";
     public static final String CREDITCARD_PROVISION_FAILED = "CREDITCARD_PROVISION_FAILED";
+    public static final String CREDITCARD_PROVISION_SUCCESS = "CREDITCARD_PROVISION_SUCCESS";
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({
@@ -31,7 +32,8 @@ public final class CommitTypes {
             SET_DEFAULT_CREDITCARD,
             APDU_PACKAGE,
             CREDITCARD_METADATA_UPDATED,
-            CREDITCARD_PROVISION_FAILED
+            CREDITCARD_PROVISION_FAILED,
+            CREDITCARD_PROVISION_SUCCESS
     })
     public @interface Type {
     }

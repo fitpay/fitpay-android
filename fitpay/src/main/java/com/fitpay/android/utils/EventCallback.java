@@ -29,6 +29,7 @@ public class EventCallback {
     public static final String CREDITCARD_DELETED = "CREDITCARD_DELETED";
     public static final String CREDITCARD_METADATA_UPDATED = "CREDITCARD_METADATA_UPDATED";
     public static final String CREDITCARD_PROVISION_FAILED = "CREDITCARD_PROVISION_FAILED";
+    public static final String CREDITCARD_PROVISION_SUCCESS = "CREDITCARD_PROVISION_SUCCESS";
     public static final String SET_DEFAULT_CREDITCARD = "SET_DEFAULT_CREDITCARD";
     public static final String RESET_DEFAULT_CREDITCARD = "RESET_DEFAULT_CREDITCARD";
     public static final String TOKEN_INITIAL_ACTIVATION = "TOKEN_INITIAL_ACTIVATION";
@@ -50,6 +51,7 @@ public class EventCallback {
             CREDITCARD_DELETED,
             CREDITCARD_METADATA_UPDATED,
             CREDITCARD_PROVISION_FAILED,
+            CREDITCARD_PROVISION_SUCCESS,
             SET_DEFAULT_CREDITCARD,
             RESET_DEFAULT_CREDITCARD,
             TOKEN_INITIAL_ACTIVATION, //?
@@ -206,6 +208,9 @@ public class EventCallback {
                 command = CREDITCARD_METADATA_UPDATED;
             case CommitTypes.CREDITCARD_PROVISION_FAILED:
                 command = CREDITCARD_PROVISION_FAILED;
+                break;
+            case CommitTypes.CREDITCARD_PROVISION_SUCCESS:
+                command = CREDITCARD_PROVISION_SUCCESS;
                 break;
         }
         return command;

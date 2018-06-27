@@ -10,6 +10,7 @@ import com.fitpay.android.api.models.card.CreditCard;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.sse.UserEventStreamListener;
 import com.fitpay.android.api.sse.UserEventStreamManager;
+import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
 import com.fitpay.android.utils.Listener;
@@ -71,7 +72,7 @@ public class UserEventStreamSyncTest extends TestActions {
         final SyncListener syncListener = new SyncListener(syncLatch, syncRequests);
         NotificationManager.getInstance().addListener(syncListener);
 
-        CreditCard createdCard = createCreditCard(user, getTestCreditCard("9999504454545450"));
+        CreditCard createdCard = createCreditCard(user, getTestCreditCardInfo("9999504454545450"));
 
         final CountDownLatch latch = new CountDownLatch(1);
         createdCard.acceptTerms(new ApiCallback<CreditCard>() {
@@ -99,7 +100,7 @@ public class UserEventStreamSyncTest extends TestActions {
         assertEquals(device.getDeviceIdentifier(), syncRequest.getSyncInfo().getDeviceId());
         assertEquals(SyncInitiator.PLATFORM, syncRequest.getSyncInfo().getInitiator());
         assertEquals(syncRequest.getSyncId(), syncRequest.getSyncInfo().getSyncId());
-        assertEquals(ApiManager.getConfig().get("clientId"), syncRequest.getSyncInfo().getClientId());
+        assertEquals(FitpayConfig.getInstance().get("clientId"), syncRequest.getSyncInfo().getClientId());
 
         assertNotNull(syncRequest.getConnector());
         assertNotNull(syncRequest.getDevice());
@@ -136,7 +137,7 @@ public class UserEventStreamSyncTest extends TestActions {
 
         UserEventStreamManager.subscribe(user.getId());
 
-        CreditCard createdCard = createCreditCard(user, getTestCreditCard("9999504454545450"));
+        CreditCard createdCard = createCreditCard(user, getTestCreditCardInfo("9999504454545450"));
 
         final CountDownLatch latch = new CountDownLatch(1);
         createdCard.acceptTerms(new ApiCallback<CreditCard>() {

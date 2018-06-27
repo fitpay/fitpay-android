@@ -1,6 +1,7 @@
 package com.fitpay.android;
 
 import com.fitpay.android.api.models.card.CreditCard;
+import com.fitpay.android.api.models.card.CreditCardInfo;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
 
@@ -23,9 +24,9 @@ public class CreditCardTest3 extends TestActions {
         assertEquals("should have one device", 1, devices.getTotalResults());
 
         String pan = "9999445454545454";
-        CreditCard creditCard = getTestCreditCard(pan);
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
 
-        creditCard = createCreditCard(user, creditCard);
+        CreditCard creditCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created", creditCard);
         assertEquals("card not in expected state", "ELIGIBLE", creditCard.getState());
 

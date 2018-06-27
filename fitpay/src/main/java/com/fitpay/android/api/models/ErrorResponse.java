@@ -70,7 +70,7 @@ public class ErrorResponse {
 
     @Override
     public String toString(){
-        return getMessage();
+        return getError();
     }
 
     public static class ErrorMessage {

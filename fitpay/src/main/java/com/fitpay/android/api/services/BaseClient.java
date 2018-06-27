@@ -2,6 +2,7 @@ package com.fitpay.android.api.services;
 
 import android.os.Build;
 
+import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.utils.FPLog;
 
@@ -36,9 +37,11 @@ public class BaseClient {
     public static OkHttpClient.Builder getOkHttpClient(boolean enabledLogging) {
         OkHttpClient.Builder builder = getDefaultOkHttpClient();
 
-        int connectTimeout = Integer.valueOf(ApiManager.getConfig().get(ApiManager.PROPERTY_HTTP_CONNECT_TIMEOUT));
-        int readTimeout = Integer.valueOf(ApiManager.getConfig().get(ApiManager.PROPERTY_HTTP_READ_TIMEOUT));
-        int writeTimeout = Integer.valueOf(ApiManager.getConfig().get(ApiManager.PROPERTY_HTTP_WRITE_TIMEOUT));
+        FitpayConfig fitpayConfig = FitpayConfig.getInstance();
+
+        int connectTimeout = fitpayConfig.get(FitpayConfig.PROPERTY_HTTP_CONNECT_TIMEOUT);
+        int readTimeout = fitpayConfig.get(FitpayConfig.PROPERTY_HTTP_READ_TIMEOUT);
+        int writeTimeout = fitpayConfig.get(FitpayConfig.PROPERTY_HTTP_WRITE_TIMEOUT);
 
         builder = builder.connectTimeout(connectTimeout, TimeUnit.SECONDS)
             .readTimeout(readTimeout, TimeUnit.SECONDS)
