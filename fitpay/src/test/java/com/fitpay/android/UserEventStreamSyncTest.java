@@ -71,7 +71,7 @@ public class UserEventStreamSyncTest extends TestActions {
         final SyncListener syncListener = new SyncListener(syncLatch, syncRequests);
         NotificationManager.getInstance().addListener(syncListener);
 
-        CreditCard createdCard = createCreditCard(user, getTestCreditCard("9999504454545450"));
+        CreditCard createdCard = createCreditCard(user, getTestCreditCardInfo("9999504454545450"));
 
         final CountDownLatch latch = new CountDownLatch(1);
         createdCard.acceptTerms(new ApiCallback<CreditCard>() {
@@ -136,7 +136,7 @@ public class UserEventStreamSyncTest extends TestActions {
 
         UserEventStreamManager.subscribe(user.getId());
 
-        CreditCard createdCard = createCreditCard(user, getTestCreditCard("9999504454545450"));
+        CreditCard createdCard = createCreditCard(user, getTestCreditCardInfo("9999504454545450"));
 
         final CountDownLatch latch = new CountDownLatch(1);
         createdCard.acceptTerms(new ApiCallback<CreditCard>() {
