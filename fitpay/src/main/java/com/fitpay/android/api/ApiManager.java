@@ -273,7 +273,7 @@ public class ApiManager {
      * @param identity data for login
      * @param callback result callback
      */
-    public void loginUser(LoginIdentity identity, final ApiCallback<OAuthToken> callback) {
+    public void login(LoginIdentity identity, final ApiCallback<OAuthToken> callback) {
 
         CallbackWrapper<OAuthToken> updateTokenCallback = new CallbackWrapper<>(new ApiCallback<OAuthToken>() {
             @Override
@@ -298,7 +298,43 @@ public class ApiManager {
         allParams.put("response_type", "token");
         allParams.put("client_id", config.get(ApiManager.PROPERTY_CLIENT_ID));
         allParams.put("redirect_uri", config.get(ApiManager.PROPERTY_REDIRECT_URI));
-        Call<OAuthToken> getTokenCall = getAuthClient().loginUser(allParams);
+        Call<OAuthToken> getTokenCall = getAuthClient().loginCredentials(allParams);
+        getTokenCall.enqueue(updateTokenCallback);
+    }
+
+    /**
+     * User Login
+     *
+     * @param firebaseToken token for login
+     * @param callback      result callback
+     */
+    public void login(String firebaseToken, final ApiCallback<OAuthToken> callback) {
+        CallbackWrapper<OAuthToken> updateTokenCallback = new CallbackWrapper<>(new ApiCallback<OAuthToken>() {
+            @Override
+            public void onSuccess(OAuthToken result) {
+                if (null == result || result.getUserId() == null) {
+                    callback.onFailure(ResultCode.UNAUTHORIZED, "user login was not successful");
+                    return;
+                }
+                apiService.updateToken(result);
+                callback.onSuccess(result);
+            }
+
+            @Override
+            public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
+                if (callback != null) {
+                    callback.onFailure(errorCode, errorMessage);
+                }
+            }
+        });
+
+        Map<String, String> allParams = new HashMap<>();
+        allParams.put("firebase_token", firebaseToken);
+        allParams.put("response_type", "token");
+        allParams.put("client_id", config.get(ApiManager.PROPERTY_CLIENT_ID));
+        allParams.put("redirect_uri", config.get(ApiManager.PROPERTY_REDIRECT_URI));
+        Call<OAuthToken> getTokenCall = getAuthClient().loginToken(allParams);
+
         getTokenCall.enqueue(updateTokenCallback);
     }
 
@@ -333,8 +369,7 @@ public class ApiManager {
             checkKeyAndMakeCall(onSuccess, callback);
         }
     }
-
-
+    
     /**
      * Creates a relationship between a device and a creditCard.
      *
@@ -439,108 +474,6 @@ public class ApiManager {
             checkKeyAndMakeCall(onSuccess, callback);
         }
     }
-
-//    /**
-//     * Get a single relationship.
-//     *
-//     * @param userId       user id
-//     * @param creditCardId credit card id
-//     * @param deviceId     device id
-//     * @param callback     result callback
-//     */
-//    public void getRelationship(String userId, String creditCardId, String deviceId, ApiCallback<Relationship> callback) {
-//        if(isAuthorized(callback)){
-//            Call<Relationship> getRelationshipCall = getClient().getRelationship(userId, creditCardId, deviceId);
-//            getRelationshipCall.enqueue(new CallbackWrapper<>(callback));
-//        }
-//    }
-//
-//    /**
-//     * Retrieves the details of an existing credit card.
-//     * You need only supply the unique identifier that was returned upon creation.
-//     *
-//     * @param userId       user id
-//     * @param creditCardId credit card id
-//     * @param callback     result callback
-//     */
-//    public void getCreditCard(final String userId, final String creditCardId, final ApiCallback<CreditCard> callback) {
-//        if (isAuthorized(callback)) {
-//
-//            Runnable onSuccess = new Runnable() {
-//                @Override
-//                public void run() {
-//                    Call<CreditCard> getCreditCardCall = getClient().getCreditCard(userId, creditCardId);
-//                    getCreditCardCall.enqueue(new CallbackWrapper<>(callback));
-//                }
-//            };
-//
-//            checkKeyAndMakeCall(onSuccess, callback);
-//        }
-//    }
-//
-//    /**
-//     * Retrieves the details of an existing device.
-//     * You need only supply the unique identifier that was returned upon creation.
-//     *
-//     * @param userId   user id
-//     * @param deviceId device id
-//     * @param callback result callback
-//     */
-//    public void getDevice(final String userId, final String deviceId, final ApiCallback<Device> callback) {
-//        if(isAuthorized(callback)){
-//
-//            Runnable onSuccess = new Runnable() {
-//                @Override
-//                public void run() {
-//
-//                    Call<Device> getDeviceCall = getClient().getDevice(userId, deviceId);
-//                    getDeviceCall.enqueue(new CallbackWrapper<>(callback));
-//                }
-//            };
-//
-//            checkKeyAndMakeCall(onSuccess, callback);
-//        }
-//    }
-//
-//    /**
-//     * Retrieves an individual commit.
-//     *
-//     * @param userId   user id
-//     * @param deviceId device id
-//     * @param commitId commit id
-//     * @param callback result callback
-//     */
-//    public void getCommit(final String userId, final String deviceId, final String commitId, final ApiCallback<Commit> callback) {
-//        if(isAuthorized(callback)){
-//
-//            Runnable onSuccess = new Runnable() {
-//                @Override
-//                public void run() {
-//
-//                    Call<Commit> getCommitCall = getClient().getCommit(userId, deviceId, commitId);
-//                    getCommitCall.enqueue(new CallbackWrapper<>(callback));
-//                }
-//            };
-//
-//            checkKeyAndMakeCall(onSuccess, callback);
-//        }
-//    }
-//
-//    /**
-//     * Get a single transaction.
-//     *
-//     * @param userId        user id
-//     * @param creditCardId credit card id
-//     * @param transactionId transaction id
-//     * @param callback      result callback
-//     */
-//    public void getTransaction(String userId, String creditCardId, String transactionId, ApiCallback<Transaction> callback) {
-//        if(isAuthorized(callback)){
-//            Call<Transaction> getTransactionCall = getClient().getTransaction(userId, creditCardId, transactionId);
-//            getTransactionCall.enqueue(new CallbackWrapper<>(callback));
-//        }
-//    }
-//
 
     private <T> void makeCall(final Call<JsonElement> call, final Type type,
                               final ApiCallback<T> callback) {
