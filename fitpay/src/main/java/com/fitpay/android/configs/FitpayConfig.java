@@ -46,11 +46,6 @@ public final class FitpayConfig {
     public static String authURL;
 
     /**
-     * Determines if the SDK will perform and initial health check
-     */
-    public static boolean skipHealthCheck;
-
-    /**
      * Setup FitpaySDK with default params and custom clientId
      *
      * @param clientId clientId
@@ -71,7 +66,6 @@ public final class FitpayConfig {
         redirectURL = configModel.getRedirectUrl();
         apiURL = configModel.getApiURL();
         authURL = configModel.getAuthURL();
-        skipHealthCheck = configModel.skipHealthCheck();
         Web.demoMode = configModel.getWebConfig().demoMode;
         Web.demoCardGroup = configModel.getWebConfig().demoCardGroup;
         Web.cssURL = configModel.getWebConfig().cssURL;

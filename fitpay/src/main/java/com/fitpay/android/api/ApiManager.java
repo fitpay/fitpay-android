@@ -79,35 +79,10 @@ public class ApiManager {
             throw new IllegalStateException("The SdkConfig must be initialized prior to use. API base url required");
         }
         apiService = new FitPayService(FitpayConfig.apiURL);
-        init(FitpayConfig.skipHealthCheck);
     }
 
     public PlatformConfig getPlatformConfig() {
         return apiService.getPlatformConfig();
-    }
-
-    /**
-     * Initialize the SDK, skipHealthCheck determines if the SDK will perform and initial health check
-     * on the API or not after initialization.
-     *
-     * @param skipHealthCheck
-     */
-    public void init(boolean skipHealthCheck) {
-        if (!skipHealthCheck) {
-            Call<Object> healthCall = getClient().health();
-            healthCall.enqueue(new Callback<Object>() {
-                @Override
-                public void onResponse(Call<Object> call, Response<Object> response) {
-                    FPLog.i("FitPay API Health Result: " + response.body());
-                }
-
-                @Override
-                public void onFailure(Call<Object> call, Throwable t) {
-                    FPLog.e("FitPay API Health Check Failed: " + t.getMessage());
-                    FPLog.e(t);
-                }
-            });
-        }
     }
 
     public FitPayService getApiService() {

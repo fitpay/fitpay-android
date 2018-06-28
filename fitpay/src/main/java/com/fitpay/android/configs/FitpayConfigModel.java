@@ -15,7 +15,6 @@ class FitpayConfigModel {
     private String redirectUrl;
     private String apiURL;
     private String authURL;
-    private boolean skipHealthCheck;
     private FitpayConfigWebModel web;
 
     FitpayConfigModel(@NonNull String clientId) {
@@ -43,10 +42,6 @@ class FitpayConfigModel {
 
     String getAuthURL() {
         return !StringUtils.isEmpty(authURL) ? authURL : Constants.CONFIG_AUTH_BASE_URL;
-    }
-
-    boolean skipHealthCheck() {
-        return skipHealthCheck;
     }
 
     FitpayConfigWebModel getWebConfig() {
