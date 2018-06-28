@@ -7,6 +7,7 @@ import com.fitpay.android.api.models.Transaction;
 import com.fitpay.android.api.models.apdu.ApduPackage;
 import com.fitpay.android.api.models.card.Address;
 import com.fitpay.android.api.models.card.CreditCard;
+import com.fitpay.android.api.models.card.CreditCardInfo;
 import com.fitpay.android.api.models.card.Reason;
 import com.fitpay.android.api.models.card.VerificationMethod;
 import com.fitpay.android.api.models.card.VerificationMethods;
@@ -185,7 +186,7 @@ public class TestActions {
                 .build();
     }
 
-    protected CreditCard getTestCreditCard(String pan) {
+    protected CreditCardInfo getTestCreditCardInfo(String pan) {
         String cardName = "TEST CARD";
         int expYear = 2018;
         int expMonth = 10;
@@ -203,14 +204,14 @@ public class TestActions {
         address.setCountryCode(countryCode);
         address.setStreet1(street1);
 
-        CreditCard creditCard = new CreditCard.Builder()
+        CreditCardInfo creditCardInfo = new CreditCardInfo.Builder()
                 .setCVV(cvv)
                 .setPAN(pan)
                 .setExpDate(expYear, expMonth)
                 .setAddress(address)
                 .setName(cardName)
                 .build();
-        return creditCard;
+        return creditCardInfo;
     }
 
     public Device getTestDevice() {
@@ -316,10 +317,10 @@ public class TestActions {
         return callback.getResult();
     }
 
-    protected CreditCard createCreditCard(User user, CreditCard creditCard) throws Exception {
+    protected CreditCard createCreditCard(User user, CreditCardInfo creditCardInfo) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<CreditCard> callback = new ResultProvidingCallback<>(latch);
-        user.createCreditCard(creditCard, callback);
+        user.createCreditCard(creditCardInfo, callback);
         latch.await(TIMEOUT, TimeUnit.SECONDS);
         return callback.getResult();
     }

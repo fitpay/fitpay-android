@@ -3,6 +3,7 @@ package com.fitpay.android;
 import com.fitpay.android.api.callbacks.ResultProvidingCallback;
 import com.fitpay.android.api.enums.ResetDeviceStatus;
 import com.fitpay.android.api.models.card.CreditCard;
+import com.fitpay.android.api.models.card.CreditCardInfo;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
 
@@ -217,9 +218,9 @@ public class DeviceTest2 extends TestActions {
         assertEquals("should have one device", 1, devices.getTotalResults());
 
         String pan = "9999504454545450";
-        CreditCard creditCard = getTestCreditCard(pan);
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
 
-        CreditCard createdCard = createCreditCard(user, creditCard);
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
         assertNotNull("card not created",createdCard);
 
         Collections.CreditCardCollection creditCards = getCreditCards(user);
