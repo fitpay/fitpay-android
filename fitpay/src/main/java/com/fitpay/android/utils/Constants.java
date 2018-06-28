@@ -21,7 +21,6 @@ public final class Constants {
     public static final String CONFIG_WV_URL = "https://webapp.fit-pay.com";
     public static final String CONFIG_API_BASE_URL = "https://api.fit-pay.com";
     public static final String CONFIG_AUTH_BASE_URL = "https://auth.fit-pay.com";
-    public static final String CONFIG_CLIENT_ID = "pagare";
     public static final String CONFIG_REDIRECT_URL = "https://webapp.fit-pay.com";
 
     public final static String SYNC_DATA = "SYNC_DATA";

@@ -319,7 +319,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
                         }
 
-                        String token = FitpayConfig.pushNotificationToken;
+                        String token = FitpayConfig.User.pushNotificationToken;
                         String deviceToken = device.getNotificationToken();
 
                         final Runnable onSuccess = () -> onTaskSuccess(EventCallback.GET_USER_AND_DEVICE, callbackId);

@@ -46,25 +46,9 @@ public final class FitpayConfig {
     public static String authURL;
 
     /**
-     * Used for storing app push notification token
-     */
-    public static String pushNotificationToken;
-
-    /**
      * Determines if the SDK will perform and initial health check
      */
     public static boolean skipHealthCheck;
-
-    static {
-        configure();
-    }
-
-    /**
-     * Setup FitpaySDK with default params
-     */
-    public static void configure() {
-        configure(new FitpayConfigModel());
-    }
 
     /**
      * Setup FitpaySDK with default params and custom clientId
@@ -96,7 +80,6 @@ public final class FitpayConfig {
         Web.automaticallySubscribeToUserEventStream = configModel.getWebConfig().automaticallySubscribeToUserEventStream;
         Web.automaticallySyncFromUserEventStream = configModel.getWebConfig().automaticallySyncFromUserEventStream;
 
-
         ApiManager.clean();
     }
 
@@ -107,18 +90,20 @@ public final class FitpayConfig {
      * @param assetsFileName json file name in assets folder
      */
     public static void configure(@NonNull Context context, @NonNull String assetsFileName) {
+        FitpayConfigModel configModel = null;
         try {
             InputStream json = context.getAssets().open(assetsFileName);
             BufferedReader in = new BufferedReader(new InputStreamReader(json, "UTF-8"));
-            FitpayConfigModel configModel = Constants.getGson().fromJson(in, FitpayConfigModel.class);
-            if (configModel == null) {
-                configModel = new FitpayConfigModel();
-            }
-            configure(configModel);
+            configModel = Constants.getGson().fromJson(in, FitpayConfigModel.class);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
-            configure();
         }
+
+        if (configModel == null) {
+            throw new NullPointerException("Can't load FitpayConfig from file. Check the logs or try to use #configure(clientId)");
+        }
+
+        configure(configModel);
     }
 
     /**
@@ -128,7 +113,7 @@ public final class FitpayConfig {
         /**
          * Shows autofill options on the add card page when enabled
          */
-        public static boolean demoMode = false;
+        public static boolean demoMode;
 
         /**
          * Changes autofill options to include a default and auto-verify version of one card type
@@ -152,18 +137,27 @@ public final class FitpayConfig {
         /**
          * Turn on when you are ready to implement card scanning methods
          */
-        public static boolean supportCardScanner = false;
+        public static boolean supportCardScanner;
 
         /**
          * Turn off SSE connection to reduce overhead if not in use
          */
-        public static boolean automaticallySubscribeToUserEventStream = true;
+        public static boolean automaticallySubscribeToUserEventStream;
 
         /**
          * Trigger syncs from an SSE connection automatically established.
          * {@link #automaticallySubscribeToUserEventStream} must also be on to sync
          */
-        public static boolean automaticallySyncFromUserEventStream = true;
+        public static boolean automaticallySyncFromUserEventStream;
     }
 
+    /**
+     * User config. Configuration options related to the user
+     */
+    public static class User{
+        /**
+         * Used for storing app push notification token
+         */
+        public static String pushNotificationToken;
+    }
 }

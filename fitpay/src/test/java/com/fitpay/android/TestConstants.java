@@ -16,9 +16,9 @@ public final class TestConstants {
     }
 
     static void configureFitpay() {
+        FitpayConfig.configure(getClientId());
         FitpayConfig.apiURL = System.getProperty(PROPERTY_API_BASE_URL, "https://api.fit-pay.com");
         FitpayConfig.authURL = System.getProperty(PROPERTY_AUTH_BASE_URL, "https://auth.fit-pay.com");
-        FitpayConfig.clientId = System.getProperty(PROPERTY_CLIENT_ID, getClientId());
         FitpayConfig.redirectURL = System.getProperty(PROPROPERTY_REDIRECT_URLPERTY_CLIENT_ID, "https://webapp.fit-pay.com");
     }
 

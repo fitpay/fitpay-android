@@ -18,15 +18,15 @@ class FitpayConfigModel {
     private boolean skipHealthCheck;
     private FitpayConfigWebModel web;
 
-    FitpayConfigModel() {
-    }
-
     FitpayConfigModel(@NonNull String clientId) {
         this.clientId = clientId;
     }
 
     String getClientId() {
-        return !StringUtils.isEmpty(clientId) ? clientId : Constants.CONFIG_CLIENT_ID;
+        if(StringUtils.isEmpty(clientId)){
+            throw new IllegalArgumentException("clientId can't be null");
+        }
+        return clientId;
     }
 
     String getWebUrl() {
