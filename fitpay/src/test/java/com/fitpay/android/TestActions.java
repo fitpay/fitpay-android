@@ -18,7 +18,6 @@ import com.fitpay.android.api.models.security.OAuthToken;
 import com.fitpay.android.api.models.user.LoginIdentity;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.api.models.user.UserCreateRequest;
-import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.paymentdevice.impl.mock.SecureElementDataProvider;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.SecurityProvider;
@@ -92,7 +91,7 @@ public class TestActions {
         FPLog.setShowHTTPLogs(false);
 
         SecurityProvider.getInstance().setProvider(new BouncyCastleProvider());
-        FitpayConfig.getInstance().init(TestConstants.getConfig());
+        TestConstants.configureFitpay();
 
         RxAndroidPlugins.getInstance().reset();
         RxAndroidPlugins.getInstance().registerSchedulersHook(new RxAndroidSchedulersHook() {
@@ -124,7 +123,7 @@ public class TestActions {
     }
 
     @AfterClass
-    public static void clear(){
+    public static void clear() {
         FPLog.clean();
     }
 

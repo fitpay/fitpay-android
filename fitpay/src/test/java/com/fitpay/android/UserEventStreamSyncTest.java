@@ -100,7 +100,7 @@ public class UserEventStreamSyncTest extends TestActions {
         assertEquals(device.getDeviceIdentifier(), syncRequest.getSyncInfo().getDeviceId());
         assertEquals(SyncInitiator.PLATFORM, syncRequest.getSyncInfo().getInitiator());
         assertEquals(syncRequest.getSyncId(), syncRequest.getSyncInfo().getSyncId());
-        assertEquals(FitpayConfig.getInstance().get("clientId"), syncRequest.getSyncInfo().getClientId());
+        assertEquals(FitpayConfig.clientId, syncRequest.getSyncInfo().getClientId());
 
         assertNotNull(syncRequest.getConnector());
         assertNotNull(syncRequest.getDevice());

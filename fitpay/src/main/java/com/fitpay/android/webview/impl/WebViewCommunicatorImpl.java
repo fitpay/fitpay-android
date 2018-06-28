@@ -6,7 +6,6 @@ import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
-import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.R;
 import com.fitpay.android.a2averification.A2AVerificationFailed;
 import com.fitpay.android.a2averification.A2AVerificationRequest;
@@ -22,6 +21,7 @@ import com.fitpay.android.api.sse.UserEventStreamListener;
 import com.fitpay.android.api.sse.UserEventStreamManager;
 import com.fitpay.android.cardscanner.IFitPayCardScanner;
 import com.fitpay.android.cardscanner.ScannedCardInfo;
+import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.paymentdevice.DeviceService;
 import com.fitpay.android.paymentdevice.constants.States;
 import com.fitpay.android.paymentdevice.enums.Sync;
@@ -295,14 +295,12 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                             deviceConnector.setDevice(device);
                         }
 
-                        FitpayConfig fitpayConfig = FitpayConfig.getInstance();
-
-                        boolean automaticallySubscribeToUserEventStream =  fitpayConfig.<Boolean>get(FitpayConfig.PROPERTY_AUTOMATICALLY_SUBSCRIBE_TO_USER_EVENT_STREAM, true);
+                        boolean automaticallySubscribeToUserEventStream = FitpayConfig.Web.automaticallySubscribeToUserEventStream;
                         if (automaticallySubscribeToUserEventStream) {
 
                             UserEventStreamManager.subscribe(user.getId());
 
-                            boolean automaticSyncThroughUserEventStream = fitpayConfig.<Boolean>get(FitpayConfig.PROPERTY_AUTOMATICALLY_SYNC_FROM_USER_EVENT_STREAM, true);
+                            boolean automaticSyncThroughUserEventStream = FitpayConfig.Web.automaticallySyncFromUserEventStream;
                             if (automaticSyncThroughUserEventStream) {
                                 userEventStreamSyncListener = new UserEventStreamListener() {
                                     @Override
@@ -321,7 +319,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
                         }
 
-                        String token = fitpayConfig.getPushNotificationToken();
+                        String token = FitpayConfig.pushNotificationToken;
                         String deviceToken = device.getNotificationToken();
 
                         final Runnable onSuccess = () -> onTaskSuccess(EventCallback.GET_USER_AND_DEVICE, callbackId);

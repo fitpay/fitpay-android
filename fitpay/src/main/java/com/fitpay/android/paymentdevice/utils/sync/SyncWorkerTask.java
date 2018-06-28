@@ -2,9 +2,7 @@ package com.fitpay.android.paymentdevice.utils.sync;
 
 import android.content.Context;
 
-import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.R;
-import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.ResponseState;
 import com.fitpay.android.api.enums.ResultCode;
@@ -31,7 +29,6 @@ import com.fitpay.android.utils.StringUtils;
 import com.fitpay.android.webview.events.DeviceStatusMessage;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -61,9 +58,6 @@ public final class SyncWorkerTask implements Runnable {
 
     private ScheduledFuture<Void> commitWarningTimer;
     private ScheduledFuture<Void> commitTimeoutTimer;
-
-    private final int commitWarningTimeout = FitpayConfig.getInstance().get(FitpayConfig.PROPERTY_COMMIT_WARNING_TIMEOUT);
-    private final int commitErrorTimeout = FitpayConfig.getInstance().get(FitpayConfig.PROPERTY_COMMIT_ERROR_TIMEOUT);
 
     private SyncProcess syncProcess;
 
@@ -294,30 +288,27 @@ public final class SyncWorkerTask implements Runnable {
 
             // start the watching timers, this first timer is responsible for producing a warning
             // if a commit isn't responded to in a timely manner
-            boolean commitTimersEnabled = FitpayConfig.getInstance().<Boolean>get(FitpayConfig.PROPERTY_COMMIT_TIMERS_ENABLED, true);
-            if (commitTimersEnabled) {
-                commitWarningTimer = timeoutWatcherExecutor.schedule(new Callable<Void>() {
-                    @Override
-                    public Void call() {
-                        FPLog.w(TAG, "warning, commit " + commit + " has not returned within " + commitWarningTimer + "ms");
+            boolean commitTimersEnabled = syncRequest.getConnector().isCommitTimersEnabled();
+            int commitWarningTimeout = syncRequest.getConnector().getCommitWarningTimeout();
+            int commitErrorTimeout = syncRequest.getConnector().getCommitErrorTimeout();
 
-                        return null;
-                    }
+            if (commitTimersEnabled) {
+                commitWarningTimer = timeoutWatcherExecutor.schedule(() -> {
+                    FPLog.w(TAG, "warning, commit " + commit + " has not returned within " + commitWarningTimeout + "ms");
+
+                    return null;
                 }, commitWarningTimeout, TimeUnit.MILLISECONDS);
 
                 // this is the timeout timer that'll basically kill the sync if a commit isn't responded too
-                commitTimeoutTimer = timeoutWatcherExecutor.schedule(new Callable<Void>() {
-                    @Override
-                    public Void call() {
-                        final String errorMessage = "error, commit timeout " + commit.getCommitId() + " has not returned within " + commitErrorTimeout + "ms";
-                        FPLog.e(TAG, errorMessage);
+                commitTimeoutTimer = timeoutWatcherExecutor.schedule(() -> {
+                    final String errorMessage = "error, commit timeout " + commit.getCommitId() + " has not returned within " + commitErrorTimeout + "ms";
+                    FPLog.e(TAG, errorMessage);
 
-                        CommitFailed.Builder builder = new CommitFailed.Builder().commit(commit);
-                        builder.errorMessage(errorMessage);
-                        RxBus.getInstance().post(connectorId, builder.build());
+                    CommitFailed.Builder builder = new CommitFailed.Builder().commit(commit);
+                    builder.errorMessage(errorMessage);
+                    RxBus.getInstance().post(connectorId, builder.build());
 
-                        return null;
-                    }
+                    return null;
                 }, commitErrorTimeout, TimeUnit.MILLISECONDS);
             } else {
                 FPLog.d(TAG, "skipped commit timers, they're turned off in ApiManager configuration");
