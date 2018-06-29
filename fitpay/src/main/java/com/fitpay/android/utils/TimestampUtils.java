@@ -1,6 +1,12 @@
 package com.fitpay.android.utils;
 
+import android.support.annotation.Nullable;
+
 import com.google.gson.internal.bind.util.ISO8601Utils;
+
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 
 import java.text.ParseException;
 import java.text.ParsePosition;
@@ -42,5 +48,15 @@ public class TimestampUtils {
      */
     public static String getISO8601StringForTime(long time) {
         return ISO8601Utils.format(new Date(time), true);
+    }
+
+    /**
+     * Return days between specified date and current time
+     *
+     * @param date specified date
+     * @return days or null
+     */
+    public static Integer getDaysBetweenDates(@Nullable Date date){
+        return date == null ? null : Days.daysBetween(new LocalDateTime(date), new LocalDateTime()).getDays();
     }
 }

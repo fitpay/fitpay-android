@@ -4,10 +4,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fitpay.android.utils.RxBus;
-import com.fitpay.android.utils.StringUtils;
+import com.fitpay.android.utils.TimestampUtils;
 import com.fitpay.android.webview.enums.DeviceTimeZone;
 import com.fitpay.android.webview.enums.RtmType;
 import com.fitpay.android.webview.events.RtmMessageResponse;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 import java.util.Locale;
@@ -16,19 +17,23 @@ import java.util.Locale;
  * IdVerification data
  */
 
-public final class IdVerification implements Parcelable {
+public final class  IdVerification implements Parcelable {
     private Date oemAccountInfoUpdatedDate; // Most recent date this user update their: Billing Address, Name, Email, password, or other Personally Identifiable Information associated to their account.
     private Date oemAccountCreatedDate;
+    @SerializedName("suspendedCardsInAccount")
     private Integer suspendedCardsInOemAccount; // If this user has multiple devices, how many cards are suspended in total across all devices?
-    private Date lastOemAccountActivityDate; // Date this account was previously used, never today.
-    private Date deviceLostModeDate; // Date this device was reported lost or stolen. Don't send if you don't have it.
-    private Integer devicesWithIdenticalActiveToken;
+    @SerializedName("daysSinceLastAccountActivity")
+    private Integer lastOemAccountActivityDate; // Days this account was previously used, never today.
+    @SerializedName("deviceLostMode")
+    private Integer deviceLostModeDate; // Days this device was reported lost or stolen. Don't send if you don't have it.
+    @SerializedName("deviceWithActiveTokens")
+    private Integer devicesWithIdenticalActiveToken; // Number of devices that the token is on
+    @SerializedName("activeTokenOnAllDevicesForAccount")
     private Integer activeTokensOnAllDevicesForOemAccount; // If this user has multiple devices, how many cards are active in total across all devices?"
     private Integer oemAccountScore; // int between 0-9
     private Integer deviceScore; // int between 0-9
     private Boolean nfcCapable; // Only needed if your device is NOT nfcCapable
 
-    private String billingCountryCode; // Country of user's billing address in ISO 3166-1 alpha-2 format, e.g., US; maximum 2 characters
     private String oemAccountCountryCode; // Country setting of account or phone in ISO 3166-1 alpha-2 format
     private String deviceCountry; // Country setting of payment device
     private String oemAccountUserName; // First and Last name of account
@@ -36,15 +41,82 @@ public final class IdVerification implements Parcelable {
     private String deviceTimeZone; // Time Zone Abbreviation. Example: PDT, MST
     private Integer deviceTimeZoneSetBy; // 1 - Time Zone Set by Network; 2 - Time Zone Set by User; 3 - Time Zone set by Device Location
     private String deviceIMEI; // Only needed if your payment device has a cell connection
-    private String billingLine1;
-    private String billingLine2;
-    private String billingCity;
-    private String billingState;
-    private String billingZip;
 
     private String locale; //ISO 3166-1 alpha-2
 
     private IdVerification() {
+    }
+
+    public Date getOemAccountInfoUpdatedDate() {
+        return oemAccountInfoUpdatedDate;
+    }
+
+    public Date getOemAccountCreatedDate() {
+        return oemAccountCreatedDate;
+    }
+
+    public Integer getSuspendedCardsInOemAccount() {
+        return suspendedCardsInOemAccount;
+    }
+
+    public Integer getLastOemAccountActivityDate() {
+        return lastOemAccountActivityDate;
+    }
+
+    public Integer getDeviceLostModeDate() {
+        return deviceLostModeDate;
+    }
+
+    public Integer getDevicesWithIdenticalActiveToken() {
+        return devicesWithIdenticalActiveToken;
+    }
+
+    public Integer getActiveTokensOnAllDevicesForOemAccount() {
+        return activeTokensOnAllDevicesForOemAccount;
+    }
+
+    public Integer getOemAccountScore() {
+        return oemAccountScore;
+    }
+
+    public Integer getDeviceScore() {
+        return deviceScore;
+    }
+
+    public Boolean getNfcCapable() {
+        return nfcCapable;
+    }
+
+    public String getOemAccountCountryCode() {
+        return oemAccountCountryCode;
+    }
+
+    public String getDeviceCountry() {
+        return deviceCountry;
+    }
+
+    public String getOemAccountUserName() {
+        return oemAccountUserName;
+    }
+
+    public Date getDevicePairedToOemAccountDate() {
+        return devicePairedToOemAccountDate;
+    }
+
+    public String getDeviceTimeZone() {
+        return deviceTimeZone;
+    }
+
+    public Integer getDeviceTimeZoneSetBy() {
+        return deviceTimeZoneSetBy;
+    }
+
+    public String getDeviceIMEI() {
+        return deviceIMEI;
+    }
+
+    public String getLocale() {
+        return locale;
     }
 
     /**
@@ -65,8 +137,6 @@ public final class IdVerification implements Parcelable {
         private Integer oemAccountScore;
         private Integer deviceScore;
         private Boolean nfcCapable;
-
-        private String billingCountryCode;
         private String oemAccountCountryCode;
         private String deviceCountry;
         private String oemAccountUserName;
@@ -75,11 +145,6 @@ public final class IdVerification implements Parcelable {
         @DeviceTimeZone.SetBy
         private Integer deviceTimeZoneSetBy;
         private String deviceIMEI;
-        private String billingLine1;
-        private String billingLine2;
-        private String billingCity;
-        private String billingState;
-        private String billingZip;
 
         private final String locale;
 
@@ -204,20 +269,6 @@ public final class IdVerification implements Parcelable {
         }
 
         /**
-         * Country of user's billing address in ISO 3166-1 alpha-2 format, e.g., US; maximum 2 characters
-         *
-         * @param billingCountryCode
-         * @return this
-         */
-        public Builder setBillingCountryCode(String billingCountryCode) {
-            if (StringUtils.isEmpty(billingCountryCode) && billingCountryCode.length() > 2) {
-                throw new IllegalArgumentException("billingCountryCode maximum 2 characters");
-            }
-            this.billingCountryCode = billingCountryCode;
-            return this;
-        }
-
-        /**
          * Country setting of account or phone in ISO 3166-1 alpha-2 format
          *
          * @param oemAccountCountryCode
@@ -294,76 +345,20 @@ public final class IdVerification implements Parcelable {
             return this;
         }
 
-        /**
-         * Billing line 1
-         *
-         * @param billingLine1
-         * @return this
-         */
-        public Builder setBillingLine1(String billingLine1) {
-            this.billingLine1 = billingLine1;
-            return this;
-        }
-
-        /**
-         * Billing line 2
-         *
-         * @param billingLine2
-         * @return this
-         */
-        public Builder setBillingLine2(String billingLine2) {
-            this.billingLine2 = billingLine2;
-            return this;
-        }
-
-        /**
-         * Billing city
-         *
-         * @param billingCity
-         * @return this
-         */
-        public Builder setBillingCity(String billingCity) {
-            this.billingCity = billingCity;
-            return this;
-        }
-
-        /**
-         * Billing state
-         *
-         * @param billingState
-         * @return this
-         */
-        public Builder setBillingState(String billingState) {
-            this.billingState = billingState;
-            return this;
-        }
-
-        /**
-         * Billing zip
-         *
-         * @param billingZip
-         * @return this
-         */
-        public Builder setBillingZip(String billingZip) {
-            this.billingZip = billingZip;
-            return this;
-        }
-
         public IdVerification build() {
             IdVerification idVerification = new IdVerification();
 
             idVerification.oemAccountInfoUpdatedDate = oemAccountInfoUpdatedDate;
             idVerification.oemAccountCreatedDate = oemAccountCreatedDate;
             idVerification.suspendedCardsInOemAccount = suspendedCardsInOemAccount;
-            idVerification.lastOemAccountActivityDate = lastOemAccountActivityDate;
-            idVerification.deviceLostModeDate = deviceLostModeDate;
+            idVerification.lastOemAccountActivityDate = TimestampUtils.getDaysBetweenDates(lastOemAccountActivityDate);
+            idVerification.deviceLostModeDate = TimestampUtils.getDaysBetweenDates(deviceLostModeDate);
             idVerification.devicesWithIdenticalActiveToken = devicesWithIdenticalActiveToken;
             idVerification.activeTokensOnAllDevicesForOemAccount = activeTokensOnAllDevicesForOemAccount;
             idVerification.oemAccountScore = oemAccountScore;
             idVerification.deviceScore = deviceScore;
             idVerification.nfcCapable = nfcCapable;
 
-            idVerification.billingCountryCode = billingCountryCode;
             idVerification.oemAccountCountryCode = oemAccountCountryCode;
             idVerification.deviceCountry = deviceCountry;
             idVerification.oemAccountUserName = oemAccountUserName;
@@ -371,11 +366,6 @@ public final class IdVerification implements Parcelable {
             idVerification.deviceTimeZone = deviceTimeZone;
             idVerification.deviceTimeZoneSetBy = deviceTimeZoneSetBy;
             idVerification.deviceIMEI = deviceIMEI;
-            idVerification.billingLine1 = billingLine1;
-            idVerification.billingLine2 = billingLine2;
-            idVerification.billingCity = billingCity;
-            idVerification.billingState = billingState;
-            idVerification.billingZip = billingZip;
 
             idVerification.locale = locale;
 
@@ -393,14 +383,13 @@ public final class IdVerification implements Parcelable {
         dest.writeLong(this.oemAccountInfoUpdatedDate != null ? this.oemAccountInfoUpdatedDate.getTime() : -1);
         dest.writeLong(this.oemAccountCreatedDate != null ? this.oemAccountCreatedDate.getTime() : -1);
         dest.writeValue(this.suspendedCardsInOemAccount);
-        dest.writeLong(this.lastOemAccountActivityDate != null ? this.lastOemAccountActivityDate.getTime() : -1);
-        dest.writeLong(this.deviceLostModeDate != null ? this.deviceLostModeDate.getTime() : -1);
+        dest.writeValue(this.lastOemAccountActivityDate);
+        dest.writeValue(this.deviceLostModeDate);
         dest.writeValue(this.devicesWithIdenticalActiveToken);
         dest.writeValue(this.activeTokensOnAllDevicesForOemAccount);
         dest.writeValue(this.oemAccountScore);
         dest.writeValue(this.deviceScore);
         dest.writeValue(this.nfcCapable);
-        dest.writeString(this.billingCountryCode);
         dest.writeString(this.oemAccountCountryCode);
         dest.writeString(this.deviceCountry);
         dest.writeString(this.oemAccountUserName);
@@ -408,11 +397,6 @@ public final class IdVerification implements Parcelable {
         dest.writeString(this.deviceTimeZone);
         dest.writeValue(this.deviceTimeZoneSetBy);
         dest.writeString(this.deviceIMEI);
-        dest.writeString(this.billingLine1);
-        dest.writeString(this.billingLine2);
-        dest.writeString(this.billingCity);
-        dest.writeString(this.billingState);
-        dest.writeString(this.billingZip);
         dest.writeString(this.locale);
     }
 
@@ -422,16 +406,13 @@ public final class IdVerification implements Parcelable {
         long tmpOemAccountCreatedDate = in.readLong();
         this.oemAccountCreatedDate = tmpOemAccountCreatedDate == -1 ? null : new Date(tmpOemAccountCreatedDate);
         this.suspendedCardsInOemAccount = (Integer) in.readValue(Integer.class.getClassLoader());
-        long tmpLastOemAccountActivityDate = in.readLong();
-        this.lastOemAccountActivityDate = tmpLastOemAccountActivityDate == -1 ? null : new Date(tmpLastOemAccountActivityDate);
-        long tmpDeviceLostModeDate = in.readLong();
-        this.deviceLostModeDate = tmpDeviceLostModeDate == -1 ? null : new Date(tmpDeviceLostModeDate);
+        this.lastOemAccountActivityDate = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.deviceLostModeDate = (Integer) in.readValue(Integer.class.getClassLoader());
         this.devicesWithIdenticalActiveToken = (Integer) in.readValue(Integer.class.getClassLoader());
         this.activeTokensOnAllDevicesForOemAccount = (Integer) in.readValue(Integer.class.getClassLoader());
         this.oemAccountScore = (Integer) in.readValue(Integer.class.getClassLoader());
         this.deviceScore = (Integer) in.readValue(Integer.class.getClassLoader());
         this.nfcCapable = (Boolean) in.readValue(Boolean.class.getClassLoader());
-        this.billingCountryCode = in.readString();
         this.oemAccountCountryCode = in.readString();
         this.deviceCountry = in.readString();
         this.oemAccountUserName = in.readString();
@@ -440,11 +421,6 @@ public final class IdVerification implements Parcelable {
         this.deviceTimeZone = in.readString();
         this.deviceTimeZoneSetBy = (Integer) in.readValue(Integer.class.getClassLoader());
         this.deviceIMEI = in.readString();
-        this.billingLine1 = in.readString();
-        this.billingLine2 = in.readString();
-        this.billingCity = in.readString();
-        this.billingState = in.readString();
-        this.billingZip = in.readString();
         this.locale = in.readString();
     }
 
