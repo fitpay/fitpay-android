@@ -45,15 +45,6 @@ public interface PaymentDeviceConnectable extends CommitHandler {
     void readDeviceInfo();
 
     /**
-     * Post {@link SyncRequest} via {@link com.fitpay.android.utils.RxBus}
-     *
-     * @param user current user
-     * @param device current device
-     * @param syncInfo sync info
-     */
-    void createSyncRequest(@NonNull User user, @NonNull Device device, @Nullable SyncInfo syncInfo);
-
-    /**
      * Do any pre-sync preparation.
      * Typically this will be used to make sure the device is in the proper state
      * and to register event listeners used in the sync process

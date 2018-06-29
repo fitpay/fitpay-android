@@ -267,18 +267,11 @@ public abstract class PaymentDeviceConnector implements PaymentDeviceConnectable
         completeApduPackageExecution();
     }
 
-
-    public void createSyncRequest(@Nullable SyncInfo syncInfo) {
-        createSyncRequest(user, device, syncInfo);
-    }
-
     /**
      * Create sync request
      */
-    @Override
-    public void createSyncRequest(@NonNull User user, @NonNull Device device, @Nullable SyncInfo syncInfo) {
+    public void createSyncRequest(@Nullable SyncInfo syncInfo) {
         RxBus.getInstance().post(new SyncRequest.Builder()
-                .setSyncId(syncInfo != null ? syncInfo.getSyncId() : null)
                 .setUser(user)
                 .setDevice(device)
                 .setConnector(this)

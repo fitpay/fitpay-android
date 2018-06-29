@@ -28,6 +28,7 @@ import com.fitpay.android.paymentdevice.enums.Sync;
 import com.fitpay.android.paymentdevice.events.NotificationSyncRequest;
 import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
 import com.fitpay.android.paymentdevice.models.SyncInfo;
+import com.fitpay.android.paymentdevice.models.SyncRequest;
 import com.fitpay.android.utils.EventCallback;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.Listener;
@@ -403,7 +404,12 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
     private void createSyncRequest(SyncInfo syncInfo) {
         if (deviceConnector != null) {
-            deviceConnector.createSyncRequest(user, device, syncInfo);
+            new SyncRequest.Builder()
+                    .setSyncInfo(syncInfo)
+                    .setConnector(deviceConnector)
+                    .setUser(user)
+                    .setDevice(device)
+                    .build();
         } else {
             Log.e(TAG, "Can't create syncRequest. PaymentDeviceConnector is missing");
         }
