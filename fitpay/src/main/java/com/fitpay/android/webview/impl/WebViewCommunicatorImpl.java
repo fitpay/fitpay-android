@@ -274,9 +274,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                 }
 
                 WebViewCommunicatorImpl.this.user = result;
-                if (deviceConnector != null) {
-                    deviceConnector.setUser(user);
-                }
 
                 postMessage(new UserReceived(user.getId(), user.getUsername()));
 
@@ -290,10 +287,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                     @Override
                     public void onSuccess(Device result) {
                         WebViewCommunicatorImpl.this.device = result;
-
-                        if (deviceConnector != null) {
-                            deviceConnector.setDevice(device);
-                        }
 
                         boolean automaticallySubscribeToUserEventStream = FitpayConfig.Web.automaticallySubscribeToUserEventStream;
                         if (automaticallySubscribeToUserEventStream) {
@@ -330,10 +323,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                                 @Override
                                 public void onSuccess(Device result) {
                                     WebViewCommunicatorImpl.this.device = result;
-
-                                    if (deviceConnector != null) {
-                                        deviceConnector.setDevice(device);
-                                    }
 
                                     onSuccess.run();
                                 }
@@ -414,7 +403,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
     private void createSyncRequest(SyncInfo syncInfo) {
         if (deviceConnector != null) {
-            deviceConnector.createSyncRequest(syncInfo);
+            deviceConnector.createSyncRequest(user, device, syncInfo);
         } else {
             Log.e(TAG, "Can't create syncRequest. PaymentDeviceConnector is missing");
         }

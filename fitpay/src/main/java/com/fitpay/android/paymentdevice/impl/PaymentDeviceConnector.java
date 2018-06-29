@@ -205,7 +205,6 @@ public abstract class PaymentDeviceConnector implements PaymentDeviceConnectable
         }
     }
 
-    @Override
     public void setUser(@NonNull User user) {
         this.user = user;
     }
@@ -214,12 +213,10 @@ public abstract class PaymentDeviceConnector implements PaymentDeviceConnectable
         return user;
     }
 
-    @Override
     public void setDevice(@NonNull Device device) {
         this.device = device;
     }
 
-    @Override
     public final Device getDevice() {
         return device;
     }
@@ -272,11 +269,16 @@ public abstract class PaymentDeviceConnector implements PaymentDeviceConnectable
         completeApduPackageExecution();
     }
 
+
+    public void createSyncRequest(@Nullable SyncInfo syncInfo) {
+        createSyncRequest(user, device, syncInfo);
+    }
+
     /**
      * Create sync request
      */
     @Override
-    public void createSyncRequest(@Nullable SyncInfo syncInfo) {
+    public void createSyncRequest(@NonNull User user, @NonNull Device device, @Nullable SyncInfo syncInfo) {
         RxBus.getInstance().post(new SyncRequest.Builder()
                 .setSyncId(syncInfo != null ? syncInfo.getSyncId() : null)
                 .setUser(user)

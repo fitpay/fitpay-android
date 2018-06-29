@@ -46,8 +46,12 @@ public interface PaymentDeviceConnectable extends CommitHandler {
 
     /**
      * Post {@link SyncRequest} via {@link com.fitpay.android.utils.RxBus}
+     *
+     * @param user current user
+     * @param device current device
+     * @param syncInfo sync info
      */
-    void createSyncRequest(@Nullable SyncInfo syncInfo);
+    void createSyncRequest(@NonNull User user, @NonNull Device device, @Nullable SyncInfo syncInfo);
 
     /**
      * Do any pre-sync preparation.
@@ -108,34 +112,6 @@ public interface PaymentDeviceConnectable extends CommitHandler {
     int getState();
 
     void setState(@Connection.State int state);
-
-    /**
-     * Add user
-     *
-     * @param user current user
-     */
-    void setUser(@NonNull User user);
-
-    /**
-     * Add device
-     *
-     * @param device current device
-     */
-    void setDevice(@NonNull Device device);
-
-    /**
-     * Get User
-     *
-     * @return current user
-     */
-    User getUser();
-
-    /**
-     * Get Device
-     *
-     * @return current payment device
-     */
-    Device getDevice();
 
     /**
      * Check if commit timers are enabled.
