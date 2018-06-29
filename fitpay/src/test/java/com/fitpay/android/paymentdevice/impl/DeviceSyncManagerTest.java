@@ -129,11 +129,6 @@ public class DeviceSyncManagerTest extends TestActions {
         this.device = createDevice(this.user, getTestDevice());
         assertNotNull(this.device);
 
-        String pan = "9999504454545450";
-        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
-        CreditCard createdCard = createCreditCard(user, creditCardInfo);
-        assertNotNull("card not created", createdCard);
-
         Properties props = new Properties();
         props.put(MockPaymentDeviceConnector.CONFIG_CONNECTED_RESPONSE_TIME, "0");
         mockPaymentDevice.init(props);
@@ -147,7 +142,15 @@ public class DeviceSyncManagerTest extends TestActions {
             Thread.sleep(500);
         }
 
+        mockPaymentDevice.setUser(user);
+        mockPaymentDevice.setDevice(device);
+
         assertEquals("payment service should be connected", States.CONNECTED, mockPaymentDevice.getState());
+
+        String pan = "9999504454545450";
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
+        assertNotNull("card not created", createdCard);
 
         this.executionLatch = new CountDownLatch(1);
         this.listener = new SyncCompleteListener();

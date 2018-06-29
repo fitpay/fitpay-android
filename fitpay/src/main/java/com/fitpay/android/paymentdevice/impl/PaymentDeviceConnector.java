@@ -92,10 +92,8 @@ public abstract class PaymentDeviceConnector implements PaymentDeviceConnectable
         connectorId = id;
         mContext = context;
         TAG = "PaymentDeviceConnector-" + connectorId;
-    }
-
-    private void init() {
         state = States.NEW;
+
         addDefaultCommitHandlers();
     }
 
