@@ -173,13 +173,7 @@ public final class CreditCardInfo implements Parcelable {
          * @param cvv cards's cvv2 code. string with 3 digits only
          * @return a reference to this {@code Builder} object to fulfill the "Builder" pattern
          */
-        public Builder setCVV(@NonNull String cvv) {//throws IllegalFormatException{
-
-//            String pattern = "\\d{1,3}$";
-//            if(!cvv.matches(pattern)){
-//                throw new IllegalArgumentException("incorrect value");
-//            }
-
+        public Builder setCVV(@NonNull String cvv) {
             this.cvv = cvv;
             return this;
         }
@@ -190,13 +184,7 @@ public final class CreditCardInfo implements Parcelable {
          * @param pan cards's PAN. string with 16 digits only
          * @return a reference to this {@code Builder} object to fulfill the "Builder" pattern
          */
-        public Builder setPAN(@NonNull String pan) {//throws IllegalFormatException{
-
-//            String pattern = "\\d{1,16}$";
-//            if(!cvv.matches(pattern)){
-//                throw new IllegalArgumentException("incorrect value");
-//            }
-
+        public Builder setPAN(@NonNull String pan) {
             this.pan = pan;
             return this;
         }

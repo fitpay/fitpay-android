@@ -249,9 +249,36 @@ public final class User extends UserModel implements Parcelable {
      * @param callback result callback
      */
     public void createCreditCard(@NonNull CreditCardInfo creditCardInfo, @NonNull ApiCallback<CreditCard> callback) {
-        Map<String, CreditCardInfo> cardInfoMap = new HashMap<>(1);
-        cardInfoMap.put("encryptedData", creditCardInfo);
-        makePostCall(GET_CARDS, cardInfoMap, CreditCard.class, callback);
+        Map<String, Object> queryMap = new HashMap<>(1);
+        queryMap.put("encryptedData", creditCardInfo);
+        makePostCall(GET_CARDS, queryMap, CreditCard.class, callback);
+    }
+
+    /**
+     * Add a single credit card to a user's profile.
+     * If the card owner has no default card, then the new card will become the default.
+     * However, if the owner already has a default then it will not change.
+     * To change the default, you should update the user to have a new "default_source".
+     * <p>
+     * <p>
+     * <b>Important note:</b>
+     * This call responds with a hypermedia link for accept terms. Getting the card again will not
+     * result in the proper hypermedia link.
+     * It's your own responsibility to store {@link CreditCard#getAcceptTermsUrl()} and restore
+     * {@link CreditCard#setAcceptTermsUrl(String)} this link allowing the user to come back to the T&Cs at a later time
+     * </p>
+     *
+     * @param creditCardInfo credit card data:(pan, expMonth, expYear, cvv, name,
+     *                   address data:(street1, street2, street3, city, state, postalCode, country))
+     * @param deviceId id of the device the credit card should create a credential for
+     * @param callback result callback
+     */
+    public void createCreditCard(@NonNull CreditCardInfo creditCardInfo, @NonNull String deviceId, @NonNull ApiCallback<CreditCard> callback) {
+        Map<String, Object> queryMap = new HashMap<>(1);
+        queryMap.put("encryptedData", creditCardInfo);
+        queryMap.put("deviceId", deviceId);
+
+        makePostCall(GET_CARDS, queryMap, CreditCard.class, callback);
     }
 
     /**
