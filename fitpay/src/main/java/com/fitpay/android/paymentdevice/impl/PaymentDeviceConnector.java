@@ -318,6 +318,7 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
 
     /**
      * Post data for everyone who is listening for current {@link #id()}
+     *
      * @param data data
      */
     public void postData(@NonNull Object data) {
@@ -467,6 +468,21 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
         } else {
             FPLog.e(TAG, "Unexpected state - current commit is null but should be populated");
         }
+    }
+
+    @Override
+    public boolean isCommitTimersEnabled() {
+        return true;
+    }
+
+    @Override
+    public int getCommitWarningTimeout() {
+        return COMMIT_WARNING_TIMEOUT;
+    }
+
+    @Override
+    public int getCommitErrorTimeout() {
+        return COMMIT_ERROR_TIMEOUT;
     }
 
     /**

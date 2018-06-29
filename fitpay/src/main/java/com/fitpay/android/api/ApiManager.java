@@ -22,6 +22,7 @@ import com.fitpay.android.api.services.FitPayClient;
 import com.fitpay.android.api.services.FitPayService;
 import com.fitpay.android.api.services.UserClient;
 import com.fitpay.android.api.services.UserService;
+import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.KeysManager;
@@ -44,70 +45,11 @@ import retrofit2.Response;
  */
 public class ApiManager {
 
-    public static final String PROPERTY_API_BASE_URL = "apiBaseUrl";
-    public static final String PROPERTY_AUTH_BASE_URL = "authBaseUrl";
-    public static final String PROPERTY_CLIENT_ID = "clientId";
-    public static final String PROPERTY_TIMEOUT = "timeout";
-    public static final String PROPERTY_REDIRECT_URI = "redirectUri";
-    public static final String PROPERTY_SYNC_QUEUE_SIZE = "deviceSyncRequestQueueSize";
-    public static final String PROPERTY_SYNC_THREADS_COUNT = "deviceSyncRequestThreadsCount";
-    public static final String PROPERTY_COMMIT_TIMERS_ENABLED = "commitTimers";
-    public static final String PROPERTY_COMMIT_WARNING_TIMEOUT = "commitWarningTimeout";
-    public static final String PROPERTY_COMMIT_ERROR_TIMEOUT = "commitErrorTimeout";
-    public static final String PROPERTY_DISABLE_SSL_VALIDATION = "disableSslTrustValidation";
-    public static final String PROPERTY_HTTP_CONNECT_TIMEOUT = "httpConnectTimeout";
-    public static final String PROPERTY_HTTP_READ_TIMEOUT = "httpReadTimeout";
-    public static final String PROPERTY_HTTP_WRITE_TIMEOUT = "httpWriteTimeout";
-    public static final String PROPERTY_AUTOMATICALLY_SYNC_FROM_USER_EVENT_STREAM = "syncFromUserEventStream";
-    public static final String PROPERTY_AUTOMATICALLY_SUBSCRIBE_TO_USER_EVENT_STREAM = "subscribeToUserEventStream";
-
-    private static Map<String, String> config = new HashMap<>();
-
-    static {
-        config.put(PROPERTY_TIMEOUT, "10");
-        config.put(PROPERTY_SYNC_QUEUE_SIZE, "10");
-        config.put(PROPERTY_SYNC_THREADS_COUNT, "4");
-        config.put(PROPERTY_COMMIT_WARNING_TIMEOUT, "5000");
-        config.put(PROPERTY_COMMIT_ERROR_TIMEOUT, "30000");
-        config.put(PROPERTY_COMMIT_TIMERS_ENABLED, "true");
-        config.put(PROPERTY_DISABLE_SSL_VALIDATION, "false");
-        config.put(PROPERTY_HTTP_CONNECT_TIMEOUT, "60");
-        config.put(PROPERTY_HTTP_READ_TIMEOUT, "60");
-        config.put(PROPERTY_HTTP_WRITE_TIMEOUT, "60");
-        config.put(PROPERTY_AUTOMATICALLY_SUBSCRIBE_TO_USER_EVENT_STREAM, "true");
-        config.put(PROPERTY_AUTOMATICALLY_SYNC_FROM_USER_EVENT_STREAM, "true");
-    }
-
-    private static ApiManager sInstance;
-
-    private FitPayService apiService;
-    private UserService userService;
-    private AuthService authService;
-
-    private static String sPushToken;
-
-    private ApiManager() {
-        if (null == getBaseUrl()) {
-            throw new IllegalStateException("The ApiManager must be initialized prior to use.  API base url required");
-        }
-        apiService = new FitPayService(getBaseUrl());
-    }
-
-    /**
-     * Clean API static variables. Required to be call in case of app URL overrides.
-     */
-    public static void clean() {
-        synchronized (ApiManager.class) {
-            sInstance = null;
-        }
-    }
+    private static volatile ApiManager sInstance;
 
     public static ApiManager getInstance() {
         if (sInstance == null) {
             synchronized (ApiManager.class) {
-                if (null == config) {
-                    throw new IllegalStateException("The ApiManager must be initialized prior to use");
-                }
                 if (sInstance == null) {
                     sInstance = new ApiManager();
                 }
@@ -117,56 +59,30 @@ public class ApiManager {
         return sInstance;
     }
 
-    public static String getPushToken() {
-        return sPushToken;
+    /**
+     * Clean API static variables. Required to be call in case of app URL overrides.
+     */
+    public static void clean() {
+        if (sInstance != null) {
+            synchronized (ApiManager.class) {
+                sInstance = null;
+            }
+        }
     }
 
-    public static void setPushToken(String pushToken) {
-        sPushToken = pushToken;
+    private FitPayService apiService;
+    private UserService userService;
+    private AuthService authService;
+
+    private ApiManager() {
+        if (null == FitpayConfig.apiURL) {
+            throw new IllegalStateException("The SdkConfig must be initialized prior to use. API base url required");
+        }
+        apiService = new FitPayService(FitpayConfig.apiURL);
     }
 
     public PlatformConfig getPlatformConfig() {
         return apiService.getPlatformConfig();
-    }
-
-    /**
-     * Initialize the SDK and do not perform an initial API health check
-     *
-     * @param props
-     */
-    public static void init(Map<String, String> props) {
-        init(props, true);
-    }
-
-    /**
-     * Initialize the SDK, skipHealthCheck determines if the SDK will perform and initial health check
-     * on the API or not after initialization.
-     *
-     * @param props
-     * @param skipHealthCheck
-     */
-    public static void init(Map<String, String> props, boolean skipHealthCheck) {
-        config.putAll(props);
-
-        if (!skipHealthCheck) {
-            Call<Object> healthCall = getInstance().getClient().health();
-            healthCall.enqueue(new Callback<Object>() {
-                @Override
-                public void onResponse(Call<Object> call, Response<Object> response) {
-                    FPLog.i("FitPay API Health Result: " + response.body());
-                }
-
-                @Override
-                public void onFailure(Call<Object> call, Throwable t) {
-                    FPLog.e("FitPay API Health Check Failed: " + t.getMessage());
-                    FPLog.e(t);
-                }
-            });
-        }
-    }
-
-    public static Map<String, String> getConfig() {
-        return config;
     }
 
     public FitPayService getApiService() {
@@ -184,21 +100,21 @@ public class ApiManager {
     public AuthClient getAuthClient() {
         if (null == authService) {
             synchronized (this) {
-                String baseUrl = config.get(ApiManager.PROPERTY_AUTH_BASE_URL);
+                String baseUrl = FitpayConfig.authURL;
                 if (null == baseUrl) {
-                    baseUrl = config.get(ApiManager.PROPERTY_API_BASE_URL);
+                    baseUrl = FitpayConfig.apiURL;
                 }
                 if (null == baseUrl) {
                     throw new IllegalArgumentException("The configuration must contain one of the following two properties: "
-                            + ApiManager.PROPERTY_AUTH_BASE_URL + " or " + ApiManager.PROPERTY_API_BASE_URL);
+                            + FitpayConfig.authURL + " or " + FitpayConfig.apiURL);
                 }
-                if (null == config.get(ApiManager.PROPERTY_CLIENT_ID)) {
+                if (null == FitpayConfig.clientId) {
                     throw new IllegalArgumentException("The configuration must contain the following property: "
-                            + ApiManager.PROPERTY_CLIENT_ID);
+                            + FitpayConfig.clientId);
                 }
-                if (null == config.get(ApiManager.PROPERTY_REDIRECT_URI)) {
+                if (null == FitpayConfig.redirectURL) {
                     throw new IllegalArgumentException("The configuration must contain the following property: "
-                            + ApiManager.PROPERTY_REDIRECT_URI);
+                            + FitpayConfig.redirectURL);
                 }
                 authService = new AuthService(baseUrl);
             }
@@ -209,27 +125,13 @@ public class ApiManager {
     public UserClient getUserClient() {
         if (null == userService) {
             synchronized (this) {
-                if (null == getBaseUrl()) {
-                    throw new IllegalStateException("The ApiManager must be initialized prior to use.  API base url required");
+                if (null == FitpayConfig.apiURL) {
+                    throw new IllegalStateException("The SdkConfig must be initialized prior to use.  API base url required");
                 }
-                userService = new UserService(getBaseUrl());
+                userService = new UserService(FitpayConfig.apiURL);
             }
         }
         return userService.getClient();
-    }
-
-    private String getBaseUrl() {
-        if (null == config) {
-            return null;
-        }
-        return config.get(PROPERTY_API_BASE_URL);
-    }
-
-    private String getAuthBaseUrl() {
-        if (null == config) {
-            return null;
-        }
-        return config.get(PROPERTY_AUTH_BASE_URL);
     }
 
     public boolean isAuthorized(@NonNull ApiCallback callback) {
@@ -259,7 +161,7 @@ public class ApiManager {
     public void createUser(UserCreateRequest user, final ApiCallback<User> callback) {
 
         Runnable onSuccess = () -> {
-            user.addCredentials(config.get(PROPERTY_CLIENT_ID));
+            user.addCredentials(FitpayConfig.clientId);
             Call<User> createUserCall = getUserClient().createUser(user);
             createUserCall.enqueue(new CallbackWrapper<>(callback));
         };
@@ -296,8 +198,8 @@ public class ApiManager {
         Map<String, String> allParams = new HashMap<>();
         allParams.put("credentials", getCredentialsString(identity));
         allParams.put("response_type", "token");
-        allParams.put("client_id", config.get(ApiManager.PROPERTY_CLIENT_ID));
-        allParams.put("redirect_uri", config.get(ApiManager.PROPERTY_REDIRECT_URI));
+        allParams.put("client_id", FitpayConfig.clientId);
+        allParams.put("redirect_uri", FitpayConfig.redirectURL);
         Call<OAuthToken> getTokenCall = getAuthClient().loginCredentials(allParams);
         getTokenCall.enqueue(updateTokenCallback);
     }
@@ -331,8 +233,8 @@ public class ApiManager {
         Map<String, String> allParams = new HashMap<>();
         allParams.put("firebase_token", firebaseToken);
         allParams.put("response_type", "token");
-        allParams.put("client_id", config.get(ApiManager.PROPERTY_CLIENT_ID));
-        allParams.put("redirect_uri", config.get(ApiManager.PROPERTY_REDIRECT_URI));
+        allParams.put("client_id", FitpayConfig.clientId);
+        allParams.put("redirect_uri", FitpayConfig.redirectURL);
         Call<OAuthToken> getTokenCall = getAuthClient().loginToken(allParams);
 
         getTokenCall.enqueue(updateTokenCallback);
@@ -369,7 +271,7 @@ public class ApiManager {
             checkKeyAndMakeCall(onSuccess, callback);
         }
     }
-    
+
     /**
      * Creates a relationship between a device and a creditCard.
      *
@@ -462,7 +364,7 @@ public class ApiManager {
      */
     public void getResetPaymentDeviceStatus(@NonNull String resetId,
                                             final ApiCallback<ResetDeviceResult> callback) {
-        if(isAuthorized(callback)) {
+        if (isAuthorized(callback)) {
             Runnable onSuccess = new Runnable() {
                 @Override
                 public void run() {

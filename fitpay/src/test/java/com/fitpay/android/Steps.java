@@ -61,6 +61,7 @@ public class Steps {
 
     protected Steps() {
         SecurityProvider.getInstance().setProvider(new BouncyCastleProvider());
+        TestConstants.configureFitpay();
 
         userName = TestUtils.getRandomLengthString(5, 10) + "@"
                 + TestUtils.getRandomLengthString(5, 10) + "." + TestUtils.getRandomLengthString(4, 10);

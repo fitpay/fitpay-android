@@ -18,6 +18,11 @@ public final class Constants {
 
     public static final String FIT_PAY_TAG = "FitPay";
 
+    public static final String CONFIG_WV_URL = "https://webapp.fit-pay.com";
+    public static final String CONFIG_API_BASE_URL = "https://api.fit-pay.com";
+    public static final String CONFIG_AUTH_BASE_URL = "https://auth.fit-pay.com";
+    public static final String CONFIG_REDIRECT_URL = "https://webapp.fit-pay.com";
+
     public final static String SYNC_DATA = "SYNC_DATA";
     public final static String APDU_DATA = "APDU_DATA";
     public final static String WV_DATA = "WV_DATA";

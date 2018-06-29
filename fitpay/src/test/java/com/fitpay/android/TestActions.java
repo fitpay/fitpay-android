@@ -91,7 +91,7 @@ public class TestActions {
         FPLog.setShowHTTPLogs(false);
 
         SecurityProvider.getInstance().setProvider(new BouncyCastleProvider());
-        ApiManager.init(TestConstants.getConfig());
+        TestConstants.configureFitpay();
 
         RxAndroidPlugins.getInstance().reset();
         RxAndroidPlugins.getInstance().registerSchedulersHook(new RxAndroidSchedulersHook() {
@@ -123,7 +123,7 @@ public class TestActions {
     }
 
     @AfterClass
-    public static void clear(){
+    public static void clear() {
         FPLog.clean();
     }
 

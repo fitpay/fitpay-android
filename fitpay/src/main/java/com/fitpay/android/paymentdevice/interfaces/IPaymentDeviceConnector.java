@@ -24,6 +24,9 @@ import java.util.Properties;
  */
 public interface IPaymentDeviceConnector extends CommitHandler {
 
+    int COMMIT_WARNING_TIMEOUT = 5000;
+    int COMMIT_ERROR_TIMEOUT = 30000;
+
     /**
      * @return payment device connector UUID
      */
@@ -96,7 +99,7 @@ public interface IPaymentDeviceConnector extends CommitHandler {
      * @param apduPkgNumber package number
      * @param apduCommand   apdu command
      */
-    void executeApduCommand(long apduPkgNumber,@NonNull final ApduCommand apduCommand);
+    void executeApduCommand(long apduPkgNumber, @NonNull final ApduCommand apduCommand);
 
     /**
      * send apdu execution result to the server
@@ -175,4 +178,28 @@ public interface IPaymentDeviceConnector extends CommitHandler {
      * @return current payment device
      */
     Device getDevice();
+
+    /**
+     * Check if commit timers are enabled.
+     * Default value should be true
+     *
+     * @return is enabled or not
+     */
+    boolean isCommitTimersEnabled();
+
+    /**
+     * Get commit warning timeout
+     * Default value should be {@link #COMMIT_WARNING_TIMEOUT}
+     *
+     * @return warningTimeout milliseconds.
+     */
+    int getCommitWarningTimeout();
+
+    /**
+     * Get commit error timeout
+     * Default value should be {@link #COMMIT_ERROR_TIMEOUT}
+     *
+     * @return errorTimeout milliseconds.
+     */
+    int getCommitErrorTimeout();
 }
