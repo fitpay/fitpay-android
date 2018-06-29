@@ -409,7 +409,8 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                     .setConnector(deviceConnector)
                     .setUser(user)
                     .setDevice(device)
-                    .build();
+                    .build()
+                    .send();
         } else {
             Log.e(TAG, "Can't create syncRequest. PaymentDeviceConnector is missing");
         }

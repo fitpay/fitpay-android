@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
+import com.fitpay.android.utils.RxBus;
 import com.fitpay.android.utils.StringUtils;
 
 import java.util.UUID;
@@ -69,6 +70,10 @@ public final class SyncRequest {
                 ", connector=" + connector +
                 ", links=" + syncInfo +
                 '}';
+    }
+
+    public void send() {
+        RxBus.getInstance().post(this);
     }
 
     public static Builder builder() {
@@ -147,7 +152,7 @@ public final class SyncRequest {
         public Builder setSyncInfo(SyncInfo syncInfo) {
             this.syncInfo = syncInfo;
 
-            if(syncInfo != null){
+            if (syncInfo != null) {
                 this.syncId = syncInfo.getSyncId();
             }
 

@@ -84,8 +84,8 @@ public abstract class PaymentDeviceConnector implements PaymentDeviceConnectable
 
     private Properties properties;
 
-    public PaymentDeviceConnector(@NonNull Context context){
-        this(context,UUID.randomUUID().toString());
+    public PaymentDeviceConnector(@NonNull Context context) {
+        this(context, UUID.randomUUID().toString());
     }
 
     public PaymentDeviceConnector(@NonNull Context context, @NonNull final String id) {
@@ -271,12 +271,13 @@ public abstract class PaymentDeviceConnector implements PaymentDeviceConnectable
      * Create sync request
      */
     public void createSyncRequest(@Nullable SyncInfo syncInfo) {
-        RxBus.getInstance().post(new SyncRequest.Builder()
+        new SyncRequest.Builder()
                 .setUser(user)
                 .setDevice(device)
                 .setConnector(this)
                 .setSyncInfo(syncInfo)
-                .build());
+                .build()
+                .send();
     }
 
     /**
