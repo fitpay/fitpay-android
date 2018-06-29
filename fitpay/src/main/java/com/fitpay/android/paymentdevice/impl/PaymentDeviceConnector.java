@@ -24,7 +24,7 @@ import com.fitpay.android.paymentdevice.enums.Connection;
 import com.fitpay.android.paymentdevice.events.CommitFailed;
 import com.fitpay.android.paymentdevice.events.CommitSkipped;
 import com.fitpay.android.paymentdevice.events.CommitSuccess;
-import com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector;
+import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
 import com.fitpay.android.paymentdevice.models.SyncInfo;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
 import com.fitpay.android.paymentdevice.utils.ApduExecException;
@@ -54,7 +54,7 @@ import static com.fitpay.android.utils.Constants.APDU_DATA;
  * <p>
  * This component is designed to handle one operation at a time.  It is not thread safe.
  */
-public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector {
+public abstract class PaymentDeviceConnector implements PaymentDeviceConnectable {
 
     protected final String TAG;
 
@@ -84,24 +84,14 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
 
     private Properties properties;
 
-    public PaymentDeviceConnector() {
-        this(UUID.randomUUID().toString());
-    }
-
-    public PaymentDeviceConnector(@NonNull final String id) {
-        init();
-        connectorId = id;
-        TAG = "PaymentDeviceConnector-" + connectorId;
-    }
-
-    public PaymentDeviceConnector(@NonNull Context context) {
-        this();
-        mContext = context;
+    public PaymentDeviceConnector(@NonNull Context context){
+        this(context,UUID.randomUUID().toString());
     }
 
     public PaymentDeviceConnector(@NonNull Context context, @NonNull final String id) {
-        this(id);
+        connectorId = id;
         mContext = context;
+        TAG = "PaymentDeviceConnector-" + connectorId;
     }
 
     private void init() {
@@ -117,18 +107,12 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
         return device != null ? device.getDeviceIdentifier() : null;
     }
 
-    @Override
     public void init(@NonNull Properties props) {
         this.properties = props;
     }
 
     public Properties getProperties() {
         return properties;
-    }
-
-    @Override
-    public void setContext(@NonNull Context context) {
-        this.mContext = context;
     }
 
     /**
@@ -138,14 +122,11 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
         addCommitHandler(CommitTypes.APDU_PACKAGE, new ApduCommitHandler());
     }
 
-    @Override
-    public
     @Connection.State
-    int getState() {
+    public int getState() {
         return state;
     }
 
-    @Override
     public void setState(@Connection.State int state) {
         FPLog.d(TAG, "connection state changed: " + state);
         this.state = state;
@@ -153,26 +134,17 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
     }
 
     @Override
-    public void close() {
-        disconnect();
+    public void connect() {
+    }
 
+    @Override
+    public void disconnect() {
         if (null != apduExecutionListener) {
             NotificationManager.getInstance().removeListener(apduExecutionListener);
             apduExecutionListener = null;
         }
     }
 
-    @Override
-    public void reset() {
-        // subclasses to implement as needed
-    }
-
-    @Override
-    public void reconnect() {
-        connect();
-    }
-
-    @Override
     public void addCommitHandler(String commitType, @NonNull final CommitHandler handler) {
         if (null == commitHandlers) {
             commitHandlers = new HashMap<>();
@@ -180,7 +152,6 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
         commitHandlers.put(commitType, handler);
     }
 
-    @Override
     public void removeCommitHandler(String commitType) {
         if (null == commitHandlers) {
             return;
@@ -271,7 +242,6 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
      * 4) apduExecutionResult.setExecutedDurationTilNow();
      * 5) deviceConnector.sendApduExecutionResult(apduExecutionResult)
      */
-    @Override
     public void executeApduPackage(@NonNull final ApduPackage apduPackage) {
         if (apduExecutionInProgress) {
             FPLog.w(TAG, "apduPackage processing is already in progress");
@@ -289,16 +259,16 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
         apduCommandListener = new ApduCommandListener(connectorId);
         NotificationManager.getInstance().addListener(apduCommandListener);
 
-        onPreExecuteApdu();
+        onPreExecuteApduPackage();
     }
 
     @Override
-    public void onPreExecuteApdu() {
+    public void onPreExecuteApduPackage() {
         executeNextApduCommand();
     }
 
     @Override
-    public void onPostExecuteApdu() {
+    public void onPostExecuteApduPackage() {
         completeApduPackageExecution();
     }
 
@@ -356,7 +326,7 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
             curApduCommand = nextCommand;
             executeApduCommand(curApduPgkNumber, nextCommand);
         } else {
-            onPostExecuteApdu();
+            onPostExecuteApduPackage();
         }
     }
 
@@ -397,7 +367,7 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
 
     /**
      * @param towPackages
-     * @deprecated See {@link IPaymentDeviceConnector} - providing a do-nothing implementation to help clean up OEM integrations
+     * @deprecated See {@link PaymentDeviceConnectable} - providing a do-nothing implementation to help clean up OEM integrations
      */
     @Override
     public void executeTopOfWallet(List<TopOfWallet> towPackages) {
@@ -594,7 +564,7 @@ public abstract class PaymentDeviceConnector implements IPaymentDeviceConnector 
             apduExecutionResult.setState(apduError.getResponseState());
             apduExecutionResult.setErrorReason(apduError.getMessage());
             apduExecutionResult.setErrorCode(apduError.getResponseCode());
-            onPostExecuteApdu();
+            onPostExecuteApduPackage();
         }
     }
 

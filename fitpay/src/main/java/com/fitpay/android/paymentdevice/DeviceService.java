@@ -5,30 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.fitpay.android.api.models.device.Device;
-import com.fitpay.android.api.models.user.User;
-import com.fitpay.android.paymentdevice.constants.States;
-import com.fitpay.android.paymentdevice.events.NotificationSyncRequest;
-import com.fitpay.android.paymentdevice.impl.PaymentDeviceConnector;
-import com.fitpay.android.paymentdevice.impl.ble.BluetoothPaymentDeviceConnector;
-import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
-import com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector;
-import com.fitpay.android.paymentdevice.models.SyncInfo;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
-import com.fitpay.android.utils.Constants;
-import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.Listener;
 import com.fitpay.android.utils.NotificationManager;
-import com.fitpay.android.utils.RxBus;
 
-import java.io.IOException;
-import java.util.Properties;
-import java.util.concurrent.Executor;
-
-import static com.fitpay.android.utils.StringUtils.convertCommaSeparatedList;
 import static java.lang.Class.forName;
 
 /**

@@ -13,7 +13,7 @@ import com.fitpay.android.paymentdevice.callbacks.DeviceSyncManagerCallback;
 import com.fitpay.android.paymentdevice.constants.States;
 import com.fitpay.android.paymentdevice.events.CommitSuccess;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
-import com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector;
+import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
 import com.fitpay.android.utils.Listener;
 import com.fitpay.android.utils.NotificationManager;
@@ -49,10 +49,10 @@ public class DeviceParallelSyncTest extends TestActions {
     private Context mContext;
     private DeviceSyncManager syncManager;
 
-    private IPaymentDeviceConnector firstMockPaymentDevice;
+    private MockPaymentDeviceConnector firstMockPaymentDevice;
     private Device firstDevice;
 
-    private IPaymentDeviceConnector secondMockPaymentDevice;
+    private MockPaymentDeviceConnector secondMockPaymentDevice;
     private Device secondDevice;
 
     private SyncCompleteListener firstSyncListener;
@@ -94,7 +94,7 @@ public class DeviceParallelSyncTest extends TestActions {
 
         initPrefs(firstDevice.getDeviceIdentifier());
 
-        firstMockPaymentDevice = new MockPaymentDeviceConnector();
+        firstMockPaymentDevice = new MockPaymentDeviceConnector(mContext);
         initPaymentDeviceConnector(firstMockPaymentDevice);
 
         firstSyncListener = new SyncCompleteListener(firstMockPaymentDevice.id());
@@ -107,7 +107,7 @@ public class DeviceParallelSyncTest extends TestActions {
 
         initPrefs(secondDevice.getDeviceIdentifier());
 
-        secondMockPaymentDevice = new MockPaymentDeviceConnector();
+        secondMockPaymentDevice = new MockPaymentDeviceConnector(mContext);
         initPaymentDeviceConnector(secondMockPaymentDevice);
 
         secondSyncListener = new SyncCompleteListener(secondMockPaymentDevice.id());
@@ -217,7 +217,7 @@ public class DeviceParallelSyncTest extends TestActions {
                         .count());
     }
 
-    private void runSync(IPaymentDeviceConnector deviceConnector, Device device, SyncCompleteListener listener, AtomicReference<CountDownLatch> executionLatch, AtomicReference<CountDownLatch> finishLatch) throws InterruptedException {
+    private void runSync(PaymentDeviceConnectable deviceConnector, Device device, SyncCompleteListener listener, AtomicReference<CountDownLatch> executionLatch, AtomicReference<CountDownLatch> finishLatch) throws InterruptedException {
         int syncCount = 10;
 
         for (int i = 0; i < syncCount; i++) {
@@ -274,7 +274,7 @@ public class DeviceParallelSyncTest extends TestActions {
         finishLatch.get().countDown();
     }
 
-    private void initPaymentDeviceConnector(IPaymentDeviceConnector connector) throws InterruptedException {
+    private void initPaymentDeviceConnector(MockPaymentDeviceConnector connector) throws InterruptedException {
         Properties props = new Properties();
         props.put(MockPaymentDeviceConnector.CONFIG_CONNECTED_RESPONSE_TIME, "0");
 

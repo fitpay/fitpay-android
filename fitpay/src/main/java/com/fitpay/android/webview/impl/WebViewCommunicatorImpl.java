@@ -26,7 +26,7 @@ import com.fitpay.android.paymentdevice.DeviceService;
 import com.fitpay.android.paymentdevice.constants.States;
 import com.fitpay.android.paymentdevice.enums.Sync;
 import com.fitpay.android.paymentdevice.events.NotificationSyncRequest;
-import com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector;
+import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
 import com.fitpay.android.paymentdevice.models.SyncInfo;
 import com.fitpay.android.utils.EventCallback;
 import com.fitpay.android.utils.FPLog;
@@ -66,7 +66,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
     private final Activity activity;
     private DeviceService deviceService;
-    private final IPaymentDeviceConnector deviceConnector;
+    private final PaymentDeviceConnectable deviceConnector;
 
     private User user;
     private Device device;
@@ -94,7 +94,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
     private boolean supportsAppVerification;
 
-    public WebViewCommunicatorImpl(Activity ctx, IPaymentDeviceConnector deviceConnector, WebView webView) {
+    public WebViewCommunicatorImpl(Activity ctx, PaymentDeviceConnectable deviceConnector, WebView webView) {
         this.activity = ctx;
         this.deviceConnector = deviceConnector;
 

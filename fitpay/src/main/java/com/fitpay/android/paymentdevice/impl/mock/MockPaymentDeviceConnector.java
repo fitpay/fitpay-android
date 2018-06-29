@@ -1,6 +1,7 @@
 package com.fitpay.android.paymentdevice.impl.mock;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 
 import com.fitpay.android.api.enums.CommitTypes;
 import com.fitpay.android.api.enums.DeviceTypes;
@@ -68,8 +69,8 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
 
     private final SyncCompleteListener syncCompleteListener;
 
-    public MockPaymentDeviceConnector() {
-        super();
+    public MockPaymentDeviceConnector(Context context) {
+        super(context);
 
         syncCompleteListener = new SyncCompleteListener(id());
 
@@ -95,12 +96,6 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
         if (config.contains(CONFIG_DEFAULT_DELAY_TIME)) {
             delay = getIntValue(config.getProperty(CONFIG_DEFAULT_DELAY_TIME));
         }
-    }
-
-    @Override
-    public void close() {
-        super.close();
-        FPLog.d(TAG, "close not implemented");
     }
 
     @Override
