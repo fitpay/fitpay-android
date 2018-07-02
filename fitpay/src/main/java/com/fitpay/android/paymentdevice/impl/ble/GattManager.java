@@ -20,7 +20,7 @@ import com.fitpay.android.paymentdevice.impl.ble.message.ContinuationControlMess
 import com.fitpay.android.paymentdevice.impl.ble.message.ContinuationPacketMessage;
 import com.fitpay.android.paymentdevice.impl.ble.message.NotificationMessage;
 import com.fitpay.android.paymentdevice.impl.ble.message.SecurityStateMessage;
-import com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector;
+import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
 import com.fitpay.android.paymentdevice.interfaces.ISecureMessage;
 import com.fitpay.android.paymentdevice.utils.Crc32;
 import com.fitpay.android.utils.FPLog;
@@ -39,7 +39,7 @@ final class GattManager {
 
     private static final String TAG = GattManager.class.getSimpleName();
 
-    private IPaymentDeviceConnector paymentDeviceConnector;
+    private PaymentDeviceConnectable paymentDeviceConnector;
 
     private Context mContext;
     private BluetoothGatt mGatt;
@@ -53,7 +53,7 @@ final class GattManager {
 
     private AsyncTask<Void, Void, Void> mCurrentOperationTimeout;
 
-    public GattManager(IPaymentDeviceConnector paymentDeviceConnector, Context context, BluetoothDevice device) {
+    public GattManager(PaymentDeviceConnectable paymentDeviceConnector, Context context, BluetoothDevice device) {
         this.paymentDeviceConnector = paymentDeviceConnector;
         mContext = context;
         mDevice = device;
