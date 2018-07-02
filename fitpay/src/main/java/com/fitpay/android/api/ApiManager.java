@@ -282,13 +282,9 @@ public class ApiManager {
      */
     public void createRelationship(String userId, String creditCardId, String deviceId, ApiCallback<Relationship> callback) {
         if (isAuthorized(callback)) {
-
-            Runnable onSuccess = new Runnable() {
-                @Override
-                public void run() {
-                    Call<Relationship> createRelationshipCall = getClient().createRelationship(userId, creditCardId, deviceId);
-                    createRelationshipCall.enqueue(new CallbackWrapper<>(callback));
-                }
+            Runnable onSuccess = () -> {
+                Call<Relationship> createRelationshipCall = getClient().createRelationship(userId, creditCardId, deviceId);
+                createRelationshipCall.enqueue(new CallbackWrapper<>(callback));
             };
 
             checkKeyAndMakeCall(onSuccess, callback);
@@ -302,12 +298,9 @@ public class ApiManager {
      * @param callback result callback
      */
     public void getIssuers(final ApiCallback<Issuers> callback) {
-        Runnable onSuccess = new Runnable() {
-            @Override
-            public void run() {
-                Call<Issuers> getIssuersCall = getClient().getIssuers();
-                getIssuersCall.enqueue(new CallbackWrapper<>(callback));
-            }
+        Runnable onSuccess = () -> {
+            Call<Issuers> getIssuersCall = getClient().getIssuers();
+            getIssuersCall.enqueue(new CallbackWrapper<>(callback));
         };
 
         checkKeyAndMakeCall(onSuccess, callback);
@@ -322,12 +315,9 @@ public class ApiManager {
      */
     public void getVerificationMethods(String userId, String creditCardId, ApiCallback<VerificationMethods> callback) {
         if (isAuthorized(callback)) {
-            Runnable onSuccess = new Runnable() {
-                @Override
-                public void run() {
-                    Call<VerificationMethods> getVerificationMethodsCall = getClient().getVerificationMethods(userId, creditCardId);
-                    getVerificationMethodsCall.enqueue(new CallbackWrapper<>(callback));
-                }
+            Runnable onSuccess = () -> {
+                Call<VerificationMethods> getVerificationMethodsCall = getClient().getVerificationMethods(userId, creditCardId);
+                getVerificationMethodsCall.enqueue(new CallbackWrapper<>(callback));
             };
             checkKeyAndMakeCall(onSuccess, callback);
         }
@@ -344,12 +334,9 @@ public class ApiManager {
      */
     public void resetPaymentDevice(@NonNull String userId, @NonNull String deviceId, final ApiCallback<ResetDeviceResult> callback) {
         if (isAuthorized(callback)) {
-            Runnable onSuccess = new Runnable() {
-                @Override
-                public void run() {
-                    Call<ResetDeviceResult> resetDeviceCall = getClient().resetPaymentDevice(userId, deviceId);
-                    resetDeviceCall.enqueue(new CallbackWrapper<>(callback));
-                }
+            Runnable onSuccess = () -> {
+                Call<ResetDeviceResult> resetDeviceCall = getClient().resetPaymentDevice(userId, deviceId);
+                resetDeviceCall.enqueue(new CallbackWrapper<>(callback));
             };
 
             checkKeyAndMakeCall(onSuccess, callback);
@@ -365,20 +352,16 @@ public class ApiManager {
     public void getResetPaymentDeviceStatus(@NonNull String resetId,
                                             final ApiCallback<ResetDeviceResult> callback) {
         if (isAuthorized(callback)) {
-            Runnable onSuccess = new Runnable() {
-                @Override
-                public void run() {
-                    Call<ResetDeviceResult> resetDeviceCall = getClient().getResetPaymentDeviceStatus(resetId);
-                    resetDeviceCall.enqueue(new CallbackWrapper<>(callback));
-                }
+            Runnable onSuccess = () -> {
+                Call<ResetDeviceResult> resetDeviceCall = getClient().getResetPaymentDeviceStatus(resetId);
+                resetDeviceCall.enqueue(new CallbackWrapper<>(callback));
             };
 
             checkKeyAndMakeCall(onSuccess, callback);
         }
     }
 
-    private <T> void makeCall(final Call<JsonElement> call, final Type type,
-                              final ApiCallback<T> callback) {
+    private <T> void makeCall(final Call<JsonElement> call, final Type type, final ApiCallback<T> callback) {
         call.enqueue(new CallbackWrapper<>(new ApiCallbackExt<JsonElement>() {
             @Override
             public void onSuccess(JsonElement result) {
@@ -397,15 +380,13 @@ public class ApiManager {
         }));
     }
 
-    public <T> void get(final String url, final Map<String, Object> queryMap, final Type type,
-                        final ApiCallback<T> callback) {
+    public <T> void get(final String url, final Map<String, Object> queryMap, final Type type, final ApiCallback<T> callback) {
         Call<JsonElement> getDataCall = queryMap != null ?
                 getClient().get(url, queryMap) : getClient().get(url);
         makeCall(getDataCall, type, callback);
     }
 
-    public <T, U> void post(final String url, final U data, final Type type,
-                            final ApiCallback<T> callback) {
+    public <T, U> void post(final String url, final U data, final Type type, final ApiCallback<T> callback) {
         Call<JsonElement> postDataCall = data != null ?
                 getClient().post(url, data) : getClient().post(url);
         makeCall(postDataCall, type, callback);
@@ -417,8 +398,7 @@ public class ApiManager {
         postDataCall.enqueue(new CallbackWrapper<>(callback));
     }
 
-    public <T, U> void patch(final String url, final U data, final boolean add,
-                             final boolean encrypt, final Type type, final ApiCallback<T> callback) {
+    public <T, U> void patch(final String url, final U data, final boolean add, final boolean encrypt, final Type type, final ApiCallback<T> callback) {
         JsonArray updateData = new JsonArray();
 
         Map<String, Object> userMap = ObjectConverter.convertToSimpleMap(data);
@@ -447,8 +427,7 @@ public class ApiManager {
         makeCall(patchDataCall, type, callback);
     }
 
-    public <T> void put(final String url, final T data, final Type type,
-                        final ApiCallback<T> callback) {
+    public <T> void put(final String url, final T data, final Type type, final ApiCallback<T> callback) {
         Call<JsonElement> putDataCall = getClient().put(url, data);
         makeCall(putDataCall, type, callback);
     }

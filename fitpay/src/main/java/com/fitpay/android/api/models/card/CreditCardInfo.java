@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.fitpay.android.webview.models.IdVerification;
+import com.google.gson.Gson;
 
 import java.util.Calendar;
 import java.util.IllegalFormatException;
@@ -78,7 +79,7 @@ public final class CreditCardInfo implements Parcelable {
 
     @Override
     public String toString() {
-        return "CreditCardInfo";
+        return new Gson().toJson(this);
     }
 
     @Override

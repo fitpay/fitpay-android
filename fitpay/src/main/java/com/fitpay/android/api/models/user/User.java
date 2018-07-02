@@ -15,7 +15,10 @@ import com.fitpay.android.api.models.card.CreditCardInfo;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.paymentdevice.DeviceOperationException;
+import com.fitpay.android.utils.KeysManager;
+import com.fitpay.android.utils.StringUtils;
 import com.fitpay.android.utils.TimestampUtils;
+import com.google.gson.JsonObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -250,7 +253,8 @@ public final class User extends UserModel implements Parcelable {
      */
     public void createCreditCard(@NonNull CreditCardInfo creditCardInfo, @NonNull ApiCallback<CreditCard> callback) {
         Map<String, Object> queryMap = new HashMap<>(1);
-        queryMap.put("encryptedData", creditCardInfo);
+        queryMap.put("encryptedData", StringUtils.getEncryptedString(KeysManager.KEY_API, creditCardInfo.toString()));
+
         makePostCall(GET_CARDS, queryMap, CreditCard.class, callback);
     }
 
@@ -274,8 +278,8 @@ public final class User extends UserModel implements Parcelable {
      * @param callback result callback
      */
     public void createCreditCard(@NonNull CreditCardInfo creditCardInfo, @NonNull String deviceId, @NonNull ApiCallback<CreditCard> callback) {
-        Map<String, Object> queryMap = new HashMap<>(1);
-        queryMap.put("encryptedData", creditCardInfo);
+        Map<String, Object> queryMap = new HashMap<>(2);
+        queryMap.put("encryptedData", StringUtils.getEncryptedString(KeysManager.KEY_API, creditCardInfo.toString()));
         queryMap.put("deviceId", deviceId);
 
         makePostCall(GET_CARDS, queryMap, CreditCard.class, callback);
