@@ -6,6 +6,7 @@ import android.util.ArrayMap;
 import android.util.Log;
 
 import com.fitpay.android.paymentdevice.impl.PaymentDeviceConnector;
+import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -19,7 +20,7 @@ public class PaymentDeviceConnectorManager {
 
     private static PaymentDeviceConnectorManager sInstance = null;
 
-    private Map<String, PaymentDeviceConnector> connectors;
+    private Map<String, PaymentDeviceConnectable> connectors;
 
     private PaymentDeviceConnectorManager() {
         connectors = new ArrayMap<>(5);
@@ -40,9 +41,10 @@ public class PaymentDeviceConnectorManager {
      * @param id string value to determine your connector
      * @return connector, null if not found
      */
+    @SuppressWarnings("unchecked")
     @Nullable
-    public PaymentDeviceConnector getConnector(String id) {
-        return connectors.get(id);
+    public <T extends PaymentDeviceConnectable> T getConnector(String id) {
+        return (T)connectors.get(id);
     }
 
     /**
@@ -51,8 +53,8 @@ public class PaymentDeviceConnectorManager {
      * @param id        string value to determine your connector
      * @param connector payment device connector
      */
-    public void addConnector(String id, PaymentDeviceConnector connector) {
-        for (PaymentDeviceConnector value : connectors.values()) {
+    public void addConnector(String id, PaymentDeviceConnectable connector) {
+        for (PaymentDeviceConnectable value : connectors.values()) {
             if (value == connector) {
                 Log.e(TAG, "connector has been added already");
                 return;
@@ -86,9 +88,9 @@ public class PaymentDeviceConnectorManager {
      *
      * @param connector
      */
-    public void removeConnector(PaymentDeviceConnector connector) {
-        for (Iterator<Map.Entry<String, PaymentDeviceConnector>> it = connectors.entrySet().iterator(); it.hasNext(); ) {
-            Map.Entry<String, PaymentDeviceConnector> entry = it.next();
+    public void removeConnector(PaymentDeviceConnectable connector) {
+        for (Iterator<Map.Entry<String, PaymentDeviceConnectable>> it = connectors.entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry<String, PaymentDeviceConnectable> entry = it.next();
             if (entry.getValue() == connector) {
                 it.remove();
                 return;

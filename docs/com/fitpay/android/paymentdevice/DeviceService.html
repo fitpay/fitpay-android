@@ -342,7 +342,7 @@ extends android.app.Service</pre>
 </tr>
 <tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/fitpay/android/paymentdevice/DeviceService.html#setPaymentDeviceConnector-com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector-">setPaymentDeviceConnector</a></span>(<a href="../../../../com/fitpay/android/paymentdevice/interfaces/IPaymentDeviceConnector.html" title="interface in com.fitpay.android.paymentdevice.interfaces">IPaymentDeviceConnector</a>&nbsp;paymentDeviceConnector)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/fitpay/android/paymentdevice/DeviceService.html#setPaymentDeviceConnector-com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable-">setPaymentDeviceConnector</a></span>(<a href="../../../../com/fitpay/android/paymentdevice/interfaces/IPaymentDeviceConnector.html" title="interface in com.fitpay.android.paymentdevice.interfaces">IPaymentDeviceConnector</a>&nbsp;paymentDeviceConnector)</code>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
 <div class="block"><span class="deprecationComment">Create <a href="../../../../com/fitpay/android/paymentdevice/impl/PaymentDeviceConnector.html" title="class in com.fitpay.android.paymentdevice.impl"><code>PaymentDeviceConnector</code></a> via constructor
   Set properties via <a href="../../../../com/fitpay/android/paymentdevice/impl/PaymentDeviceConnector.html#init-java.util.Properties-"><code>PaymentDeviceConnector.init(Properties)</code></a>
@@ -370,7 +370,7 @@ extends android.app.Service</pre>
 </tr>
 <tr id="i17" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/fitpay/android/paymentdevice/DeviceService.html#syncData-com.fitpay.android.api.models.user.User-com.fitpay.android.api.models.device.Device-com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector-">syncData</a></span>(<a href="../../../../com/fitpay/android/api/models/user/User.html" title="class in com.fitpay.android.api.models.user">User</a>&nbsp;user,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/fitpay/android/paymentdevice/DeviceService.html#syncData-com.fitpay.android.api.models.user.User-com.fitpay.android.api.models.device.Device-com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable-">syncData</a></span>(<a href="../../../../com/fitpay/android/api/models/user/User.html" title="class in com.fitpay.android.api.models.user">User</a>&nbsp;user,
         <a href="../../../../com/fitpay/android/api/models/device/Device.html" title="class in com.fitpay.android.api.models.device">Device</a>&nbsp;device,
         <a href="../../../../com/fitpay/android/paymentdevice/interfaces/IPaymentDeviceConnector.html" title="interface in com.fitpay.android.paymentdevice.interfaces">IPaymentDeviceConnector</a>&nbsp;connector)</code>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
@@ -384,7 +384,7 @@ extends android.app.Service</pre>
 </tr>
 <tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/fitpay/android/paymentdevice/DeviceService.html#syncData-com.fitpay.android.api.models.user.User-com.fitpay.android.api.models.device.Device-com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector-com.fitpay.android.paymentdevice.events.NotificationSyncRequest-">syncData</a></span>(<a href="../../../../com/fitpay/android/api/models/user/User.html" title="class in com.fitpay.android.api.models.user">User</a>&nbsp;user,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/fitpay/android/paymentdevice/DeviceService.html#syncData-com.fitpay.android.api.models.user.User-com.fitpay.android.api.models.device.Device-com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable-com.fitpay.android.paymentdevice.events.NotificationSyncRequest-">syncData</a></span>(<a href="../../../../com/fitpay/android/api/models/user/User.html" title="class in com.fitpay.android.api.models.user">User</a>&nbsp;user,
         <a href="../../../../com/fitpay/android/api/models/device/Device.html" title="class in com.fitpay.android.api.models.device">Device</a>&nbsp;device,
         <a href="../../../../com/fitpay/android/paymentdevice/interfaces/IPaymentDeviceConnector.html" title="interface in com.fitpay.android.paymentdevice.interfaces">IPaymentDeviceConnector</a>&nbsp;connector,
         <a href="../../../../com/fitpay/android/paymentdevice/events/NotificationSyncRequest.html" title="class in com.fitpay.android.paymentdevice.events">NotificationSyncRequest</a>&nbsp;syncRequest)</code>
@@ -659,7 +659,7 @@ protected&nbsp;void&nbsp;configure(android.content.Intent&nbsp;intent)</pre>
 </dl>
 </li>
 </ul>
-<a name="setPaymentDeviceConnector-com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector-">
+<a name="setPaymentDeviceConnector-com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -752,7 +752,7 @@ public&nbsp;void&nbsp;syncData(@NonNull
 </dl>
 </li>
 </ul>
-<a name="syncData-com.fitpay.android.api.models.user.User-com.fitpay.android.api.models.device.Device-com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector-">
+<a name="syncData-com.fitpay.android.api.models.user.User-com.fitpay.android.api.models.device.Device-com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -799,7 +799,7 @@ public&nbsp;void&nbsp;syncData(@NonNull
 </dl>
 </li>
 </ul>
-<a name="syncData-com.fitpay.android.api.models.user.User-com.fitpay.android.api.models.device.Device-com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector-com.fitpay.android.paymentdevice.events.NotificationSyncRequest-">
+<a name="syncData-com.fitpay.android.api.models.user.User-com.fitpay.android.api.models.device.Device-com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable-com.fitpay.android.paymentdevice.events.NotificationSyncRequest-">
 <!--   -->
 </a>
 <ul class="blockList">

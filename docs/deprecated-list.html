@@ -130,7 +130,7 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><a href="com/fitpay/android/paymentdevice/interfaces/IPaymentDeviceConnector.html#executeTopOfWallet-java.util.List-">com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector.executeTopOfWallet(List&lt;TopOfWallet&gt;)</a>
+<td class="colOne"><a href="com/fitpay/android/paymentdevice/interfaces/IPaymentDeviceConnector.html#executeTopOfWallet-java.util.List-">com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable.executeTopOfWallet(List&lt;TopOfWallet&gt;)</a>
 <div class="block"><span class="deprecationComment">At this time we're looking to move away from the SDK specifically managing TOW execution:
  <p>
  1. This typically occurs on the wearable device and not within the mobile SDK
@@ -207,14 +207,14 @@
 </tr>
 <tr class="altColor">
 <td class="colOne"><a href="com/fitpay/android/webview/impl/WebViewCommunicatorImpl.html#setDeviceService-com.fitpay.android.paymentdevice.DeviceService-">com.fitpay.android.webview.impl.WebViewCommunicatorImpl.setDeviceService(DeviceService)</a>
-<div class="block"><span class="deprecationComment">Use <a href="com/fitpay/android/webview/impl/WebViewCommunicatorImpl.html#WebViewCommunicatorImpl-android.app.Activity-com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector-android.webkit.WebView-"><code>WebViewCommunicatorImpl.WebViewCommunicatorImpl(Activity, IPaymentDeviceConnector, WebView)</code></a></span></div>
+<div class="block"><span class="deprecationComment">Use <a href="com/fitpay/android/webview/impl/WebViewCommunicatorImpl.html#WebViewCommunicatorImpl-android.app.Activity-com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable-android.webkit.WebView-"><code>WebViewCommunicatorImpl.WebViewCommunicatorImpl(Activity, IPaymentDeviceConnector, WebView)</code></a></span></div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colOne"><a href="com/fitpay/android/api/models/device/Device.Builder.html#setNotificaitonToken-java.lang.String-">com.fitpay.android.api.models.device.Device.Builder.setNotificaitonToken(String)</a></td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><a href="com/fitpay/android/paymentdevice/DeviceService.html#setPaymentDeviceConnector-com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector-">com.fitpay.android.paymentdevice.DeviceService.setPaymentDeviceConnector(IPaymentDeviceConnector)</a>
+<td class="colOne"><a href="com/fitpay/android/paymentdevice/DeviceService.html#setPaymentDeviceConnector-com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable-">com.fitpay.android.paymentdevice.DeviceService.setPaymentDeviceConnector(IPaymentDeviceConnector)</a>
 <div class="block"><span class="deprecationComment">Create <a href="com/fitpay/android/paymentdevice/impl/PaymentDeviceConnector.html" title="class in com.fitpay.android.paymentdevice.impl"><code>PaymentDeviceConnector</code></a> via constructor
   Set properties via <a href="com/fitpay/android/paymentdevice/impl/PaymentDeviceConnector.html#init-java.util.Properties-"><code>PaymentDeviceConnector.init(Properties)</code></a>
 
@@ -231,7 +231,7 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><a href="com/fitpay/android/paymentdevice/DeviceService.html#syncData-com.fitpay.android.api.models.user.User-com.fitpay.android.api.models.device.Device-com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector-">com.fitpay.android.paymentdevice.DeviceService.syncData(User, Device, IPaymentDeviceConnector)</a>
+<td class="colOne"><a href="com/fitpay/android/paymentdevice/DeviceService.html#syncData-com.fitpay.android.api.models.user.User-com.fitpay.android.api.models.device.Device-com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable-">com.fitpay.android.paymentdevice.DeviceService.syncData(User, Device, IPaymentDeviceConnector)</a>
 <div class="block"><span class="deprecationComment">Please send <a href="com/fitpay/android/paymentdevice/models/SyncRequest.html" title="class in com.fitpay.android.paymentdevice.models"><code>SyncRequest</code></a> via <a href="com/fitpay/android/utils/RxBus.html" title="class in com.fitpay.android.utils"><code>RxBus</code></a> or <a href="com/fitpay/android/paymentdevice/impl/PaymentDeviceConnector.html#createSyncRequest-com.fitpay.android.paymentdevice.models.SyncInfo-"><code>PaymentDeviceConnector.createSyncRequest(SyncInfo)</code></a>
 
  Sync data between FitPay server and payment device
@@ -240,7 +240,7 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><a href="com/fitpay/android/paymentdevice/DeviceService.html#syncData-com.fitpay.android.api.models.user.User-com.fitpay.android.api.models.device.Device-com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector-com.fitpay.android.paymentdevice.events.NotificationSyncRequest-">com.fitpay.android.paymentdevice.DeviceService.syncData(User, Device, IPaymentDeviceConnector, NotificationSyncRequest)</a>
+<td class="colOne"><a href="com/fitpay/android/paymentdevice/DeviceService.html#syncData-com.fitpay.android.api.models.user.User-com.fitpay.android.api.models.device.Device-com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable-com.fitpay.android.paymentdevice.events.NotificationSyncRequest-">com.fitpay.android.paymentdevice.DeviceService.syncData(User, Device, IPaymentDeviceConnector, NotificationSyncRequest)</a>
 <div class="block"><span class="deprecationComment">Please send <a href="com/fitpay/android/paymentdevice/models/SyncRequest.html" title="class in com.fitpay.android.paymentdevice.models"><code>SyncRequest</code></a> via <a href="com/fitpay/android/utils/RxBus.html" title="class in com.fitpay.android.utils"><code>RxBus</code></a> or <a href="com/fitpay/android/paymentdevice/impl/PaymentDeviceConnector.html#createSyncRequest-com.fitpay.android.paymentdevice.models.SyncInfo-"><code>PaymentDeviceConnector.createSyncRequest(SyncInfo)</code></a>
 
  Sync data between FitPay server and payment device</span></div>
@@ -285,7 +285,7 @@
 </tr>
 <tr class="rowColor">
 <td class="colOne"><a href="com/fitpay/android/webview/impl/WebViewCommunicatorImpl.html#WebViewCommunicatorImpl-android.app.Activity-android.webkit.WebView-">com.fitpay.android.webview.impl.WebViewCommunicatorImpl(Activity, WebView)</a>
-<div class="block"><span class="deprecationComment">Use <a href="com/fitpay/android/webview/impl/WebViewCommunicatorImpl.html#WebViewCommunicatorImpl-android.app.Activity-com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector-android.webkit.WebView-"><code>WebViewCommunicatorImpl.WebViewCommunicatorImpl(Activity, IPaymentDeviceConnector, WebView)</code></a></span></div>
+<div class="block"><span class="deprecationComment">Use <a href="com/fitpay/android/webview/impl/WebViewCommunicatorImpl.html#WebViewCommunicatorImpl-android.app.Activity-com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable-android.webkit.WebView-"><code>WebViewCommunicatorImpl.WebViewCommunicatorImpl(Activity, IPaymentDeviceConnector, WebView)</code></a></span></div>
 </td>
 </tr>
 </tbody>

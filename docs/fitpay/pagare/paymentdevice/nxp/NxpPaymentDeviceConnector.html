@@ -113,7 +113,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd>com.fitpay.android.paymentdevice.CommitHandler, com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector</dd>
+<dd>com.fitpay.android.paymentdevice.CommitHandler, com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable</dd>
 </dl>
 <hr>
 <br>
@@ -285,7 +285,7 @@ extends com.fitpay.android.paymentdevice.impl.PaymentDeviceConnector</pre>
 <pre>public&nbsp;void&nbsp;executeApduPackage(com.fitpay.android.api.models.apdu.ApduPackage&nbsp;apduPackage)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>executeApduPackage</code>&nbsp;in interface&nbsp;<code>com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector</code></dd>
+<dd><code>executeApduPackage</code>&nbsp;in interface&nbsp;<code>com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable</code></dd>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code>executeApduPackage</code>&nbsp;in class&nbsp;<code>com.fitpay.android.paymentdevice.impl.PaymentDeviceConnector</code></dd>
 </dl>
@@ -323,7 +323,7 @@ extends com.fitpay.android.paymentdevice.impl.PaymentDeviceConnector</pre>
 <pre>public&nbsp;void&nbsp;executeTopOfWallet(java.util.List&lt;com.fitpay.android.api.models.card.TopOfWallet&gt;&nbsp;towPackages)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>executeTopOfWallet</code>&nbsp;in interface&nbsp;<code>com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector</code></dd>
+<dd><code>executeTopOfWallet</code>&nbsp;in interface&nbsp;<code>com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable</code></dd>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code>executeTopOfWallet</code>&nbsp;in class&nbsp;<code>com.fitpay.android.paymentdevice.impl.PaymentDeviceConnector</code></dd>
 </dl>

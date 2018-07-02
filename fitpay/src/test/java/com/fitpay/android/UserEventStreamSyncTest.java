@@ -42,7 +42,7 @@ public class UserEventStreamSyncTest extends TestActions {
 
         Activity context = Mockito.mock(Activity.class);
 
-        MockPaymentDeviceConnector connector = new MockPaymentDeviceConnector();
+        MockPaymentDeviceConnector connector = new MockPaymentDeviceConnector(context);
 
         // pretend to launch the webview and act like the user has logged into the WV, this should
         // cause the user event stream subscription to occur

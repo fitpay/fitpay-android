@@ -1,13 +1,11 @@
 package com.fitpay.android.paymentdevice.interfaces;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.fitpay.android.api.enums.CommitTypes;
 import com.fitpay.android.api.models.apdu.ApduCommand;
 import com.fitpay.android.api.models.apdu.ApduExecutionResult;
-import com.fitpay.android.api.models.apdu.ApduPackage;
 import com.fitpay.android.api.models.card.TopOfWallet;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.models.user.User;
@@ -17,12 +15,11 @@ import com.fitpay.android.paymentdevice.models.SyncInfo;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
 
 import java.util.List;
-import java.util.Properties;
 
 /**
  * abstract interface of wearable payment device
  */
-public interface IPaymentDeviceConnector extends CommitHandler {
+public interface PaymentDeviceConnectable extends CommitHandler {
 
     int COMMIT_WARNING_TIMEOUT = 5000;
     int COMMIT_ERROR_TIMEOUT = 30000;
@@ -33,30 +30,14 @@ public interface IPaymentDeviceConnector extends CommitHandler {
     String id();
 
     /**
-     * Provide an Android context to the PaymentDeviceConnector so tha it can access
-     * application and environment reseources as needed.
-     *
-     * @param context Android context.   In most case this will be the DeviceService context.
+     * Connect to device
      */
-    void setContext(@NonNull Context context);
-
-    /**
-     * Configuration properties for the PaymentDeviceConnector.
-     * Property content is specific to the PaymentDeviceConnector implementation.
-     *
-     * @param props configuration properties
-     */
-    void init(@NonNull Properties props);
-
-    void reset();
-
     void connect();
 
+    /**
+     * Disconnect from device
+     */
     void disconnect();
-
-    void reconnect();
-
-    void close();
 
     /**
      * Read payment device info
@@ -79,19 +60,12 @@ public interface IPaymentDeviceConnector extends CommitHandler {
     /**
      * do what you need before executing apdu package
      */
-    void onPreExecuteApdu();
+    void onPreExecuteApduPackage();
 
     /**
      * do what you need after executiong apdu package
      */
-    void onPostExecuteApdu();
-
-    /**
-     * process apdu package
-     *
-     * @param apduPackage apdu package commit
-     */
-    void executeApduPackage(@NonNull final ApduPackage apduPackage);
+    void onPostExecuteApduPackage();
 
     /**
      * process single apdu command
@@ -125,59 +99,10 @@ public interface IPaymentDeviceConnector extends CommitHandler {
      */
     void commitProcessed(@CommitTypes.Type int type, @Nullable final Throwable error);
 
-    /**
-     * Add commit type handler
-     *
-     * @param commitType type of commit
-     * @param handler    handler to process that commit
-     */
-    void addCommitHandler(String commitType, @NonNull CommitHandler handler);
-
-    /**
-     * Remove commit type handler
-     *
-     * @param commitType type of commit
-     */
-    void removeCommitHandler(String commitType);
-
     @Connection.State
     int getState();
 
     void setState(@Connection.State int state);
-
-    /**
-     * Add user
-     *
-     * @param user current user
-     */
-    void setUser(@NonNull User user);
-
-    /**
-     * Add device
-     *
-     * @param device current device
-     */
-    void setDevice(@NonNull Device device);
-
-
-    /**
-     * Post {@link SyncRequest} via {@link com.fitpay.android.utils.RxBus}
-     */
-    void createSyncRequest(@Nullable SyncInfo syncInfo);
-
-    /**
-     * Get User
-     *
-     * @return current user
-     */
-    User getUser();
-
-    /**
-     * Get Device
-     *
-     * @return current payment device
-     */
-    Device getDevice();
 
     /**
      * Check if commit timers are enabled.
