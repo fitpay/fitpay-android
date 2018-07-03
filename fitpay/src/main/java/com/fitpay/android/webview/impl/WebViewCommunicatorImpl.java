@@ -150,12 +150,12 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     /**
      * call this function in {@link Activity#onBackPressed()}
      */
-    public void onBack() {
+    public void onBackPressed() {
         postMessage(new RtmMessageResponse("back"));
     }
 
     /**
-     * response for a {@link #onBack()} function.
+     * response for a {@link #onBackPressed()} function.
      */
     public void onNoHistory() {
         activity.finish();

@@ -1,11 +1,11 @@
-package com.fitpay.android.webview.models;
+package com.fitpay.android.configs;
 
 import com.fitpay.android.api.models.device.Device;
 
 /***
  * Extended device info for {@link WvConfig}
  */
-public class WvPaymentDeviceInfoSecure extends WvPaymentDeviceInfo {
+class WvPaymentDeviceInfoSecure extends WvPaymentDeviceInfo {
     private String secureElementId;
     private String casd;
 

@@ -3,9 +3,7 @@ package com.fitpay.android.webview;
 import android.webkit.JavascriptInterface;
 
 import com.fitpay.android.cardscanner.IFitPayCardScanner;
-import com.fitpay.android.paymentdevice.DeviceService;
 import com.fitpay.android.paymentdevice.models.SyncInfo;
-import com.fitpay.android.webview.impl.WebViewCommunicatorImpl;
 import com.fitpay.android.webview.models.IdVerification;
 
 import org.json.JSONException;
@@ -47,7 +45,7 @@ public interface WebViewCommunicator {
 
     /**
      * Provide a {@link IFitPayCardScanner} implementation to handle card image scanning within the native OS.  In order to enable
-     * the "useWebCardScanner" must be set to false in the {@link com.fitpay.android.webview.models.WvConfig} when launching the
+     * the "supportCardScanner" must be set to false in the {@link com.fitpay.android.configs.FitpayConfig.Web#supportCardScanner} when launching the
      * webview.
      *
      * @param cardScanner
@@ -58,7 +56,7 @@ public interface WebViewCommunicator {
 
     /**
      * Called by the webview when the consumer requests a card scan operation and the "useWebCardScanner" is false in the
-     * {@link com.fitpay.android.webview.models.WvConfig}
+     * {@link WvConfig}
      * <p>
      * * @param callbackId rtm callback id
      */
