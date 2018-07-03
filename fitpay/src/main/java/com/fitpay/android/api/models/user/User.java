@@ -110,6 +110,22 @@ public final class User extends UserModel implements Parcelable {
     }
 
     /**
+     * Retrieve a pagable collection of tokenized credit cards in their profile.
+     *
+     * @param limit    Max number of credit cards per page, default: 10
+     * @param offset   Start index position for list of entities returned
+     * @param deviceId DeviceId to filter on
+     * @param callback result callback
+     */
+    public void getCreditCards(int limit, int offset, @NonNull String deviceId, @NonNull ApiCallback<Collections.CreditCardCollection> callback) {
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("limit", limit);
+        queryMap.put("offset", offset);
+        queryMap.put("deviceId", deviceId);
+        makeGetCall(GET_CARDS, queryMap, Collections.CreditCardCollection.class, callback);
+    }
+
+    /**
      * retrieve a specific user card
      *
      * @param cardId   the Id of the device to be retrieved
@@ -253,7 +269,7 @@ public final class User extends UserModel implements Parcelable {
      */
     public void createCreditCard(@NonNull CreditCardInfo creditCardInfo, @NonNull ApiCallback<CreditCard> callback) {
         Map<String, Object> queryMap = new HashMap<>(1);
-        queryMap.put("encryptedData", StringUtils.getEncryptedString(KeysManager.KEY_API, creditCardInfo.toString()));
+        queryMap.put("encryptedData", creditCardInfo);
 
         makePostCall(GET_CARDS, queryMap, CreditCard.class, callback);
     }
