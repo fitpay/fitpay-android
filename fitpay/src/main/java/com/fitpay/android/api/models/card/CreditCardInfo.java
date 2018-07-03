@@ -79,7 +79,7 @@ public final class CreditCardInfo implements Parcelable {
 
     @Override
     public String toString() {
-        return new Gson().toJson(this);
+        return "CreditCardInfo";
     }
 
     @Override

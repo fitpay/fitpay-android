@@ -279,7 +279,7 @@ public final class User extends UserModel implements Parcelable {
      */
     public void createCreditCard(@NonNull CreditCardInfo creditCardInfo, @NonNull String deviceId, @NonNull ApiCallback<CreditCard> callback) {
         Map<String, Object> queryMap = new HashMap<>(2);
-        queryMap.put("encryptedData", StringUtils.getEncryptedString(KeysManager.KEY_API, creditCardInfo.toString()));
+        queryMap.put("encryptedData", creditCardInfo);
         queryMap.put("deviceId", deviceId);
 
         makePostCall(GET_CARDS, queryMap, CreditCard.class, callback);
