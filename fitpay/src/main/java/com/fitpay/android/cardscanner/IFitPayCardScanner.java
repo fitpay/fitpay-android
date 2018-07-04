@@ -1,9 +1,23 @@
 package com.fitpay.android.cardscanner;
 
+import android.support.annotation.Nullable;
+
+/**
+ * Interface for default card scanner
+ */
 public interface IFitPayCardScanner {
-    void startScan(String callbackId);
+    /**
+     * start scan
+     *
+     * @param callbackId     js callback id
+     * @param resultCallback result callback
+     */
+    void startScan(String callbackId, ResultCallback resultCallback);
 
-    void onScanned(ScannedCardInfo cardInfo);
-
-    void onCanceled();
+    /**
+     * Callback for scanning result
+     */
+    interface ResultCallback {
+        void onScanned(@Nullable ScannedCardInfo cardInfo);
+    }
 }

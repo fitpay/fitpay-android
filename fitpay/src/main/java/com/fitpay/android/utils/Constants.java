@@ -27,6 +27,10 @@ public final class Constants {
     public final static String APDU_DATA = "APDU_DATA";
     public final static String WV_DATA = "WV_DATA";
 
+    public static final int INTENT_TAKE_PHOTO_REQUEST = 41280;
+    public static final int INTENT_TAKE_PHOTO_PERMISSION_REQUEST = 41290;
+    public static final int INTENT_A2A_VERIFICATION_REQUEST = 41300;
+
     public final static String A2A_STEP_UP_AUTH_CODE = "STEP_UP_AUTH_CODE";
     public final static String A2A_STEP_UP_AUTH_RESPONSE = "STEP_UP_RESPONSE";
 

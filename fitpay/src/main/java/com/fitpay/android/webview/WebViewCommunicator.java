@@ -1,10 +1,12 @@
 package com.fitpay.android.webview;
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.webkit.JavascriptInterface;
 
 import com.fitpay.android.cardscanner.IFitPayCardScanner;
+import com.fitpay.android.cardscanner.ScannedCardInfo;
 import com.fitpay.android.paymentdevice.models.SyncInfo;
-import com.fitpay.android.webview.models.IdVerification;
 
 import org.json.JSONException;
 
@@ -52,27 +54,26 @@ public interface WebViewCommunicator {
      */
     void setCardScanner(IFitPayCardScanner cardScanner);
 
-    IFitPayCardScanner getCardScanner();
-
     /**
-     * Called by the webview when the consumer requests a card scan operation and the "useWebCardScanner" is false in the
-     * {@link WvConfig}
-     * <p>
+     * Called by the webview when the consumer requests a card scan operation and the {@link com.fitpay.android.configs.FitpayConfig.Web#supportCardScanner} is false
+     *
      * * @param callbackId rtm callback id
      */
     void startScan(String callbackId);
 
     /**
-     * IdVerification response for {@link com.fitpay.android.webview.events.IdVerificationRequest}
-     * @return idVerification
+     * Send "logout" message to JS
      */
-    IdVerification getIdVerification();
+    void logout();
 
     /**
-     * Called by the parser when it receives {#value {@link com.fitpay.android.webview.enums.RtmType#SUPPORTS_ISSUER_APP_VERIFICATION}} event
-     * By default the app-to-app verification capability should be disabled.
-     *
-     * @return Mark whether you support app-to-app verifications.
+     * Clear all. This method should be called manually in {@link Activity#onDestroy()} or {@link Fragment#onDestroyView()}
      */
-    boolean supportsAppVerification();
+    void destroy();
+
+    /**
+     * Send "back" message to JS
+     * call this function in {@link Activity#onBackPressed()}
+     */
+    void onBackPressed();
 }

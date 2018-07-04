@@ -73,6 +73,7 @@ public final class FitpayConfig {
         Web.supportCardScanner = configModel.getWebConfig().supportCardScanner;
         Web.automaticallySubscribeToUserEventStream = configModel.getWebConfig().automaticallySubscribeToUserEventStream;
         Web.automaticallySyncFromUserEventStream = configModel.getWebConfig().automaticallySyncFromUserEventStream;
+        Web.supportA2AVerification = configModel.getWebConfig().supportA2AVerification;
 
         ApiManager.clean();
     }
@@ -148,12 +149,20 @@ public final class FitpayConfig {
          * {@link #automaticallySubscribeToUserEventStream} must also be on to sync
          */
         public static boolean automaticallySyncFromUserEventStream;
+
+        /**
+         * By default the app-to-app verification capability should be disabled.
+         * Called by the parser when it receives {#value {@link com.fitpay.android.webview.enums.RtmType#SUPPORTS_ISSUER_APP_VERIFICATION}} event
+         *
+         * @return Mark whether you support app-to-app verifications.
+         */
+        public static boolean supportA2AVerification;
     }
 
     /**
      * User config. Configuration options related to the user
      */
-    public static class User{
+    public static class User {
         /**
          * Used for storing app push notification token
          */

@@ -6,6 +6,7 @@ import com.fitpay.android.a2averification.A2AIssuerAppVerification;
 import com.fitpay.android.a2averification.A2AVerificationError;
 import com.fitpay.android.a2averification.A2AVerificationFailed;
 import com.fitpay.android.a2averification.A2AVerificationRequest;
+import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.RxBus;
@@ -35,11 +36,11 @@ public class RtmParserV5 extends RtmParserV4 {
                 break;
 
             case RtmType.SUPPORTS_ISSUER_APP_VERIFICATION:
-                impl.postMessage(new RtmMessageResponse(msg.getCallbackId(), true, new A2AIssuerAppVerification(impl.supportsAppVerification()), RtmType.SUPPORTS_ISSUER_APP_VERIFICATION));
+                impl.postMessage(new RtmMessageResponse(msg.getCallbackId(), true, new A2AIssuerAppVerification(), RtmType.SUPPORTS_ISSUER_APP_VERIFICATION));
                 break;
 
             case RtmType.APP_TO_APP_VERIFICATION:
-                if (impl.supportsAppVerification()) {
+                if (FitpayConfig.Web.supportA2AVerification) {
                     A2AVerificationRequest appToAppVerification = Constants.getGson().fromJson(msg.getData(), A2AVerificationRequest.class);
                     appToAppVerification.setCallbackId(msg.getCallbackId());
                     impl.postMessage(appToAppVerification);

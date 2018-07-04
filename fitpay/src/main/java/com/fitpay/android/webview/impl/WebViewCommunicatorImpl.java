@@ -7,8 +7,6 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
 import com.fitpay.android.R;
-import com.fitpay.android.a2averification.A2AVerificationFailed;
-import com.fitpay.android.a2averification.A2AVerificationRequest;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.ResultCode;
@@ -38,11 +36,9 @@ import com.fitpay.android.utils.StringUtils;
 import com.fitpay.android.webview.WebViewCommunicator;
 import com.fitpay.android.webview.enums.RtmType;
 import com.fitpay.android.webview.events.DeviceStatusMessage;
-import com.fitpay.android.webview.events.IdVerificationRequest;
 import com.fitpay.android.webview.events.RtmMessage;
 import com.fitpay.android.webview.events.RtmMessageResponse;
 import com.fitpay.android.webview.events.UserReceived;
-import com.fitpay.android.webview.models.IdVerification;
 import com.fitpay.android.webview.models.RtmVersion;
 import com.google.gson.Gson;
 
@@ -82,9 +78,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
     private PushNotificationSyncListener pushNotificationSyncListener;
 
-    private IdVerificationListener idVerificationListener;
-    private A2AListener a2AListener;
-
     private WebView webView;
 
     private RtmVersion webAppRtmVersion = new RtmVersion(RtmType.RTM_VERSION);
@@ -93,8 +86,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
     private IFitPayCardScanner cardScanner;
 
-    private boolean supportsAppVerification;
-
     public WebViewCommunicatorImpl(Activity ctx, PaymentDeviceConnectable deviceConnector, WebView webView) {
         this.activity = ctx;
         this.deviceConnector = deviceConnector;
@@ -102,8 +93,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
         NotificationManager.getInstance().addListener(deviceStatusListener = new DeviceStatusListener());
         NotificationManager.getInstance().addListener(rtmMessageListener = new RtmMessageListener());
         NotificationManager.getInstance().addListener(pushNotificationSyncListener = new PushNotificationSyncListener());
-        NotificationManager.getInstance().addListener(idVerificationListener = new IdVerificationListener());
-        NotificationManager.getInstance().addListener(a2AListener = new A2AListener());
 
         this.webView = webView;
     }
@@ -117,21 +106,13 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
         this.cardScanner = cardScanner;
     }
 
-    public IFitPayCardScanner getCardScanner() {
-        return this.cardScanner;
-    }
-
-    /**
-     * this method should be called manually in {@link Activity#onDestroy()}
-     */
-    public void close() {
+    @Override
+    public void destroy() {
         NotificationManager.getInstance().removeListener(deviceStatusListener);
         NotificationManager.getInstance().removeListener(rtmMessageListener);
         NotificationManager.getInstance().removeListener(pushNotificationSyncListener);
         NotificationManager.getInstance().removeListener(listenerForAppCallbacks);
         NotificationManager.getInstance().removeListener(listenerForAppCallbacksNoCallbackId);
-        NotificationManager.getInstance().removeListener(idVerificationListener);
-        NotificationManager.getInstance().removeListener(a2AListener);
         NotificationManager.getInstance().removeListener(userEventStreamSyncListener);
 
         if (user != null) {
@@ -139,17 +120,13 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
         }
     }
 
-    /**
-     * send logout message to JS
-     */
+    @Override
     public void logout() {
         postMessage(new RtmMessageResponse("logout"));
         postMessage(new DeviceStatusMessage(activity.getString(R.string.fp_connecting), deviceId, DeviceStatusMessage.PENDING));
     }
 
-    /**
-     * call this function in {@link Activity#onBackPressed()}
-     */
+    @Override
     public void onBackPressed() {
         postMessage(new RtmMessageResponse("back"));
     }
@@ -424,42 +401,19 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     public void startScan(String callbackId) {
         if (cardScanner != null) {
             FPLog.d("cardScan requested");
-            cardScanner.startScan(callbackId);
+            cardScanner.startScan(callbackId, cardInfo -> {
+                if (cardInfo != null) {
+                    sendCardData(callbackId, cardInfo);
+                }
+            });
         } else {
             FPLog.e("cardScan requested, however there is no cardScanner implementation provided");
         }
     }
 
-    @Override
-    public IdVerification getIdVerification() {
-        return new IdVerification.Builder().build();
-    }
-
-    @Override
-    public boolean supportsAppVerification() {
-        return supportsAppVerification;
-    }
-
-    public void setSupportsAppVerification(boolean supportsAppVerification) {
-        this.supportsAppVerification = supportsAppVerification;
-    }
-
-    /**
-     * Get app-to-app return location
-     * <p>
-     * On completion of the issuer intent the OEM app must then open the web-view using the returnLocation.
-     * <baseUrl>/<returnLocation>?config=<base64 encoded config with a2a>
-     *
-     * @return a2a return location
-     */
-    public String getA2aReturnLocation() {
-        return a2AListener != null ? a2AListener.returnLocation : null;
-    }
-
     public void postMessage(Object object) {
         RxBus.getInstance().post(getConnectorId(), object);
     }
-
 
     /**
      * Listen to device status
@@ -554,35 +508,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     private class PushNotificationSyncListener extends Listener {
         private PushNotificationSyncListener() {
             mCommands.put(NotificationSyncRequest.class, data -> sync(null, ((NotificationSyncRequest) data).getSyncInfo()));
-        }
-    }
-
-    /**
-     * Listen to {@link IdVerificationRequest}
-     */
-    private class IdVerificationListener extends Listener {
-        private IdVerificationListener() {
-            super(getConnectorId());
-            mCommands.put(IdVerificationRequest.class, data ->
-                    getIdVerification().send(getConnectorId(), ((IdVerificationRequest) data).getCallbackId()));
-        }
-    }
-
-    /**
-     * Listen to a2a request {@link A2AVerificationRequest} and {@link A2AVerificationFailed}
-     */
-    private class A2AListener extends Listener {
-        private String requestCallbackId;
-        private String returnLocation;
-
-        private A2AListener() {
-            super(getConnectorId());
-            mCommands.put(A2AVerificationRequest.class, data -> {
-                returnLocation = ((A2AVerificationRequest) data).getReturnLocation();
-                requestCallbackId = ((A2AVerificationRequest) data).getCallbackId();
-            });
-            mCommands.put(A2AVerificationFailed.class, data ->
-                    postMessage(new RtmMessageResponse(requestCallbackId, false, data, RtmType.APP_TO_APP_VERIFICATION)));
         }
     }
 }

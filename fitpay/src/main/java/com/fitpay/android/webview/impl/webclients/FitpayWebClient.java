@@ -1,4 +1,4 @@
-package com.fitpay.android.webview.impl;
+package com.fitpay.android.webview.impl.webclients;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
