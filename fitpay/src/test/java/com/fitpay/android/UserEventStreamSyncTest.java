@@ -109,7 +109,7 @@ public class UserEventStreamSyncTest extends TestActions {
         assertEquals(user.getId(), syncRequest.getUser().getId());
 
         // now let's close the webview and ensure the subscription is removed
-        wvc.close();
+        wvc.destroy();
 
         assertFalse(UserEventStreamManager.isSubscribed(user.getId()));
     }
