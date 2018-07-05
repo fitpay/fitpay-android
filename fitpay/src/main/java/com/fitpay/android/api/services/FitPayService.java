@@ -127,7 +127,7 @@ final public class FitPayService extends BaseClient {
                 } else {
                     FPLog.d("platformConfiguration " + body.toString() + " from " + PLATFORM_CONFIG_URL + " does not have an android section, using defaults");
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 FPLog.e("error getting platform configuration from " + PLATFORM_CONFIG_URL + ", using defaults", e);
                 platformConfig = new PlatformConfig();
             }
