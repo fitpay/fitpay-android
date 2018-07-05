@@ -90,6 +90,28 @@ public class FitpayWebChromeClient extends WebChromeClient {
         }
     }
 
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == Constants.INTENT_TAKE_PHOTO_PERMISSION_REQUEST) {
+            if (grantResults.length == 0) {
+                dismissPhotoAction(true);
+            } else {
+                boolean canTakePhoto = true;
+                for (int grantResult : grantResults) {
+                    if (grantResult == PackageManager.PERMISSION_DENIED) {
+                        canTakePhoto = false;
+                        break;
+                    }
+                }
+
+                if (canTakePhoto) {
+                    takePhoto();
+                } else {
+                    dismissPhotoAction(true);
+                }
+            }
+        }
+    }
+
     @Override
     public void onProgressChanged(WebView view, int newProgress) {
         super.onProgressChanged(view, newProgress);

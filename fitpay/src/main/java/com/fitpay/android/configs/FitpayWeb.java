@@ -170,6 +170,13 @@ public class FitpayWeb {
     }
 
     /**
+     * Call it on {@link Activity#onRequestPermissionsResult(int, String[], int[])}
+     */
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        mWebChromeClient.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    /**
      * Get default {@link FitpayWebChromeClient} client.
      * Don't override unless you know what you are doing.
      *

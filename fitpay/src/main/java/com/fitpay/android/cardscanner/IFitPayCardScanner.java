@@ -1,5 +1,6 @@
 package com.fitpay.android.cardscanner;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 /**
@@ -18,6 +19,6 @@ public interface IFitPayCardScanner {
      * Callback for scanning result
      */
     interface ResultCallback {
-        void onScanned(@Nullable ScannedCardInfo cardInfo);
+        void onScanned(@NonNull String callbackId,@Nullable ScannedCardInfo cardInfo);
     }
 }

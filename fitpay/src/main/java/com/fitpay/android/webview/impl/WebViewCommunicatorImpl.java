@@ -2,6 +2,7 @@ package com.fitpay.android.webview.impl;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
@@ -401,9 +402,9 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     public void startScan(String callbackId) {
         if (cardScanner != null) {
             FPLog.d("cardScan requested");
-            cardScanner.startScan(callbackId, cardInfo -> {
+            cardScanner.startScan(callbackId, (callbackId1, cardInfo) -> {
                 if (cardInfo != null) {
-                    sendCardData(callbackId, cardInfo);
+                    sendCardData(callbackId1, cardInfo);
                 }
             });
         } else {

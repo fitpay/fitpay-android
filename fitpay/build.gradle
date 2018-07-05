@@ -15,7 +15,7 @@ apply plugin: 'maven'
 apply plugin: 'de.mobilej.unmock'
 
 group = 'com.fitpay.android'
-version = '0.6.2'
+version = '0.6.4'
 archivesBaseName = "android_sdk"
 
 uploadArchives {
