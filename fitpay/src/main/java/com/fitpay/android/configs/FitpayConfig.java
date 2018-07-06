@@ -46,6 +46,14 @@ public final class FitpayConfig {
     public static String authURL;
 
     /**
+     * By default the app-to-app verification capability should be disabled.
+     * Called by the parser when it receives {#value {@link com.fitpay.android.webview.enums.RtmType#SUPPORTS_ISSUER_APP_VERIFICATION}} event
+     *
+     * @return Mark whether you support app-to-app verifications.
+     */
+    public static boolean supportApp2App;
+
+    /**
      * Setup FitpaySDK with default params and custom clientId
      *
      * @param clientId clientId
@@ -66,6 +74,7 @@ public final class FitpayConfig {
         redirectURL = configModel.getRedirectUrl();
         apiURL = configModel.getApiURL();
         authURL = configModel.getAuthURL();
+        supportApp2App = configModel.isSupportA2A();
         Web.demoMode = configModel.getWebConfig().demoMode;
         Web.demoCardGroup = configModel.getWebConfig().demoCardGroup;
         Web.cssURL = configModel.getWebConfig().cssURL;
@@ -73,7 +82,7 @@ public final class FitpayConfig {
         Web.supportCardScanner = configModel.getWebConfig().supportCardScanner;
         Web.automaticallySubscribeToUserEventStream = configModel.getWebConfig().automaticallySubscribeToUserEventStream;
         Web.automaticallySyncFromUserEventStream = configModel.getWebConfig().automaticallySyncFromUserEventStream;
-        Web.supportA2AVerification = configModel.getWebConfig().supportA2AVerification;
+        Web.accessToken = configModel.getWebConfig().accessToken;
 
         ApiManager.clean();
     }
@@ -151,12 +160,9 @@ public final class FitpayConfig {
         public static boolean automaticallySyncFromUserEventStream;
 
         /**
-         * By default the app-to-app verification capability should be disabled.
-         * Called by the parser when it receives {#value {@link com.fitpay.android.webview.enums.RtmType#SUPPORTS_ISSUER_APP_VERIFICATION}} event
-         *
-         * @return Mark whether you support app-to-app verifications.
+         * skips the pin screen if valid
          */
-        public static boolean supportA2AVerification;
+        public static String accessToken;
     }
 
     /**

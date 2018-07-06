@@ -22,6 +22,7 @@ public final class Constants {
     public static final String CONFIG_API_BASE_URL = "https://api.fit-pay.com";
     public static final String CONFIG_AUTH_BASE_URL = "https://auth.fit-pay.com";
     public static final String CONFIG_REDIRECT_URL = "https://webapp.fit-pay.com";
+    public static final String CONFIG_CSS_URL = "https://fitpaycss.github.io/pagare.css";
 
     public final static String SYNC_DATA = "SYNC_DATA";
     public final static String APDU_DATA = "APDU_DATA";

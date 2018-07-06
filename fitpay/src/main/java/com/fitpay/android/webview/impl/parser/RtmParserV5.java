@@ -40,7 +40,7 @@ public class RtmParserV5 extends RtmParserV4 {
                 break;
 
             case RtmType.APP_TO_APP_VERIFICATION:
-                if (FitpayConfig.Web.supportA2AVerification) {
+                if (FitpayConfig.supportApp2App) {
                     A2AVerificationRequest appToAppVerification = Constants.getGson().fromJson(msg.getData(), A2AVerificationRequest.class);
                     appToAppVerification.setCallbackId(msg.getCallbackId());
                     impl.postMessage(appToAppVerification);

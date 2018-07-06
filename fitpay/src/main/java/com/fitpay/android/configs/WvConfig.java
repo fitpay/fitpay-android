@@ -77,6 +77,16 @@ class WvConfig {
             return this;
         }
 
+        public Builder setBaseLanguageUrl(String baseLanguageUrl){
+            data.put("baseLangUrl", baseLanguageUrl);
+            return this;
+        }
+
+        public Builder setAccessToken(String accessToken){
+            data.put("accessToken", accessToken);
+            return this;
+        }
+
         public Builder addKeyValue(String key, Object value) {
             data.put(key, value);
             return this;

@@ -5,12 +5,11 @@
   "apiURL": "https://api.fit-pay.com",
   "authURL": "https://auth.fit-pay.com",
   "supportApp2App": true,
-  "minLogLevel": 1,
   "web": {
     "demoMode": true,
     "demoCardGroup": "visa_only",
+    "loadingPage" : "/",
     "cssURL": "https://fitpaycss.github.io/pagare.css",
-    "supportCardScanner": true,
-    "supportA2AVerification": false
+    "supportCardScanner": true
   }
 }

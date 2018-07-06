@@ -10,6 +10,6 @@ public class A2AIssuerAppVerification {
     private boolean supportsIssuerAppVerification;
 
     public A2AIssuerAppVerification() {
-        supportsIssuerAppVerification = FitpayConfig.Web.supportA2AVerification;
+        supportsIssuerAppVerification = FitpayConfig.supportApp2App;
     }
 }
