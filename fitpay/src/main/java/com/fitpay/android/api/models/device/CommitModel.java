@@ -1,6 +1,7 @@
 package com.fitpay.android.api.models.device;
 
 import com.fitpay.android.api.enums.CommitTypes;
+import com.fitpay.android.api.enums.SourceTypes;
 import com.fitpay.android.api.models.BaseModel;
 import com.fitpay.android.api.models.Payload;
 import com.google.gson.annotations.SerializedName;
@@ -11,9 +12,15 @@ import com.google.gson.annotations.SerializedName;
 abstract class CommitModel extends BaseModel {
 
     protected String commitId;
+
     @CommitTypes.Type
     protected String commitType;
+
+    @SourceTypes.Type
+    protected String source;
+
     protected Long createdTs;
+
     @SerializedName("encryptedData")
     protected Payload payload;
 
@@ -21,6 +28,9 @@ abstract class CommitModel extends BaseModel {
     public String getCommitType() {
         return commitType;
     }
+
+    @SourceTypes.Type
+    public String getSource() { return source; }
 
     public long getCreatedTs() {
         return createdTs;
@@ -39,6 +49,7 @@ abstract class CommitModel extends BaseModel {
         return "Commit{" +
                 "commitId='" + commitId + '\'' +
                 ", commitType='" + commitType + '\'' +
+                ", source='" + source + '\'' +
                 ", createdTs=" + createdTs +
                 '}';
     }
