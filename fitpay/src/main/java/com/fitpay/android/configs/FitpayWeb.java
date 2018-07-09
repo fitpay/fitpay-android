@@ -247,7 +247,7 @@ public class FitpayWeb {
             builder.appendEncodedPath(pathValue);
         }
 
-        mWebView.loadUrl(builder.build().toString());
+        loadUrl(builder.build().toString());
     }
 
     /**
@@ -256,7 +256,7 @@ public class FitpayWeb {
      * @param absolutePath absolute url path
      */
     public void load(@NonNull String absolutePath) {
-        mWebView.loadUrl(absolutePath);
+        loadUrl(absolutePath);
     }
 
     /**
@@ -272,6 +272,13 @@ public class FitpayWeb {
                 .appendQueryParameter("a2a", issuerResponse.getEncodedString());
 
         load(builder.build().toString());
+    }
+
+    private void loadUrl(String url) {
+        if (StringUtils.isEmpty(FitpayConfig.webURL)) {
+            throw new NullPointerException("Fitpay config is not initialized");
+        }
+        mWebView.loadUrl(url);
     }
 
     /**

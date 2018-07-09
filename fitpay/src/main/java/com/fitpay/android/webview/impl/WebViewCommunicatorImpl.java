@@ -28,6 +28,7 @@ import com.fitpay.android.paymentdevice.events.NotificationSyncRequest;
 import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
 import com.fitpay.android.paymentdevice.models.SyncInfo;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
+import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.EventCallback;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.Listener;
@@ -63,7 +64,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     private static final int RESPONSE_IN_PROGRESS = 2;
 
     private final Activity activity;
-    private DeviceService deviceService;
     private final PaymentDeviceConnectable deviceConnector;
 
     private User user;
@@ -82,8 +82,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     private WebView webView;
 
     private RtmVersion webAppRtmVersion = new RtmVersion(RtmType.RTM_VERSION);
-
-    private final Gson gson = new Gson();
 
     private IFitPayCardScanner cardScanner;
 
@@ -278,7 +276,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                                     @Override
                                     public void onUserEvent(UserStreamEvent event) {
                                         if ("SYNC".equals(event.getType())) {
-                                            SyncInfo syncInfo = gson.fromJson(event.getPayload(), SyncInfo.class);
+                                            SyncInfo syncInfo = Constants.getGson().fromJson(event.getPayload(), SyncInfo.class);
                                             syncInfo.setInitiator(SyncInitiator.PLATFORM);
 
                                             createSyncRequest(syncInfo);
@@ -359,7 +357,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
         FPLog.w(TAG, errorMessage);
 
         if (null != callbackId) {
-            sendMessageToJs(callbackId, false, gson.toJson(failedResponse));
+            sendMessageToJs(callbackId, false, Constants.getGson().toJson(failedResponse));
         }
 
         postMessage(new DeviceStatusMessage(activity.getString(R.string.fp_sync_failed, errorMessage), deviceId, DeviceStatusMessage.ERROR));

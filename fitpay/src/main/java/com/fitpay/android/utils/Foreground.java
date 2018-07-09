@@ -57,10 +57,11 @@ public class Foreground implements Application.ActivityLifecycleCallbacks {
             Context appCtx = ctx.getApplicationContext();
             if (appCtx instanceof Application) {
                 init((Application) appCtx);
+            } else {
+                throw new IllegalStateException(
+                        "Foreground is not initialised and " +
+                                "cannot obtain the Application object");
             }
-            throw new IllegalStateException(
-                    "Foreground is not initialised and " +
-                            "cannot obtain the Application object");
         }
         return instance;
     }
