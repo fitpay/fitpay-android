@@ -115,11 +115,6 @@ public final class FitpayConfig {
      */
     public static class Web {
         /**
-         * Web config version
-         */
-        public static String version;
-
-        /**
          * Shows autofill options on the add card page when enabled
          */
         public static boolean demoMode;

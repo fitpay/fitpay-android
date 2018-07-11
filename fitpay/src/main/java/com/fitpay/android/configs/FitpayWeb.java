@@ -211,7 +211,6 @@ public class FitpayWeb {
         mConfig = new WvConfig.Builder()
                 .email(userEmail)
                 .accountExist(userHasFitpayAccount)
-                .version(FitpayConfig.Web.version)
                 .clientId(FitpayConfig.clientId)
                 .setCSSUrl(FitpayConfig.Web.cssURL)
                 .redirectUri(FitpayConfig.redirectURL)

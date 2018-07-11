@@ -52,11 +52,6 @@ class WvConfig {
             return this;
         }
 
-        public Builder version(String version) {
-            data.put("version", version);
-            return this;
-        }
-
         public <T extends WvPaymentDeviceInfo> Builder paymentDevice(T paymentDevice) {
             data.put("paymentDevice", paymentDevice);
             return this;
