@@ -1,4 +1,4 @@
-package com.fitpay.android.webview.models;
+package com.fitpay.android.configs;
 
 import android.util.Base64;
 
@@ -10,7 +10,7 @@ import java.util.HashMap;
 /**
  * Encoded wv config
  */
-public class WvConfig {
+class WvConfig {
 
     private HashMap<String, Object> data = new HashMap<>();
 
@@ -24,7 +24,7 @@ public class WvConfig {
         return Base64.encodeToString(bytesToEncode, Base64.URL_SAFE);
     }
 
-    public static class Builder<T extends WvPaymentDeviceInfo> {
+    public static class Builder{
         private HashMap<String, Object> data = new HashMap<>();
 
         public Builder accountExist(boolean value) {
@@ -52,12 +52,7 @@ public class WvConfig {
             return this;
         }
 
-        public Builder version(String version) {
-            data.put("version", version);
-            return this;
-        }
-
-        public Builder paymentDevice(T paymentDevice) {
+        public <T extends WvPaymentDeviceInfo> Builder paymentDevice(T paymentDevice) {
             data.put("paymentDevice", paymentDevice);
             return this;
         }
@@ -74,6 +69,16 @@ public class WvConfig {
 
         public Builder useWebCardScanner(boolean value) {
             data.put("useWebCardScanner", value);
+            return this;
+        }
+
+        public Builder setBaseLanguageUrl(String baseLanguageUrl){
+            data.put("baseLangUrl", baseLanguageUrl);
+            return this;
+        }
+
+        public Builder setAccessToken(String accessToken){
+            data.put("accessToken", accessToken);
             return this;
         }
 

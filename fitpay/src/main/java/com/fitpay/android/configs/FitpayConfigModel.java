@@ -15,6 +15,7 @@ class FitpayConfigModel {
     private String redirectUrl;
     private String apiURL;
     private String authURL;
+    private boolean supportA2A;
     private FitpayConfigWebModel web;
 
     FitpayConfigModel(@NonNull String clientId) {
@@ -42,6 +43,10 @@ class FitpayConfigModel {
 
     String getAuthURL() {
         return !StringUtils.isEmpty(authURL) ? authURL : Constants.CONFIG_AUTH_BASE_URL;
+    }
+
+    boolean isSupportA2A(){
+        return supportA2A;
     }
 
     FitpayConfigWebModel getWebConfig() {

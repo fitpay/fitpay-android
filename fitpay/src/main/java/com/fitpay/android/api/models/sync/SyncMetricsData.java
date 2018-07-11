@@ -40,7 +40,7 @@ public class SyncMetricsData {
 
                 @Override
                 public void onFailure(int errorCode, String errorMessage) {
-                    FPLog.e("MetricsData failed to send. syncId:%s" + request.getSyncId());
+                    FPLog.e("MetricsData failed to send. syncId:" + request.getSyncId());
                 }
             });
         }
