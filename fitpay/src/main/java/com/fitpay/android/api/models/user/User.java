@@ -136,63 +136,6 @@ public final class User extends UserModel implements Parcelable {
     }
 
     /**
-     * Retrieves 'all' credit cards
-     *
-     * @param callback result callback
-     */
-    public void getAllCreditCards(@NonNull final ApiCallback<Collections.CreditCardCollection> callback) {
-        final int limit = 10;
-        final Collections.CreditCardCollection tempCardsStorage = new Collections.CreditCardCollection();
-        getCreditCards(limit, 0, new ApiCallback<Collections.CreditCardCollection>() {
-            @Override
-            public void onSuccess(Collections.CreditCardCollection result) {
-                tempCardsStorage.addCollection(result);
-
-                if (result.hasNext()) {
-                    getCreditCards(limit, result.getOffset(), this);
-                } else {
-                    callback.onSuccess(tempCardsStorage);
-                }
-            }
-
-            @Override
-            public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
-                callback.onFailure(errorCode, errorMessage);
-            }
-        });
-    }
-
-    /**
-     * Retrieves 'all' credit cards
-     *
-     * @return observable
-     */
-    public Observable<Collections.CreditCardCollection> getAllCreditCards() {
-        return Observable.create(new Observable.OnSubscribe<Collections.CreditCardCollection>() {
-            @Override
-            public void call(Subscriber<? super Collections.CreditCardCollection> subscriber) {
-                getAllCreditCards(new ApiCallback<Collections.CreditCardCollection>() {
-                    @Override
-                    public void onSuccess(Collections.CreditCardCollection result) {
-                        if (result == null) {
-                            subscriber.onError(new Exception("cards result is null"));
-                            return;
-                        }
-
-                        subscriber.onNext(result);
-                        subscriber.onCompleted();
-                    }
-
-                    @Override
-                    public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
-                        subscriber.onError(new DeviceOperationException(errorMessage, errorCode));
-                    }
-                });
-            }
-        });
-    }
-
-    /**
      * retrieve a pagable collection of devices in their profile.
      *
      * @param limit    Max number of devices per page, default: 10
