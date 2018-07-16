@@ -8,7 +8,6 @@ import com.fitpay.android.api.callbacks.CallbackWrapper;
 import com.fitpay.android.api.enums.ResultCode;
 import com.fitpay.android.api.models.ErrorResponse;
 import com.fitpay.android.api.models.PlatformConfig;
-import com.fitpay.android.api.models.Relationship;
 import com.fitpay.android.api.models.card.VerificationMethods;
 import com.fitpay.android.api.models.device.ResetDeviceResult;
 import com.fitpay.android.api.models.issuer.Issuers;
@@ -24,7 +23,6 @@ import com.fitpay.android.api.services.UserClient;
 import com.fitpay.android.api.services.UserService;
 import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.utils.Constants;
-import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.KeysManager;
 import com.fitpay.android.utils.ObjectConverter;
 import com.fitpay.android.utils.StringUtils;
@@ -37,8 +35,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /*
  * API manager
@@ -266,25 +262,6 @@ public class ApiManager {
                     Call<User> getUserCall = getClient().getUser(apiService.getUserId());
                     getUserCall.enqueue(new CallbackWrapper<>(callback));
                 }
-            };
-
-            checkKeyAndMakeCall(onSuccess, callback);
-        }
-    }
-
-    /**
-     * Creates a relationship between a device and a creditCard.
-     *
-     * @param userId       user id
-     * @param creditCardId credit card id
-     * @param deviceId     device id
-     * @param callback     result callback
-     */
-    public void createRelationship(String userId, String creditCardId, String deviceId, ApiCallback<Relationship> callback) {
-        if (isAuthorized(callback)) {
-            Runnable onSuccess = () -> {
-                Call<Relationship> createRelationshipCall = getClient().createRelationship(userId, creditCardId, deviceId);
-                createRelationshipCall.enqueue(new CallbackWrapper<>(callback));
             };
 
             checkKeyAndMakeCall(onSuccess, callback);
