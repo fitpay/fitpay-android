@@ -14,6 +14,7 @@ com.fitpay.android.api.models.user
 com.fitpay.android.api.services
 com.fitpay.android.api.sse
 com.fitpay.android.cardscanner
+com.fitpay.android.configs
 com.fitpay.android.paymentdevice
 com.fitpay.android.paymentdevice.callbacks
 com.fitpay.android.paymentdevice.constants
@@ -33,8 +34,10 @@ com.fitpay.android.rtm.enums
 com.fitpay.android.rtm.models
 com.fitpay.android.utils
 com.fitpay.android.webview
+com.fitpay.android.webview.callbacks
 com.fitpay.android.webview.enums
 com.fitpay.android.webview.events
 com.fitpay.android.webview.impl
 com.fitpay.android.webview.impl.parser
+com.fitpay.android.webview.impl.webclients
 com.fitpay.android.webview.models
