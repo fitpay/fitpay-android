@@ -260,12 +260,9 @@ public class ApiManager {
     public void getUser(final ApiCallback<User> callback) {
         if (isAuthorized(callback)) {
 
-            Runnable onSuccess = new Runnable() {
-                @Override
-                public void run() {
-                    Call<User> getUserCall = getClient().getUser(apiService.getUserId());
-                    getUserCall.enqueue(new CallbackWrapper<>(callback));
-                }
+            Runnable onSuccess = () -> {
+                Call<User> getUserCall = getClient().getUser(apiService.getUserId());
+                getUserCall.enqueue(new CallbackWrapper<>(callback));
             };
 
             checkKeyAndMakeCall(onSuccess, callback);

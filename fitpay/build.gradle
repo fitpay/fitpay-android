@@ -168,8 +168,7 @@ task generateJavadocs(type: Javadoc) {
 
     classpath += configurations.compile
     classpath += configurations.javadocDeps
-    classpath += project.files(android.getBootClasspath()
-            .join(File.pathSeparator))
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
 
     // exclude generated files
     exclude '**/BuildConfig.java'

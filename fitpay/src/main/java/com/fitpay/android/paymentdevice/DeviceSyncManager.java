@@ -48,9 +48,7 @@ public class DeviceSyncManager {
     }
 
     public void onDestroy() {
-        if (requests != null) {
-            requests.clear();
-        }
+        requests.clear();
 
         if (worker != null) {
             worker.shutdownNow();
@@ -58,9 +56,7 @@ public class DeviceSyncManager {
     }
 
     public void add(final SyncRequest request) {
-        if (request == null) {
-            return;
-        }
+        if (request == null) { return; }
 
         // if we have a syncId, dedupe it to avoid re-running syncs arriving through multiple channels
         if (request.getSyncId() != null) {
