@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class DeviceSyncManager {
     private final static int DEDUPE_LIMIT = 100;
     private final static int SYNC_QUEUE_SIZE = 10;
-    private final static int SYNC_THREADS_COUNT = 4;
+    private final static int SYNC_THREADS_COUNT = 2;
 
     private final Context mContext;
 
