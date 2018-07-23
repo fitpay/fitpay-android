@@ -30,10 +30,9 @@ import com.fitpay.android.webview.WebViewCommunicator;
 import com.fitpay.android.webview.callbacks.A2AVerificationListener;
 import com.fitpay.android.webview.callbacks.IdVerificationListener;
 import com.fitpay.android.webview.callbacks.UserReceivedListener;
-import com.fitpay.android.webview.enums.RelativePath;
+import com.fitpay.android.webview.enums.RelativeWebPath;
 import com.fitpay.android.webview.events.RtmMessage;
 import com.fitpay.android.webview.events.UserReceived;
-import com.fitpay.android.webview.impl.WebRelativePath;
 import com.fitpay.android.webview.impl.WebViewCommunicatorImpl;
 import com.fitpay.android.webview.impl.webclients.FitpayWebChromeClient;
 import com.fitpay.android.webview.impl.webclients.FitpayWebClient;
@@ -227,35 +226,25 @@ public class FitpayWeb {
      * Loads the main page on Fitpay based on user variables
      */
     public void load() {
-        load(WebRelativePath.PAGE_DEFAULT);
+        load(RelativeWebPath.PAGE_DEFAULT);
     }
 
     /**
      * Loads a specific page on Fitpay based on user variables.
-     * Use default {@link WebRelativePath} or your own inherited from {@link RelativePath}
+     * Use default {@link RelativeWebPath.Value}
      *
      * @param relativePath relative path
      */
-    public void load(@NonNull RelativePath relativePath) {
+    public void load(@NonNull @RelativeWebPath.Value String relativePath) {
         Uri.Builder builder = new Uri.Builder()
                 .encodedPath(FitpayConfig.webURL)
                 .appendQueryParameter("config", mConfig.getEncodedString());
 
-        String pathValue = relativePath.valueOf();
-        if (!StringUtils.isEmpty(pathValue)) {
-            builder.appendEncodedPath(pathValue);
+        if (!StringUtils.isEmpty(relativePath)) {
+            builder.appendEncodedPath(relativePath);
         }
 
         loadUrl(builder.build().toString());
-    }
-
-    /**
-     * Loads any valid url - use with discretion
-     *
-     * @param absolutePath absolute url path
-     */
-    public void load(@NonNull String absolutePath) {
-        loadUrl(absolutePath);
     }
 
     /**
@@ -270,10 +259,15 @@ public class FitpayWeb {
                 .appendEncodedPath(a2ARequestListener.getA2aReturnLocation())
                 .appendQueryParameter("a2a", issuerResponse.getEncodedString());
 
-        load(builder.build().toString());
+        loadUrl(builder.build().toString());
     }
 
-    private void loadUrl(String url) {
+    /**
+     * Loads any valid url - use with discretion
+     *
+     * @param url absolute url path
+     */
+    public void loadUrl(String url) {
         if (StringUtils.isEmpty(FitpayConfig.webURL)) {
             throw new NullPointerException("Fitpay config is not initialized");
         }
