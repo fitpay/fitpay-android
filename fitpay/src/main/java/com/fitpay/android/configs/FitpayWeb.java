@@ -207,7 +207,7 @@ public class FitpayWeb {
      * @param accessToken          skips the pin screen if valid
      * @param device               payment device
      */
-    public void setupWebView(@NonNull String userEmail, boolean userHasFitpayAccount, @Nullable String accessToken, @NonNull Device device) {
+    public void setupWebView(@Nullable String userEmail, boolean userHasFitpayAccount, @Nullable String accessToken, @NonNull Device device) {
         mConfig = new WvConfig.Builder()
                 .email(userEmail)
                 .accountExist(userHasFitpayAccount)
