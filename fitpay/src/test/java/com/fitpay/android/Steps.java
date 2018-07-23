@@ -5,7 +5,6 @@ import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.CardInitiators;
 import com.fitpay.android.api.enums.DeviceTypes;
 import com.fitpay.android.api.enums.ResultCode;
-import com.fitpay.android.api.models.Relationship;
 import com.fitpay.android.api.models.card.Address;
 import com.fitpay.android.api.models.card.CreditCard;
 import com.fitpay.android.api.models.card.CreditCardInfo;
@@ -61,6 +60,7 @@ public class Steps {
 
     protected Steps() {
         SecurityProvider.getInstance().setProvider(new BouncyCastleProvider());
+        TestConstants.configureFitpay();
 
         userName = TestUtils.getRandomLengthString(5, 10) + "@"
                 + TestUtils.getRandomLengthString(5, 10) + "." + TestUtils.getRandomLengthString(4, 10);
@@ -122,7 +122,7 @@ public class Steps {
 
         Assert.assertNotNull(loginIdentity);
 
-        ApiManager.getInstance().loginUser(loginIdentity, new ApiCallback<OAuthToken>() {
+        ApiManager.getInstance().login(loginIdentity, new ApiCallback<OAuthToken>() {
             @Override
             public void onSuccess(OAuthToken result) {
                 Assert.assertNotNull("missing bearer token", result.getAccessToken());
@@ -309,22 +309,8 @@ public class Steps {
         Assert.assertNotNull(currentCard);
         Assert.assertNotNull(currentDevice);
 
-        final CountDownLatch latch = new CountDownLatch(2);
+        final CountDownLatch latch = new CountDownLatch(1);
         final boolean[] isRequestSuccess = {false};
-
-        ApiManager.getInstance().createRelationship(currentUser.getId(), currentCard.getCreditCardId(),
-                currentDevice.getDeviceIdentifier(), new ApiCallback<Relationship>() {
-                    @Override
-                    public void onSuccess(Relationship result) {
-                        latch.countDown();
-                    }
-
-                    @Override
-                    public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
-                        latch.countDown();
-                    }
-                });
-        latch.await(TIMEOUT, TimeUnit.SECONDS);
 
         currentCard.acceptTerms(new ApiCallback<CreditCard>() {
             @Override

@@ -1,8 +1,5 @@
 package com.fitpay.android;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ResultProvidingCallback;
 import com.fitpay.android.api.enums.DeviceTypes;
@@ -34,9 +31,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.mockito.Mockito;
 
-import java.security.Security;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -49,9 +44,6 @@ import rx.schedulers.Schedulers;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
 
 public class TestActions {
 
@@ -99,7 +91,7 @@ public class TestActions {
         FPLog.setShowHTTPLogs(false);
 
         SecurityProvider.getInstance().setProvider(new BouncyCastleProvider());
-        ApiManager.init(TestConstants.getConfig());
+        TestConstants.configureFitpay();
 
         RxAndroidPlugins.getInstance().reset();
         RxAndroidPlugins.getInstance().registerSchedulersHook(new RxAndroidSchedulersHook() {
@@ -131,7 +123,7 @@ public class TestActions {
     }
 
     @AfterClass
-    public static void clear(){
+    public static void clear() {
         FPLog.clean();
     }
 
@@ -156,7 +148,7 @@ public class TestActions {
     protected boolean doLogin(LoginIdentity loginIdentity) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<OAuthToken> callback = new ResultProvidingCallback<>(latch);
-        ApiManager.getInstance().loginUser(loginIdentity, callback);
+        ApiManager.getInstance().login(loginIdentity, callback);
         boolean completed = latch.await(TIMEOUT, TimeUnit.SECONDS);
         assertTrue("login did not complete successfully", completed);
         assertEquals("login error code. (message: " + callback.getErrorMessage() + ")", -1, callback.getErrorCode());

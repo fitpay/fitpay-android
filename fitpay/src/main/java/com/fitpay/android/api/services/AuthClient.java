@@ -16,6 +16,13 @@ public interface AuthClient {
      */
     @FormUrlEncoded
     @POST("oauth/authorize")
-    Call<OAuthToken> loginUser(@FieldMap Map<String, String> options);
+    Call<OAuthToken> loginCredentials(@FieldMap Map<String, String> options);
+
+    /**
+     * Login user and get auth token
+     */
+    @FormUrlEncoded
+    @POST("oauth/token")
+    Call<OAuthToken> loginToken(@FieldMap Map<String, String> options);
 
 }

@@ -48,8 +48,7 @@ public class PlatformConfigTest {
             }
         });
         FPLog.setShowHTTPLogs(false);
-
-        ApiManager.init(TestConstants.getConfig());
+        TestConstants.configureFitpay();
     }
 
     @Test

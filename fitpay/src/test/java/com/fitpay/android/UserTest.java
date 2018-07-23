@@ -1,6 +1,5 @@
 package com.fitpay.android;
 
-import com.fitpay.android.api.ApiManager;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -16,7 +15,6 @@ public class UserTest {
 
     @BeforeClass
     public static void init() {
-        ApiManager.init(TestConstants.getConfig());
         steps = new Steps();
     }
 
@@ -41,7 +39,8 @@ public class UserTest {
     }
 
     @Test
-    @Ignore  //TODO this test does not work since anonymous user is not valid.  There is an open ticket in Jira
+    @Ignore
+    //TODO this test does not work since anonymous user is not valid.  There is an open ticket in Jira
     public void test04_updateUser() throws InterruptedException {
         steps.updateUser();
     }

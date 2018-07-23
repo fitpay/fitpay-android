@@ -1,7 +1,5 @@
 package com.fitpay.android;
 
-import com.fitpay.android.api.ApiManager;
-
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -21,7 +19,6 @@ public class ExpiredKeysTest {
     @BeforeClass
     public static void init() {
         steps = new Steps();
-        ApiManager.init(TestConstants.getConfig());
     }
 
     @Test

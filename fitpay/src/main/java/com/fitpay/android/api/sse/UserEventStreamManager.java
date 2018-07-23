@@ -8,19 +8,15 @@ import com.fitpay.android.api.services.FitPayClient;
 import com.fitpay.android.utils.FPLog;
 
 import java.io.IOException;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import retrofit2.Response;
 import rx.Observable;
 import rx.schedulers.Schedulers;
-
 
 /**
  * This class manages the subscribing and unsubscribing from the user event stream of the FitPay platform.  The subscription
@@ -35,11 +31,7 @@ public class UserEventStreamManager {
     public static boolean isSubscribed(String userId) {
         UserEventStream stream = streams.get(userId);
 
-        if (stream != null) {
-            return stream.isConnected();
-        } else {
-            return false;
-        }
+        return stream != null && stream.isConnected();
     }
 
     /**
@@ -47,12 +39,10 @@ public class UserEventStreamManager {
      * received from the FitPay platform.  The subscription occurs in the background, therefore this
      * method returns a Future for that subscription task.
      *
-     * @param userId
-     *
+     * @param userId users Id
      * @return null is possible if not supported
-     * @throws IOException
      */
-    public static Future<UserEventStream> subscribe(final String userId) throws IOException {
+    public static Future<UserEventStream> subscribe(final String userId) {
         // if at the platform level SSE subscriptions are turned off, then this method will simply
         // return null
         if (!ApiManager.getInstance().getPlatformConfig().isUserEventStreamsEnabled()) {
@@ -115,12 +105,12 @@ public class UserEventStreamManager {
             }
 
             @Override
-            public UserEventStream get() throws InterruptedException, ExecutionException {
+            public UserEventStream get() {
                 return stream;
             }
 
             @Override
-            public UserEventStream get(long timeout, @NonNull TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+            public UserEventStream get(long timeout, @NonNull TimeUnit unit) {
                 return stream;
             }
         };
@@ -129,18 +119,13 @@ public class UserEventStreamManager {
     /**
      * If subscribed, close the event stream subscription for the specified userId and device.
      *
-     * @param userId
+     * @param userId users Id
      */
     public static void unsubscribe(final String userId) {
         UserEventStream stream = streams.remove(userId);
 
         if (stream != null) {
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    stream.close();
-                }
-            });
+            executor.execute(stream::close);
         }
     }
 }

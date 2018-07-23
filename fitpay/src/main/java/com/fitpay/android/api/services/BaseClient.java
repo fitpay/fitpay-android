@@ -2,7 +2,6 @@ package com.fitpay.android.api.services;
 
 import android.os.Build;
 
-import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.utils.FPLog;
 
 import java.security.KeyStore;
@@ -28,6 +27,9 @@ public class BaseClient {
     protected static final String FP_KEY_ID = "fp-key-id";
     protected static final String FP_KEY_SDK_VER = "X-FitPay-SDK";
 
+    protected static final int HTTP_CONNECT_TIMEOUT = 60;
+    protected static final int HTTP_READ_TIMEOUT = 60;
+    protected static final int HTTP_WRITE_TIMEOUT = 60;
 
     public static OkHttpClient.Builder getOkHttpClient() {
         return getOkHttpClient(FPLog.showHttpLogs());
@@ -36,16 +38,12 @@ public class BaseClient {
     public static OkHttpClient.Builder getOkHttpClient(boolean enabledLogging) {
         OkHttpClient.Builder builder = getDefaultOkHttpClient();
 
-        int connectTimeout = Integer.valueOf(ApiManager.getConfig().get(ApiManager.PROPERTY_HTTP_CONNECT_TIMEOUT));
-        int readTimeout = Integer.valueOf(ApiManager.getConfig().get(ApiManager.PROPERTY_HTTP_READ_TIMEOUT));
-        int writeTimeout = Integer.valueOf(ApiManager.getConfig().get(ApiManager.PROPERTY_HTTP_WRITE_TIMEOUT));
-
-        builder = builder.connectTimeout(connectTimeout, TimeUnit.SECONDS)
-            .readTimeout(readTimeout, TimeUnit.SECONDS)
-            .writeTimeout(writeTimeout, TimeUnit.SECONDS)
-            .followRedirects(true)
-            .followSslRedirects(true)
-            .retryOnConnectionFailure(true);
+        builder = builder.connectTimeout(HTTP_CONNECT_TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(HTTP_READ_TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(HTTP_WRITE_TIMEOUT, TimeUnit.SECONDS)
+                .followRedirects(true)
+                .followSslRedirects(true)
+                .retryOnConnectionFailure(true);
 
         if (enabledLogging) {
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();

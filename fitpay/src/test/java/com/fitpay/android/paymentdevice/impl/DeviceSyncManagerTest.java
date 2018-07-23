@@ -16,7 +16,7 @@ import com.fitpay.android.paymentdevice.constants.States;
 import com.fitpay.android.paymentdevice.enums.Sync;
 import com.fitpay.android.paymentdevice.events.CommitSuccess;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
-import com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector;
+import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
 import com.fitpay.android.utils.Listener;
 import com.fitpay.android.utils.NotificationManager;
@@ -50,7 +50,7 @@ public class DeviceSyncManagerTest extends TestActions {
 
     private Context mContext;
     private DeviceSyncManager syncManager;
-    protected IPaymentDeviceConnector mockPaymentDevice;
+    protected MockPaymentDeviceConnector mockPaymentDevice;
 
     private Device device;
 
@@ -111,7 +111,7 @@ public class DeviceSyncManagerTest extends TestActions {
         };
         syncManager.registerDeviceSyncManagerCallback(syncManagerCallback);
 
-        mockPaymentDevice = new MockPaymentDeviceConnector();
+        mockPaymentDevice = new MockPaymentDeviceConnector(mContext);
 
         userName = TestUtils.getRandomLengthString(5, 10) + "@"
                 + TestUtils.getRandomLengthString(5, 10) + "." + TestUtils.getRandomLengthString(4, 10);
@@ -129,11 +129,6 @@ public class DeviceSyncManagerTest extends TestActions {
         this.device = createDevice(this.user, getTestDevice());
         assertNotNull(this.device);
 
-        String pan = "9999504454545450";
-        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
-        CreditCard createdCard = createCreditCard(user, creditCardInfo);
-        assertNotNull("card not created", createdCard);
-
         Properties props = new Properties();
         props.put(MockPaymentDeviceConnector.CONFIG_CONNECTED_RESPONSE_TIME, "0");
         mockPaymentDevice.init(props);
@@ -147,7 +142,15 @@ public class DeviceSyncManagerTest extends TestActions {
             Thread.sleep(500);
         }
 
+        mockPaymentDevice.setUser(user);
+        mockPaymentDevice.setDevice(device);
+
         assertEquals("payment service should be connected", States.CONNECTED, mockPaymentDevice.getState());
+
+        String pan = "9999504454545450";
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan);
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
+        assertNotNull("card not created", createdCard);
 
         this.executionLatch = new CountDownLatch(1);
         this.listener = new SyncCompleteListener();

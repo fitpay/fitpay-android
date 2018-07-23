@@ -14,7 +14,6 @@ import com.fitpay.android.paymentdevice.enums.SecureElement;
 import com.fitpay.android.paymentdevice.impl.PaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.impl.ble.message.SecurityStateMessage;
 import com.fitpay.android.utils.FPLog;
-import com.fitpay.android.utils.RxBus;
 import com.fitpay.android.utils.StringUtils;
 
 import java.util.List;
@@ -99,7 +98,6 @@ public final class BluetoothPaymentDeviceConnector extends PaymentDeviceConnecto
         }
     }
 
-    @Override
     public void reconnect() {
         if (mGattManager != null) {
             mGattManager.reconnect();
@@ -112,7 +110,6 @@ public final class BluetoothPaymentDeviceConnector extends PaymentDeviceConnecto
      * After using a given BLE device, the app must call this method to ensure resources are
      * released properly.
      */
-    @Override
     public void close() {
         mGattManager.close();
         mGattManager = null;

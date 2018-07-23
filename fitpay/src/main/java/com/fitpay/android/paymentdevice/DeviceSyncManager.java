@@ -2,7 +2,6 @@ package com.fitpay.android.paymentdevice;
 
 import android.content.Context;
 
-import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.paymentdevice.callbacks.DeviceSyncManagerCallback;
 import com.fitpay.android.paymentdevice.models.SyncInfo;
@@ -22,6 +21,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class DeviceSyncManager {
     private final static int DEDUPE_LIMIT = 100;
+    private final static int SYNC_QUEUE_SIZE = 10;
+    private final static int SYNC_THREADS_COUNT = 4;
 
     private final Context mContext;
 
@@ -37,8 +38,8 @@ public class DeviceSyncManager {
 
     public DeviceSyncManager(Context context) {
         this.mContext = context;
-        queueSize = Integer.parseInt(ApiManager.getConfig().get(ApiManager.PROPERTY_SYNC_QUEUE_SIZE));
-        threadsCount = Integer.parseInt(ApiManager.getConfig().get(ApiManager.PROPERTY_SYNC_THREADS_COUNT));
+        queueSize = SYNC_QUEUE_SIZE;
+        threadsCount = SYNC_THREADS_COUNT;
         requests = new ArrayBlockingQueue<>(queueSize);
     }
 

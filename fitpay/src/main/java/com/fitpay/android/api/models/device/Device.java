@@ -10,7 +10,6 @@ import com.fitpay.android.api.enums.DeviceTypes;
 import com.fitpay.android.api.enums.ResultCode;
 import com.fitpay.android.api.models.Links;
 import com.fitpay.android.api.models.card.CreditCard;
-import com.fitpay.android.api.models.card.CreditCardRef;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.paymentdevice.DeviceOperationException;
@@ -18,7 +17,6 @@ import com.fitpay.android.utils.TimestampUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import rx.Observable;
@@ -33,12 +31,6 @@ public final class Device extends DeviceModel implements Parcelable {
     private static final String USER = "user";
     private static final String LAST_ACK_COMMIT = "lastAckCommit";
     private static final String DEVICE_RESET_TASKS = "deviceResetTasks";
-
-    private List<CreditCardRef> cardRelationships;
-
-    public List<CreditCardRef> getCardRelationships() {
-        return cardRelationships;
-    }
 
     /**
      * Get current user
@@ -507,15 +499,6 @@ public final class Device extends DeviceModel implements Parcelable {
         }
 
         /**
-         * Set notification token use {@link #setNotificationToken(String)}
-         */
-        @Deprecated
-        public Builder setNotificaitonToken(String notificationToken) {
-            this.notificationToken = notificationToken;
-            return this;
-        }
-
-        /**
          * Set notification token
          *
          * @param notificationToken The hardware revision for the hardware within the device.
@@ -547,7 +530,6 @@ public final class Device extends DeviceModel implements Parcelable {
         dest.writeString(this.bdAddress);
         dest.writeString(this.pairingTs);
         dest.writeString(this.hostDeviceId);
-        dest.writeList(this.cardRelationships);
         dest.writeParcelable(this.links, flags);
         dest.writeString(this.notificationToken);
         dest.writeString(this.deviceType);
@@ -574,8 +556,6 @@ public final class Device extends DeviceModel implements Parcelable {
         this.bdAddress = in.readString();
         this.pairingTs = in.readString();
         this.hostDeviceId = in.readString();
-        this.cardRelationships = new ArrayList<>();
-        in.readList(this.cardRelationships, CreditCardRef.class.getClassLoader());
         this.links = in.readParcelable(Links.class.getClassLoader());
         this.notificationToken = in.readString();
         //noinspection ResourceType

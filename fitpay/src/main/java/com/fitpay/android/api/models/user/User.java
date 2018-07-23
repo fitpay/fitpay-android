@@ -15,7 +15,10 @@ import com.fitpay.android.api.models.card.CreditCardInfo;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.paymentdevice.DeviceOperationException;
+import com.fitpay.android.utils.KeysManager;
+import com.fitpay.android.utils.StringUtils;
 import com.fitpay.android.utils.TimestampUtils;
+import com.google.gson.JsonObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -107,6 +110,22 @@ public final class User extends UserModel implements Parcelable {
     }
 
     /**
+     * Retrieve a pagable collection of tokenized credit cards in their profile.
+     *
+     * @param limit    Max number of credit cards per page, default: 10
+     * @param offset   Start index position for list of entities returned
+     * @param deviceId DeviceId to filter on
+     * @param callback result callback
+     */
+    public void getCreditCards(int limit, int offset, @NonNull String deviceId, @NonNull ApiCallback<Collections.CreditCardCollection> callback) {
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("limit", limit);
+        queryMap.put("offset", offset);
+        queryMap.put("deviceId", deviceId);
+        makeGetCall(GET_CARDS, queryMap, Collections.CreditCardCollection.class, callback);
+    }
+
+    /**
      * retrieve a specific user card
      *
      * @param cardId   the Id of the device to be retrieved
@@ -114,63 +133,6 @@ public final class User extends UserModel implements Parcelable {
      */
     public void getCreditCard(String cardId, @NonNull ApiCallback<CreditCard> callback) {
         makeGetCall(GET_CARDS, cardId, null, CreditCard.class, callback);
-    }
-
-    /**
-     * Retrieves 'all' credit cards
-     *
-     * @param callback result callback
-     */
-    public void getAllCreditCards(@NonNull final ApiCallback<Collections.CreditCardCollection> callback) {
-        final int limit = 10;
-        final Collections.CreditCardCollection tempCardsStorage = new Collections.CreditCardCollection();
-        getCreditCards(limit, 0, new ApiCallback<Collections.CreditCardCollection>() {
-            @Override
-            public void onSuccess(Collections.CreditCardCollection result) {
-                tempCardsStorage.addCollection(result);
-
-                if (result.hasNext()) {
-                    getCreditCards(limit, result.getOffset(), this);
-                } else {
-                    callback.onSuccess(tempCardsStorage);
-                }
-            }
-
-            @Override
-            public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
-                callback.onFailure(errorCode, errorMessage);
-            }
-        });
-    }
-
-    /**
-     * Retrieves 'all' credit cards
-     *
-     * @return observable
-     */
-    public Observable<Collections.CreditCardCollection> getAllCreditCards() {
-        return Observable.create(new Observable.OnSubscribe<Collections.CreditCardCollection>() {
-            @Override
-            public void call(Subscriber<? super Collections.CreditCardCollection> subscriber) {
-                getAllCreditCards(new ApiCallback<Collections.CreditCardCollection>() {
-                    @Override
-                    public void onSuccess(Collections.CreditCardCollection result) {
-                        if (result == null) {
-                            subscriber.onError(new Exception("cards result is null"));
-                            return;
-                        }
-
-                        subscriber.onNext(result);
-                        subscriber.onCompleted();
-                    }
-
-                    @Override
-                    public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
-                        subscriber.onError(new DeviceOperationException(errorMessage, errorCode));
-                    }
-                });
-            }
-        });
     }
 
     /**
@@ -249,9 +211,37 @@ public final class User extends UserModel implements Parcelable {
      * @param callback result callback
      */
     public void createCreditCard(@NonNull CreditCardInfo creditCardInfo, @NonNull ApiCallback<CreditCard> callback) {
-        Map<String, CreditCardInfo> cardInfoMap = new HashMap<>(1);
-        cardInfoMap.put("encryptedData", creditCardInfo);
-        makePostCall(GET_CARDS, cardInfoMap, CreditCard.class, callback);
+        Map<String, Object> queryMap = new HashMap<>(1);
+        queryMap.put("encryptedData", creditCardInfo);
+
+        makePostCall(GET_CARDS, queryMap, CreditCard.class, callback);
+    }
+
+    /**
+     * Add a single credit card to a user's profile.
+     * If the card owner has no default card, then the new card will become the default.
+     * However, if the owner already has a default then it will not change.
+     * To change the default, you should update the user to have a new "default_source".
+     * <p>
+     * <p>
+     * <b>Important note:</b>
+     * This call responds with a hypermedia link for accept terms. Getting the card again will not
+     * result in the proper hypermedia link.
+     * It's your own responsibility to store {@link CreditCard#getAcceptTermsUrl()} and restore
+     * {@link CreditCard#setAcceptTermsUrl(String)} this link allowing the user to come back to the T&Cs at a later time
+     * </p>
+     *
+     * @param creditCardInfo credit card data:(pan, expMonth, expYear, cvv, name,
+     *                   address data:(street1, street2, street3, city, state, postalCode, country))
+     * @param deviceId id of the device the credit card should create a credential for
+     * @param callback result callback
+     */
+    public void createCreditCard(@NonNull CreditCardInfo creditCardInfo, @NonNull String deviceId, @NonNull ApiCallback<CreditCard> callback) {
+        Map<String, Object> queryMap = new HashMap<>(2);
+        queryMap.put("encryptedData", creditCardInfo);
+        queryMap.put("deviceId", deviceId);
+
+        makePostCall(GET_CARDS, queryMap, CreditCard.class, callback);
     }
 
     /**

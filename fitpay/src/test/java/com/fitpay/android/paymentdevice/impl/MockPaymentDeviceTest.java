@@ -1,5 +1,7 @@
 package com.fitpay.android.paymentdevice.impl;
 
+import android.content.Context;
+
 import com.fitpay.android.TestActions;
 import com.fitpay.android.api.enums.ResponseState;
 import com.fitpay.android.api.models.apdu.ApduExecutionResult;
@@ -11,13 +13,14 @@ import com.fitpay.android.paymentdevice.constants.States;
 import com.fitpay.android.paymentdevice.enums.Connection;
 import com.fitpay.android.paymentdevice.events.PaymentDeviceOperationFailed;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
-import com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector;
+import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
 import com.fitpay.android.utils.Listener;
 import com.fitpay.android.utils.NotificationManager;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
@@ -33,14 +36,15 @@ public class MockPaymentDeviceTest extends TestActions {
 
     private final static String TAG = MockPaymentDeviceTest.class.getSimpleName();
 
-    private IPaymentDeviceConnector paymentDeviceService;
+    private MockPaymentDeviceConnector paymentDeviceService;
 
     private NotificationManager manager;
     private Listener listener;
 
     @Before
     public void setUp() throws Exception {
-        paymentDeviceService = new MockPaymentDeviceConnector();
+        Context context = Mockito.mock(Context.class);
+        paymentDeviceService = new MockPaymentDeviceConnector(context);
         manager = NotificationManager.getInstance();
     }
 

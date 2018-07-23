@@ -1,7 +1,5 @@
 package com.fitpay.android.api.services;
 
-import android.util.Log;
-
 import com.fitpay.android.BuildConfig;
 import com.fitpay.android.api.models.PlatformConfig;
 import com.fitpay.android.api.models.security.AccessDenied;
@@ -20,8 +18,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 

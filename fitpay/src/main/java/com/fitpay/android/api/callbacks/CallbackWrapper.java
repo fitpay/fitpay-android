@@ -3,8 +3,6 @@ package com.fitpay.android.api.callbacks;
 import android.support.annotation.NonNull;
 
 import com.fitpay.android.api.enums.ResultCode;
-import com.fitpay.android.api.models.ErrorResponse;
-import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.StringUtils;
 
 import retrofit2.Call;

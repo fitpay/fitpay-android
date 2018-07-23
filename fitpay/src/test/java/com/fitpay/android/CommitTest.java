@@ -1,7 +1,5 @@
 package com.fitpay.android;
 
-import com.fitpay.android.api.ApiManager;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -16,7 +14,6 @@ public class CommitTest {
     @BeforeClass
     public static void init() {
         steps = new Steps();
-        ApiManager.init(TestConstants.getConfig());
     }
 
     @Test
@@ -48,6 +45,7 @@ public class CommitTest {
     public void test032_addCard() throws InterruptedException {
         steps.createCard();
     }
+
     @Test
     public void test04_getCommits() throws InterruptedException {
         steps.getCommits();

@@ -1,8 +1,7 @@
 package com.fitpay.android.api.services;
 
-import com.fitpay.android.api.models.Relationship;
-import com.fitpay.android.api.models.device.ResetDeviceResult;
 import com.fitpay.android.api.models.card.VerificationMethods;
+import com.fitpay.android.api.models.device.ResetDeviceResult;
 import com.fitpay.android.api.models.issuer.Issuers;
 import com.fitpay.android.api.models.security.ECCKeyPair;
 import com.fitpay.android.api.models.user.User;
@@ -13,8 +12,6 @@ import java.util.Map;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
@@ -44,18 +41,6 @@ public interface FitPayClient {
     @GET("users/{userId}/creditCards/{creditCardId}/verificationMethods")
     Call<VerificationMethods> getVerificationMethods(@Path("userId") String userId,
                                                      @Path("creditCardId") String creditCardId);
-
-    /**
-     * Creates a relationship between a device and a creditCard.
-     *
-     * @param userId       user id
-     * @param creditCardId credit card id
-     * @param deviceId     device id
-     */
-    @PUT("users/{userId}/relationships")
-    Call<Relationship> createRelationship(@Path("userId") String userId,
-                                          @Query("creditCardId") String creditCardId,
-                                          @Query("deviceId") String deviceId);
 
     /**
      * Creates a new encryption key pair
@@ -153,7 +138,4 @@ public interface FitPayClient {
 
     @DELETE
     Call<Void> delete(@Url String url);
-
-    @GET("health")
-    Call<Object> health();
 }

@@ -4,8 +4,8 @@ import android.bluetooth.BluetoothGatt;
 
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.models.device.PaymentDevice;
-import com.fitpay.android.utils.RxBus;
 import com.fitpay.android.utils.Hex;
+import com.fitpay.android.utils.RxBus;
 import com.fitpay.android.utils.StringUtils;
 
 import java.util.UUID;

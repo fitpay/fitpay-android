@@ -4,7 +4,8 @@ import android.support.annotation.NonNull;
 
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.models.user.User;
-import com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector;
+import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
+import com.fitpay.android.utils.RxBus;
 import com.fitpay.android.utils.StringUtils;
 
 import java.util.UUID;
@@ -17,7 +18,7 @@ public final class SyncRequest {
     private final User user;
     private final Device device;
     private final boolean useLastAckCommit;
-    private final IPaymentDeviceConnector connector;
+    private final PaymentDeviceConnectable connector;
     private final SyncInfo syncInfo;
 
     private SyncRequest(
@@ -25,7 +26,7 @@ public final class SyncRequest {
             User user,
             Device device,
             boolean useLastAckCommit,
-            IPaymentDeviceConnector connector,
+            PaymentDeviceConnectable connector,
             SyncInfo syncInfo) {
         this.syncId = !StringUtils.isEmpty(syncId) ? syncId : UUID.randomUUID().toString();
         this.user = user;
@@ -43,7 +44,7 @@ public final class SyncRequest {
         return device;
     }
 
-    public IPaymentDeviceConnector getConnector() {
+    public PaymentDeviceConnectable getConnector() {
         return connector;
     }
 
@@ -71,6 +72,10 @@ public final class SyncRequest {
                 '}';
     }
 
+    public void send() {
+        RxBus.getInstance().post(this);
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -80,7 +85,7 @@ public final class SyncRequest {
         private User user;
         private Device device;
         private boolean useLastAckCommit = true;
-        private IPaymentDeviceConnector connector;
+        private PaymentDeviceConnectable connector;
         private SyncInfo syncInfo;
 
         /**
@@ -128,12 +133,12 @@ public final class SyncRequest {
         }
 
         /**
-         * Set current connector {@link IPaymentDeviceConnector}
+         * Set current connector {@link PaymentDeviceConnectable}
          *
          * @param connector payment device connector
          * @return this
          */
-        public Builder setConnector(@NonNull IPaymentDeviceConnector connector) {
+        public Builder setConnector(@NonNull PaymentDeviceConnectable connector) {
             this.connector = connector;
             return this;
         }
@@ -147,7 +152,7 @@ public final class SyncRequest {
         public Builder setSyncInfo(SyncInfo syncInfo) {
             this.syncInfo = syncInfo;
 
-            if(syncInfo != null){
+            if (syncInfo != null) {
                 this.syncId = syncInfo.getSyncId();
             }
 

@@ -24,11 +24,6 @@ public class RtmMessage {
         }
     }
 
-    @Deprecated //see getData()
-    public String getJsonData() {
-        return data;
-    }
-
     public String getData() {
         return data;
     }

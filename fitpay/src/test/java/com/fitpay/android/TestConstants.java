@@ -1,25 +1,25 @@
 package com.fitpay.android;
 
-import com.fitpay.android.api.ApiManager;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.fitpay.android.configs.FitpayConfig;
 
 /**
  * Test constants
  */
 public final class TestConstants {
+    private final static String PROPERTY_API_BASE_URL = "apiBaseUrl";
+    private final static String PROPERTY_AUTH_BASE_URL = "authBaseUrl";
+    private final static String PROPERTY_CLIENT_ID = "clientId";
+    private final static String PROPROPERTY_REDIRECT_URLPERTY_CLIENT_ID = "redirectUrl";
 
-    static Map<String, String> getConfig() {
-        Map<String, String> config = new HashMap<>();
-        config.put(ApiManager.PROPERTY_API_BASE_URL, System.getProperty(ApiManager.PROPERTY_API_BASE_URL, "https://api.fit-pay.com"));
-        config.put(ApiManager.PROPERTY_AUTH_BASE_URL, System.getProperty(ApiManager.PROPERTY_AUTH_BASE_URL, "https://auth.fit-pay.com"));
-        config.put(ApiManager.PROPERTY_CLIENT_ID, System.getProperty(ApiManager.PROPERTY_CLIENT_ID, "fp_webapp_pJkVp2Rl"));
-        config.put(ApiManager.PROPERTY_REDIRECT_URI, System.getProperty(ApiManager.PROPERTY_REDIRECT_URI, "https://webapp.fit-pay.com"));
+    static String getClientId(){
+        return System.getProperty(PROPERTY_CLIENT_ID, "fp_webapp_pJkVp2Rl");
+    }
 
-        System.out.println("test configuration: " + config);
-
-        return config;
+    static void configureFitpay() {
+        FitpayConfig.configure(getClientId());
+        FitpayConfig.apiURL = System.getProperty(PROPERTY_API_BASE_URL, "https://api.fit-pay.com");
+        FitpayConfig.authURL = System.getProperty(PROPERTY_AUTH_BASE_URL, "https://auth.fit-pay.com");
+        FitpayConfig.redirectURL = System.getProperty(PROPROPERTY_REDIRECT_URLPERTY_CLIENT_ID, "https://webapp.fit-pay.com");
     }
 
     static void waitSomeActionsOnServer() throws InterruptedException {

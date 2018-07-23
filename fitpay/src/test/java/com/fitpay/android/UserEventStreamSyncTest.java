@@ -10,6 +10,7 @@ import com.fitpay.android.api.models.card.CreditCard;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.sse.UserEventStreamListener;
 import com.fitpay.android.api.sse.UserEventStreamManager;
+import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
 import com.fitpay.android.utils.Listener;
@@ -41,7 +42,7 @@ public class UserEventStreamSyncTest extends TestActions {
 
         Activity context = Mockito.mock(Activity.class);
 
-        MockPaymentDeviceConnector connector = new MockPaymentDeviceConnector();
+        MockPaymentDeviceConnector connector = new MockPaymentDeviceConnector(context);
 
         // pretend to launch the webview and act like the user has logged into the WV, this should
         // cause the user event stream subscription to occur
@@ -99,7 +100,7 @@ public class UserEventStreamSyncTest extends TestActions {
         assertEquals(device.getDeviceIdentifier(), syncRequest.getSyncInfo().getDeviceId());
         assertEquals(SyncInitiator.PLATFORM, syncRequest.getSyncInfo().getInitiator());
         assertEquals(syncRequest.getSyncId(), syncRequest.getSyncInfo().getSyncId());
-        assertEquals(ApiManager.getConfig().get("clientId"), syncRequest.getSyncInfo().getClientId());
+        assertEquals(FitpayConfig.clientId, syncRequest.getSyncInfo().getClientId());
 
         assertNotNull(syncRequest.getConnector());
         assertNotNull(syncRequest.getDevice());
@@ -108,7 +109,7 @@ public class UserEventStreamSyncTest extends TestActions {
         assertEquals(user.getId(), syncRequest.getUser().getId());
 
         // now let's close the webview and ensure the subscription is removed
-        wvc.close();
+        wvc.destroy();
 
         assertFalse(UserEventStreamManager.isSubscribed(user.getId()));
     }

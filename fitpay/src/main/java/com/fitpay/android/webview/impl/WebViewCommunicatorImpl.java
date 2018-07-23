@@ -2,6 +2,7 @@ package com.fitpay.android.webview.impl;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
@@ -19,13 +20,15 @@ import com.fitpay.android.api.sse.UserEventStreamListener;
 import com.fitpay.android.api.sse.UserEventStreamManager;
 import com.fitpay.android.cardscanner.IFitPayCardScanner;
 import com.fitpay.android.cardscanner.ScannedCardInfo;
+import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.paymentdevice.DeviceService;
 import com.fitpay.android.paymentdevice.constants.States;
-import com.fitpay.android.paymentdevice.enums.AppMessage;
 import com.fitpay.android.paymentdevice.enums.Sync;
 import com.fitpay.android.paymentdevice.events.NotificationSyncRequest;
-import com.fitpay.android.paymentdevice.interfaces.IPaymentDeviceConnector;
+import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
 import com.fitpay.android.paymentdevice.models.SyncInfo;
+import com.fitpay.android.paymentdevice.models.SyncRequest;
+import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.EventCallback;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.Listener;
@@ -35,24 +38,18 @@ import com.fitpay.android.utils.StringUtils;
 import com.fitpay.android.webview.WebViewCommunicator;
 import com.fitpay.android.webview.enums.RtmType;
 import com.fitpay.android.webview.events.DeviceStatusMessage;
-import com.fitpay.android.webview.events.IdVerificationRequest;
 import com.fitpay.android.webview.events.RtmMessage;
 import com.fitpay.android.webview.events.RtmMessageResponse;
 import com.fitpay.android.webview.events.UserReceived;
-import com.fitpay.android.webview.events.a2a.A2AVerificationFailed;
-import com.fitpay.android.webview.events.a2a.A2AVerificationRequest;
-import com.fitpay.android.webview.models.IdVerification;
 import com.fitpay.android.webview.models.RtmVersion;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.Locale;
 
 import static com.fitpay.android.utils.Constants.WV_DATA;
-
 
 /**
  * Created by Ross Gabay on 4/13/2016.
@@ -67,8 +64,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     private static final int RESPONSE_IN_PROGRESS = 2;
 
     private final Activity activity;
-    private DeviceService deviceService;
-    private final IPaymentDeviceConnector deviceConnector;
+    private final PaymentDeviceConnectable deviceConnector;
 
     private User user;
     private Device device;
@@ -83,52 +79,19 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
     private PushNotificationSyncListener pushNotificationSyncListener;
 
-    private IdVerificationListener idVerificationListener;
-    private A2AListener a2AListener;
-
     private WebView webView;
 
     private RtmVersion webAppRtmVersion = new RtmVersion(RtmType.RTM_VERSION);
 
-    private final Gson gson = new Gson();
-
     private IFitPayCardScanner cardScanner;
 
-    private boolean supportsAppVerification;
-
-    private boolean usedDeprecatedConstructor = false;
-
-    /**
-     * @deprecated Use {@link #WebViewCommunicatorImpl(Activity, IPaymentDeviceConnector, WebView)}
-     *
-     * @param ctx
-     * @param webView
-     */
-    @Deprecated
-    public WebViewCommunicatorImpl(Activity ctx, WebView webView) {
-        this(ctx, null, webView);
-        usedDeprecatedConstructor = true;
-    }
-
-    /**
-     * @deprecated Use {@link #WebViewCommunicatorImpl(Activity, IPaymentDeviceConnector, WebView)}
-     *
-     * @param deviceService
-     */
-    @Deprecated
-    public void setDeviceService(DeviceService deviceService) {
-        this.deviceService = deviceService;
-    }
-
-    public WebViewCommunicatorImpl(Activity ctx, IPaymentDeviceConnector deviceConnector, WebView webView) {
+    public WebViewCommunicatorImpl(Activity ctx, PaymentDeviceConnectable deviceConnector, WebView webView) {
         this.activity = ctx;
         this.deviceConnector = deviceConnector;
 
         NotificationManager.getInstance().addListener(deviceStatusListener = new DeviceStatusListener());
         NotificationManager.getInstance().addListener(rtmMessageListener = new RtmMessageListener());
         NotificationManager.getInstance().addListener(pushNotificationSyncListener = new PushNotificationSyncListener());
-        NotificationManager.getInstance().addListener(idVerificationListener = new IdVerificationListener());
-        NotificationManager.getInstance().addListener(a2AListener = new A2AListener());
 
         this.webView = webView;
     }
@@ -142,21 +105,13 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
         this.cardScanner = cardScanner;
     }
 
-    public IFitPayCardScanner getCardScanner() {
-        return this.cardScanner;
-    }
-
-    /**
-     * this method should be called manually in {@link Activity#onDestroy()}
-     */
-    public void close() {
+    @Override
+    public void destroy() {
         NotificationManager.getInstance().removeListener(deviceStatusListener);
         NotificationManager.getInstance().removeListener(rtmMessageListener);
         NotificationManager.getInstance().removeListener(pushNotificationSyncListener);
         NotificationManager.getInstance().removeListener(listenerForAppCallbacks);
         NotificationManager.getInstance().removeListener(listenerForAppCallbacksNoCallbackId);
-        NotificationManager.getInstance().removeListener(idVerificationListener);
-        NotificationManager.getInstance().removeListener(a2AListener);
         NotificationManager.getInstance().removeListener(userEventStreamSyncListener);
 
         if (user != null) {
@@ -164,23 +119,19 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
         }
     }
 
-    /**
-     * send logout message to JS
-     */
+    @Override
     public void logout() {
         postMessage(new RtmMessageResponse("logout"));
         postMessage(new DeviceStatusMessage(activity.getString(R.string.fp_connecting), deviceId, DeviceStatusMessage.PENDING));
     }
 
-    /**
-     * call this function in {@link Activity#onBackPressed()}
-     */
-    public void onBack() {
+    @Override
+    public void onBackPressed() {
         postMessage(new RtmMessageResponse("back"));
     }
 
     /**
-     * response for a {@link #onBack()} function.
+     * response for a {@link #onBackPressed()} function.
      */
     public void onNoHistory() {
         activity.finish();
@@ -236,8 +187,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     public void sync(String callbackId, final SyncInfo syncInfo) {
         FPLog.d(TAG, "sync received");
 
-//        postMessage(new DeviceStatusMessage(activity.getString(R.string.sync_started), DeviceStatusMessage.PROGRESS));
-
         if (null == user) {
             onTaskError(EventCallback.SYNC_COMPLETED, callbackId, "No user specified for sync operation");
             return;
@@ -248,12 +197,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
             return;
         }
 
-        if (null == deviceService && usedDeprecatedConstructor) {
-            onTaskError(EventCallback.SYNC_COMPLETED, callbackId, "No DeviceService has not been configured for sync operation");
-            return;
-        }
-
-        if (null == deviceConnector && !usedDeprecatedConstructor) {
+        if (null == deviceConnector) {
             onTaskError(EventCallback.SYNC_COMPLETED, callbackId, "No PaymentConnector has not been configured for sync operation");
             return;
         }
@@ -307,9 +251,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                 }
 
                 WebViewCommunicatorImpl.this.user = result;
-                if (deviceConnector != null) {
-                    deviceConnector.setUser(user);
-                }
 
                 postMessage(new UserReceived(user.getId(), user.getUsername()));
 
@@ -324,38 +265,18 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                     public void onSuccess(Device result) {
                         WebViewCommunicatorImpl.this.device = result;
 
-                        if (deviceConnector != null) {
-                            deviceConnector.setDevice(device);
-                        }
-
-                        String token = ApiManager.getPushToken();
-                        String deviceToken = device.getNotificationToken();
-
-                        final Runnable onSuccess = () -> onTaskSuccess(EventCallback.GET_USER_AND_DEVICE, callbackId);
-
-                        boolean automaticallySubscribeToUserEventStream = true;
-                        if (ApiManager.getConfig().containsKey(ApiManager.PROPERTY_AUTOMATICALLY_SUBSCRIBE_TO_USER_EVENT_STREAM)) {
-                            automaticallySubscribeToUserEventStream = "true".equals(ApiManager.getConfig().get(ApiManager.PROPERTY_AUTOMATICALLY_SUBSCRIBE_TO_USER_EVENT_STREAM));
-                        }
-
+                        boolean automaticallySubscribeToUserEventStream = FitpayConfig.Web.automaticallySubscribeToUserEventStream;
                         if (automaticallySubscribeToUserEventStream) {
-                            try {
-                                UserEventStreamManager.subscribe(user.getId());
-                            } catch (IOException e) {
-                                FPLog.e(e);
-                            }
 
-                            boolean automaticSyncThroughUserEventStream = true;
-                            if (ApiManager.getConfig().containsKey(ApiManager.PROPERTY_AUTOMATICALLY_SYNC_FROM_USER_EVENT_STREAM)) {
-                                automaticSyncThroughUserEventStream = "true".equals(ApiManager.getConfig().get(ApiManager.PROPERTY_AUTOMATICALLY_SYNC_FROM_USER_EVENT_STREAM));
-                            }
+                            UserEventStreamManager.subscribe(user.getId());
 
+                            boolean automaticSyncThroughUserEventStream = FitpayConfig.Web.automaticallySyncFromUserEventStream;
                             if (automaticSyncThroughUserEventStream) {
                                 userEventStreamSyncListener = new UserEventStreamListener() {
                                     @Override
                                     public void onUserEvent(UserStreamEvent event) {
                                         if ("SYNC".equals(event.getType())) {
-                                            SyncInfo syncInfo = gson.fromJson(event.getPayload(), SyncInfo.class);
+                                            SyncInfo syncInfo = Constants.getGson().fromJson(event.getPayload(), SyncInfo.class);
                                             syncInfo.setInitiator(SyncInitiator.PLATFORM);
 
                                             createSyncRequest(syncInfo);
@@ -368,16 +289,17 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
                         }
 
+                        String token = FitpayConfig.User.pushNotificationToken;
+                        String deviceToken = device.getNotificationToken();
+
+                        final Runnable onSuccess = () -> onTaskSuccess(EventCallback.GET_USER_AND_DEVICE, callbackId);
+
                         if (deviceToken == null || !deviceToken.equals(token)) {
                             Device updatedDevice = new Device.Builder().setNotificationToken(token).build();
                             device.updateToken(updatedDevice, deviceToken == null, new ApiCallback<Device>() {
                                 @Override
                                 public void onSuccess(Device result) {
                                     WebViewCommunicatorImpl.this.device = result;
-
-                                    if (deviceConnector != null) {
-                                        deviceConnector.setDevice(device);
-                                    }
 
                                     onSuccess.run();
                                 }
@@ -435,7 +357,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
         FPLog.w(TAG, errorMessage);
 
         if (null != callbackId) {
-            sendMessageToJs(callbackId, false, gson.toJson(failedResponse));
+            sendMessageToJs(callbackId, false, Constants.getGson().toJson(failedResponse));
         }
 
         postMessage(new DeviceStatusMessage(activity.getString(R.string.fp_sync_failed, errorMessage), deviceId, DeviceStatusMessage.ERROR));
@@ -456,11 +378,15 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
         return deviceConnector != null ? deviceConnector.id() : null;
     }
 
-    private void createSyncRequest(SyncInfo syncInfo){
+    private void createSyncRequest(SyncInfo syncInfo) {
         if (deviceConnector != null) {
-            deviceConnector.createSyncRequest(syncInfo);
-        } else if(deviceService.getPaymentDeviceConnector() != null){
-            deviceService.getPaymentDeviceConnector().createSyncRequest(syncInfo);
+            new SyncRequest.Builder()
+                    .setSyncInfo(syncInfo)
+                    .setConnector(deviceConnector)
+                    .setUser(user)
+                    .setDevice(device)
+                    .build()
+                    .send();
         } else {
             Log.e(TAG, "Can't create syncRequest. PaymentDeviceConnector is missing");
         }
@@ -474,41 +400,19 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     public void startScan(String callbackId) {
         if (cardScanner != null) {
             FPLog.d("cardScan requested");
-            cardScanner.startScan(callbackId);
+            cardScanner.startScan(callbackId, (callbackId1, cardInfo) -> {
+                if (cardInfo != null) {
+                    sendCardData(callbackId1, cardInfo);
+                }
+            });
         } else {
             FPLog.e("cardScan requested, however there is no cardScanner implementation provided");
         }
     }
 
-    @Override
-    public IdVerification getIdVerification() {
-        return new IdVerification.Builder().build();
-    }
-    @Override
-    public boolean supportsAppVerification() {
-        return supportsAppVerification;
-    }
-
-    public void setSupportsAppVerification(boolean supportsAppVerification) {
-        this.supportsAppVerification = supportsAppVerification;
-    }
-
-    /**
-     * Get app-to-app return location
-     * <p>
-     * On completion of the issuer intent the OEM app must then open the web-view using the returnLocation.
-     * <baseUrl>/<returnLocation>?config=<base64 encoded config with a2a>
-     *
-     * @return a2a return location
-     */
-    public String getA2aReturnLocation() {
-        return a2AListener != null ? a2AListener.returnLocation : null;
-    }
-
-    public void postMessage(Object object){
+    public void postMessage(Object object) {
         RxBus.getInstance().post(getConnectorId(), object);
     }
-
 
     /**
      * Listen to device status
@@ -603,40 +507,6 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     private class PushNotificationSyncListener extends Listener {
         private PushNotificationSyncListener() {
             mCommands.put(NotificationSyncRequest.class, data -> sync(null, ((NotificationSyncRequest) data).getSyncInfo()));
-            mCommands.put(AppMessage.class, data -> {
-                if (AppMessage.SYNC.equals(((AppMessage) data).getType())) {
-                    sync(null);
-                }
-            });
-        }
-    }
-
-    /**
-     * Listen to {@link IdVerificationRequest}
-     */
-    private class IdVerificationListener extends Listener {
-        private IdVerificationListener() {
-            super(getConnectorId());
-            mCommands.put(IdVerificationRequest.class, data ->
-                    getIdVerification().send(getConnectorId(), ((IdVerificationRequest) data).getCallbackId()));
-        }
-    }
-
-    /**
-     * Listen to a2a request {@link A2AVerificationRequest} and {@link A2AVerificationFailed}
-     */
-    private class A2AListener extends Listener {
-        private String requestCallbackId;
-        private String returnLocation;
-
-        private A2AListener() {
-            super(getConnectorId());
-            mCommands.put(A2AVerificationRequest.class, data -> {
-                returnLocation = ((A2AVerificationRequest) data).getReturnLocation();
-                requestCallbackId = ((A2AVerificationRequest) data).getCallbackId();
-            });
-            mCommands.put(A2AVerificationFailed.class, data ->
-                    postMessage(new RtmMessageResponse(requestCallbackId, false, data, RtmType.APP_TO_APP_VERIFICATION)));
         }
     }
 }
