@@ -210,8 +210,8 @@ Now that you've built the repository, you need to tell your Android project wher
 3. Add the repository as a dependency to the module-level build.gradle file of your project.
     ```
     dependencies {
-        compile fileTree(dir: 'libs', include: ['*.jar'])
-        compile 'com.fitpay.android:android_sdk:0.5.0'
+        implementation fileTree(dir: 'libs', include: ['*.jar'])
+        compimplementationile 'com.fitpay.android:android_sdk:1.0.0'
     }
     ```
 
