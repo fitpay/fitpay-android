@@ -39,9 +39,8 @@ public class UserEventStreamManager {
      * received from the FitPay platform.  The subscription occurs in the background, therefore this
      * method returns a Future for that subscription task.
      *
-     * @param userId
+     * @param userId users Id
      * @return null is possible if not supported
-     * @throws IOException
      */
     public static Future<UserEventStream> subscribe(final String userId) {
         // if at the platform level SSE subscriptions are turned off, then this method will simply
@@ -120,18 +119,13 @@ public class UserEventStreamManager {
     /**
      * If subscribed, close the event stream subscription for the specified userId and device.
      *
-     * @param userId
+     * @param userId users Id
      */
     public static void unsubscribe(final String userId) {
         UserEventStream stream = streams.remove(userId);
 
         if (stream != null) {
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    stream.close();
-                }
-            });
+            executor.execute(stream::close);
         }
     }
 }

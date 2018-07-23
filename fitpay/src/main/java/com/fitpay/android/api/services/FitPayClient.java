@@ -1,6 +1,5 @@
 package com.fitpay.android.api.services;
 
-import com.fitpay.android.api.models.Relationship;
 import com.fitpay.android.api.models.card.VerificationMethods;
 import com.fitpay.android.api.models.device.ResetDeviceResult;
 import com.fitpay.android.api.models.issuer.Issuers;
@@ -42,18 +41,6 @@ public interface FitPayClient {
     @GET("users/{userId}/creditCards/{creditCardId}/verificationMethods")
     Call<VerificationMethods> getVerificationMethods(@Path("userId") String userId,
                                                      @Path("creditCardId") String creditCardId);
-
-    /**
-     * Creates a relationship between a device and a creditCard.
-     *
-     * @param userId       user id
-     * @param creditCardId credit card id
-     * @param deviceId     device id
-     */
-    @PUT("users/{userId}/relationships")
-    Call<Relationship> createRelationship(@Path("userId") String userId,
-                                          @Query("creditCardId") String creditCardId,
-                                          @Query("deviceId") String deviceId);
 
     /**
      * Creates a new encryption key pair

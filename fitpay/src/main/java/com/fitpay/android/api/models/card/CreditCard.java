@@ -10,16 +10,11 @@ import com.fitpay.android.api.enums.CardInitiators;
 import com.fitpay.android.api.models.AssetReference;
 import com.fitpay.android.api.models.Links;
 import com.fitpay.android.api.models.collection.Collections;
-import com.fitpay.android.api.models.device.DeviceRef;
 import com.fitpay.android.api.models.user.User;
-import com.fitpay.android.webview.models.IdVerification;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.IllegalFormatException;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -35,12 +30,6 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
     private static final String MAKE_DEFAULT = "makeDefault";
     private static final String SELECTED_VERIFICATION = "selectedVerification";
     private static final String VERIFICATION_METHODS = "verificationMethods";
-
-    private List<DeviceRef> deviceRelationships;
-
-    public List<DeviceRef> getDeviceRelationships() {
-        return deviceRelationships;
-    }
 
     /**
      * Indicate a user has accepted the terms and conditions presented
@@ -260,7 +249,6 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
         dest.writeString(this.termsAssetId);
         dest.writeValue(this.eligibilityExpirationEpoch);
         dest.writeList(this.termsAssetReferences);
-        dest.writeList(this.deviceRelationships);
         dest.writeParcelable(this.links, flags);
     }
 
@@ -285,8 +273,6 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
         this.eligibilityExpirationEpoch = (Long) in.readValue(Long.class.getClassLoader());
         this.termsAssetReferences = new ArrayList<>();
         in.readList(this.termsAssetReferences, AssetReference.class.getClassLoader());
-        this.deviceRelationships = new ArrayList<>();
-        in.readList(this.deviceRelationships, DeviceRef.class.getClassLoader());
         this.links = in.readParcelable(Links.class.getClassLoader());
     }
 
