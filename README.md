@@ -211,7 +211,7 @@ Now that you've built the repository, you need to tell your Android project wher
     ```
     dependencies {
         implementation fileTree(dir: 'libs', include: ['*.jar'])
-        compimplementationile 'com.fitpay.android:android_sdk:1.0.0'
+        implementation 'com.fitpay.android:android_sdk:1.0.0'
     }
     ```
 
