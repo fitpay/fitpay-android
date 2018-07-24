@@ -18,6 +18,7 @@ import com.fitpay.android.utils.TimestampUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -296,6 +297,7 @@ public final class Device extends DeviceModel implements Parcelable {
         private SecureElement secureElement;
         private String pairingTs;
         private String notificationToken;
+        private UUID profileId;
 
         /**
          * Creates a Builder instance that can be used to build Gson with various configuration
@@ -330,6 +332,7 @@ public final class Device extends DeviceModel implements Parcelable {
             device.pairingTs = pairingTs;
             device.notificationToken = notificationToken;
             device.secureElement = secureElement;
+            device.profileId = profileId;
             return device;
         }
 
@@ -508,6 +511,17 @@ public final class Device extends DeviceModel implements Parcelable {
             this.notificationToken = notificationToken;
             return this;
         }
+
+        /**
+         * Set notification token
+         *
+         * @param profileId Unique identifier to platform asset.
+         * @return a reference to this {@code Builder} object to fulfill the "Builder" pattern
+         */
+        public Builder setProfileId(UUID profileId) {
+            this.profileId = profileId;
+            return this;
+        }
     }
 
     @Override
@@ -532,6 +546,7 @@ public final class Device extends DeviceModel implements Parcelable {
         dest.writeString(this.hostDeviceId);
         dest.writeParcelable(this.links, flags);
         dest.writeString(this.notificationToken);
+        dest.writeString(this.profileId.toString());
         dest.writeString(this.deviceType);
         dest.writeString(this.manufacturerName);
         dest.writeString(this.deviceName);
@@ -558,6 +573,7 @@ public final class Device extends DeviceModel implements Parcelable {
         this.hostDeviceId = in.readString();
         this.links = in.readParcelable(Links.class.getClassLoader());
         this.notificationToken = in.readString();
+        this.profileId = UUID.fromString(in.readString());
         //noinspection ResourceType
         this.deviceType = in.readString();
         this.manufacturerName = in.readString();
