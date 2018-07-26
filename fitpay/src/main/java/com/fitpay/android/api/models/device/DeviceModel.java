@@ -1,7 +1,5 @@
 package com.fitpay.android.api.models.device;
 
-import java.util.UUID;
-
 /**
  * Device model
  */
@@ -73,7 +71,7 @@ abstract class DeviceModel extends PaymentDevice {
     /**
      * Unique identifier to platform asset that contains details about the embedded secure element for the device. (Optional)
      */
-    protected UUID profileId;
+    protected String profileId;
 
     protected DeviceModel() {
     }
@@ -134,5 +132,5 @@ abstract class DeviceModel extends PaymentDevice {
         return notificationToken;
     }
 
-    public  UUID getProfileId() { return  profileId; }
+    public  String getProfileId() { return  profileId; }
 }
