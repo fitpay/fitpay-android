@@ -114,8 +114,8 @@ public class DeviceParallelSyncTest extends TestActions {
         NotificationManager.getInstance().addListenerToCurrentThread(secondSyncListener);
         /*-----second_device_end-----*/
 
-        syncManager = new DeviceSyncManager(mContext);
-        syncManager.onCreate();
+        syncManager = DeviceSyncManager.init(mContext);
+        syncManager.subscribe();
 
         syncManagerCallback = new DeviceSyncManagerCallback() {
             @Override
@@ -156,7 +156,7 @@ public class DeviceParallelSyncTest extends TestActions {
     @After
     public void cleanup() {
         if (syncManager != null) {
-            syncManager.onDestroy();
+            syncManager.unsubscribe();
             syncManager.removeDeviceSyncManagerCallback(syncManagerCallback);
         }
 

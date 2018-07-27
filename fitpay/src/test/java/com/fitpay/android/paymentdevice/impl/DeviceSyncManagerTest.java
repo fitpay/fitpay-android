@@ -79,8 +79,8 @@ public class DeviceSyncManagerTest extends TestActions {
 
         when(mockEditor.commit()).thenReturn(true);
 
-        syncManager = new DeviceSyncManager(mContext);
-        syncManager.onCreate();
+        syncManager = DeviceSyncManager.init(mContext);
+        syncManager.subscribe();
 
         syncManagerCallback = new DeviceSyncManagerCallback() {
             @Override
@@ -160,7 +160,7 @@ public class DeviceSyncManagerTest extends TestActions {
     @After
     public void cleanup() {
         if (syncManager != null) {
-            syncManager.onDestroy();
+            syncManager.unsubscribe();
             syncManager.removeDeviceSyncManagerCallback(syncManagerCallback);
         }
 
