@@ -48,6 +48,7 @@ public class PlatformConfigTest {
             }
         });
         FPLog.setShowHTTPLogs(false);
+
         TestConstants.configureFitpay();
     }
 
