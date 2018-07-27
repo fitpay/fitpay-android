@@ -111,7 +111,7 @@ public final class SyncWorkerTask implements Runnable {
 
     public void sync() {
         if (syncRequest == null) {
-            FPLog.d("sync skipped, syncRequest is null");
+            FPLog.w(TAG, "sync skipped, syncRequest is null");
             return;
         }
 
