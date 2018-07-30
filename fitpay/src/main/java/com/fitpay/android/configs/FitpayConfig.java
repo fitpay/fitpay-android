@@ -94,7 +94,6 @@ public final class FitpayConfig {
         Web.supportCardScanner = configModel.getWebConfig().supportCardScanner;
         Web.automaticallySubscribeToUserEventStream = configModel.getWebConfig().automaticallySubscribeToUserEventStream;
         Web.automaticallySyncFromUserEventStream = configModel.getWebConfig().automaticallySyncFromUserEventStream;
-        Web.accessToken = configModel.getWebConfig().accessToken;
 
         ApiManager.clean();
     }
@@ -164,11 +163,6 @@ public final class FitpayConfig {
          * {@link #automaticallySubscribeToUserEventStream} must also be on to sync
          */
         public static boolean automaticallySyncFromUserEventStream;
-
-        /**
-         * skips the pin screen if valid
-         */
-        public static String accessToken;
     }
 
     /**
