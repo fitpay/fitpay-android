@@ -145,29 +145,6 @@ public class MockPaymentDeviceTest extends TestActions {
         assertEquals("apdu execution state", ResponseState.PROCESSED, listener.getResult().getState());
     }
 
-    @Test
-    public void canProcessApduPackageFailure() {
-        CountDownLatch latch = new CountDownLatch(1);
-        ApduListener listener = new ApduListener(latch);
-        this.listener = listener;
-
-        manager.addListenerToCurrentThread(listener);
-
-        ApduPackage apduPackage = getFailingTestApduPackage();
-
-        paymentDeviceService.executeApduPackage(apduPackage);
-
-        try {
-            latch.await(20, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        assertNotNull("apdu execution result as captured by listener", listener.getResult());
-        assertEquals("apdu execution state", ResponseState.FAILED, listener.getResult().getState());
-    }
-
-
     protected class ConnectPaymentDeviceListener extends PaymentDeviceListener {
 
         protected CountDownLatch latch;
