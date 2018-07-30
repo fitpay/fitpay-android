@@ -21,8 +21,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class DeviceSyncManager {
     private final static int DEDUPE_LIMIT = 100;
-    private final static int SYNC_QUEUE_SIZE = 10;
-    private final static int SYNC_THREADS_COUNT = 4;
 
     private final Context mContext;
 
@@ -38,8 +36,8 @@ public class DeviceSyncManager {
 
     public DeviceSyncManager(Context context) {
         this.mContext = context;
-        queueSize = SYNC_QUEUE_SIZE;
-        threadsCount = SYNC_THREADS_COUNT;
+        queueSize = 10;
+        threadsCount = 2;
         requests = new ArrayBlockingQueue<>(queueSize);
     }
 

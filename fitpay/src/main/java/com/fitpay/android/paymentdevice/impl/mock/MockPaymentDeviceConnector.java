@@ -117,12 +117,14 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
             NotificationManager.getInstance().removeListener(syncCompleteListener);
         }
 
-        setStateWithDelay(CONFIG_DISCONNECTING_RESPONSE_TIME, States.DISCONNECTING)
-                .flatMap(x -> setStateWithDelay(CONFIG_DISCONNECTED_RESPONSE_TIME, States.DISCONNECTED))
-                .subscribe(
-                        x -> FPLog.d(TAG, "disconnect success"),
-                        throwable -> FPLog.e(TAG, "disconnect error:" + throwable.toString()),
-                        () -> FPLog.d(TAG, "disconnect complete"));
+        if (state != States.DISCONNECTING && state != States.DISCONNECTED) {
+            setStateWithDelay(CONFIG_DISCONNECTING_RESPONSE_TIME, States.DISCONNECTING)
+                    .flatMap(x -> setStateWithDelay(CONFIG_DISCONNECTED_RESPONSE_TIME, States.DISCONNECTED))
+                    .subscribe(
+                            x -> FPLog.d(TAG, "disconnect success"),
+                            throwable -> FPLog.e(TAG, "disconnect error:" + throwable.toString()),
+                            () -> FPLog.d(TAG, "disconnect complete"));
+        }
     }
 
     @Override

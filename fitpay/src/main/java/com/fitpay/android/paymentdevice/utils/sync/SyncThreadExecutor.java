@@ -1,6 +1,9 @@
 package com.fitpay.android.paymentdevice.utils.sync;
 
 import android.content.Context;
+import android.os.Debug;
+import android.os.Handler;
+import android.util.Log;
 
 import com.fitpay.android.paymentdevice.callbacks.DeviceSyncManagerCallback;
 import com.fitpay.android.paymentdevice.constants.States;
@@ -13,7 +16,9 @@ import com.fitpay.android.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -36,12 +41,15 @@ public class SyncThreadExecutor extends ThreadPoolExecutor {
 
     private final int queueSize;
 
+    private Handler handler;
+
     public SyncThreadExecutor(Context context, List<DeviceSyncManagerCallback> syncManagerCallbacks, int queueSize, int threadsCount, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue) {
         super(threadsCount, threadsCount, keepAliveTime, unit, workQueue);
         this.mContext = context;
         this.syncManagerCallbacks = syncManagerCallbacks;
         this.queueSize = queueSize;
         this.syncBuffer = new HashMap<>(threadsCount);
+        handler = new Handler();
     }
 
     @Override
@@ -58,6 +66,8 @@ public class SyncThreadExecutor extends ThreadPoolExecutor {
 
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
+        super.afterExecute(r, t);
+
         SyncWorkerTask task = (SyncWorkerTask) r;
         inWork.remove(task.getSyncRequest().getDevice().getDeviceIdentifier());
 
@@ -65,14 +75,24 @@ public class SyncThreadExecutor extends ThreadPoolExecutor {
             callback.syncTaskCompleted(task.getSyncRequest());
         }
 
-        for (String key : syncBuffer.keySet()) {
-            if (!inWork.contains(key)) {
-                execute(new SyncWorkerTask(mContext, syncManagerCallbacks, syncBuffer.get(key).poll()));
+        for (Iterator<Map.Entry<String, BlockingQueue<SyncRequest>>> it = syncBuffer.entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry<String, BlockingQueue<SyncRequest>> entry = it.next();
+            if (!inWork.contains(entry.getKey())) {
+                BlockingQueue<SyncRequest> queue = entry.getValue();
+                SyncRequest request = entry.getValue().poll();
+                if(queue.size() == 0){
+                    it.remove();
+                }
+                if (request != null) {
+                    handler.postDelayed(()-> {
+                        if(!isShutdown() && !isTerminated() && !isTerminating()) {
+                            execute(new SyncWorkerTask(mContext, syncManagerCallbacks, request));
+                        }
+                    }, 100);
+                    break;
+                }
             }
-            break;
         }
-
-        super.afterExecute(r, t);
     }
 
     /**
@@ -92,7 +112,12 @@ public class SyncThreadExecutor extends ThreadPoolExecutor {
                 if (deviceQueue == null) {
                     deviceQueue = new ArrayBlockingQueue<>(queueSize);
                 }
-                deviceQueue.add(request);
+                if(deviceQueue.size() < queueSize) {
+                    deviceQueue.add(request);
+                    syncBuffer.put(deviceId, deviceQueue);
+                } else {
+                    Log.w(TAG, "Queue is full");
+                }
             } else {
                 execute(new SyncWorkerTask(mContext, syncManagerCallbacks, request));
             }
