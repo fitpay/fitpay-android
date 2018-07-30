@@ -68,6 +68,11 @@ abstract class DeviceModel extends PaymentDevice {
      */
     protected String notificationToken;
 
+    /**
+     * Unique identifier to platform asset that contains details about the embedded secure element for the device. (Optional)
+     */
+    protected String profileId;
+
     protected DeviceModel() {
     }
 
@@ -126,4 +131,6 @@ abstract class DeviceModel extends PaymentDevice {
     public String getNotificationToken() {
         return notificationToken;
     }
+
+    public  String getProfileId() { return  profileId; }
 }
