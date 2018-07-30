@@ -33,28 +33,32 @@ public final class FitpayConfig {
     /**
      * Used for web calls
      */
-    public static String webURL;
+    @NonNull
+    public static String webURL = Constants.CONFIG_WV_URL;
 
     /**
      * Used for redirects
      */
-    public static String redirectURL;
+    @NonNull
+    public static String redirectURL = Constants.CONFIG_REDIRECT_URL;
 
     /**
      * Used for API calls
      */
-    public static String apiURL;
+    @NonNull
+    public static String apiURL = Constants.CONFIG_API_BASE_URL;
 
     /**
      * Used during login
      */
-    public static String authURL;
+    @NonNull
+    public static String authURL = Constants.CONFIG_AUTH_BASE_URL;
 
     /**
      * By default the app-to-app verification capability should be disabled.
      * Called by the parser when it receives {#value {@link com.fitpay.android.webview.enums.RtmType#SUPPORTS_ISSUER_APP_VERIFICATION}} event
      *
-     * @return Mark whether you support app-to-app verifications.
+     * Mark whether you support app-to-app verifications.
      */
     public static boolean supportApp2App;
 
