@@ -2,6 +2,7 @@ package com.fitpay.android.paymentdevice.impl.mock;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.fitpay.android.api.enums.CommitTypes;
 import com.fitpay.android.api.enums.DeviceTypes;
@@ -39,9 +40,6 @@ import java.util.concurrent.TimeUnit;
 import rx.Observable;
 import rx.Observer;
 
-/**
- * Created by tgs on 5/3/16.
- */
 @SuppressLint("SupportAnnotationUsage")
 public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
 
@@ -53,19 +51,11 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
     public static final String CONFIG_DISCONNECTING_RESPONSE_TIME = "DISCONNECTING_RESPONSE_TIME";
     public static final String CONFIG_DISCONNECTED_RESPONSE_TIME = "DISCONNECTED_RESPONSE_TIME";
     public static final String CONFIG_DEVICE_SERIAL_NUMBER = "DEVICE_SERIAL_NUMBER";
-    public static final String CONFIG_DEVICE_SECURE_ELEMENT_ID = "DEVICE_SECURE_ELEMENT_ID";
     private static final int DEFAULT_DELAY = 2000;
 
     private int delay = DEFAULT_DELAY;
 
     private Properties config;
-
-    /*
-     * credit cards is a mock of a payment device that has local storage and / or display
-     * For simplicity the whole card is stored typically the information transaferred and stored
-     * would be much less.  In the case of Pebble Pagare, it is masked card number and card art.
-     */
-    private Map<String, CreditCardCommit> creditCards;
 
     private final SyncCompleteListener syncCompleteListener;
 
@@ -87,7 +77,7 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
     }
 
     @Override
-    public void init(Properties props) {
+    public void init(@NonNull Properties props) {
         if (null == config) {
             config = props;
         } else {
@@ -127,12 +117,14 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
             NotificationManager.getInstance().removeListener(syncCompleteListener);
         }
 
-        setStateWithDelay(CONFIG_DISCONNECTING_RESPONSE_TIME, States.DISCONNECTING)
-                .flatMap(x -> setStateWithDelay(CONFIG_DISCONNECTED_RESPONSE_TIME, States.DISCONNECTED))
-                .subscribe(
-                        x -> FPLog.d(TAG, "disconnect success"),
-                        throwable -> FPLog.e(TAG, "disconnect error:" + throwable.toString()),
-                        () -> FPLog.d(TAG, "disconnect complete"));
+        if (state != States.DISCONNECTING && state != States.DISCONNECTED) {
+            setStateWithDelay(CONFIG_DISCONNECTING_RESPONSE_TIME, States.DISCONNECTING)
+                    .flatMap(x -> setStateWithDelay(CONFIG_DISCONNECTED_RESPONSE_TIME, States.DISCONNECTED))
+                    .subscribe(
+                            x -> FPLog.d(TAG, "disconnect success"),
+                            throwable -> FPLog.e(TAG, "disconnect error:" + throwable.toString()),
+                            () -> FPLog.d(TAG, "disconnect complete"));
+        }
     }
 
     @Override
@@ -148,7 +140,7 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
     }
 
     @Override
-    public void executeApduPackage(ApduPackage apduPackage) {
+    public void executeApduPackage(@NonNull ApduPackage apduPackage) {
         ApduExecutionResult apduExecutionResult = new ApduExecutionResult(apduPackage.getPackageId());
         apduExecutionResult.setExecutedTsEpoch(System.currentTimeMillis());
 
@@ -158,17 +150,8 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
     }
 
     @Override
-    public void executeApduCommand(long apduPkgNumber, ApduCommand apduCommand) {
+    public void executeApduCommand(long apduPkgNumber, @NonNull ApduCommand apduCommand) {
 
-    }
-
-    @Override
-    public void executeTopOfWallet(List<TopOfWallet> towPackage) {
-        getDelayObservable()
-                .subscribe(
-                        x -> FPLog.d(TAG, "execute TOW success"),
-                        throwable -> FPLog.e(TAG, "execute TOW error" + throwable.toString()),
-                        () -> FPLog.d(TAG, "execute TOW complete"));
     }
 
     private int getIntValue(String value) {
@@ -189,16 +172,12 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
     }
 
     private Device loadDefaultDevice() {
-
-        String serialNumber = null;
-        String seID = null;
+        String serialNumber;
 
         if (config != null) {
             serialNumber = config.getProperty(CONFIG_DEVICE_SERIAL_NUMBER, UUID.randomUUID().toString());
-            seID = config.getProperty(CONFIG_DEVICE_SECURE_ELEMENT_ID, SecureElementDataProvider.generateRandomSecureElementId());
         } else {
             serialNumber = UUID.randomUUID().toString();
-            seID = SecureElementDataProvider.generateRandomSecureElementId();
         }
 
         return new Device.Builder()
@@ -212,10 +191,9 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
                 .setFirmwareRevision("1030.6408.1309.0001")
                 .setSoftwareRevision("2.0.242009.6")
                 .setSystemId("0x123456FFFE9ABCDE")
-                .setOSName("ANDROID")
+                .setOSName("fitpayOS")
                 .setLicenseKey("6b413f37-90a9-47ed-962d-80e6a3528036")
                 .setBdAddress("00:00:00:00:00:00")
-                .setSecureElement(new PaymentDevice.SecureElement(SecureElementDataProvider.generateCasd(), seID))
                 .build();
     }
 
@@ -223,13 +201,8 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
         return getDelayObservable(delay);
     }
 
-    private Observable<Object> getDelayObservable(String timeValue) {
-        return getDelayObservable(getTimeValueFromConfig(timeValue));
-    }
-
     private Observable<Object> getDelayObservable(int responseDelay) {
-        return Observable.timer(responseDelay, TimeUnit.MILLISECONDS)
-                .compose(RxBus.applySchedulersExecutorThread());
+        return Observable.timer(responseDelay, TimeUnit.MILLISECONDS).compose(RxBus.applySchedulersExecutorThread());
     }
 
     private Observable<Object> setStateWithDelay(final String timeValue, final @Connection.State int targetState) {
@@ -252,13 +225,7 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
                 apduExecutionResult.addResponse(apduCommandResult);
                 FPLog.d(TAG, "apduExecutionResult: " + apduExecutionResult);
 
-                if (!ResponseState.PROCESSED.equals(apduExecutionResult.getState())) {
-                    FPLog.d(TAG, "apduExecutionResult: " + apduExecutionResult);
-                    int duration = (int) ((System.currentTimeMillis() - apduExecutionResult.getExecutedTsEpoch()) / 1000);
-                    apduExecutionResult.setExecutedDuration(duration);
-                    FPLog.d(TAG, "apdu processing is complete.  Result: " + new Gson().toJson(apduExecutionResult));
-                    postData(apduExecutionResult);
-                } else if (apduCommandNumber + 1 < apduPackage.getApduCommands().size()) {
+                if (apduCommandNumber + 1 < apduPackage.getApduCommands().size() && apduExecutionResult.getState().equals(ResponseState.PROCESSED)) {
                     getDelayObservable(100)
                             .map(x -> true)
                             .subscribe(getApduObserver(apduPackage, apduExecutionResult, apduCommandNumber + 1));
@@ -286,53 +253,35 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
     private ApduCommandResult getMockResultForApduCommand(ApduCommand apduCommand) {
         String responseData = "9000";
 
-        byte[] request = apduCommand.getCommand();
-        // should we simulate an error?  if the first byte is 0x99 or 0x98, then the
-        // next two represent the simulated error
-        if (request[0] == (byte) 0x99) {
-            responseData = Hex.bytesToHexString(new byte[]{request[1], request[2]});
-        }
+        switch (apduCommand.getType()) {
+            case "GET_CPLC":
+                responseData = "9F7F2A" + SecureElementDataProvider.generateRandomSecureElementId() + "9000";
+                break;
 
-        if (request[0] == (byte) 0x98) {
-            byte[] val = new byte[request.length + 2];
-            System.arraycopy(request, 0, val, 0, request.length);
-            System.arraycopy(new byte[]{request[1], request[2]}, 0, val, request.length, 2);
-            responseData = Hex.bytesToHexString(val);
+            case "GET_CASD_P1":
+                responseData = SecureElementDataProvider.generateCasd() + "9000";
+                break;
+
+            case "GET_CASD_P3":
+                responseData = "6D00";
+                break;
+
+            case "SELECT_ALA":
+                responseData = "6A82";
+                break;
+
+            default:
+                break;
         }
 
         String responseCode = responseData.substring(responseData.length() - 4);
 
-        ApduCommandResult result = new ApduCommandResult.Builder()
+        return new ApduCommandResult.Builder()
                 .setCommandId(apduCommand.getCommandId())
+                .setContinueOnFailure(apduCommand.isContinueOnFailure())
                 .setResponseData(responseData)
                 .setResponseCode(responseCode)
                 .build();
-        return result;
-    }
-
-
-    public void updateWallet(CreditCardCommit card) {
-        if (getWallet().containsKey(card.getCreditCardId())) {
-            FPLog.d(TAG, "Updating credit card in mock wallet.  Id: " + card.getCreditCardId() + ", pan: " + card.getPan());
-        } else {
-            FPLog.d(TAG, "Adding credit card to mock wallet.  Id: " + card.getCreditCardId() + ", pan: " + card.getPan());
-        }
-        getWallet().put(card.getCreditCardId(), card);
-    }
-
-    public void removeCardFromWallet(String creditCardId) {
-        FPLog.d(TAG, "Credit card updated in mock wallet.  remove card: : " + creditCardId);
-        getWallet().remove(creditCardId);
-    }
-
-    public Map<String, CreditCardCommit> getWallet() {
-        if (null == creditCards) {
-            //TODO should initialize wallet from local storage and then apply incremental changes
-            // if no copy in local storage then would need to initialize from beginning of life to lastCommitId to catchup
-            // For now just have delta changes
-            creditCards = new HashMap<>();
-        }
-        return creditCards;
     }
 
     private class SyncCompleteListener extends Listener {
@@ -342,16 +291,9 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
             mCommands.put(Sync.class, data -> onSyncStateChanged((Sync) data));
         }
 
-        public void onSyncStateChanged(Sync syncEvent) {
+        void onSyncStateChanged(Sync syncEvent) {
             FPLog.d(TAG, "received on sync state changed event: " + syncEvent);
 
-            switch (syncEvent.getState()) {
-                case States.COMPLETED:
-                    break;
-
-                case States.COMPLETED_NO_UPDATES:
-                    break;
-            }
         }
     }
 
@@ -377,9 +319,7 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
                     () -> {
                         CreditCardCommit card = (CreditCardCommit) commit.getPayload();
                         FPLog.d(TAG, "Mock wallet has been updated. Card removed: " + card.getCreditCardId());
-                        removeCardFromWallet(card.getCreditCardId());
-                        postData(new CommitSuccess.Builder()
-                                .commit(commit).build());
+                        postData(new CommitSuccess.Builder().commit(commit).build());
                     }
             );
         }
@@ -407,9 +347,7 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
                     () -> {
                         CreditCardCommit card = (CreditCardCommit) commit.getPayload();
                         FPLog.d(TAG, "Mock wallet has been updated. Card updated: " + card.getCreditCardId());
-                        updateWallet(card);
-                        postData(new CommitSuccess.Builder()
-                                .commit(commit).build());
+                        postData(new CommitSuccess.Builder().commit(commit).build());
                     }
             );
         }

@@ -83,15 +83,6 @@ public interface PaymentDeviceConnectable extends CommitHandler {
     void sendApduExecutionResult(@NonNull final ApduExecutionResult apduExecutionResult);
 
     /**
-     * @param towPackages top of wallet package
-     * @deprecated At this time we're looking to move away from the SDK specifically managing TOW execution:
-     * <p>
-     * 1. This typically occurs on the wearable device and not within the mobile SDK
-     * 2. When not occuring on the wearable, the TOW are really nothing more than APDU_PACKAGEs and can be treated as such in an integration
-     */
-    void executeTopOfWallet(List<TopOfWallet> towPackages);
-
-    /**
      * call after your commit has been processed
      *
      * @param type  commit execution result type

@@ -42,6 +42,7 @@ import static junit.framework.Assert.fail;
  * Created by Vlad on 16.03.2016.
  */
 public class Steps {
+
     private final int TIMEOUT = 30;
 
     private String userName;

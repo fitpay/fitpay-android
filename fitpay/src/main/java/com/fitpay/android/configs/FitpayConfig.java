@@ -21,6 +21,11 @@ public final class FitpayConfig {
     private static final String TAG = FitpayConfig.class.getSimpleName();
 
     /**
+     * Application context
+     */
+    public static Context appContext;
+
+    /**
      * Implicit allows you to get a single user token
      */
     public static String clientId;
@@ -28,47 +33,54 @@ public final class FitpayConfig {
     /**
      * Used for web calls
      */
-    public static String webURL;
+    @NonNull
+    public static String webURL = Constants.CONFIG_WV_URL;
 
     /**
      * Used for redirects
      */
-    public static String redirectURL;
+    @NonNull
+    public static String redirectURL = Constants.CONFIG_REDIRECT_URL;
 
     /**
      * Used for API calls
      */
-    public static String apiURL;
+    @NonNull
+    public static String apiURL = Constants.CONFIG_API_BASE_URL;
 
     /**
      * Used during login
      */
-    public static String authURL;
+    @NonNull
+    public static String authURL = Constants.CONFIG_AUTH_BASE_URL;
 
     /**
      * By default the app-to-app verification capability should be disabled.
      * Called by the parser when it receives {#value {@link com.fitpay.android.webview.enums.RtmType#SUPPORTS_ISSUER_APP_VERIFICATION}} event
      *
-     * @return Mark whether you support app-to-app verifications.
+     * Mark whether you support app-to-app verifications.
      */
     public static boolean supportApp2App;
 
     /**
      * Setup FitpaySDK with default params and custom clientId
      *
-     * @param clientId clientId
+     * @param context app context
+     * @param clientId   clientId
      */
-    public static void configure(@NonNull String clientId) {
-        configure(new FitpayConfigModel(clientId));
+    public static void configure(@NonNull Context context, @NonNull String clientId) {
+        configure(context, new FitpayConfigModel(clientId));
     }
 
     /**
      * Setup FitpaySDK with data from other source: file or web.
      * Internal use only
      *
+     * @param context app context
      * @param configModel parsed config model
      */
-    private static void configure(@NonNull FitpayConfigModel configModel) {
+    private static void configure(@NonNull Context context, @NonNull FitpayConfigModel configModel) {
+        appContext = context;
         clientId = configModel.getClientId();
         webURL = configModel.getWebUrl();
         redirectURL = configModel.getRedirectUrl();
@@ -82,7 +94,6 @@ public final class FitpayConfig {
         Web.supportCardScanner = configModel.getWebConfig().supportCardScanner;
         Web.automaticallySubscribeToUserEventStream = configModel.getWebConfig().automaticallySubscribeToUserEventStream;
         Web.automaticallySyncFromUserEventStream = configModel.getWebConfig().automaticallySyncFromUserEventStream;
-        Web.accessToken = configModel.getWebConfig().accessToken;
 
         ApiManager.clean();
     }
@@ -90,14 +101,13 @@ public final class FitpayConfig {
     /**
      * Setup FitpaySDK with params from file.
      *
-     * @param context        app context
-     * @param assetsFileName json file name in assets folder
+     * @param context app context
+     * @param stream  input stream
      */
-    public static void configure(@NonNull Context context, @NonNull String assetsFileName) {
+    public static void configure(@NonNull Context context, @NonNull InputStream stream) {
         FitpayConfigModel configModel = null;
         try {
-            InputStream json = context.getAssets().open(assetsFileName);
-            BufferedReader in = new BufferedReader(new InputStreamReader(json, "UTF-8"));
+            BufferedReader in = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
             configModel = Constants.getGson().fromJson(in, FitpayConfigModel.class);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -107,7 +117,7 @@ public final class FitpayConfig {
             throw new NullPointerException("Can't load FitpayConfig from file. Check the logs or try to use #configure(clientId)");
         }
 
-        configure(configModel);
+        configure(context, configModel);
     }
 
     /**
@@ -153,11 +163,6 @@ public final class FitpayConfig {
          * {@link #automaticallySubscribeToUserEventStream} must also be on to sync
          */
         public static boolean automaticallySyncFromUserEventStream;
-
-        /**
-         * skips the pin screen if valid
-         */
-        public static String accessToken;
     }
 
     /**
