@@ -512,7 +512,7 @@ public final class Device extends DeviceModel implements Parcelable {
         }
 
         /**
-         * Set notification token
+         * Set profile id
          *
          * @param profileId Unique identifier to platform asset.
          * @return a reference to this {@code Builder} object to fulfill the "Builder" pattern
