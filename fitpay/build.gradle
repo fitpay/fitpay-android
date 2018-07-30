@@ -105,7 +105,7 @@ ext {
     supportLib = "27.1.1"
     retrofitLib = "2.3.0"
     okhttpLib = "3.9.0"
-    rxjavaLib = "1.3.4"
+    rxjavaLib = "1.3.8"
 }
 
 configurations {
