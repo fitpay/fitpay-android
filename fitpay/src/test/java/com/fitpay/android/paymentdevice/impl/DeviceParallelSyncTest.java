@@ -274,9 +274,35 @@ public class DeviceParallelSyncTest extends TestActions {
     private class SyncCompleteListener extends Listener {
         private final List<CommitSuccess> commits = new ArrayList<>();
 
+        int success = 0;
+        int failed = 0;
+        int skipped = 0;
+
         private SyncCompleteListener(String filter) {
             super(filter);
-            mCommands.put(CommitSuccess.class, data -> onCommitSuccess((CommitSuccess) data));
+            mCommands.put(CommitSuccess.class, data -> {
+                System.out.println("");
+                System.out.println(">>>>>>>>>>");
+                System.out.println(filter + " CommitSuccess:" + ++success);
+                System.out.println("<<<<<<<<<<");
+                System.out.println("");
+
+                onCommitSuccess((CommitSuccess) data);
+            });
+            mCommands.put(CommitFailed.class, data -> {
+                System.out.println("");
+                System.out.println(">>>>>>>>>>");
+                System.out.println(filter + " CommitFailed:" + ++failed);
+                System.out.println("<<<<<<<<<<");
+                System.out.println("");
+            });
+            mCommands.put(CommitSkipped.class, data -> {
+                System.out.println("");
+                System.out.println(">>>>>>>>>>");
+                System.out.println(filter + " CommitSkipped:" + ++skipped);
+                System.out.println("<<<<<<<<<<");
+                System.out.println("");
+            });
         }
 
         public void onCommitSuccess(CommitSuccess commit) {
