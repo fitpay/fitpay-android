@@ -248,7 +248,7 @@ public class DeviceParallelSyncTest extends TestActions {
             System.out.println("###############################################################################################################");
             System.out.println("");
 
-            Thread.sleep(1000);
+            Thread.sleep(5000);
         }
 
         finishLatch.get().countDown();
@@ -277,12 +277,6 @@ public class DeviceParallelSyncTest extends TestActions {
         private SyncCompleteListener(String filter) {
             super(filter);
             mCommands.put(CommitSuccess.class, data -> onCommitSuccess((CommitSuccess) data));
-            mCommands.put(CommitFailed.class, data -> {
-                Log.w("error", "error");
-            });
-            mCommands.put(CommitSkipped.class, data -> {
-                Log.w("error", "error");
-            });
         }
 
         public void onCommitSuccess(CommitSuccess commit) {
