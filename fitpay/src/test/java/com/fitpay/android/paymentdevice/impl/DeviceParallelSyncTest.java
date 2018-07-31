@@ -2,6 +2,7 @@ package com.fitpay.android.paymentdevice.impl;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.fitpay.android.TestActions;
 import com.fitpay.android.TestUtils;
@@ -11,6 +12,8 @@ import com.fitpay.android.api.models.user.UserCreateRequest;
 import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.paymentdevice.callbacks.DeviceSyncManagerCallback;
 import com.fitpay.android.paymentdevice.constants.States;
+import com.fitpay.android.paymentdevice.events.CommitFailed;
+import com.fitpay.android.paymentdevice.events.CommitSkipped;
 import com.fitpay.android.paymentdevice.events.CommitSuccess;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
@@ -206,6 +209,9 @@ public class DeviceParallelSyncTest extends TestActions {
         firstMockPaymentDevice.disconnect();
         secondMockPaymentDevice.disconnect();
 
+        /*
+        This test will emit three APDU packages for the newly boarded SE, therefore there should be 3 commits that show up...
+        */
         assertEquals(3,
                 firstSyncListener.getCommits().stream()
                         .filter(commit -> commit.getCommitType().equals("APDU_PACKAGE"))
@@ -242,33 +248,7 @@ public class DeviceParallelSyncTest extends TestActions {
             System.out.println("###############################################################################################################");
             System.out.println("");
 
-            /*
-                This test will emit three APDU packages for the newly boarded SE, therefore there should be 3 commits that show up... before
-                we run the next sync(), let's wait for new commits to show up
-             */
-            if (listener.getCommits().size() < 3) {
-                final CountDownLatch waitForCommitsLatch = new CountDownLatch(1);
-                do {
-                    String lastCommitId = commitId.get(device.getDeviceIdentifier());
-
-                    System.out.println(">>> deviceId:" + device.getDeviceIdentifier() + " lastCommitId:" + lastCommitId);
-
-                    device.getAllCommits(lastCommitId)
-                            .subscribe(commits -> {
-                                        System.out.println("commits found from " + lastCommitId + ": " + commits.getTotalResults());
-
-                                        if (commits.getTotalResults() > 0) {
-                                            waitForCommitsLatch.countDown();
-                                        }
-                                    },
-                                    throwable -> {
-                                        throwable.printStackTrace();
-                                        fail(throwable.getMessage());
-                                    });
-
-                    Thread.sleep(500);
-                } while (waitForCommitsLatch.getCount() > 0);
-            }
+            Thread.sleep(1000);
         }
 
         finishLatch.get().countDown();
@@ -297,6 +277,12 @@ public class DeviceParallelSyncTest extends TestActions {
         private SyncCompleteListener(String filter) {
             super(filter);
             mCommands.put(CommitSuccess.class, data -> onCommitSuccess((CommitSuccess) data));
+            mCommands.put(CommitFailed.class, data -> {
+                Log.w("error", "error");
+            });
+            mCommands.put(CommitSkipped.class, data -> {
+                Log.w("error", "error");
+            });
         }
 
         public void onCommitSuccess(CommitSuccess commit) {

@@ -16,7 +16,6 @@ import com.fitpay.android.paymentdevice.constants.States;
 import com.fitpay.android.paymentdevice.enums.Sync;
 import com.fitpay.android.paymentdevice.events.CommitSuccess;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
-import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
 import com.fitpay.android.utils.Listener;
 import com.fitpay.android.utils.NotificationManager;
@@ -36,7 +35,6 @@ import java.util.concurrent.CountDownLatch;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -271,29 +269,6 @@ public class DeviceSyncManagerTest extends TestActions {
             System.out.println("###############################################################################################################");
             System.out.println("");
 
-            /*
-                This test will emit three APDU packages for the newly boarded SE, therefore there should be 3 commits that show up... before
-                we run the next sync(), let's wait for new commits to show up
-             */
-            if (listener.getCommits().size() < 3) {
-                final CountDownLatch waitForCommitsLatch = new CountDownLatch(1);
-                do {
-                    device.getAllCommits(lastCommitId)
-                            .subscribe(commits -> {
-                                        System.out.println("commits found from " + lastCommitId + ": " + commits.getTotalResults());
-
-                                        if (commits.getTotalResults() > 0) {
-                                            waitForCommitsLatch.countDown();
-                                        }
-                                    },
-                                    throwable -> {
-                                        throwable.printStackTrace();
-                                        fail(throwable.getMessage());
-                                    });
-
-                    Thread.sleep(500);
-                } while (waitForCommitsLatch.getCount() > 0);
-            }
         }
 
         mockPaymentDevice.disconnect();
@@ -303,6 +278,9 @@ public class DeviceSyncManagerTest extends TestActions {
                         .filter(syncEvent -> syncEvent.getState() == States.COMPLETED_NO_UPDATES || syncEvent.getState() == States.COMPLETED)
                         .count());
 
+        /*
+        This test will emit three APDU packages for the newly boarded SE, therefore there should be 3 commits that show up...
+        */
         assertEquals(3,
                 listener.getCommits().stream()
                         .filter(commit -> commit.getCommitType().equals("APDU_PACKAGE"))
