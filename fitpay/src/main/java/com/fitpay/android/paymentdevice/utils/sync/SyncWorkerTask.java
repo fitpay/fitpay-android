@@ -206,6 +206,8 @@ public final class SyncWorkerTask implements Runnable {
                         commitsCollection -> {
                             syncProcess.setCommits(commitsCollection.getResults());
 
+                            System.out.println(syncRequest.getConnector().id() + " Commits received:" + commitsCollection.getResults().size());
+
                             FPLog.i(SYNC_DATA, "Commits Received: " + syncProcess.size());
 
                             if (syncProcess.size() > 0) {
