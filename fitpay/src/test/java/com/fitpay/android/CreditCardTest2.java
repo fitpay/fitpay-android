@@ -82,7 +82,7 @@ public class CreditCardTest2 extends TestActions {
         CreditCard createdCard = callback.getResult();
 
         assertNull("created card",createdCard);
-        assertEquals("error code", 400, callback.getErrorCode());
+        assertEquals("error code", 500, callback.getErrorCode());
     }
 
     @Test
