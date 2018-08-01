@@ -2,7 +2,6 @@ package com.fitpay.android.webview.impl;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
@@ -21,7 +20,6 @@ import com.fitpay.android.api.sse.UserEventStreamManager;
 import com.fitpay.android.cardscanner.IFitPayCardScanner;
 import com.fitpay.android.cardscanner.ScannedCardInfo;
 import com.fitpay.android.configs.FitpayConfig;
-import com.fitpay.android.paymentdevice.DeviceService;
 import com.fitpay.android.paymentdevice.constants.States;
 import com.fitpay.android.paymentdevice.enums.Sync;
 import com.fitpay.android.paymentdevice.events.NotificationSyncRequest;
@@ -42,7 +40,6 @@ import com.fitpay.android.webview.events.RtmMessage;
 import com.fitpay.android.webview.events.RtmMessageResponse;
 import com.fitpay.android.webview.events.UserReceived;
 import com.fitpay.android.webview.models.RtmVersion;
-import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;

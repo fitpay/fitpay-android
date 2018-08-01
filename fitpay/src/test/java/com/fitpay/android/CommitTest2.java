@@ -232,13 +232,14 @@ public class CommitTest2 extends TestActions {
         final int correctResult = 39;
         int totalResults = 0;
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 5; i++) {
             Collections.CommitsCollection commits = getAllCommits(createdDevice, null);
             assertNotNull(commits);
             assertTrue("number of commits should be 10 or more.  Got: " + commits.getTotalResults(), commits.getTotalResults() >= 10);
 
             totalResults = commits.getTotalResults();
         }
+
         assertEquals("number of commits should be 39.  Got: " + totalResults, totalResults, correctResult);
     }
 }

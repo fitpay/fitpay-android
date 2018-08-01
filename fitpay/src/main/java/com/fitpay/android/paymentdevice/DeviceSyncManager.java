@@ -1,13 +1,14 @@
 package com.fitpay.android.paymentdevice;
 
-import android.content.Context;
-
 import com.fitpay.android.api.callbacks.ApiCallback;
+import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.paymentdevice.callbacks.DeviceSyncManagerCallback;
 import com.fitpay.android.paymentdevice.models.SyncInfo;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
 import com.fitpay.android.paymentdevice.utils.sync.SyncThreadExecutor;
 import com.fitpay.android.utils.FPLog;
+import com.fitpay.android.utils.Listener;
+import com.fitpay.android.utils.NotificationManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 public class DeviceSyncManager {
     private final static int DEDUPE_LIMIT = 100;
 
-    private final Context mContext;
+    private static DeviceSyncManager sInstance;
 
     private final BlockingQueue<Runnable> requests;
     private final List<DeviceSyncManagerCallback> syncManagerCallbacks = new CopyOnWriteArrayList<>();
@@ -34,27 +35,86 @@ public class DeviceSyncManager {
 
     private List<String> dedupeSyncIds = new ArrayList<>(DEDUPE_LIMIT);
 
-    public DeviceSyncManager(Context context) {
-        this.mContext = context;
+    private MessageListener mSyncListener;
+
+    private boolean subscribed;
+
+    /**
+     * Get DeviceSyncManager instance
+     * @return instance
+     */
+    public static DeviceSyncManager getInstance() {
+        if(FitpayConfig.appContext == null){
+            throw new IllegalStateException("FitpayConfig is not initialized.");
+        }
+
+        if (sInstance == null) {
+            sInstance = new DeviceSyncManager();
+        }
+
+        return sInstance;
+    }
+
+    /**
+     * Clean.
+     * Used inside tests to initialize with different context.
+     */
+    public static void clean(){
+        sInstance = null;
+    }
+
+    private DeviceSyncManager() {
         queueSize = 10;
         threadsCount = 2;
         requests = new ArrayBlockingQueue<>(queueSize);
+        mSyncListener = new MessageListener();
     }
 
-    public void onCreate() {
-        worker = new SyncThreadExecutor(mContext, syncManagerCallbacks, queueSize, threadsCount, 5, TimeUnit.MINUTES, requests);
-    }
+    /**
+     * Subscribe to sync request events.
+     * Start sync worker.
+     */
+    public void subscribe() {
+        if (!subscribed) {
+            subscribed = true;
 
-    public void onDestroy() {
-        requests.clear();
+            NotificationManager.getInstance().addListenerToCurrentThread(mSyncListener);
 
-        if (worker != null) {
-            worker.shutdownNow();
+            worker = new SyncThreadExecutor(FitpayConfig.appContext, syncManagerCallbacks, queueSize, threadsCount, 5, TimeUnit.MINUTES, requests);
         }
     }
 
+    /**
+     * Unsubscribe from sync request events.
+     * Stop sync worker.
+     */
+    public void unsubscribe() {
+        if (subscribed) {
+            subscribed = false;
+
+            NotificationManager.getInstance().removeListener(mSyncListener);
+
+            if (requests != null) {
+                requests.clear();
+            }
+
+            dedupeSyncIds.clear();
+
+            if (worker != null) {
+                worker.shutdownNow();
+            }
+        }
+    }
+
+    /**
+     * Add sync request to the queue
+     *
+     * @param request sync request
+     */
     public void add(final SyncRequest request) {
-        if (request == null) { return; }
+        if (request == null) {
+            return;
+        }
 
         // if we have a syncId, dedupe it to avoid re-running syncs arriving through multiple channels
         if (request.getSyncId() != null) {
@@ -95,6 +155,11 @@ public class DeviceSyncManager {
         }
     }
 
+    /**
+     * Add sync callback
+     *
+     * @param syncManagerCallback callback
+     */
     public void removeDeviceSyncManagerCallback(DeviceSyncManagerCallback syncManagerCallback) {
         if (syncManagerCallback == null) {
             return;
@@ -103,12 +168,28 @@ public class DeviceSyncManager {
         syncManagerCallbacks.remove(syncManagerCallback);
     }
 
+    /**
+     * Remove sync callback
+     *
+     * @param syncManagerCallback callback
+     */
     public void registerDeviceSyncManagerCallback(DeviceSyncManagerCallback syncManagerCallback) {
         if (syncManagerCallback == null) {
             return;
         }
 
         syncManagerCallbacks.add(syncManagerCallback);
+    }
+
+    /**
+     * Listen to Apdu and Sync callbacks
+     */
+    private class MessageListener extends Listener {
+
+        private MessageListener() {
+            super();
+            mCommands.put(SyncRequest.class, data -> add((SyncRequest) data));
+        }
     }
 }
 

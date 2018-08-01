@@ -43,8 +43,7 @@ public class MockPaymentDeviceTest extends TestActions {
 
     @Before
     public void setUp() throws Exception {
-        Context context = Mockito.mock(Context.class);
-        paymentDeviceService = new MockPaymentDeviceConnector(context);
+        paymentDeviceService = new MockPaymentDeviceConnector(mContext);
         manager = NotificationManager.getInstance();
     }
 

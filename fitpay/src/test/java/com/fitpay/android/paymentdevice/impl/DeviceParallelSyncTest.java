@@ -2,6 +2,7 @@ package com.fitpay.android.paymentdevice.impl;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.fitpay.android.TestActions;
 import com.fitpay.android.TestUtils;
@@ -11,6 +12,8 @@ import com.fitpay.android.api.models.user.UserCreateRequest;
 import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.paymentdevice.callbacks.DeviceSyncManagerCallback;
 import com.fitpay.android.paymentdevice.constants.States;
+import com.fitpay.android.paymentdevice.events.CommitFailed;
+import com.fitpay.android.paymentdevice.events.CommitSkipped;
 import com.fitpay.android.paymentdevice.events.CommitSuccess;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
@@ -46,7 +49,6 @@ import static org.mockito.Mockito.when;
 
 public class DeviceParallelSyncTest extends TestActions {
 
-    private Context mContext;
     private DeviceSyncManager syncManager;
 
     private MockPaymentDeviceConnector firstMockPaymentDevice;
@@ -71,8 +73,6 @@ public class DeviceParallelSyncTest extends TestActions {
     @Before
     @Override
     public void testActionsSetup() throws Exception {
-        mContext = Mockito.mock(Context.class);
-
         /*-----user-----*/
         userName = TestUtils.getRandomLengthString(5, 10) + "@"
                 + TestUtils.getRandomLengthString(5, 10) + "." + TestUtils.getRandomLengthString(4, 10);
@@ -114,8 +114,8 @@ public class DeviceParallelSyncTest extends TestActions {
         NotificationManager.getInstance().addListenerToCurrentThread(secondSyncListener);
         /*-----second_device_end-----*/
 
-        syncManager = new DeviceSyncManager(mContext);
-        syncManager.onCreate();
+        syncManager = DeviceSyncManager.getInstance();
+        syncManager.subscribe();
 
         syncManagerCallback = new DeviceSyncManagerCallback() {
             @Override
@@ -124,6 +124,15 @@ public class DeviceParallelSyncTest extends TestActions {
 
             @Override
             public void syncRequestFailed(SyncRequest request) {
+                if (request.getConnector().id().equals(firstMockPaymentDevice.id())) {
+                    if (firstLatch != null) {
+                        firstLatch.get().countDown();
+                    }
+                } else if (request.getConnector().id().equals(secondMockPaymentDevice.id())) {
+                    if (secondLatch != null) {
+                        secondLatch.get().countDown();
+                    }
+                }
             }
 
             @Override
@@ -156,14 +165,12 @@ public class DeviceParallelSyncTest extends TestActions {
     @After
     public void cleanup() {
         if (syncManager != null) {
-            syncManager.onDestroy();
+            syncManager.unsubscribe();
             syncManager.removeDeviceSyncManagerCallback(syncManagerCallback);
         }
 
         NotificationManager.getInstance().removeListener(this.firstSyncListener);
         NotificationManager.getInstance().removeListener(this.secondSyncListener);
-
-        mContext = null;
     }
 
     private void initPrefs(String deviceId) {
@@ -186,7 +193,7 @@ public class DeviceParallelSyncTest extends TestActions {
 
         new Thread(() -> {
             try {
-                runSync(firstMockPaymentDevice, firstDevice, firstSyncListener, firstLatch, firstFinishLatch);
+                runSync(firstMockPaymentDevice, firstDevice, firstLatch, firstFinishLatch);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -194,7 +201,7 @@ public class DeviceParallelSyncTest extends TestActions {
 
         new Thread(() -> {
             try {
-                runSync(secondMockPaymentDevice, secondDevice, secondSyncListener, secondLatch, secondFinishLatch);
+                runSync(secondMockPaymentDevice, secondDevice, secondLatch, secondFinishLatch);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -206,6 +213,9 @@ public class DeviceParallelSyncTest extends TestActions {
         firstMockPaymentDevice.disconnect();
         secondMockPaymentDevice.disconnect();
 
+        /*
+        This test will emit three APDU packages for the newly boarded SE, therefore there should be 3 commits that show up...
+        */
         assertEquals(3,
                 firstSyncListener.getCommits().stream()
                         .filter(commit -> commit.getCommitType().equals("APDU_PACKAGE"))
@@ -217,7 +227,7 @@ public class DeviceParallelSyncTest extends TestActions {
                         .count());
     }
 
-    private void runSync(PaymentDeviceConnectable deviceConnector, Device device, SyncCompleteListener listener, AtomicReference<CountDownLatch> executionLatch, AtomicReference<CountDownLatch> finishLatch) throws InterruptedException {
+    private void runSync(PaymentDeviceConnectable deviceConnector, Device device, AtomicReference<CountDownLatch> executionLatch, AtomicReference<CountDownLatch> finishLatch) throws InterruptedException {
         int syncCount = 10;
 
         for (int i = 0; i < syncCount; i++) {
@@ -242,33 +252,7 @@ public class DeviceParallelSyncTest extends TestActions {
             System.out.println("###############################################################################################################");
             System.out.println("");
 
-            /*
-                This test will emit three APDU packages for the newly boarded SE, therefore there should be 3 commits that show up... before
-                we run the next sync(), let's wait for new commits to show up
-             */
-            if (listener.getCommits().size() < 3) {
-                final CountDownLatch waitForCommitsLatch = new CountDownLatch(1);
-                do {
-                    String lastCommitId = commitId.get(device.getDeviceIdentifier());
-
-                    System.out.println(">>> deviceId:" + device.getDeviceIdentifier() + " lastCommitId:" + lastCommitId);
-
-                    device.getAllCommits(lastCommitId)
-                            .subscribe(commits -> {
-                                        System.out.println("commits found from " + lastCommitId + ": " + commits.getTotalResults());
-
-                                        if (commits.getTotalResults() > 0) {
-                                            waitForCommitsLatch.countDown();
-                                        }
-                                    },
-                                    throwable -> {
-                                        throwable.printStackTrace();
-                                        fail(throwable.getMessage());
-                                    });
-
-                    Thread.sleep(500);
-                } while (waitForCommitsLatch.getCount() > 0);
-            }
+            Thread.sleep(5000);
         }
 
         finishLatch.get().countDown();

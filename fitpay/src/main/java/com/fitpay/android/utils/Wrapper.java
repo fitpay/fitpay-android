@@ -23,4 +23,9 @@ public class Wrapper<T> {
     public Class getClazz() {
         return clazz;
     }
+
+    @Override
+    public String toString(){
+        return object != null ? object.toString() : "";
+    }
 }
