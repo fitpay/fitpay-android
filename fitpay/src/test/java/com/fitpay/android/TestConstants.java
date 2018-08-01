@@ -21,8 +21,7 @@ public final class TestConstants {
         return System.getProperty(PROPERTY_CLIENT_ID, "fp_webapp_pJkVp2Rl");
     }
 
-    static void configureFitpay() {
-        Context context = Mockito.mock(Context.class);
+    static void configureFitpay(Context context) {
         Mockito.when(context.getCacheDir()).thenReturn(new File(System.getProperty("java.io.tmpdir")));
 
         FitpayConfig.configure(context, getClientId());

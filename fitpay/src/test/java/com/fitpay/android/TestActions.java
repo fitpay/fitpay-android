@@ -12,7 +12,6 @@ import com.fitpay.android.api.models.card.CreditCard;
 import com.fitpay.android.api.models.card.CreditCardInfo;
 import com.fitpay.android.api.models.card.Reason;
 import com.fitpay.android.api.models.card.VerificationMethod;
-import com.fitpay.android.api.models.card.VerificationMethods;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.models.device.PaymentDevice;
@@ -20,6 +19,7 @@ import com.fitpay.android.api.models.security.OAuthToken;
 import com.fitpay.android.api.models.user.LoginIdentity;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.api.models.user.UserCreateRequest;
+import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.paymentdevice.impl.mock.SecureElementDataProvider;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.SecurityProvider;
@@ -58,6 +58,8 @@ public class TestActions {
 
     protected User user;
 
+    protected static Context mContext;
+
     @BeforeClass
     public static void init() {
         FPLog.clean(); //in tests only one log impl should be used
@@ -94,7 +96,7 @@ public class TestActions {
         FPLog.setShowHTTPLogs(false);
 
         SecurityProvider.getInstance().setProvider(new BouncyCastleProvider());
-        TestConstants.configureFitpay();
+        TestConstants.configureFitpay(mContext = Mockito.mock(Context.class));
 
         RxAndroidPlugins.getInstance().reset();
         RxAndroidPlugins.getInstance().registerSchedulersHook(new RxAndroidSchedulersHook() {
@@ -128,6 +130,8 @@ public class TestActions {
     @AfterClass
     public static void clear() {
         FPLog.clean();
+        mContext = null;
+        DeviceSyncManager.clean();
     }
 
     @After

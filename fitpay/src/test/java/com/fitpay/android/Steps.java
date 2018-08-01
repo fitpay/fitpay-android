@@ -1,5 +1,7 @@
 package com.fitpay.android;
 
+import android.content.Context;
+
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.CardInitiators;
@@ -26,6 +28,7 @@ import com.fitpay.android.utils.ValidationException;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +64,8 @@ public class Steps {
 
     protected Steps() {
         SecurityProvider.getInstance().setProvider(new BouncyCastleProvider());
-        TestConstants.configureFitpay();
+
+        TestConstants.configureFitpay(Mockito.mock(Context.class));
 
         userName = TestUtils.getRandomLengthString(5, 10) + "@"
                 + TestUtils.getRandomLengthString(5, 10) + "." + TestUtils.getRandomLengthString(4, 10);

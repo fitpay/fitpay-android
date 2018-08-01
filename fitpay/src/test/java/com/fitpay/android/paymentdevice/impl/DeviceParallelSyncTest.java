@@ -49,7 +49,6 @@ import static org.mockito.Mockito.when;
 
 public class DeviceParallelSyncTest extends TestActions {
 
-    private Context mContext;
     private DeviceSyncManager syncManager;
 
     private MockPaymentDeviceConnector firstMockPaymentDevice;
@@ -74,8 +73,6 @@ public class DeviceParallelSyncTest extends TestActions {
     @Before
     @Override
     public void testActionsSetup() throws Exception {
-        mContext = Mockito.mock(Context.class);
-
         /*-----user-----*/
         userName = TestUtils.getRandomLengthString(5, 10) + "@"
                 + TestUtils.getRandomLengthString(5, 10) + "." + TestUtils.getRandomLengthString(4, 10);
@@ -117,7 +114,7 @@ public class DeviceParallelSyncTest extends TestActions {
         NotificationManager.getInstance().addListenerToCurrentThread(secondSyncListener);
         /*-----second_device_end-----*/
 
-        syncManager = DeviceSyncManager.init(mContext);
+        syncManager = DeviceSyncManager.getInstance();
         syncManager.subscribe();
 
         syncManagerCallback = new DeviceSyncManagerCallback() {
@@ -127,6 +124,15 @@ public class DeviceParallelSyncTest extends TestActions {
 
             @Override
             public void syncRequestFailed(SyncRequest request) {
+                if (request.getConnector().id().equals(firstMockPaymentDevice.id())) {
+                    if (firstLatch != null) {
+                        firstLatch.get().countDown();
+                    }
+                } else if (request.getConnector().id().equals(secondMockPaymentDevice.id())) {
+                    if (secondLatch != null) {
+                        secondLatch.get().countDown();
+                    }
+                }
             }
 
             @Override
@@ -165,8 +171,6 @@ public class DeviceParallelSyncTest extends TestActions {
 
         NotificationManager.getInstance().removeListener(this.firstSyncListener);
         NotificationManager.getInstance().removeListener(this.secondSyncListener);
-
-        mContext = null;
     }
 
     private void initPrefs(String deviceId) {
@@ -189,7 +193,7 @@ public class DeviceParallelSyncTest extends TestActions {
 
         new Thread(() -> {
             try {
-                runSync(firstMockPaymentDevice, firstDevice, firstSyncListener, firstLatch, firstFinishLatch);
+                runSync(firstMockPaymentDevice, firstDevice, firstLatch, firstFinishLatch);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -197,7 +201,7 @@ public class DeviceParallelSyncTest extends TestActions {
 
         new Thread(() -> {
             try {
-                runSync(secondMockPaymentDevice, secondDevice, secondSyncListener, secondLatch, secondFinishLatch);
+                runSync(secondMockPaymentDevice, secondDevice, secondLatch, secondFinishLatch);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -223,7 +227,7 @@ public class DeviceParallelSyncTest extends TestActions {
                         .count());
     }
 
-    private void runSync(PaymentDeviceConnectable deviceConnector, Device device, SyncCompleteListener listener, AtomicReference<CountDownLatch> executionLatch, AtomicReference<CountDownLatch> finishLatch) throws InterruptedException {
+    private void runSync(PaymentDeviceConnectable deviceConnector, Device device, AtomicReference<CountDownLatch> executionLatch, AtomicReference<CountDownLatch> finishLatch) throws InterruptedException {
         int syncCount = 10;
 
         for (int i = 0; i < syncCount; i++) {

@@ -46,7 +46,6 @@ import static org.mockito.Mockito.when;
 
 public class DeviceSyncManagerTest extends TestActions {
 
-    private Context mContext;
     private DeviceSyncManager syncManager;
     protected MockPaymentDeviceConnector mockPaymentDevice;
 
@@ -61,7 +60,6 @@ public class DeviceSyncManagerTest extends TestActions {
     @Before
     @Override
     public void testActionsSetup() throws Exception {
-        mContext = Mockito.mock(Context.class);
         final SharedPreferences mockPrefs = Mockito.mock(SharedPreferences.class);
         final SharedPreferences.Editor mockEditor = Mockito.mock(SharedPreferences.Editor.class);
 
@@ -77,7 +75,7 @@ public class DeviceSyncManagerTest extends TestActions {
 
         when(mockEditor.commit()).thenReturn(true);
 
-        syncManager = DeviceSyncManager.init(mContext);
+        syncManager = DeviceSyncManager.getInstance();
         syncManager.subscribe();
 
         syncManagerCallback = new DeviceSyncManagerCallback() {
@@ -163,8 +161,6 @@ public class DeviceSyncManagerTest extends TestActions {
         }
 
         NotificationManager.getInstance().removeListener(this.listener);
-
-        mContext = null;
     }
 
     @Test

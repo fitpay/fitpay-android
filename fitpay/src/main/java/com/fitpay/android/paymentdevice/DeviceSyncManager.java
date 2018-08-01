@@ -1,8 +1,7 @@
 package com.fitpay.android.paymentdevice;
 
-import android.content.Context;
-
 import com.fitpay.android.api.callbacks.ApiCallback;
+import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.paymentdevice.callbacks.DeviceSyncManagerCallback;
 import com.fitpay.android.paymentdevice.models.SyncInfo;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
@@ -26,8 +25,6 @@ public class DeviceSyncManager {
 
     private static DeviceSyncManager sInstance;
 
-    private final Context mContext;
-
     private final BlockingQueue<Runnable> requests;
     private final List<DeviceSyncManagerCallback> syncManagerCallbacks = new CopyOnWriteArrayList<>();
 
@@ -43,30 +40,30 @@ public class DeviceSyncManager {
     private boolean subscribed;
 
     /**
-     * Initialize.
-     * <p>
-     * You should call {@link #subscribe()} to start listening to events and {@link #unsubscribe()} if you don't need it anymore
-     *
-     * @param context app context
+     * Get DeviceSyncManager instance
+     * @return instance
      */
-    public static DeviceSyncManager init(Context context) {
-        if (sInstance == null) {
-            sInstance = new DeviceSyncManager(context);
+    public static DeviceSyncManager getInstance() {
+        if(FitpayConfig.appContext == null){
+            throw new IllegalStateException("FitpayConfig is not initialized.");
         }
 
-        return getInstance();
-    }
-
-    public static DeviceSyncManager getInstance() {
         if (sInstance == null) {
-            throw new IllegalStateException("DeviceSyncManager is not initialized. Call init() at first");
+            sInstance = new DeviceSyncManager();
         }
 
         return sInstance;
     }
 
-    private DeviceSyncManager(Context context) {
-        this.mContext = context;
+    /**
+     * Clean.
+     * Used inside tests to initialize with different context.
+     */
+    public static void clean(){
+        sInstance = null;
+    }
+
+    private DeviceSyncManager() {
         queueSize = 10;
         threadsCount = 2;
         requests = new ArrayBlockingQueue<>(queueSize);
@@ -83,7 +80,7 @@ public class DeviceSyncManager {
 
             NotificationManager.getInstance().addListenerToCurrentThread(mSyncListener);
 
-            worker = new SyncThreadExecutor(mContext, syncManagerCallbacks, queueSize, threadsCount, 5, TimeUnit.MINUTES, requests);
+            worker = new SyncThreadExecutor(FitpayConfig.appContext, syncManagerCallbacks, queueSize, threadsCount, 5, TimeUnit.MINUTES, requests);
         }
     }
 

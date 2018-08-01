@@ -1,10 +1,13 @@
 package com.fitpay.android;
 
+import android.content.Context;
+
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.utils.FPLog;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -49,7 +52,7 @@ public class PlatformConfigTest {
         });
         FPLog.setShowHTTPLogs(false);
 
-        TestConstants.configureFitpay();
+        TestConstants.configureFitpay(Mockito.mock(Context.class));
     }
 
     @Test
