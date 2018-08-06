@@ -1,8 +1,7 @@
-# FitPay Android SDK - README.md
+# FitPay Android SDK
 
 [![GitHub license](https://img.shields.io/github/license/fitpay/fitpay-ios-sdk.svg)](https://github.com/fitpay/fitpay-ios-sdk/blob/develop/LICENSE)
-[![Build Status](https://travis-ci.org/fitpay/fitpay-android-sdk.svg?branch=develop)](https://travis-ci.org/fitpay/fitpay-android-sdk)
-
+[![Build Status](https://travis-ci.com/fitpay/fitpay-android-sdk.svg?branch=develop)](https://travis-ci.com/fitpay/fitpay-android-sdk)
 
 ## Building the library
 
