@@ -168,8 +168,6 @@ public final class SyncWorkerTask implements Runnable {
         }
 
         FPLog.d(TAG, "sync initiated from thread: " + Thread.currentThread() + ", " + Thread.currentThread().getName() + ", syncRequest: " + syncRequest);
-
-        syncDevice();
     }
 
     private void syncDevice() {
@@ -350,6 +348,8 @@ public final class SyncWorkerTask implements Runnable {
                     FPLog.d(TAG, "sync started: " + syncEvent);
                     syncProcess = new SyncProcess(syncRequest);
                     syncProcess.start();
+
+                    syncDevice();
                     break;
 
                 case States.COMPLETED:
@@ -385,6 +385,10 @@ public final class SyncWorkerTask implements Runnable {
                 return;
             }
 
+            if(syncProcess.isCommitProcessed(commitSuccess.getCommitId())){
+                return;
+            }
+
             syncProcess.finishCommitProcessing();
 
             FPLog.i(SYNC_DATA, "Commit Success: " + commitSuccess);
@@ -411,6 +415,10 @@ public final class SyncWorkerTask implements Runnable {
         public void onCommitFailed(CommitFailed commitFailed) {
             if (!commitFailed.getCommitId().equals(syncProcess.getPendingCommitId())) {
                 FPLog.w(SYNC_DATA, "Unexpected CommitFailed " + commitFailed + " received, expected commitId " + syncProcess.getPendingCommitId());
+                return;
+            }
+
+            if(syncProcess.isCommitProcessed(commitFailed.getCommitId())){
                 return;
             }
 
@@ -441,6 +449,10 @@ public final class SyncWorkerTask implements Runnable {
         public void onCommitSkipped(CommitSkipped commitSkipped) {
             if (!commitSkipped.getCommitId().equals(syncProcess.getPendingCommitId())) {
                 FPLog.w(SYNC_DATA, "Unexpected CommitSkipped " + commitSkipped + " received, expected commitId " + syncProcess.getPendingCommitId());
+                return;
+            }
+
+            if(syncProcess.isCommitProcessed(commitSkipped.getCommitId())){
                 return;
             }
 

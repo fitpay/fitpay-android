@@ -445,7 +445,8 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
 
             switch (syncEvent.getState()) {
                 case States.COMPLETED:
-                case States.COMPLETED_NO_UPDATES: {
+                case States.COMPLETED_NO_UPDATES:
+                case States.SKIPPED:{
                     if (callbackId != null) {
                         onTaskSuccess(EventCallback.SYNC_COMPLETED, callbackId);
                     }
