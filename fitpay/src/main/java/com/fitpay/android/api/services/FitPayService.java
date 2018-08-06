@@ -9,8 +9,7 @@ import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.KeysManager;
 import com.fitpay.android.utils.RxBus;
 import com.google.gson.JsonElement;
-
-import java.io.IOException;
+import com.google.gson.JsonObject;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -19,7 +18,6 @@ import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.schedulers.Schedulers;
-
 
 final public class FitPayService extends BaseClient {
 
@@ -31,8 +29,7 @@ final public class FitPayService extends BaseClient {
     private OAuthToken mAuthToken;
     private boolean expiredNotificationSent;
 
-    private static final String PLATFORM_CONFIG_URL = "http://s3.amazonaws.com/crypto-web-prod/mobile/config.json";
-    private PlatformConfig platformConfig;
+    private PlatformConfig platformConfig = new PlatformConfig();
 
     public FitPayService(String apiBaseUrl) {
 
@@ -57,11 +54,7 @@ final public class FitPayService extends BaseClient {
                     expiredNotificationSent = true;
                 }
 
-                final String value = new StringBuilder()
-                        .append(AUTHORIZATION_BEARER)
-                        .append(" ")
-                        .append(mAuthToken.getAccessToken())
-                        .toString();
+                final String value = AUTHORIZATION_BEARER + " " + mAuthToken.getAccessToken();
 
                 builder.header(HEADER_AUTHORIZATION, value);
             }
@@ -110,19 +103,20 @@ final public class FitPayService extends BaseClient {
 
         rx.Observable.defer(() -> {
             try {
-                retrofit2.Response<JsonElement> result = mAPIClient.get(PLATFORM_CONFIG_URL).execute();
+                retrofit2.Response<JsonElement> response = mAPIClient.getPlatformConfig().execute();
 
-                JsonElement body = result.body();
-
-                if (body.getAsJsonObject().has("android")) {
-                    platformConfig = Constants.getGson().fromJson(body.getAsJsonObject().getAsJsonObject("android"), PlatformConfig.class);
+                if (response.isSuccessful() && response.errorBody() == null) {
+                    JsonObject body = response.body().getAsJsonObject();
+                    if (body.has("android")) {
+                        platformConfig = Constants.getGson().fromJson(body.getAsJsonObject("android"), PlatformConfig.class);
+                    }
                 } else {
-                    FPLog.d("platformConfiguration " + body.toString() + " from " + PLATFORM_CONFIG_URL + " does not have an android section, using defaults");
+                    FPLog.e("error getting platform configuration from platform, using defaults");
                 }
             } catch (Exception e) {
-                FPLog.e("error getting platform configuration from " + PLATFORM_CONFIG_URL + ", using defaults", e);
-                platformConfig = new PlatformConfig();
+                FPLog.e("error getting platform configuration from platform, using defaults", e);
             }
+
             return rx.Observable.empty();
         }).subscribeOn(Schedulers.io()).toBlocking().subscribe();
 

@@ -1,5 +1,6 @@
 package com.fitpay.android.api.services;
 
+import com.fitpay.android.api.models.PlatformConfig;
 import com.fitpay.android.api.models.card.VerificationMethods;
 import com.fitpay.android.api.models.device.ResetDeviceResult;
 import com.fitpay.android.api.models.issuer.Issuers;
@@ -31,6 +32,13 @@ public interface FitPayClient {
      */
     @GET("users/{userId}")
     Call<User> getUser(@Path("userId") String userId);
+
+    /**
+     * Retrieves the platform configuration.
+     *
+     */
+    @GET("mobile/config")
+    Call<JsonElement> getPlatformConfig();
 
     /**
      * Provides a fresh list of available verification methods for the credit card
