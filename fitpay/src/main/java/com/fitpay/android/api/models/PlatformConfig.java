@@ -1,29 +1,36 @@
 package com.fitpay.android.api.models;
 
 /**
- * Created by ssteveli on 4/2/18.
- */
-
-/**
  * This model object represents the centralized platform configuration which FitPay can leverage
  * for dynamic SDK control of features/functionality.
  */
 public class PlatformConfig {
     private boolean userEventStreamsEnabled;
 
+    /**
+     * Can be used disable the user event stream from being initialized in the sdk
+     * server defaults to true
+     *
+     * @return userEventStreamsEnabled
+     */
     public boolean isUserEventStreamsEnabled() {
         return userEventStreamsEnabled;
     }
 
+    /**
+     * You should not set event streams enabled as it is returned from the platform
+     *
+     * @deprecated as of release 1.0.1
+     *
+     * @param userEventStreamsEnabled sets userEventStreamsEnabled
+     */
+    @Deprecated
     public void setUserEventStreamsEnabled(boolean userEventStreamsEnabled) {
         this.userEventStreamsEnabled = userEventStreamsEnabled;
     }
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("PlatformConfig{");
-        sb.append("userEventStreamsEnabled=").append(userEventStreamsEnabled);
-        sb.append('}');
-        return sb.toString();
+        return "PlatformConfig{" + "userEventStreamsEnabled=" + userEventStreamsEnabled + "}";
     }
 }
