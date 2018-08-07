@@ -8,6 +8,7 @@ import android.util.Log;
 import com.fitpay.android.paymentdevice.callbacks.DeviceSyncManagerCallback;
 import com.fitpay.android.paymentdevice.constants.States;
 import com.fitpay.android.paymentdevice.enums.Sync;
+import com.fitpay.android.paymentdevice.models.SyncInfo;
 import com.fitpay.android.paymentdevice.models.SyncProcess;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
 import com.fitpay.android.utils.FPLog;
@@ -169,6 +170,16 @@ public class SyncThreadExecutor extends ThreadPoolExecutor {
 
         if (syncRequest.getDevice() == null) {
             errorMsg = "No payment device connector configured in syncRequest: " + syncId;
+        }
+
+        SyncInfo syncInfo = syncRequest.getSyncInfo();
+        if (syncInfo != null){
+            String userId = syncInfo.getUserId();
+            String deviceId = syncInfo.getDeviceId();
+            if((!StringUtils.isEmpty(userId) && !userId.equals(syncRequest.getUser().getId())) ||
+                    (!StringUtils.isEmpty(deviceId) && !deviceId.equals(syncRequest.getDevice().getDeviceIdentifier()))){
+                errorMsg = "Skip that sync. It was from another connector";
+            }
         }
 
         if (!StringUtils.isEmpty(errorMsg)) {
