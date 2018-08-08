@@ -181,7 +181,6 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
         }
 
         return new Device.Builder()
-                .setDeviceIdentifier(UUID.randomUUID().toString())
                 .setDeviceType(DeviceTypes.WATCH)
                 .setManufacturerName("Fitpay")
                 .setDeviceName("PSPS")
