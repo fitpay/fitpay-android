@@ -3,18 +3,11 @@ package com.fitpay.android.paymentdevice.interfaces;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.fitpay.android.api.enums.CommitTypes;
 import com.fitpay.android.api.models.apdu.ApduCommand;
 import com.fitpay.android.api.models.apdu.ApduExecutionResult;
-import com.fitpay.android.api.models.card.TopOfWallet;
-import com.fitpay.android.api.models.device.Device;
-import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.paymentdevice.CommitHandler;
+import com.fitpay.android.paymentdevice.enums.CommitResult;
 import com.fitpay.android.paymentdevice.enums.Connection;
-import com.fitpay.android.paymentdevice.models.SyncInfo;
-import com.fitpay.android.paymentdevice.models.SyncRequest;
-
-import java.util.List;
 
 /**
  * abstract interface of wearable payment device
@@ -88,7 +81,7 @@ public interface PaymentDeviceConnectable extends CommitHandler {
      * @param type  commit execution result type
      * @param error error
      */
-    void commitProcessed(@CommitTypes.Type int type, @Nullable final Throwable error);
+    void commitProcessed(@CommitResult.Type int type, @Nullable final Throwable error);
 
     @Connection.State
     int getState();
