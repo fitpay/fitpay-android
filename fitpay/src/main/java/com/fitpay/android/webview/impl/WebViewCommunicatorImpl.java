@@ -2,7 +2,6 @@ package com.fitpay.android.webview.impl;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
@@ -385,7 +384,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                     .build()
                     .send();
         } else {
-            Log.e(TAG, "Can't create syncRequest. PaymentDeviceConnector is missing");
+            FPLog.e(TAG, "Can't create syncRequest. PaymentDeviceConnector is missing");
         }
     }
 

@@ -6,12 +6,12 @@ import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.RxBus;
 import com.fitpay.android.webview.enums.RtmType;
 import com.fitpay.android.webview.events.RtmMessageResponse;
@@ -49,7 +49,7 @@ public class FitpayWebClient extends WebViewClient {
      */
     private boolean handleUri(@NonNull WebView view, @NonNull final Uri uri) {
         final String uriToString = uri.toString();
-        Log.d(TAG, "handleUri\n" + uriToString);
+        FPLog.d(TAG, "handleUri\n" + uriToString);
 
         // Launch the dial action.
         if (uriToString.startsWith("tel:")) {

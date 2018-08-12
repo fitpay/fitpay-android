@@ -14,14 +14,14 @@ import java.util.List;
  */
 
 public class FPLog {
-    public static final int NONE = 4;
+    public static final int VERBOSE = 4;
     public static final int DEBUG = 3;
     public static final int INFO = 2;
     public static final int WARNING = 1;
     public static final int ERROR = 0;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({NONE, DEBUG, INFO, WARNING, ERROR})
+    @IntDef({VERBOSE, DEBUG, INFO, WARNING, ERROR})
     public @interface LogLevel {
     }
 
@@ -34,6 +34,18 @@ public class FPLog {
 
     public static void clean() {
         logs.clear();
+    }
+
+    public static void v(String text) {
+        v(Constants.FIT_PAY_TAG, text);
+    }
+
+    public static void v(String tag, String text) {
+        for (ILog l : logs) {
+            if (l.logLevel() >= VERBOSE) {
+                l.v(tag, text);
+            }
+        }
     }
 
     public static void d(String text) {
@@ -108,6 +120,8 @@ public class FPLog {
     }
 
     public interface ILog {
+        void v(String tag, String text);
+
         void d(String tag, String text);
 
         void i(String tag, String text);

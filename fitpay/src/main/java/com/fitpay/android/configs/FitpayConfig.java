@@ -2,10 +2,10 @@ package com.fitpay.android.configs;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.utils.Constants;
+import com.fitpay.android.utils.FPLog;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -110,7 +110,7 @@ public final class FitpayConfig {
             BufferedReader in = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
             configModel = Constants.getGson().fromJson(in, FitpayConfigModel.class);
         } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
+            FPLog.e(TAG, e.getMessage());
         }
 
         if (configModel == null) {

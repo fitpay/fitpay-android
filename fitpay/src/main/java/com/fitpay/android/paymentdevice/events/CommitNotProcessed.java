@@ -24,7 +24,7 @@ abstract class CommitNotProcessed extends CommitEvent {
 
     @Override
     public String toString() {
-        return "CommitSkipped{" +
+        return getClass().getSimpleName() + "{" +
                 "commitId='" + getCommitId() + '\'' +
                 ", commitType='" + getCommitType() + '\'' +
                 ", errorCode='" + getErrorCode() + '\'' +

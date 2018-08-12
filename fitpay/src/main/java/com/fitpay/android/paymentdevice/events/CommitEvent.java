@@ -43,7 +43,7 @@ abstract class CommitEvent {
 
     @Override
     public String toString() {
-        return "CommitSuccess{" +
+        return getClass().getSimpleName() + "{" +
                 "commitId='" + getCommitId() + '\'' +
                 ", createdTs='" + getCreatedTs() + '\'' +
                 ", commitType='" + getCommitType() + '\'' +

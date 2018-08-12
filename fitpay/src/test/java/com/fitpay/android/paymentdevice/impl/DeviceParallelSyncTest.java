@@ -2,7 +2,6 @@ package com.fitpay.android.paymentdevice.impl;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.fitpay.android.TestActions;
 import com.fitpay.android.TestUtils;
@@ -12,8 +11,6 @@ import com.fitpay.android.api.models.user.UserCreateRequest;
 import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.paymentdevice.callbacks.DeviceSyncManagerCallback;
 import com.fitpay.android.paymentdevice.constants.States;
-import com.fitpay.android.paymentdevice.events.CommitFailed;
-import com.fitpay.android.paymentdevice.events.CommitSkipped;
 import com.fitpay.android.paymentdevice.events.CommitSuccess;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
@@ -38,7 +35,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
