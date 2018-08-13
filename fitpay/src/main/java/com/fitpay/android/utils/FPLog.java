@@ -14,6 +14,8 @@ import java.util.List;
  */
 
 public class FPLog {
+    @Deprecated
+    public static final int NONE = -1;
     public static final int VERBOSE = 4;
     public static final int DEBUG = 3;
     public static final int INFO = 2;
@@ -21,7 +23,7 @@ public class FPLog {
     public static final int ERROR = 0;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({VERBOSE, DEBUG, INFO, WARNING, ERROR})
+    @IntDef({NONE, VERBOSE, DEBUG, INFO, WARNING, ERROR})
     public @interface LogLevel {
     }
 
