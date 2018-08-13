@@ -3,10 +3,10 @@ package com.fitpay.android.paymentdevice.utils;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.ArrayMap;
-import android.util.Log;
 
 import com.fitpay.android.paymentdevice.impl.PaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
+import com.fitpay.android.utils.FPLog;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -56,16 +56,16 @@ public class PaymentDeviceConnectorManager {
     public void addConnector(String id, PaymentDeviceConnectable connector) {
         for (PaymentDeviceConnectable value : connectors.values()) {
             if (value == connector) {
-                Log.e(TAG, "connector has been added already");
+                FPLog.e(TAG, "connector has been added already");
                 return;
             }
         }
 
         if (connectors.containsKey(id)) {
-            Log.e(TAG, "id:" + id + " already exist");
+            FPLog.e(TAG, "id:" + id + " already exist");
 
             if (connectors.get(id) != connector) {
-                Log.e(TAG, "id:" + id + " uses another connector");
+                FPLog.e(TAG, "id:" + id + " uses another connector");
             }
 
             return;

@@ -72,7 +72,7 @@ final public class FitPayService extends BaseClient {
 
                 return response;
             } finally {
-                FPLog.d(String.format("%s %s %s %dms",
+                printLog(String.format("%s %s %s %dms",
                         chain.request().method(),
                         chain.request().url(),
                         response != null ? response.code() : "null",

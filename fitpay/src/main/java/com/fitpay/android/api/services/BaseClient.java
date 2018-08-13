@@ -26,6 +26,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
  * Created by tgs on 5/20/16.
  */
 public class BaseClient {
+    protected static final String TAG = "API_REQUEST";
+
     protected static final String FP_KEY_ID = "fp-key-id";
     protected static final String FP_KEY_SDK_VER = "X-FitPay-SDK";
 
@@ -48,7 +50,7 @@ public class BaseClient {
                 .retryOnConnectionFailure(true);
 
         if (enabledLogging) {
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor(BaseClient::printLog);
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
             builder = builder.addInterceptor(logging);
@@ -100,5 +102,11 @@ public class BaseClient {
         }
 
         return client;
+    }
+
+    protected static void printLog(String message){
+        if(FPLog.showHttpLogs()){
+            FPLog.v(TAG, message);
+        }
     }
 }

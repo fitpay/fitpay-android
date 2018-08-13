@@ -62,39 +62,6 @@ public class TestActions {
 
     @BeforeClass
     public static void init() {
-        FPLog.clean(); //in tests only one log impl should be used
-        FPLog.addLogImpl(new FPLog.ILog() {
-            @Override
-            public void d(String tag, String text) {
-                System.out.println(tag + " DEBUG (" + Thread.currentThread().getName() + "): " + text);
-            }
-
-            @Override
-            public void i(String tag, String text) {
-                System.out.println(tag + " INFO(" + Thread.currentThread().getName() + "): " + text);
-            }
-
-            @Override
-            public void w(String tag, String text) {
-                System.out.println(tag + " WARN(" + Thread.currentThread().getName() + "): " + text);
-            }
-
-            @Override
-            public void e(String tag, Throwable throwable) {
-                System.out.println(tag + " ERROR (" + Thread.currentThread().getName() + "): " + tag);
-
-                if (throwable != null) {
-                    throwable.printStackTrace();
-                }
-            }
-
-            @Override
-            public int logLevel() {
-                return FPLog.DEBUG;
-            }
-        });
-        FPLog.setShowHTTPLogs(false);
-
         SecurityProvider.getInstance().setProvider(new BouncyCastleProvider());
         TestConstants.configureFitpay(mContext = Mockito.mock(Context.class));
 

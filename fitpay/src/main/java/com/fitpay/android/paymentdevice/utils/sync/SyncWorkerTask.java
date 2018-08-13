@@ -371,6 +371,9 @@ public final class SyncWorkerTask implements Runnable {
                     processNextCommit();
                     break;
 
+                case States.IN_PROGRESS:
+                    break;
+
                 default:
                     FPLog.d(TAG, "unrecognized/handled syncEvent: " + syncEvent);
                     break;

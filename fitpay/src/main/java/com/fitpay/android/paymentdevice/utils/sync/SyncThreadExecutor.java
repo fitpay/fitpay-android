@@ -1,9 +1,7 @@
 package com.fitpay.android.paymentdevice.utils.sync;
 
 import android.content.Context;
-import android.os.Debug;
 import android.os.Handler;
-import android.util.Log;
 
 import com.fitpay.android.paymentdevice.callbacks.DeviceSyncManagerCallback;
 import com.fitpay.android.paymentdevice.constants.States;
@@ -117,7 +115,7 @@ public class SyncThreadExecutor extends ThreadPoolExecutor {
                     deviceQueue.add(request);
                     syncBuffer.put(deviceId, deviceQueue);
                 } else {
-                    Log.w(TAG, "Queue is full");
+                    FPLog.w(TAG, "Queue is full");
                 }
             } else {
                 execute(new SyncWorkerTask(mContext, syncManagerCallbacks, request));
