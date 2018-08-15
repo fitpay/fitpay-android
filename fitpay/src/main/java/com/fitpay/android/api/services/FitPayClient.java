@@ -1,6 +1,5 @@
 package com.fitpay.android.api.services;
 
-import com.fitpay.android.api.models.PlatformConfig;
 import com.fitpay.android.api.models.card.VerificationMethods;
 import com.fitpay.android.api.models.device.ResetDeviceResult;
 import com.fitpay.android.api.models.issuer.Issuers;
@@ -35,7 +34,6 @@ public interface FitPayClient {
 
     /**
      * Retrieves the platform configuration.
-     *
      */
     @GET("mobile/config")
     Call<JsonElement> getPlatformConfig();
@@ -105,7 +103,7 @@ public interface FitPayClient {
     /**
      * Reset of payment device back to a factory state.
      *
-     * @param userId user id
+     * @param userId   user id
      * @param deviceId device id
      */
     @POST("resetDeviceTasks")
