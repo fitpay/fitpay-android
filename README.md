@@ -2,6 +2,7 @@
 
 [![GitHub license](https://img.shields.io/github/license/fitpay/fitpay-ios-sdk.svg)](https://github.com/fitpay/fitpay-ios-sdk/blob/develop/LICENSE)
 [![Build Status](https://travis-ci.com/fitpay/fitpay-android-sdk.svg?branch=develop)](https://travis-ci.com/fitpay/fitpay-android-sdk)
+[![Bintray](https://api.bintray.com/packages/fit-pay/maven/com.fitpay/images/download.svg)](https://bintray.com/fit-pay/maven/com.fitpay)
 
 ## Building the library
 
