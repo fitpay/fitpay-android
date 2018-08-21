@@ -2,6 +2,7 @@ package com.fitpay.android.api.models.card;
 
 import com.fitpay.android.a2averification.A2AContext;
 import com.fitpay.android.api.enums.VerificationMethod;
+import com.fitpay.android.api.enums.VerificationState;
 import com.fitpay.android.api.models.BaseModel;
 
 /**
@@ -10,9 +11,13 @@ import com.fitpay.android.api.models.BaseModel;
 abstract class VerificationMethodModel extends BaseModel {
 
     protected String verificationId;
+
+    @VerificationState.Type
     protected String state;
+
     @VerificationMethod.Type
     protected String methodType;
+
     protected String value;
     protected String verificationResult;
     protected long createdTsEpoch;
@@ -24,6 +29,7 @@ abstract class VerificationMethodModel extends BaseModel {
         return verificationId;
     }
 
+    @VerificationState.Type
     public String getState() {
         return state;
     }
@@ -56,4 +62,5 @@ abstract class VerificationMethodModel extends BaseModel {
     public A2AContext getAppToAppContext() {
         return appToAppContext;
     }
+
 }
