@@ -20,7 +20,7 @@ public class PlatformConfig {
     /**
      * You should not set event streams enabled as it is returned from the platform
      *
-     * @deprecated as of release 1.0.1
+     * @deprecated as of v1.0.1
      *
      * @param userEventStreamsEnabled sets userEventStreamsEnabled
      */
