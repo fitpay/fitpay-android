@@ -23,6 +23,9 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
+import static net.bytebuddy.matcher.ElementMatchers.anyOf;
+import static net.bytebuddy.matcher.ElementMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
 /**
@@ -82,7 +85,7 @@ public class CreditCardTest2 extends TestActions {
         CreditCard createdCard = callback.getResult();
 
         assertNull("created card",createdCard);
-        assertEquals("error code", 500, callback.getErrorCode());
+        assertThat("error code",callback.getErrorCode() == 400 || callback.getErrorCode() == 500);
     }
 
     @Test

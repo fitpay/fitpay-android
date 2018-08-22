@@ -2,17 +2,13 @@ buildscript {
     repositories {
         jcenter()
     }
-
-    dependencies {
-        classpath 'de.mobilej.unmock:UnMockPlugin:0.6.4'
-    }
 }
 
 apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'maven'
-apply plugin: 'de.mobilej.unmock'
+
 
 group = 'com.fitpay.android'
 version = '1.0.2'
@@ -54,7 +50,7 @@ uploadArchives {
 
 android {
     compileSdkVersion 28
-    buildToolsVersion '28.0.1'
+    buildToolsVersion '28.0.2'
 
     defaultConfig {
         minSdkVersion 19
@@ -110,12 +106,6 @@ ext {
 
 configurations {
     javadocDeps
-}
-
-unMock {
-    keepStartingWith "libcore."
-    keepStartingWith "android.net.Uri"
-    keepAndRename "java.nio.charset.Charsets" to "xjava.nio.charset.Charsets"
 }
 
 dependencies {
