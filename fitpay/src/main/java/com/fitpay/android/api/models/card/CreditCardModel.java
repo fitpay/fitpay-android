@@ -14,8 +14,13 @@ abstract class CreditCardModel extends BaseModel {
 
     protected String creditCardId;
     protected String userId;
+
+    /**
+     * @deprecated as of v1.0.3
+     */
     @SerializedName("default")
     protected Boolean defaultX;
+
     protected Long createdTsEpoch;
     protected Long lastModifiedTsEpoch;
     protected String state;
@@ -47,6 +52,9 @@ abstract class CreditCardModel extends BaseModel {
         return userId;
     }
 
+    /**
+     * @deprecated as of v1.0.3 - will stop being returned from the server
+     */
     public boolean isDefault() {
         if (null == defaultX) {
             return false;
@@ -134,4 +142,5 @@ abstract class CreditCardModel extends BaseModel {
     public String getTokenLastFour() {
         return tokenLastFour;
     }
+
 }
