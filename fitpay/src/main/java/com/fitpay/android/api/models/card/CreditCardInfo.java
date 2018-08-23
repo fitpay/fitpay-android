@@ -3,6 +3,7 @@ package com.fitpay.android.api.models.card;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.fitpay.android.webview.models.IdVerification;
 import com.google.gson.Gson;
@@ -174,7 +175,7 @@ public final class CreditCardInfo implements Parcelable {
          * @param cvv cards's cvv2 code. string with 3 digits only
          * @return a reference to this {@code Builder} object to fulfill the "Builder" pattern
          */
-        public Builder setCVV(@NonNull String cvv) {
+        public Builder setCVV(@Nullable String cvv) {
             this.cvv = cvv;
             return this;
         }
@@ -197,11 +198,16 @@ public final class CreditCardInfo implements Parcelable {
          * @param expMonth cards's expiration month
          * @return a reference to this {@code Builder} object to fulfill the "Builder" pattern
          */
-        public Builder setExpDate(int expYear, int expMonth) throws IllegalFormatException {
-
-            Calendar calendar = Calendar.getInstance();
-            if (expYear < calendar.get(Calendar.YEAR) && expMonth < calendar.get(Calendar.MONTH) + 1) {
-                throw new IllegalArgumentException("incorrect expiration date");
+        public Builder setExpDate(Integer expYear, Integer expMonth) throws IllegalFormatException {
+            if (expYear != null) {
+                Calendar calendar = Calendar.getInstance();
+                if (expMonth != null && expYear < calendar.get(Calendar.YEAR) && expMonth < calendar.get(Calendar.MONTH) + 1) {
+                    throw new IllegalArgumentException("Incorrect expiration date. Date is in the past.");
+                } else if (expMonth == null && expYear < calendar.get(Calendar.YEAR)) {
+                    throw new IllegalArgumentException("Incorrect expiration date. Year is in the past.");
+                }
+            } else if (expMonth != null) {
+                throw new IllegalArgumentException("Incorrect expiration date. Month was specified without year.");
             }
 
             this.expYear = expYear;
