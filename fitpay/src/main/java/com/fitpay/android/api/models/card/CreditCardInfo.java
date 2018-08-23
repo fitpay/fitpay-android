@@ -176,6 +176,10 @@ public final class CreditCardInfo implements Parcelable {
          * @return a reference to this {@code Builder} object to fulfill the "Builder" pattern
          */
         public Builder setCVV(@Nullable String cvv) {
+            if (cvv != null && cvv.equals("")) {
+                cvv = null;
+            }
+
             this.cvv = cvv;
             return this;
         }
