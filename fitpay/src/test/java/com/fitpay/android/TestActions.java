@@ -184,6 +184,30 @@ public class TestActions {
                 .build();
     }
 
+    protected CreditCardInfo getTestCreditCardInfo(String pan, String cvv, Integer expMonth, Integer expYear) {
+        String cardName = "TEST CARD";
+        String city = "Boulder";
+        String state = "CO";
+        String postalCode = "80302";
+        String countryCode = "US";
+        String street1 = "1035 Pearl St";
+
+        Address address = new Address();
+        address.setCity(city);
+        address.setState(state);
+        address.setPostalCode(postalCode);
+        address.setCountryCode(countryCode);
+        address.setStreet1(street1);
+
+        return new CreditCardInfo.Builder()
+                .setCVV(cvv)
+                .setPAN(pan)
+                .setExpDate(expYear, expMonth)
+                .setAddress(address)
+                .setName(cardName)
+                .build();
+    }
+
     public Device getTestDevice() {
         return getTestDevice(true);
     }

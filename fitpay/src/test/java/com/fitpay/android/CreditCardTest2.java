@@ -60,19 +60,6 @@ public class CreditCardTest2 extends TestActions {
         //assertEquals(-1, callback.getErrorCode());
     }
 
-    protected void verifyCardContents(CreditCardInfo creditCardInfo, CreditCard createdCard) {
-        assertNotNull("card not created",createdCard);
-        assertEquals("cvv should be masked", "###", createdCard.getCVV());
-        assertEquals("exp month", creditCardInfo.getExpMonth(), createdCard.getExpMonth());
-        assertEquals("exp year", creditCardInfo.getExpYear(), createdCard.getExpYear());
-        assertEquals("street 1", creditCardInfo.getAddress().getStreet1(), createdCard.getAddress().getStreet1());
-        assertEquals("postal code", creditCardInfo.getAddress().getPostalCode(), createdCard.getAddress().getPostalCode());
-        assertNotNull("card meta data should be populated", createdCard.getCardMetaData());
-        assertNotNull("brand logo should be populated", createdCard.getCardMetaData().getBrandLogo());
-        assertTrue("brand logo should have at least one asset", createdCard.getCardMetaData().getBrandLogo().size() > 0);
-        assertEquals("first brand logo mime type", "image/png", createdCard.getCardMetaData().getBrandLogo().get(0).getMimeType());
-    }
-
     @Test
     public void testCantAddCreditCardWithNoDevice() throws Exception {
         String pan = "9999545454545454";
@@ -452,6 +439,123 @@ public class CreditCardTest2 extends TestActions {
         Transaction transaction = transactions.getResults().get(0);
         Transaction retreivedTransaction = getTransaction(transaction);
         assertEquals("should be the same transaction", transaction.getTransactionId(), retreivedTransaction.getTransactionId());
+    }
 
+    @Test
+    public void canAddCreditCardWithoutExpOrCvv() throws Exception {
+        Device device = getTestDevice();
+        Device createdDevice = createDevice(user, device);
+        assertNotNull("created device", createdDevice);
+
+        Collections.DeviceCollection devices = getDevices(user);
+        assertNotNull("devices collection should not be null", devices);
+        assertEquals("should have one device", 1, devices.getTotalResults());
+
+        String pan = "9999504454545450";
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan, null, null, null);
+
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
+
+        verifyCardContents(creditCardInfo, createdCard);
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        ResultProvidingCallback<Image> callback = new ResultProvidingCallback<>(latch);
+        createdCard.getCardMetaData().getBrandLogo().get(0).self(callback);
+        latch.await(TIMEOUT, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void canAddCreditCardWithoutCvv() throws Exception {
+        Device device = getTestDevice();
+        Device createdDevice = createDevice(user, device);
+        assertNotNull("created device", createdDevice);
+
+        Collections.DeviceCollection devices = getDevices(user);
+        assertNotNull("devices collection should not be null", devices);
+        assertEquals("should have one device", 1, devices.getTotalResults());
+
+        String pan = "9999504454545450";
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan, null, 10, 2018);
+
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
+
+        verifyCardContents(creditCardInfo, createdCard);
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        ResultProvidingCallback<Image> callback = new ResultProvidingCallback<>(latch);
+        createdCard.getCardMetaData().getBrandLogo().get(0).self(callback);
+        latch.await(TIMEOUT, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void canAddCardWithYearAndNoMonth() throws Exception {
+        Device device = getTestDevice();
+        Device createdDevice = createDevice(user, device);
+        assertNotNull("created device", createdDevice);
+
+        Collections.DeviceCollection devices = getDevices(user);
+        assertNotNull("devices collection should not be null", devices);
+        assertEquals("should have one device", 1, devices.getTotalResults());
+
+        String pan = "9999504454545450";
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan, "133", null, 2022);
+
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
+
+        verifyCardContents(creditCardInfo, createdCard);
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        ResultProvidingCallback<Image> callback = new ResultProvidingCallback<>(latch);
+        createdCard.getCardMetaData().getBrandLogo().get(0).self(callback);
+        latch.await(TIMEOUT, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void expirationValidationNegativeTests() throws Exception {
+        Device device = getTestDevice();
+        Device createdDevice = createDevice(user, device);
+        assertNotNull("created device", createdDevice);
+
+        Collections.DeviceCollection devices = getDevices(user);
+        assertNotNull("devices collection should not be null", devices);
+        assertEquals("should have one device", 1, devices.getTotalResults());
+
+        String pan = "9999504454545450";
+        try {
+            CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan, "133", 11, null);
+        } catch (Exception e) {
+            assertTrue("should throw illegalArgument if card has month and no year", e instanceof IllegalArgumentException);
+        }
+
+        try {
+            CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan, "133", 11, 2001);
+        } catch (Exception e) {
+            assertTrue("should throw illegalArgument if card has full exp date in past", e instanceof IllegalArgumentException);
+        }
+
+        try {
+            CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan, "133", null, 2001);
+        } catch (Exception e) {
+            assertTrue("should throw illegalArgument if card has exp year in past", e instanceof IllegalArgumentException);
+        }
+    }
+
+    protected void verifyCardContents(CreditCardInfo creditCardInfo, CreditCard createdCard) {
+        assertNotNull("card not created",createdCard);
+        if (null != creditCardInfo.getCVV()) {
+            assertEquals("cvv should be masked", "###", createdCard.getCVV());
+        }
+        if (creditCardInfo.getExpMonth() != null) {
+            assertEquals("exp month", creditCardInfo.getExpMonth(), createdCard.getExpMonth());
+        }
+        if (creditCardInfo.getExpYear() != null) {
+            assertEquals("exp year", creditCardInfo.getExpYear(), createdCard.getExpYear());
+        }
+        assertEquals("street 1", creditCardInfo.getAddress().getStreet1(), createdCard.getAddress().getStreet1());
+        assertEquals("postal code", creditCardInfo.getAddress().getPostalCode(), createdCard.getAddress().getPostalCode());
+        assertNotNull("card meta data should be populated", createdCard.getCardMetaData());
+        assertNotNull("brand logo should be populated", createdCard.getCardMetaData().getBrandLogo());
+        assertTrue("brand logo should have at least one asset", createdCard.getCardMetaData().getBrandLogo().size() > 0);
+        assertEquals("first brand logo mime type", "image/png", createdCard.getCardMetaData().getBrandLogo().get(0).getMimeType());
     }
 }
