@@ -442,7 +442,7 @@ public class CreditCardTest2 extends TestActions {
     }
 
     @Test
-    public void testCanAddCreditCardWithoutExpOrCvv() throws Exception {
+    public void canAddCreditCardWithoutExpOrCvv() throws Exception {
         Device device = getTestDevice();
         Device createdDevice = createDevice(user, device);
         assertNotNull("created device", createdDevice);
@@ -462,6 +462,82 @@ public class CreditCardTest2 extends TestActions {
         ResultProvidingCallback<Image> callback = new ResultProvidingCallback<>(latch);
         createdCard.getCardMetaData().getBrandLogo().get(0).self(callback);
         latch.await(TIMEOUT, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void canAddCreditCardWithoutCvv() throws Exception {
+        Device device = getTestDevice();
+        Device createdDevice = createDevice(user, device);
+        assertNotNull("created device", createdDevice);
+
+        Collections.DeviceCollection devices = getDevices(user);
+        assertNotNull("devices collection should not be null", devices);
+        assertEquals("should have one device", 1, devices.getTotalResults());
+
+        String pan = "9999504454545450";
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan, null, 10, 2018);
+
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
+
+        verifyCardContents(creditCardInfo, createdCard);
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        ResultProvidingCallback<Image> callback = new ResultProvidingCallback<>(latch);
+        createdCard.getCardMetaData().getBrandLogo().get(0).self(callback);
+        latch.await(TIMEOUT, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void canAddCardWithYearAndNoMonth() throws Exception {
+        Device device = getTestDevice();
+        Device createdDevice = createDevice(user, device);
+        assertNotNull("created device", createdDevice);
+
+        Collections.DeviceCollection devices = getDevices(user);
+        assertNotNull("devices collection should not be null", devices);
+        assertEquals("should have one device", 1, devices.getTotalResults());
+
+        String pan = "9999504454545450";
+        CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan, "133", null, 2022);
+
+        CreditCard createdCard = createCreditCard(user, creditCardInfo);
+
+        verifyCardContents(creditCardInfo, createdCard);
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        ResultProvidingCallback<Image> callback = new ResultProvidingCallback<>(latch);
+        createdCard.getCardMetaData().getBrandLogo().get(0).self(callback);
+        latch.await(TIMEOUT, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void expirationValidationNegativeTests() throws Exception {
+        Device device = getTestDevice();
+        Device createdDevice = createDevice(user, device);
+        assertNotNull("created device", createdDevice);
+
+        Collections.DeviceCollection devices = getDevices(user);
+        assertNotNull("devices collection should not be null", devices);
+        assertEquals("should have one device", 1, devices.getTotalResults());
+
+        String pan = "9999504454545450";
+        try {
+            CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan, "133", 11, null);
+        } catch (Exception e) {
+            assertTrue("should throw illegalArgument if card has month and no year", e instanceof IllegalArgumentException);
+        }
+
+        try {
+            CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan, "133", 11, 2001);
+        } catch (Exception e) {
+            assertTrue("should throw illegalArgument if card has full exp date in past", e instanceof IllegalArgumentException);
+        }
+
+        try {
+            CreditCardInfo creditCardInfo = getTestCreditCardInfo(pan, "133", null, 2001);
+        } catch (Exception e) {
+            assertTrue("should throw illegalArgument if card has exp year in past", e instanceof IllegalArgumentException);
+        }
     }
 
     protected void verifyCardContents(CreditCardInfo creditCardInfo, CreditCard createdCard) {
