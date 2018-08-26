@@ -1,5 +1,7 @@
-package com.fitpay.android;
+package com.fitpay.android.configs;
 
+import com.fitpay.android.TestActions;
+import com.fitpay.android.TestConstants;
 import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.utils.Constants;
 

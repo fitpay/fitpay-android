@@ -33,7 +33,7 @@ public class UnrecognizedMessageTest extends TestActions{
 
     @Before
     @Override
-    public void testActionsSetup() throws Exception {
+    public void before() throws Exception {
         latch = new CountDownLatch(1);
         this.listener = new UnrecognizedRtmMessageListener(latch);
         NotificationManager.getInstance().addListener(listener, Schedulers.immediate());

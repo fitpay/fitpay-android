@@ -59,7 +59,7 @@ public class DeviceSyncManagerTest extends TestActions {
 
     @Before
     @Override
-    public void testActionsSetup() throws Exception {
+    public void before() throws Exception {
         final SharedPreferences mockPrefs = Mockito.mock(SharedPreferences.class);
         final SharedPreferences.Editor mockEditor = Mockito.mock(SharedPreferences.Editor.class);
 

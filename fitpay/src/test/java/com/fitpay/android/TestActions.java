@@ -79,7 +79,7 @@ public class TestActions {
     }
 
     @Before
-    public void testActionsSetup() throws Exception {
+    public void before() throws Exception {
         userName = TestUtils.getRandomLengthString(5, 10) + "@"
                 + TestUtils.getRandomLengthString(5, 10) + "." + TestUtils.getRandomLengthString(4, 10);
         pin = TestUtils.getRandomLengthNumber(4, 4);
@@ -102,7 +102,7 @@ public class TestActions {
     }
 
     @After
-    public void deleteUser() throws Exception {
+    public void after() throws Exception {
         if (null != this.user) {
             final CountDownLatch latch = new CountDownLatch(1);
             ResultProvidingCallback<Void> callback = new ResultProvidingCallback<>(latch);

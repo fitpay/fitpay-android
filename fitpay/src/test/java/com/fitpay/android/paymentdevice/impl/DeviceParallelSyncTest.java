@@ -68,7 +68,7 @@ public class DeviceParallelSyncTest extends TestActions {
 
     @Before
     @Override
-    public void testActionsSetup() throws Exception {
+    public void before() throws Exception {
         /*-----user-----*/
         userName = TestUtils.getRandomLengthString(5, 10) + "@"
                 + TestUtils.getRandomLengthString(5, 10) + "." + TestUtils.getRandomLengthString(4, 10);

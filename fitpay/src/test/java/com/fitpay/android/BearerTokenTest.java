@@ -27,7 +27,7 @@ public class BearerTokenTest extends TestActions {
 
     @Before
     @Override
-    public void testActionsSetup() throws Exception {
+    public void before() throws Exception {
         this.listener = new AccessDeniedListener();
         NotificationManager.getInstance().addListenerToCurrentThread(this.listener);
     }

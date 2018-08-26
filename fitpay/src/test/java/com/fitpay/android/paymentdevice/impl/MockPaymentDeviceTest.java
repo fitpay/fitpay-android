@@ -48,7 +48,7 @@ public class MockPaymentDeviceTest extends TestActions {
     }
 
     @Override
-    public void testActionsSetup() throws Exception {
+    public void before() throws Exception {
     }
 
     @After
