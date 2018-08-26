@@ -12,28 +12,29 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import rx.schedulers.Schedulers;
 
-final public class FitPayService extends BaseClient {
+final public class FitPayService extends GenericClient<FitPayClient> {
 
     private static final String HEADER_AUTHORIZATION = "Authorization";
     private static final String AUTHORIZATION_BEARER = "Bearer";
     private static final String FP_KEY_ID = "fp-key-id";
 
-    private FitPayClient mAPIClient;
     private OAuthToken mAuthToken;
     private boolean expiredNotificationSent;
 
     private PlatformConfig platformConfig = new PlatformConfig();
 
     public FitPayService(String apiBaseUrl) {
+        super(apiBaseUrl);
+        constructPlatformConfig();
+    }
 
-        Interceptor interceptor = chain -> {
+    @Override
+    public Interceptor getInterceptor() {
+        return chain -> {
             Request.Builder builder = chain.request().newBuilder()
                     .header("Accept", "application/json")
                     .header("Content-Type", "application/json")
@@ -79,31 +80,16 @@ final public class FitPayService extends BaseClient {
                         System.currentTimeMillis() - startTime));
             }
         };
-
-        OkHttpClient.Builder clientBuilder = getOkHttpClient();
-        clientBuilder.addInterceptor(interceptor);
-
-        mAPIClient = constructClient(apiBaseUrl, clientBuilder.build());
-        constructPlatformConfig();
-    }
-
-    private FitPayClient constructClient(String apiBaseUrl, OkHttpClient okHttpClient) {
-        return new Retrofit.Builder()
-                .baseUrl(apiBaseUrl)
-                .addConverterFactory(GsonConverterFactory.create(Constants.getGson()))
-                .client(okHttpClient)
-                .build()
-                .create(FitPayClient.class);
     }
 
     private void constructPlatformConfig() {
-        if (mAPIClient == null) {
+        if (client == null) {
             throw new IllegalStateException("invalid state, not okhttp client is currently set");
         }
 
         rx.Observable.defer(() -> {
             try {
-                retrofit2.Response<JsonElement> response = mAPIClient.getPlatformConfig().execute();
+                retrofit2.Response<JsonElement> response = client.getPlatformConfig().execute();
 
                 if (response.isSuccessful() && response.errorBody() == null) {
                     JsonObject body = response.body().getAsJsonObject();
@@ -121,10 +107,6 @@ final public class FitPayService extends BaseClient {
         }).subscribeOn(Schedulers.io()).toBlocking().subscribe();
 
         FPLog.d("platformConfiguration: " + platformConfig);
-    }
-
-    public FitPayClient getClient() {
-        return mAPIClient;
     }
 
     public void updateToken(OAuthToken token) {
