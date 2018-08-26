@@ -3,6 +3,7 @@ package com.fitpay.android.webview.impl;
 import com.fitpay.android.TestActions;
 import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.FPLog;
+import com.fitpay.android.utils.HttpLogging;
 import com.fitpay.android.utils.Listener;
 import com.fitpay.android.utils.NotificationManager;
 import com.fitpay.android.utils.RxBus;
@@ -24,7 +25,7 @@ import static junit.framework.Assert.assertNotNull;
  * Created by Vlad on 04.12.2017.
  */
 
-public class UnrecognizedMessageTest extends TestActions{
+public class UnrecognizedMessageTest {//extends TestActions{
 
     private RtmMessage message;
 
@@ -32,8 +33,10 @@ public class UnrecognizedMessageTest extends TestActions{
     private UnrecognizedRtmMessageListener listener;
 
     @Before
-    @Override
+//    @Override
     public void testActionsSetup() throws Exception {
+        HttpLogging.setTestName(UnrecognizedRtmMessageListener.class.getSimpleName());
+
         latch = new CountDownLatch(1);
         this.listener = new UnrecognizedRtmMessageListener(latch);
         NotificationManager.getInstance().addListener(listener, Schedulers.immediate());

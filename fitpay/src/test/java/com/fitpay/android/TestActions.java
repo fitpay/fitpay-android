@@ -22,6 +22,7 @@ import com.fitpay.android.api.models.user.UserCreateRequest;
 import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.paymentdevice.impl.mock.SecureElementDataProvider;
 import com.fitpay.android.utils.FPLog;
+import com.fitpay.android.utils.HttpLogging;
 import com.fitpay.android.utils.SecurityProvider;
 import com.fitpay.android.utils.TimestampUtils;
 import com.fitpay.android.utils.ValidationException;
@@ -50,7 +51,7 @@ import static junit.framework.Assert.assertTrue;
 
 public class TestActions {
 
-    final int TIMEOUT = 30;
+    final static int TIMEOUT = 30;
 
     protected String userName = null;
     protected String pin = null;
@@ -79,19 +80,31 @@ public class TestActions {
     }
 
     @Before
-    public void testActionsSetup() throws Exception {
+    public void setup() throws Exception {
+        HttpLogging.setTestName(this.getClass().getSimpleName());
+
         userName = TestUtils.getRandomLengthString(5, 10) + "@"
                 + TestUtils.getRandomLengthString(5, 10) + "." + TestUtils.getRandomLengthString(4, 10);
         pin = TestUtils.getRandomLengthNumber(4, 4);
 
-        this.user = createUser(getNewTestUser(userName, pin));
-        assertNotNull(this.user);
+        user = createUser(getNewTestUser(userName, pin));
+        assertNotNull(user);
 
         loginIdentity = getTestLoginIdentity(userName, pin);
         doLogin(loginIdentity);
 
-        this.user = getUser();
+        user = getUser();
         assertNotNull(user);
+    }
+
+    @After
+    public void cleanup() throws InterruptedException {
+        if (null != user) {
+            final CountDownLatch latch = new CountDownLatch(1);
+            ResultProvidingCallback<Void> callback = new ResultProvidingCallback<>(latch);
+            user.deleteUser(callback);
+            latch.await(TIMEOUT, TimeUnit.SECONDS);
+        }
     }
 
     @AfterClass
@@ -99,16 +112,6 @@ public class TestActions {
         FPLog.clean();
         mContext = null;
         DeviceSyncManager.clean();
-    }
-
-    @After
-    public void deleteUser() throws Exception {
-        if (null != this.user) {
-            final CountDownLatch latch = new CountDownLatch(1);
-            ResultProvidingCallback<Void> callback = new ResultProvidingCallback<>(latch);
-            this.user.deleteUser(callback);
-            latch.await(TIMEOUT, TimeUnit.SECONDS);
-        }
     }
 
     protected User createUser(UserCreateRequest user) throws Exception {
@@ -225,7 +228,7 @@ public class TestActions {
         String oSName = "A1111";
         String licenseKey = "aaaaaa-1111-1111-1111-111111111111";
         String bdAddress = "bbbbbb-1111-1111-1111-111111111111";
-        long pairingTs = System.currentTimeMillis();
+        long pairingTs = 1535228386689L;//System.currentTimeMillis();
 
         Device.Builder builder = new Device.Builder()
                 .setDeviceType(DeviceTypes.ACTIVITY_TRACKER)
@@ -247,7 +250,7 @@ public class TestActions {
             builder = builder
                     .setSecureElement(new PaymentDevice.SecureElement(
                             SecureElementDataProvider.generateCasd(),
-                            SecureElementDataProvider.generateRandomSecureElementId()));
+                            SecureElementDataProvider.generateRandomSecureElementId(null, "6fff387e169e")));
         }
 
         return builder.build();
@@ -266,7 +269,7 @@ public class TestActions {
         String oSName = "A1111";
         String licenseKey = "aaaaaa-1111-1111-1111-111111111111";
         String bdAddress = "bbbbbb-1111-1111-1111-111111111111";
-        long pairingTs = System.currentTimeMillis();
+        long pairingTs = 1535228386689L;//System.currentTimeMillis();
         String stringTimestamp = TimestampUtils.getISO8601StringForTime(pairingTs);
         String secureElementId = "cccccc-1111-1111-1111-1111111111";
         Device newDevice = new Device.Builder()
@@ -290,7 +293,7 @@ public class TestActions {
         String oSName = "A1111";
         String licenseKey = "aaaaaa-1111-1111-1111-111111111111";
         String bdAddress = "bbbbbb-1111-1111-1111-111111111111";
-        long pairingTs = System.currentTimeMillis();
+        long pairingTs = 1535228386689L;//System.currentTimeMillis();
         String stringTimestamp = TimestampUtils.getISO8601StringForTime(pairingTs);
         String secureElementId = "cccccc-1111-1111-1111-1111111111";
         Device newDevice = new Device.Builder()
@@ -339,7 +342,7 @@ public class TestActions {
     }
 
     CreditCard acceptTerms(CreditCard creditCard) throws Exception {
-        final CountDownLatch latch = new CountDownLatch(2);
+        CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<CreditCard> callback = new ResultProvidingCallback<>(latch);
         creditCard.acceptTerms(callback);
         latch.await(TIMEOUT, TimeUnit.SECONDS);
@@ -353,6 +356,7 @@ public class TestActions {
         TestConstants.waitSomeActionsOnServer();
 
         //getSelf
+        latch = new CountDownLatch(1);
         ResultProvidingCallback<CreditCard> callbackSelf = new ResultProvidingCallback<>(latch);
         acceptedCard.self(callbackSelf);
         latch.await(TIMEOUT, TimeUnit.SECONDS);

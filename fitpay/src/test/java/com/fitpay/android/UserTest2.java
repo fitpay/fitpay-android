@@ -1,5 +1,8 @@
 package com.fitpay.android;
 
+import android.os.Debug;
+import android.util.Log;
+
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ResultProvidingCallback;
 import com.fitpay.android.api.models.collection.Collections;
@@ -7,6 +10,7 @@ import com.fitpay.android.api.models.security.OAuthToken;
 import com.fitpay.android.api.models.user.LoginIdentity;
 import com.fitpay.android.api.models.user.User;
 
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -31,7 +35,7 @@ public class UserTest2 extends TestActions {
     }
 
     @Test
-    @Ignore  // this test does not work in demo environment since does auto-login
+    //@Ignore  // this test does not work in demo environment since does auto-login
     public void testCantLoginWithDifferentPassword() throws Exception {
         this.user = getUser();
         assertNotNull(user);

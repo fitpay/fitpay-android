@@ -13,7 +13,14 @@ public class CreditCardTest {
 
     @BeforeClass
     public static void init() {
-        steps = new Steps();
+        steps = new Steps(CreditCardTest.class);
+    }
+
+
+    @AfterClass
+    public static void tearDown() throws InterruptedException {
+        steps.destroy();
+        steps = null;
     }
 
     @Test
@@ -117,11 +124,5 @@ public class CreditCardTest {
     @Test
     public void test99_deleteTestCards() throws InterruptedException {
         steps.deleteTestCards();
-    }
-
-    @AfterClass
-    public static void tearDown() throws Exception {
-        steps.destroy();
-        steps = null;
     }
 }

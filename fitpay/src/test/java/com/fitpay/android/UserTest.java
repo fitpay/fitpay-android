@@ -1,6 +1,8 @@
 package com.fitpay.android;
 
 
+import com.fitpay.android.utils.HttpLogging;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -15,7 +17,7 @@ public class UserTest {
 
     @BeforeClass
     public static void init() {
-        steps = new Steps();
+        steps = new Steps(UserTest.class);
     }
 
     @Test

@@ -1,8 +1,11 @@
 package com.fitpay.android.api.models.apdu;
 
+import com.fitpay.android.CommitTest;
 import com.fitpay.android.api.enums.ResponseState;
 import com.fitpay.android.utils.Hex;
+import com.fitpay.android.utils.HttpLogging;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.UUID;
@@ -14,6 +17,11 @@ import static junit.framework.Assert.assertTrue;
  * Created by tgs on 5/27/16.
  */
 public class ApduExecutionResultTest {
+
+    @Before
+    public void init(){
+        HttpLogging.setTestName(ApduExecutionResultTest.class.getSimpleName());
+    }
 
     @Test
     public void testIsSuccessResponseCode9000() {

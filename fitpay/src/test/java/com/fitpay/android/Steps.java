@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
+import com.fitpay.android.api.callbacks.ResultProvidingCallback;
 import com.fitpay.android.api.enums.CardInitiators;
 import com.fitpay.android.api.enums.DeviceTypes;
 import com.fitpay.android.api.enums.ResultCode;
@@ -21,7 +22,10 @@ import com.fitpay.android.api.models.security.OAuthToken;
 import com.fitpay.android.api.models.user.LoginIdentity;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.api.models.user.UserCreateRequest;
+import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.paymentdevice.impl.mock.SecureElementDataProvider;
+import com.fitpay.android.utils.FPLog;
+import com.fitpay.android.utils.HttpLogging;
 import com.fitpay.android.utils.SecurityProvider;
 import com.fitpay.android.utils.TimestampUtils;
 import com.fitpay.android.utils.ValidationException;
@@ -62,9 +66,9 @@ public class Steps {
     private Commit currentCommit;
     private Issuers currentIssuer;
 
-    protected Steps() {
+    Steps(Class clazz) {
+        HttpLogging.setTestName(clazz.getSimpleName());
         SecurityProvider.getInstance().setProvider(new BouncyCastleProvider());
-
         TestConstants.configureFitpay(Mockito.mock(Context.class));
 
         userName = TestUtils.getRandomLengthString(5, 10) + "@"
@@ -72,13 +76,15 @@ public class Steps {
         password = TestUtils.getRandomLengthNumber(4, 4);
     }
 
-    public void destroy() {
+    public void destroy() throws InterruptedException {
+        FPLog.clean();
+        DeviceSyncManager.clean();
+        deleteUser();
         currentUser = null;
         cardsCollection = null;
         currentDevice = null;
         currentCommit = null;
     }
-
 
     public User createUser() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
@@ -213,7 +219,7 @@ public class Steps {
 
         String firstName = "John";
         String lastName = "Doe";
-        long currentTimestamp = System.currentTimeMillis();
+        long currentTimestamp = 1535228469833L;//System.currentTimeMillis();
         String timestampString = TimestampUtils.getISO8601StringForTime(currentTimestamp);
         String termsVersion = "0.0.2";
         User patchingUser = new User.Builder()
@@ -243,6 +249,15 @@ public class Steps {
         Assert.assertEquals(lastName, currentUser.getLastName());
         Assert.assertEquals(timestampString, currentUser.getBirthDate());
         Assert.assertEquals(termsVersion, currentUser.getTermsVersion());
+    }
+
+    public void deleteUser() throws InterruptedException {
+        if (null != currentUser) {
+            final CountDownLatch latch = new CountDownLatch(1);
+            ResultProvidingCallback<Void> callback = new ResultProvidingCallback<>(latch);
+            currentUser.deleteUser(callback);
+            latch.await(TIMEOUT, TimeUnit.SECONDS);
+        }
     }
 
     public void createCard() throws InterruptedException {
@@ -309,7 +324,7 @@ public class Steps {
     }
 
     public void acceptTerms() throws InterruptedException {
-        getDevices();
+//        getDevices();
         Assert.assertNotNull(currentUser);
         Assert.assertNotNull(currentCard);
         Assert.assertNotNull(currentDevice);
@@ -710,7 +725,7 @@ public class Steps {
         String oSName = "A1111";
         String licenseKey = "aaaaaa-1111-1111-1111-111111111111";
         String bdAddress = "bbbbbb-1111-1111-1111-111111111111";
-        long pairingTs = System.currentTimeMillis();
+        long pairingTs = 1535203149589L;// System.currentTimeMillis();
         String stringTimestamp = TimestampUtils.getISO8601StringForTime(pairingTs);
 
         Device newDevice = new Device.Builder()
@@ -729,7 +744,7 @@ public class Steps {
                 .setPairingTs(pairingTs)
                 .setSecureElement(new PaymentDevice.SecureElement(
                         SecureElementDataProvider.generateCasd(),
-                        SecureElementDataProvider.generateRandomSecureElementId()))
+                        SecureElementDataProvider.generateRandomSecureElementId(null, "6fff387e169e")))
                 .build();
 
         final String[] errors = {""};
@@ -963,7 +978,7 @@ public class Steps {
         }
         Assert.assertNotNull(currentDevice);
 
-        final CountDownLatch latch = new CountDownLatch(2);
+        final CountDownLatch latch = new CountDownLatch(1);
         final boolean[] isRequestSuccess = {false};
 
         currentDevice.getCommits(10, 0, new ApiCallback<Collections.CommitsCollection>() {

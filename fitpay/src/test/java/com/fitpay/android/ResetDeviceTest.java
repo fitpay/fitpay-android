@@ -68,7 +68,7 @@ public class ResetDeviceTest extends TestActions {
                 }))
                 .repeatWhen(observable -> observable.flatMap((Func1<Void, Observable<?>>) aVoid -> {
                     if (status.get() == null || ResetDeviceStatus.IN_PROGRESS.equals(status.get())) {
-                        return Observable.timer(1, TimeUnit.SECONDS);
+                        return Observable.timer(10, TimeUnit.SECONDS);
                     } else {
                         return Observable.just(null);
                     }
@@ -77,7 +77,7 @@ public class ResetDeviceTest extends TestActions {
                 }, throwable -> {
                 }, latch::countDown);
 
-        latch.await(30, TimeUnit.SECONDS);
+        latch.await(120, TimeUnit.SECONDS);
         assertEquals("reset device status", ResetDeviceStatus.RESET_COMPLETE, status.get());
     }
 }

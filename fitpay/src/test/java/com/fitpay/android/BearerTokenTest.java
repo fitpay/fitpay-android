@@ -27,13 +27,16 @@ public class BearerTokenTest extends TestActions {
 
     @Before
     @Override
-    public void testActionsSetup() throws Exception {
+    public void setup() throws Exception {
+        super.setup();
         this.listener = new AccessDeniedListener();
         NotificationManager.getInstance().addListenerToCurrentThread(this.listener);
     }
 
     @After
-    public void cleanup() {
+    @Override
+    public void cleanup() throws InterruptedException {
+        super.cleanup();
         NotificationManager.getInstance().removeListener(this.listener);
         this.listener = null;
     }

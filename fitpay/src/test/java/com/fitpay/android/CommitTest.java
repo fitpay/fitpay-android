@@ -13,7 +13,7 @@ public class CommitTest {
 
     @BeforeClass
     public static void init() {
-        steps = new Steps();
+        steps = new Steps(CommitTest.class);
     }
 
     @Test

@@ -4,6 +4,7 @@ import com.fitpay.android.paymentdevice.callbacks.ConnectionListener;
 import com.fitpay.android.paymentdevice.constants.States;
 import com.fitpay.android.paymentdevice.enums.Connection;
 import com.fitpay.android.utils.Command;
+import com.fitpay.android.utils.HttpLogging;
 import com.fitpay.android.utils.Listener;
 import com.fitpay.android.utils.NotificationManager;
 import com.fitpay.android.utils.RxBus;
@@ -45,6 +46,9 @@ public class NotificationsTest {
     @BeforeClass
     @SuppressWarnings("unchecked")
     public static void init() {
+
+        HttpLogging.setTestName(NotificationsTest.class.getSimpleName());
+
         listener = new ConnectionListener() {
             @Override
             public void onDeviceStateChanged(@Connection.State int state) {

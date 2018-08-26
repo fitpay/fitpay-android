@@ -116,7 +116,7 @@ public class CommitTest2 extends TestActions {
 
         for (Commit commit : commits.getResults()) {
             Collections.CommitsCollection lastCommits = getCommits(createdDevice, commit.getCommitId());
-            assertEquals("number of commits with lastId", --totalResults, lastCommits.getTotalResults());
+            assertEquals("number of commits with lastId", totalResults--, lastCommits.getTotalResults());
         }
     }
 

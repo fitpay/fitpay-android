@@ -5,8 +5,10 @@ import android.content.SharedPreferences;
 
 import com.fitpay.android.paymentdevice.interfaces.IRemoteCommitPtrHandler;
 import com.fitpay.android.paymentdevice.utils.DevicePreferenceData;
+import com.fitpay.android.utils.HttpLogging;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -23,6 +25,11 @@ import static org.mockito.Mockito.when;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RemoteCommitPointerTest {
+
+    @Before
+    public void init(){
+        HttpLogging.setTestName(RemoteCommitPointerTest.class.getSimpleName());
+    }
 
     @Test
     public void storeCommitPointerRemote() throws Exception {

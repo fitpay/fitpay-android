@@ -1,9 +1,11 @@
 package com.fitpay.android;
 
 import com.fitpay.android.utils.Constants;
+import com.fitpay.android.utils.HttpLogging;
 import com.fitpay.android.webview.models.IdVerification;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -13,6 +15,11 @@ import java.util.concurrent.TimeUnit;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class IdVerificationTest {
+
+    @Before
+    public void init(){
+        HttpLogging.setTestName(IdVerificationTest.class.getSimpleName());
+    }
 
     @Test
     public void test01_emptySetsLocale() {

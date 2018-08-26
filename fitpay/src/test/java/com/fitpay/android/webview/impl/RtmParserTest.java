@@ -3,6 +3,7 @@ package com.fitpay.android.webview.impl;
 import android.app.Activity;
 
 import com.fitpay.android.utils.Constants;
+import com.fitpay.android.utils.HttpLogging;
 import com.fitpay.android.webview.enums.RtmType;
 import com.fitpay.android.webview.events.RtmMessage;
 
@@ -26,6 +27,8 @@ public class RtmParserTest {
 
     @Before
     public void init() {
+        HttpLogging.setTestName(RtmParserTest.class.getSimpleName());
+
         Activity context = Mockito.mock(Activity.class);
         wvci = new WebViewCommunicatorImpl(context, null, null);
     }

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.utils.FPLog;
+import com.fitpay.android.utils.HttpLogging;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,6 +20,7 @@ public class PlatformConfigTest {
 
     @BeforeClass
     public static void initApiManager() {
+        HttpLogging.setTestName(PlatformConfigTest.class.getSimpleName());
         TestConstants.configureFitpay(Mockito.mock(Context.class));
     }
 
