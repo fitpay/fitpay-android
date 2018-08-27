@@ -16,5 +16,13 @@ public class CardScannerTest {
         Assert.assertEquals(10, (int)cardInfo.getExpiryMonth());
         Assert.assertEquals(2020, (int)cardInfo.getExpiryYear());
         Assert.assertEquals("123", cardInfo.getCvv());
+
+        ScannedCardInfo manualCardInfo = new ScannedCardInfo();
+        manualCardInfo.setCardNumber("376680406791017");
+        manualCardInfo.setCvv(String.valueOf(123));
+        manualCardInfo.setExpiryMonth(10);
+        manualCardInfo.setExpiryYear(2020);
+
+        Assert.assertEquals(cardInfo.getCardNumber(), manualCardInfo.getCardNumber());
     }
 }

@@ -1,7 +1,8 @@
 package com.fitpay.android.webview.models;
 
 import com.fitpay.android.utils.Constants;
-import com.fitpay.android.webview.models.IdVerification;
+import com.fitpay.android.utils.TimestampUtils;
+import com.fitpay.android.webview.enums.DeviceTimeZone;
 
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
@@ -41,5 +42,64 @@ public class IdVerificationTest {
                 .build();
         Assert.assertNotNull(verificationResponse.getDeviceLostModeDate());
         Assert.assertEquals(verificationResponse.getDeviceLostModeDate().intValue(), 5);
+    }
+
+    @Test
+    public void test04_fullComparison() {
+        Date oemAccountInfoUpdatedDate = new Date(5000000);
+        Date oemAccountCreatedDate = new Date(4000000);
+        Integer suspendedCardsInOemAccount = 1;
+        Date lastOemAccountActivityDate = new Date(3000000);
+        Date deviceLostModeDate = new Date(2000000);
+        Integer oemAccountScore = 9;
+        Integer deviceScore = 8;
+        Integer devicesWithIdenticalActiveToken = 2;
+        Integer activeTokensOnAllDevicesForOemAccount = 3;
+        boolean nfcCapable = true;
+        String oemAccountCountryCode = "en-US";
+        String deviceCountry = "US";
+        String oemAccountUserName = "AccountUserName";
+        Date devicePairedToOemAccountDate = new Date(1000000);
+        String deviceTimeZone = "PDT";
+        @DeviceTimeZone.SetBy Integer deviceTimeZoneSetBy = DeviceTimeZone.SET_BY_NETWORK;
+        String deviceIMEI = "AABBCC123";
+
+        IdVerification idVerification = new IdVerification.Builder()
+                .setOemAccountInfoUpdatedDate(oemAccountInfoUpdatedDate)
+                .setOemAccountCreatedDate(oemAccountCreatedDate)
+                .setSuspendedCardsInOemAccount(suspendedCardsInOemAccount)
+                .setLastOemAccountActivityDate(lastOemAccountActivityDate)
+                .setDeviceLostModeDate(deviceLostModeDate)
+                .setOemAccountScore(oemAccountScore)
+                .setDevicesWithIdenticalActiveToken(devicesWithIdenticalActiveToken)
+                .setActiveTokensOnAllDevicesForOemAccount(activeTokensOnAllDevicesForOemAccount)
+                .setDeviceScore(deviceScore)
+                .setNfcCapable(nfcCapable)
+                .setOemAccountCountryCode(oemAccountCountryCode)
+                .setDeviceCountry(deviceCountry)
+                .setOemAccountUserName(oemAccountUserName)
+                .setDevicePairedToOemAccountDate(devicePairedToOemAccountDate)
+                .setDeviceTimeZone(deviceTimeZone)
+                .setDeviceTimeZoneSetBy(deviceTimeZoneSetBy)
+                .setDeviceIMEI(deviceIMEI)
+                .build();
+
+        Assert.assertEquals(idVerification.getOemAccountInfoUpdatedDate(), oemAccountInfoUpdatedDate);
+        Assert.assertEquals(idVerification.getOemAccountCreatedDate(), oemAccountCreatedDate);
+        Assert.assertEquals(idVerification.getSuspendedCardsInOemAccount(), suspendedCardsInOemAccount);
+        Assert.assertEquals(idVerification.getLastOemAccountActivityDate(), TimestampUtils.getDaysBetweenDates(lastOemAccountActivityDate));
+        Assert.assertEquals(idVerification.getDeviceLostModeDate(), TimestampUtils.getDaysBetweenDates(deviceLostModeDate));
+        Assert.assertEquals(idVerification.getOemAccountScore(), oemAccountScore);
+        Assert.assertEquals(idVerification.getDevicesWithIdenticalActiveToken(), devicesWithIdenticalActiveToken);
+        Assert.assertEquals(idVerification.getActiveTokensOnAllDevicesForOemAccount(), activeTokensOnAllDevicesForOemAccount);
+        Assert.assertEquals(idVerification.getDeviceScore(), deviceScore);
+        Assert.assertEquals(idVerification.getNfcCapable(), nfcCapable);
+        Assert.assertEquals(idVerification.getOemAccountCountryCode(), oemAccountCountryCode);
+        Assert.assertEquals(idVerification.getDeviceCountry(), deviceCountry);
+        Assert.assertEquals(idVerification.getOemAccountUserName(), oemAccountUserName);
+        Assert.assertEquals(idVerification.getDevicePairedToOemAccountDate(), devicePairedToOemAccountDate);
+        Assert.assertEquals(idVerification.getDeviceTimeZone(), deviceTimeZone);
+        Assert.assertEquals(idVerification.getDeviceTimeZoneSetBy(), deviceTimeZoneSetBy);
+        Assert.assertEquals(idVerification.getDeviceIMEI(), deviceIMEI);
     }
 }

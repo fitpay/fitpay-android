@@ -1,6 +1,10 @@
 package com.fitpay.android.a2averification;
 
 import com.fitpay.android.TestActions;
+import com.fitpay.android.configs.FitpayConfig;
+import com.fitpay.android.utils.Constants;
+import com.fitpay.android.webview.enums.RtmType;
+import com.fitpay.android.webview.events.RtmMessageResponse;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,5 +35,15 @@ public class A2AVerificationTest extends TestActions {
 
         Assert.assertEquals(response.getAuthCode(), authCode);
         Assert.assertEquals(response.getResponse(), authResponse);
+    }
+
+    @Test
+    public void a2aRTMResponsesTest() {
+        FitpayConfig.supportApp2App = true;
+        A2AIssuerAppVerification a2AIssuerAppVerification = new A2AIssuerAppVerification();
+        Assert.assertEquals("{\"supportsIssuerAppVerification\":true}", Constants.getGson().toJson(a2AIssuerAppVerification));
+
+        A2AVerificationFailed a2AVerificationFailed = new A2AVerificationFailed(A2AVerificationError.NOT_SUPPORTED);
+        Assert.assertEquals("{\"reason\":\"appToAppNotSupported\"}", Constants.getGson().toJson(a2AVerificationFailed));
     }
 }
