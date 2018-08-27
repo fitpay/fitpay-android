@@ -28,7 +28,7 @@ public abstract class Listener {
      * @param command
      * @return
      */
-    public Listener addCommand(Class clazz, Command command) {
+    final public Listener addCommand(Class clazz, Command command) {
         mCommands.put(clazz, command);
         return this;
     }

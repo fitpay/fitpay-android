@@ -59,6 +59,7 @@ public final class NotificationManager {
                 mSubscriptions.put(clazz, RxBus.getInstance().register(clazz, scheduler, object -> {
                     synchronized (this) {
                         for (Command command : mCommands.get(clazz)) {
+                            FPLog.d(TAG, "-------- " + command + " " + Thread.currentThread());
                             if (object instanceof Wrapper) {
                                 if (command instanceof FilterCommand) {
                                     String filter = ((FilterCommand) command).filter();

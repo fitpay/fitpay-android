@@ -7,6 +7,7 @@ import com.fitpay.android.utils.Constants;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -16,6 +17,11 @@ import java.io.InputStream;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class FitpayConfigTest extends TestActions {
+
+    @Override
+    @Before
+    public void before(){}
+
     @Test
     public void test01_checkDefaultApiUrl() {
         Assert.assertEquals("api base url mismatch", FitpayConfig.apiURL, Constants.CONFIG_API_BASE_URL);

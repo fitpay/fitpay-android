@@ -1,4 +1,4 @@
-package com.fitpay.android;
+package com.fitpay.android.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;

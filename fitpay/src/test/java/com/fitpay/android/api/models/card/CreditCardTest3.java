@@ -1,7 +1,6 @@
-package com.fitpay.android;
+package com.fitpay.android.api.models.card;
 
-import com.fitpay.android.api.models.card.CreditCard;
-import com.fitpay.android.api.models.card.CreditCardInfo;
+import com.fitpay.android.TestActions;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
 

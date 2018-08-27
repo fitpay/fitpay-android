@@ -62,7 +62,7 @@ public class Steps {
     private Commit currentCommit;
     private Issuers currentIssuer;
 
-    protected Steps() {
+    public Steps() {
         SecurityProvider.getInstance().setProvider(new BouncyCastleProvider());
 
         TestConstants.configureFitpay(Mockito.mock(Context.class));

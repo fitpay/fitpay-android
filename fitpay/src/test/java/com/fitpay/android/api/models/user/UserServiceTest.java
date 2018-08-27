@@ -1,5 +1,7 @@
-package com.fitpay.android;
+package com.fitpay.android.api.models.user;
 
+import com.fitpay.android.TestActions;
+import com.fitpay.android.TestUtils;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.api.models.user.UserCreateRequest;
 

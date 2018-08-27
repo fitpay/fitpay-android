@@ -1,14 +1,11 @@
-package com.fitpay.android;
+package com.fitpay.android.api.models.card;
 
 import android.media.Image;
 
+import com.fitpay.android.TestActions;
 import com.fitpay.android.api.callbacks.ResultProvidingCallback;
 import com.fitpay.android.api.enums.CardInitiators;
 import com.fitpay.android.api.models.Transaction;
-import com.fitpay.android.api.models.card.CreditCard;
-import com.fitpay.android.api.models.card.CreditCardInfo;
-import com.fitpay.android.api.models.card.Reason;
-import com.fitpay.android.api.models.card.VerificationMethod;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
 
@@ -23,8 +20,6 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
-import static net.bytebuddy.matcher.ElementMatchers.anyOf;
-import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 

@@ -1,4 +1,4 @@
-package com.fitpay.android;
+package com.fitpay.android.utils;
 
 import com.fitpay.android.paymentdevice.callbacks.ConnectionListener;
 import com.fitpay.android.paymentdevice.constants.States;

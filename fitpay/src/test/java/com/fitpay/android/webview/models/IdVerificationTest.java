@@ -1,4 +1,4 @@
-package com.fitpay.android;
+package com.fitpay.android.webview.models;
 
 import com.fitpay.android.utils.Constants;
 import com.fitpay.android.webview.models.IdVerification;

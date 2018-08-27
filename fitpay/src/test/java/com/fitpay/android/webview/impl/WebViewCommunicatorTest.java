@@ -31,23 +31,11 @@ import static junit.framework.Assert.assertNotNull;
  */
 public class WebViewCommunicatorTest extends TestActions {
 
-    private User user;
-
+    @Override
     @Before
-    public void setup() throws Exception {
-        userName = TestUtils.getRandomLengthString(5, 10) + "@"
-                + TestUtils.getRandomLengthString(5, 10) + "." + TestUtils.getRandomLengthString(4, 10);
-        pin = TestUtils.getRandomLengthNumber(4, 4);
+    public void before() throws Exception {
+        super.before();
 
-        UserCreateRequest user = getNewTestUser(userName, pin);
-        User createdUser = createUser(user);
-        assertNotNull("user should have been created", createdUser);
-
-        loginIdentity = getTestLoginIdentity(userName, pin);
-        doLogin(loginIdentity);
-
-        this.user = getUser();
-        assertNotNull(user);
         Device device = getTestDevice();
 
         Device createdDevice = createDevice(this.user, device);

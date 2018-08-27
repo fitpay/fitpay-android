@@ -1,17 +1,20 @@
 package com.fitpay.android.a2averification;
 
-import com.fitpay.android.utils.Constants;
+import com.fitpay.android.TestActions;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
-public class A2AVerificationTest {
+public class A2AVerificationTest extends TestActions {
+
+    @Override
+    @Before
+    public void before(){}
 
     @Test
     public void a2aVerificationRequest() {
-        String a2aVerificationRequest = "{\"cardType\":\"VISA\",\"returnLocation\":\"\\/idv\\/b3f70e43-c066-4e9d-b5ec-b7237302f9cc\\/select\\/3b42e65f-1608-4afd-bd72-646142b00a6e\",\"context\":{\"applicationId\":\"com.fitpay.issuerdemo\",\"action\":\"generate_auth_code\",\"payload\":\"eyJ1c2VySWQiOiIxNTdmMTUxOC1kYzRjLTRhYWMtYWRmNS03NjRkMDE2MTJjNGEiLCJ0b2tlbml6YXRpb25JZCI6ImIzZjcwZTQzLWMwNjYtNGU5ZC1iNWVjLWI3MjM3MzAyZjljYyIsInZlcmlmaWNhdGlvbklkIjoiM2I0MmU2NWYtMTYwOC00YWZkLWJkNzItNjQ2MTQyYjAwYTZlIn0=\"}}";
-        A2AVerificationRequest request = Constants.getGson().fromJson(a2aVerificationRequest, A2AVerificationRequest.class);
-
+        A2AVerificationRequest request = getA2AVerificationRequest();
         Assert.assertNotNull(request);
         Assert.assertNotNull(request.getContext());
         Assert.assertEquals("VISA", request.getCardType());

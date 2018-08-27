@@ -1,7 +1,8 @@
-package com.fitpay.android;
+package com.fitpay.android.api;
 
 import android.content.Context;
 
+import com.fitpay.android.TestConstants;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.utils.FPLog;
 

@@ -2,6 +2,7 @@ package com.fitpay.android;
 
 import android.content.Context;
 
+import com.fitpay.android.a2averification.A2AVerificationRequest;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ResultProvidingCallback;
 import com.fitpay.android.api.enums.DeviceTypes;
@@ -21,6 +22,7 @@ import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.api.models.user.UserCreateRequest;
 import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.paymentdevice.impl.mock.SecureElementDataProvider;
+import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.SecurityProvider;
 import com.fitpay.android.utils.TimestampUtils;
@@ -50,15 +52,15 @@ import static junit.framework.Assert.assertTrue;
 
 public class TestActions {
 
-    final int TIMEOUT = 30;
+    public final int TIMEOUT = 30;
 
-    protected String userName = null;
-    protected String pin = null;
-    protected LoginIdentity loginIdentity = null;
+    public String userName = null;
+    public String pin = null;
+    public LoginIdentity loginIdentity = null;
 
-    protected User user;
+    public User user;
 
-    protected static Context mContext;
+    public static Context mContext;
 
     @BeforeClass
     public static void init() {
@@ -111,7 +113,7 @@ public class TestActions {
         }
     }
 
-    protected User createUser(UserCreateRequest user) throws Exception {
+    public User createUser(UserCreateRequest user) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<User> callback = new ResultProvidingCallback<>(latch);
         ApiManager.getInstance().createUser(user, callback);
@@ -119,7 +121,7 @@ public class TestActions {
         return callback.getResult();
     }
 
-    protected boolean doLogin(LoginIdentity loginIdentity) throws Exception {
+    public boolean doLogin(LoginIdentity loginIdentity) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<OAuthToken> callback = new ResultProvidingCallback<>(latch);
         ApiManager.getInstance().login(loginIdentity, callback);
@@ -130,7 +132,7 @@ public class TestActions {
     }
 
 
-    protected User getUser() throws Exception {
+    public User getUser() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
 
         ResultProvidingCallback<User> callback = new ResultProvidingCallback<>(latch);
@@ -143,21 +145,21 @@ public class TestActions {
         return user;
     }
 
-    protected LoginIdentity getTestLoginIdentity(String userName, String pin) throws ValidationException {
+    public LoginIdentity getTestLoginIdentity(String userName, String pin) throws ValidationException {
         return new LoginIdentity.Builder()
                 .setUsername(userName)
                 .setPassword(pin)
                 .build();
     }
 
-    protected UserCreateRequest getNewTestUser(String userName, String pin) throws ValidationException {
+    public UserCreateRequest getNewTestUser(String userName, String pin) throws ValidationException {
         return new UserCreateRequest.Builder()
                 .email(userName)
                 .pin(pin)
                 .build();
     }
 
-    protected CreditCardInfo getTestCreditCardInfo(String pan) {
+    public CreditCardInfo getTestCreditCardInfo(String pan) {
         String cardName = "TEST CARD";
         int expYear = 2018;
         int expMonth = 10;
@@ -184,7 +186,7 @@ public class TestActions {
                 .build();
     }
 
-    protected CreditCardInfo getTestCreditCardInfo(String pan, String cvv, Integer expMonth, Integer expYear) {
+    public CreditCardInfo getTestCreditCardInfo(String pan, String cvv, Integer expMonth, Integer expYear) {
         String cardName = "TEST CARD";
         String city = "Boulder";
         String state = "CO";
@@ -254,7 +256,7 @@ public class TestActions {
 
     }
 
-    Device getPoorlyDefinedDevice() {
+    public Device getPoorlyDefinedDevice() {
 
         String deviceName = "TEST_DEVICE";
         String firmwareRevision = "111.111";
@@ -277,7 +279,7 @@ public class TestActions {
 
     }
 
-    Device getPoorlyDeviceTestSmartStrapDevice() {
+    public Device getPoorlyDeviceTestSmartStrapDevice() {
 
         String manufacturerName = "X111";
         String deviceName = "TEST_DEVICE";
@@ -302,7 +304,7 @@ public class TestActions {
 
     }
 
-    protected Device createDevice(User user, Device device) throws Exception {
+    public Device createDevice(User user, Device device) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<Device> callback = new ResultProvidingCallback<>(latch);
         user.createDevice(device, callback);
@@ -311,7 +313,7 @@ public class TestActions {
         return callback.getResult();
     }
 
-    protected CreditCard createCreditCard(User user, CreditCardInfo creditCardInfo) throws Exception {
+    public CreditCard createCreditCard(User user, CreditCardInfo creditCardInfo) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<CreditCard> callback = new ResultProvidingCallback<>(latch);
         user.createCreditCard(creditCardInfo, callback);
@@ -319,7 +321,7 @@ public class TestActions {
         return callback.getResult();
     }
 
-    CreditCard getCreditCard(CreditCard creditCard) throws Exception {
+    public CreditCard getCreditCard(CreditCard creditCard) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<CreditCard> callback = new ResultProvidingCallback<>(latch);
         creditCard.self(callback);
@@ -329,7 +331,7 @@ public class TestActions {
     }
 
 
-    Collections.CreditCardCollection getCreditCards(User user) throws Exception {
+    public Collections.CreditCardCollection getCreditCards(User user) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<Collections.CreditCardCollection> callback = new ResultProvidingCallback<>(latch);
         user.getCreditCards(10, 0, callback);
@@ -338,7 +340,7 @@ public class TestActions {
         return callback.getResult();
     }
 
-    CreditCard acceptTerms(CreditCard creditCard) throws Exception {
+    public CreditCard acceptTerms(CreditCard creditCard) throws Exception {
         final CountDownLatch latch = new CountDownLatch(2);
         ResultProvidingCallback<CreditCard> callback = new ResultProvidingCallback<>(latch);
         creditCard.acceptTerms(callback);
@@ -360,7 +362,7 @@ public class TestActions {
         return callbackSelf.getResult();
     }
 
-    CreditCard declineTerms(CreditCard creditCard) throws Exception {
+    public CreditCard declineTerms(CreditCard creditCard) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<CreditCard> callback = new ResultProvidingCallback<>(latch);
         creditCard.declineTerms(callback);
@@ -368,7 +370,7 @@ public class TestActions {
         return callback.getResult();
     }
 
-    CreditCard deactivateCard(CreditCard creditCard, Reason reason) throws Exception {
+    public CreditCard deactivateCard(CreditCard creditCard, Reason reason) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<CreditCard> callback = new ResultProvidingCallback<>(latch);
         creditCard.deactivate(reason, callback);
@@ -376,7 +378,7 @@ public class TestActions {
         return callback.getResult();
     }
 
-    CreditCard reactivateCard(CreditCard creditCard, Reason reason) throws Exception {
+    public CreditCard reactivateCard(CreditCard creditCard, Reason reason) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<CreditCard> callback = new ResultProvidingCallback<>(latch);
         creditCard.reactivate(reason, callback);
@@ -385,7 +387,7 @@ public class TestActions {
     }
 
 
-    void makeDefaultCard(CreditCard creditCard) throws Exception {
+    public void makeDefaultCard(CreditCard creditCard) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<Void> callback = new ResultProvidingCallback<>(latch);
         creditCard.makeDefault(callback);
@@ -394,7 +396,7 @@ public class TestActions {
     }
 
 
-    void deleteCard(CreditCard creditCard) throws Exception {
+    public void deleteCard(CreditCard creditCard) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<Void> callback = new ResultProvidingCallback<>(latch);
         creditCard.deleteCard(callback);
@@ -402,7 +404,7 @@ public class TestActions {
         assertEquals("delete error code", -1, callback.getErrorCode());
     }
 
-    VerificationMethod selectVerificationMethod(VerificationMethod method) throws Exception {
+    public VerificationMethod selectVerificationMethod(VerificationMethod method) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<VerificationMethod> callback = new ResultProvidingCallback<>(latch);
         method.select(callback);
@@ -410,7 +412,7 @@ public class TestActions {
         return callback.getResult();
     }
 
-    VerificationMethod verifyVerificationMethod(VerificationMethod method, String verificationCode) throws Exception {
+    public VerificationMethod verifyVerificationMethod(VerificationMethod method, String verificationCode) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<VerificationMethod> callback = new ResultProvidingCallback<>(latch);
         method.verify(verificationCode, callback);
@@ -418,7 +420,7 @@ public class TestActions {
         return callback.getResult();
     }
 
-    VerificationMethod getSelectedVerificationMethod(CreditCard card) throws Exception {
+    public VerificationMethod getSelectedVerificationMethod(CreditCard card) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<VerificationMethod> callback = new ResultProvidingCallback<>(latch);
         card.getSelectedVerificationMethod(callback);
@@ -426,7 +428,7 @@ public class TestActions {
         return callback.getResult();
     }
 
-    Collections.TransactionCollection getCardTransactions(CreditCard card) throws Exception {
+    public Collections.TransactionCollection getCardTransactions(CreditCard card) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<Collections.TransactionCollection> callback = new ResultProvidingCallback<>(latch);
         card.getTransactions(10, 0, callback);
@@ -435,7 +437,7 @@ public class TestActions {
         return callback.getResult();
     }
 
-    Transaction getTransaction(Transaction transaction) throws Exception {
+    public Transaction getTransaction(Transaction transaction) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<Transaction> callback = new ResultProvidingCallback<>(latch);
         transaction.self(callback);
@@ -444,7 +446,7 @@ public class TestActions {
         return callback.getResult();
     }
 
-    protected Collections.DeviceCollection getDevices(User user) throws Exception {
+    public Collections.DeviceCollection getDevices(User user) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<Collections.DeviceCollection> callback = new ResultProvidingCallback<>(latch);
         user.getDevices(10, 0, callback);
@@ -454,7 +456,7 @@ public class TestActions {
     }
 
 
-    Collections.CommitsCollection getCommits(Device device, String lastCommitId) throws Exception {
+    public Collections.CommitsCollection getCommits(Device device, String lastCommitId) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<Collections.CommitsCollection> callback = new ResultProvidingCallback<>(latch);
         device.getCommits(lastCommitId, callback);
@@ -464,7 +466,7 @@ public class TestActions {
     }
 
 
-    Collections.CommitsCollection getAllCommits(Device device, String lastCommitId) throws Exception {
+    public Collections.CommitsCollection getAllCommits(Device device, String lastCommitId) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<Collections.CommitsCollection> callback = new ResultProvidingCallback<>(latch);
         device.getAllCommits(lastCommitId, callback);
@@ -473,7 +475,7 @@ public class TestActions {
         return callback.getResult();
     }
 
-    protected ApduPackage getTestApduPackage() {
+    public ApduPackage getTestApduPackage() {
 
         String apduJson = "{  \n" +
                 "   \"seIdType\":\"iccid\",\n" +
@@ -534,7 +536,7 @@ public class TestActions {
         return gson.fromJson(apduJson, ApduPackage.class);
     }
 
-    CreditCard waitForActivation(CreditCard card) throws Exception {
+    public CreditCard waitForActivation(CreditCard card) throws Exception {
         assertNotNull("no card to wait for activation on", card);
 
         CreditCard retrievedCard = card;
@@ -549,5 +551,10 @@ public class TestActions {
 
         assertEquals("card never transitioned to ACTIVE state", "ACTIVE", retrievedCard.getState());
         return retrievedCard;
+    }
+
+    public A2AVerificationRequest getA2AVerificationRequest() {
+        String a2aVerificationRequest = "{\"cardType\":\"VISA\",\"returnLocation\":\"\\/idv\\/b3f70e43-c066-4e9d-b5ec-b7237302f9cc\\/select\\/3b42e65f-1608-4afd-bd72-646142b00a6e\",\"context\":{\"applicationId\":\"com.fitpay.issuerdemo\",\"action\":\"generate_auth_code\",\"payload\":\"eyJ1c2VySWQiOiIxNTdmMTUxOC1kYzRjLTRhYWMtYWRmNS03NjRkMDE2MTJjNGEiLCJ0b2tlbml6YXRpb25JZCI6ImIzZjcwZTQzLWMwNjYtNGU5ZC1iNWVjLWI3MjM3MzAyZjljYyIsInZlcmlmaWNhdGlvbklkIjoiM2I0MmU2NWYtMTYwOC00YWZkLWJkNzItNjQ2MTQyYjAwYTZlIn0=\"}}";
+        return Constants.getGson().fromJson(a2aVerificationRequest, A2AVerificationRequest.class);
     }
 }
