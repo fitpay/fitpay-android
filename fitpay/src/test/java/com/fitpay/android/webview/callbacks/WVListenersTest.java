@@ -20,7 +20,7 @@ import rx.schedulers.Schedulers;
 
 public class WVListenersTest extends TestActions {
 
-    String id = "12345";
+    private String id = "12345";
 
     @Override
     @Before
