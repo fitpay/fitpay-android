@@ -24,6 +24,7 @@ import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.paymentdevice.impl.mock.SecureElementDataProvider;
 import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.FPLog;
+import com.fitpay.android.utils.NotificationManager;
 import com.fitpay.android.utils.SecurityProvider;
 import com.fitpay.android.utils.TimestampUtils;
 import com.fitpay.android.utils.ValidationException;
@@ -101,6 +102,7 @@ public class TestActions {
         FPLog.clean();
         mContext = null;
         DeviceSyncManager.clean();
+        NotificationManager.clean();
     }
 
     @After

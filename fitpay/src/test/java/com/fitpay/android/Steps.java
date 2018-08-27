@@ -21,7 +21,9 @@ import com.fitpay.android.api.models.security.OAuthToken;
 import com.fitpay.android.api.models.user.LoginIdentity;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.api.models.user.UserCreateRequest;
+import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.paymentdevice.impl.mock.SecureElementDataProvider;
+import com.fitpay.android.utils.NotificationManager;
 import com.fitpay.android.utils.SecurityProvider;
 import com.fitpay.android.utils.TimestampUtils;
 import com.fitpay.android.utils.ValidationException;
@@ -77,6 +79,9 @@ public class Steps {
         cardsCollection = null;
         currentDevice = null;
         currentCommit = null;
+
+        DeviceSyncManager.clean();
+        NotificationManager.clean();
     }
 
 

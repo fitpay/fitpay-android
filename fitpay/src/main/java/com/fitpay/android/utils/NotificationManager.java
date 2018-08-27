@@ -37,6 +37,17 @@ public final class NotificationManager {
         return sInstance;
     }
 
+    public static void clean() {
+        synchronized (NotificationManager.class) {
+            if(sInstance != null) {
+                sInstance.mCommands.clear();
+                sInstance.mListeners.clear();
+                sInstance.mSubscriptions.clear();
+                sInstance = null;
+            }
+        }
+    }
+
     private NotificationManager() {
         mListeners = new CopyOnWriteArrayList<>();
         mCommands = new ConcurrentHashMap<>();
