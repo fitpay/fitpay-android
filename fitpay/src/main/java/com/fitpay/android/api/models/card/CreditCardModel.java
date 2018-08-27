@@ -18,6 +18,7 @@ abstract class CreditCardModel extends BaseModel {
     /**
      * @deprecated as of v1.0.3
      */
+    @Deprecated
     @SerializedName("default")
     protected Boolean defaultX;
 
@@ -55,6 +56,7 @@ abstract class CreditCardModel extends BaseModel {
     /**
      * @deprecated as of v1.0.3 - will stop being returned from the server
      */
+    @Deprecated
     public boolean isDefault() {
         if (null == defaultX) {
             return false;
