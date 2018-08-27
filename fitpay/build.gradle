@@ -125,8 +125,8 @@ dependencies {
 
     implementation 'me.alexrs:prefs:1.1.0'
 
-    implementation 'org.bouncycastle:bcprov-jdk15on:1.58'
-    implementation 'com.nimbusds:nimbus-jose-jwt:5.1'
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.60'
+    implementation 'com.nimbusds:nimbus-jose-jwt:6.0.1'
 
     implementation 'com.github.heremaps:oksse:0.9.0'
 
