@@ -19,7 +19,7 @@ final public class AuthService extends BaseClient {
         Interceptor interceptor = chain -> {
             Request.Builder builder = chain.request().newBuilder()
                     .header("Accept", "application/json")
-                    .header("Content-Type", "application/json")
+                    .header("Content-Type", "application/json; charset=utf-8")
                     .header(FP_KEY_SDK_VER, BuildConfig.SDK_VERSION);
 
             return chain.proceed(builder.build());
