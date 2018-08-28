@@ -8,6 +8,7 @@ import android.webkit.WebView;
 import com.fitpay.android.TestActions;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
+import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.Listener;
 import com.fitpay.android.utils.NotificationManager;
 import com.fitpay.android.utils.RxBus;
@@ -81,6 +82,7 @@ public class FitpayWebTest extends TestActions {
         CountDownLatch latch = new CountDownLatch(2);
         AtomicReference<String> rtmTypeRef = new AtomicReference<>();
         fitpayWeb.setRtmDelegate(rtmMessage -> {
+            FPLog.d(rtmMessage.toString());
             rtmTypeRef.set(rtmMessage.getType());
             latch.countDown();
         });
@@ -96,7 +98,7 @@ public class FitpayWebTest extends TestActions {
         RxBus.getInstance().post(deviceConnector.id(), testMessage);
         RxBus.getInstance().post(deviceConnector.id(), new IdVerificationRequest("1"));
 
-        latch.await(10, TimeUnit.SECONDS);
+        latch.await(30, TimeUnit.SECONDS);
 
         NotificationManager.getInstance().removeListener(listener);
 
@@ -128,6 +130,7 @@ public class FitpayWebTest extends TestActions {
         IdVerificationRequestListener(String id, CountDownLatch latch, AtomicReference<IdVerificationRequest> ref) {
             super(id);
             mCommands.put(IdVerificationRequest.class, data -> {
+                FPLog.d(data.toString());
                 ref.set((IdVerificationRequest) data);
                 latch.countDown();
             });
