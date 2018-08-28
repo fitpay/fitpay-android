@@ -1,7 +1,7 @@
 package com.fitpay.android.rtm.models;
 
 /**
- * @deprecated as of v1.0.3 - not being used
+ * @deprecated as of v1.1.0 - not being used
  * This data can then be used to set or verify a user device relationship, retrieve commit changes for the device, etc...
  */
 @Deprecated
