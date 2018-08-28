@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * @deprecated as of v1.0.3 - not being used
+ * @deprecated as of v1.1.0 - not being used
  */
 @Deprecated
 public final class ErrorCodes {

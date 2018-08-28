@@ -1,6 +1,5 @@
 package com.fitpay.android.api.models;
 
-
 import android.support.annotation.NonNull;
 
 import com.fitpay.android.api.ApiManager;
@@ -86,7 +85,6 @@ public class BaseModel {
         }
     }
 
-
     protected <T, U> void makePatchCall(U data, boolean encrypt, Type type, ApiCallback<T> callback) {
         makePatchCall(data, false, encrypt, type, callback);
     }
@@ -98,13 +96,6 @@ public class BaseModel {
         }
     }
 
-    protected <T> void makePutCall(T data, Type type, ApiCallback<T> callback) {
-        String url = getLink(SELF, callback);
-        if (url != null) {
-            ApiManager.getInstance().put(url, data, type, callback);
-        }
-    }
-
     protected void makeDeleteCall(ApiCallback<Void> callback) {
         String url = getLink(SELF, callback);
         if (url != null) {
@@ -113,10 +104,6 @@ public class BaseModel {
     }
 
     public boolean hasLink(String key) {
-        if (links == null) {
-            return false;
-        }
-
-        return !StringUtils.isEmpty(links.getLink(key));
+        return links != null && !StringUtils.isEmpty(links.getLink(key));
     }
 }
