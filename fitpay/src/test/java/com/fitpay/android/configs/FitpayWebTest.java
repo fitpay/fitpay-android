@@ -94,6 +94,8 @@ public class FitpayWebTest extends TestActions {
         IdVerificationRequestListener listener = new IdVerificationRequestListener(deviceConnector.id(), latch, idRequestRef);
         NotificationManager.getInstance().addListener(listener);
 
+        Thread.sleep(1000);
+
         RtmMessage testMessage = new RtmMessage("1", "", "myEvent");
         RxBus.getInstance().post(deviceConnector.id(), testMessage);
         RxBus.getInstance().post(deviceConnector.id(), new IdVerificationRequest("1"));

@@ -133,7 +133,6 @@ public final class NotificationManager {
             FPLog.d(TAG, "addListener " + listener + " on scheduler: " + observerScheduler + ", current thread: " + Thread.currentThread());
 
             if (!mListeners.contains(listener)) {
-                FPLog.d(TAG, "addListener: " + listener);
                 mListeners.add(listener);
 
                 Map<Class, Command> commands = listener.getCommandsForRx();
