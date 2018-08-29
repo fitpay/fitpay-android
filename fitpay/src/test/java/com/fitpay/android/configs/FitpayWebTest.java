@@ -89,8 +89,8 @@ public class FitpayWebTest extends TestActions {
 
     @Test
     public void test03_checkDelegates() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(2);
-        AtomicReference<String> rtmTypeRef = new AtomicReference<>();
+        final CountDownLatch latch = new CountDownLatch(2);
+        final AtomicReference<String> rtmTypeRef = new AtomicReference<>();
         final FitpayWeb.RtmDelegate rtmDelegate = rtmMessage -> {
             FPLog.d(FitpayWebTest.class.getSimpleName(), "event received:" + rtmMessage.toString());
             rtmTypeRef.set(rtmMessage.getType());
