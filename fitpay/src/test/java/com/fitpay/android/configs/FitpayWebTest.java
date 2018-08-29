@@ -17,6 +17,7 @@ import com.fitpay.android.webview.events.RtmMessage;
 import com.fitpay.android.webview.impl.WebViewCommunicatorImpl;
 import com.fitpay.android.webview.models.IdVerification;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -27,6 +28,8 @@ import org.mockito.Mockito;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+
+import rx.schedulers.Schedulers;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class FitpayWebTest extends TestActions {
@@ -51,6 +54,13 @@ public class FitpayWebTest extends TestActions {
         deviceConnector = new MockPaymentDeviceConnector(activity);
         webViewCommunicator = new WebViewCommunicatorImpl(activity, deviceConnector, view);
         fitpayWeb = new FitpayWeb(activity, view, webViewCommunicator, deviceConnector);
+    }
+
+    @Override
+    @After
+    public void after() throws Exception {
+        super.after();
+        fitpayWeb.onDestroy();
     }
 
     @Test
@@ -81,20 +91,26 @@ public class FitpayWebTest extends TestActions {
     public void test03_checkDelegates() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(2);
         AtomicReference<String> rtmTypeRef = new AtomicReference<>();
-        fitpayWeb.setRtmDelegate(rtmMessage -> {
-            FPLog.d(rtmMessage.toString());
+        final FitpayWeb.RtmDelegate rtmDelegate = rtmMessage -> {
+            FPLog.d(FitpayWebTest.class.getSimpleName(), "event received:" + rtmMessage.toString());
             rtmTypeRef.set(rtmMessage.getType());
             latch.countDown();
-        });
+        };
+        fitpayWeb.setRtmDelegate(rtmDelegate);
+
+        Assert.assertNotNull(fitpayWeb.getRtmDelegate());
+        Assert.assertEquals(rtmDelegate, fitpayWeb.getRtmDelegate());
 
         final IdVerification idVerification = new IdVerification.Builder().build();
-        fitpayWeb.setIdVerificationDelegate(() -> idVerification);
+        final FitpayWeb.IdVerificationDelegate idVerificationDelegate = () -> idVerification;
+        fitpayWeb.setIdVerificationDelegate(idVerificationDelegate);
+
+        Assert.assertNotNull(fitpayWeb.getIdVerificationDelegate());
+        Assert.assertEquals(idVerificationDelegate, fitpayWeb.getIdVerificationDelegate());
 
         AtomicReference<IdVerificationRequest> idRequestRef = new AtomicReference<>();
         IdVerificationRequestListener listener = new IdVerificationRequestListener(deviceConnector.id(), latch, idRequestRef);
-        NotificationManager.getInstance().addListener(listener);
-
-        Thread.sleep(1000);
+        NotificationManager.getInstance().addListener(listener, Schedulers.immediate());
 
         RtmMessage testMessage = new RtmMessage("1", "", "myEvent");
         RxBus.getInstance().post(deviceConnector.id(), testMessage);

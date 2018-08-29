@@ -31,7 +31,7 @@ public class WVListenersTest extends TestActions {
     public void a2aListenerTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
 
-        AtomicReference<A2AVerificationRequest> requestRef = new AtomicReference();
+        AtomicReference<A2AVerificationRequest> requestRef = new AtomicReference<>();
         A2AVerificationListener listener = new A2AVerificationListener(id) {
             @Override
             public void onRequestReceived(A2AVerificationRequest request) {
