@@ -153,14 +153,16 @@ public class DeviceSyncManagerTest extends TestActions {
         NotificationManager.getInstance().addListener(this.listener);
     }
 
+    @Override
     @After
-    public void cleanup() {
+    public void after() {
         if (syncManager != null) {
             syncManager.unsubscribe();
             syncManager.removeDeviceSyncManagerCallback(syncManagerCallback);
         }
 
         NotificationManager.getInstance().removeListener(this.listener);
+        super.after();
     }
 
     @Test

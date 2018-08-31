@@ -59,7 +59,7 @@ public class FitpayWebTest extends TestActions {
 
     @Override
     @After
-    public void after() throws Exception {
+    public void after() {
         super.after();
         fitpayWeb.onDestroy();
     }
@@ -89,7 +89,6 @@ public class FitpayWebTest extends TestActions {
     }
 
     //TODO: current test doesn't want to pass on travis, but it works on local machine. fix it later
-    @Ignore
     @Test
     public void test03_checkDelegates() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(2);

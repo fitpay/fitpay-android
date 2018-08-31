@@ -39,7 +39,11 @@ public final class NotificationManager {
 
     public static void clean() {
         synchronized (NotificationManager.class) {
-            if(sInstance != null) {
+            if (sInstance != null) {
+                for (Map.Entry<Class, Subscription> entry : sInstance.mSubscriptions.entrySet()) {
+                    Subscription subscription = entry.getValue();
+                    subscription.unsubscribe();
+                }
                 sInstance.mCommands.clear();
                 sInstance.mListeners.clear();
                 sInstance.mSubscriptions.clear();

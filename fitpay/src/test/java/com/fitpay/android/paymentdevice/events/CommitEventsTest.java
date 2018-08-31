@@ -10,7 +10,7 @@ import org.junit.Test;
 
 public class CommitEventsTest {
 
-    Commit commit;
+    private Commit commit;
 
     @Before
     public void before() {

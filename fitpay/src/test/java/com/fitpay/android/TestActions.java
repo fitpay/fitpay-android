@@ -1,7 +1,5 @@
 package com.fitpay.android;
 
-import android.content.Context;
-
 import com.fitpay.android.a2averification.A2AVerificationRequest;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ResultProvidingCallback;
@@ -20,38 +18,24 @@ import com.fitpay.android.api.models.security.OAuthToken;
 import com.fitpay.android.api.models.user.LoginIdentity;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.api.models.user.UserCreateRequest;
-import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.paymentdevice.impl.mock.SecureElementDataProvider;
 import com.fitpay.android.utils.Constants;
-import com.fitpay.android.utils.FPLog;
-import com.fitpay.android.utils.NotificationManager;
-import com.fitpay.android.utils.SecurityProvider;
 import com.fitpay.android.utils.TimestampUtils;
 import com.fitpay.android.utils.ValidationException;
 import com.google.gson.Gson;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import org.mockito.Mockito;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
-import rx.Scheduler;
-import rx.android.plugins.RxAndroidPlugins;
-import rx.android.plugins.RxAndroidSchedulersHook;
-import rx.plugins.RxJavaHooks;
-import rx.schedulers.Schedulers;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
-public class TestActions {
+public class TestActions extends BaseTestActions {
 
     public final int TIMEOUT = 30;
 
@@ -60,26 +44,6 @@ public class TestActions {
     public LoginIdentity loginIdentity = null;
 
     public User user;
-
-    public static Context mContext;
-
-    @BeforeClass
-    public static void init() {
-        SecurityProvider.getInstance().setProvider(new BouncyCastleProvider());
-        TestConstants.configureFitpay(mContext = Mockito.mock(Context.class));
-
-        RxAndroidPlugins.getInstance().reset();
-        RxAndroidPlugins.getInstance().registerSchedulersHook(new RxAndroidSchedulersHook() {
-            @Override
-            public Scheduler getMainThreadScheduler() {
-                return Schedulers.immediate();
-            }
-        });
-
-        RxJavaHooks.setOnIOScheduler(scheduler -> Schedulers.immediate());
-        RxJavaHooks.setOnComputationScheduler(scheduler -> Schedulers.immediate());
-        RxJavaHooks.setOnNewThreadScheduler(scheduler -> Schedulers.immediate());
-    }
 
     @Before
     public void before() throws Exception {
@@ -97,22 +61,20 @@ public class TestActions {
         assertNotNull(user);
     }
 
-    @AfterClass
-    public static void clear() {
-        FPLog.clean();
-        mContext = null;
-        DeviceSyncManager.clean();
-        NotificationManager.clean();
-    }
-
+    @Override
     @After
-    public void after() throws Exception {
+    public void after() {
         if (null != this.user) {
             final CountDownLatch latch = new CountDownLatch(1);
             ResultProvidingCallback<Void> callback = new ResultProvidingCallback<>(latch);
             this.user.deleteUser(callback);
-            latch.await(TIMEOUT, TimeUnit.SECONDS);
+            try {
+                latch.await(TIMEOUT, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+        super.after();
     }
 
     public User createUser(UserCreateRequest user) throws Exception {

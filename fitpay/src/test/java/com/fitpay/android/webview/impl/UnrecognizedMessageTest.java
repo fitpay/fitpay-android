@@ -1,5 +1,6 @@
 package com.fitpay.android.webview.impl;
 
+import com.fitpay.android.BaseTestActions;
 import com.fitpay.android.TestActions;
 import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.FPLog;
@@ -24,7 +25,7 @@ import static junit.framework.Assert.assertNotNull;
  * Created by Vlad on 04.12.2017.
  */
 
-public class UnrecognizedMessageTest extends TestActions{
+public class UnrecognizedMessageTest extends BaseTestActions{
 
     private RtmMessage message;
 
@@ -32,17 +33,18 @@ public class UnrecognizedMessageTest extends TestActions{
     private UnrecognizedRtmMessageListener listener;
 
     @Before
-    @Override
     public void before() throws Exception {
         latch = new CountDownLatch(1);
         this.listener = new UnrecognizedRtmMessageListener(latch);
         NotificationManager.getInstance().addListener(listener, Schedulers.immediate());
     }
 
+    @Override
     @After
-    public void cleanup() {
+    public void after() {
         NotificationManager.getInstance().removeListener(listener);
         this.listener = null;
+        super.after();
     }
 
     @Test

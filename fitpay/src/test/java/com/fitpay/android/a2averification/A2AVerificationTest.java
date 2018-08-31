@@ -3,8 +3,6 @@ package com.fitpay.android.a2averification;
 import com.fitpay.android.TestActions;
 import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.utils.Constants;
-import com.fitpay.android.webview.enums.RtmType;
-import com.fitpay.android.webview.events.RtmMessageResponse;
 
 import org.junit.Assert;
 import org.junit.Before;

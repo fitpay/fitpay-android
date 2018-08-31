@@ -1,5 +1,6 @@
 package com.fitpay.android.webview.models;
 
+import com.fitpay.android.BaseTestActions;
 import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.TimestampUtils;
 import com.fitpay.android.webview.enums.DeviceTimeZone;
@@ -13,7 +14,7 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class IdVerificationTest {
+public class IdVerificationTest extends BaseTestActions{
 
     @Test
     public void test01_emptySetsLocale() {

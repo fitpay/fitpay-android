@@ -2,8 +2,8 @@ package com.fitpay.android.webview.impl;
 
 import android.app.Activity;
 
+import com.fitpay.android.BaseTestActions;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
-import com.fitpay.android.utils.Command;
 import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.Listener;
 import com.fitpay.android.utils.NotificationManager;
@@ -15,6 +15,7 @@ import junit.framework.Assert;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -31,20 +32,23 @@ import static junit.framework.Assert.assertNotNull;
  * Created by Vlad on 19.07.2017.
  */
 
-public class RtmParserTest {
+public class RtmParserTest extends BaseTestActions {
 
     private WebViewCommunicatorImpl wvci;
 
     @Before
-    public void init() {
+    public void before() {
         Activity context = Mockito.mock(Activity.class);
         MockPaymentDeviceConnector deviceConnector = new MockPaymentDeviceConnector(context);
         wvci = new WebViewCommunicatorImpl(context, deviceConnector, null);
     }
 
+    @Override
     @After
-    public void terminate() {
+    public void after() {
+        wvci.destroy();
         wvci = null;
+        super.after();
     }
 
     @Test
@@ -135,12 +139,14 @@ public class RtmParserTest {
     }
 
     class UnrecognizedMessageListener extends Listener {
-        private UnrecognizedMessageListener(String id, AtomicReference<RtmMessage> rtmRef, CountDownLatch latch){
+        private UnrecognizedMessageListener(String id, AtomicReference<RtmMessage> rtmRef, CountDownLatch latch) {
             super(id);
             mCommands.put(UnrecognizedRtmMessage.class, data -> {
                 rtmRef.set(((UnrecognizedRtmMessage) data).getMessage());
                 latch.countDown();
             });
         }
-    };
+    }
+
+    ;
 }

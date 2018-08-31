@@ -2,6 +2,7 @@ package com.fitpay.android.paymentdevice.utils;
 
 import android.content.Context;
 
+import com.fitpay.android.BaseTestActions;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
 
@@ -13,7 +14,7 @@ import org.mockito.internal.util.reflection.FieldSetter;
 import java.util.HashMap;
 
 
-public class PaymentDeviceConnectorManagerTest {
+public class PaymentDeviceConnectorManagerTest extends BaseTestActions{
 
     @Test
     public void managerTest() throws NoSuchFieldException {

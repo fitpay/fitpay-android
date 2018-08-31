@@ -44,11 +44,13 @@ public class MockPaymentDeviceTest extends TestActions {
         manager = NotificationManager.getInstance();
     }
 
+    @Override
     @After
-    public void teardown() {
+    public void after() {
         if (null != listener) {
             manager.removeListener(listener);
         }
+        super.after();
     }
 
     @Test

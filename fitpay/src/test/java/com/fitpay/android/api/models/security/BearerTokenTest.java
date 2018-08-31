@@ -1,11 +1,9 @@
 package com.fitpay.android.api.models.security;
 
-import com.fitpay.android.TestActions;
+import com.fitpay.android.BaseTestActions;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.ResultCode;
-import com.fitpay.android.api.models.security.AccessDenied;
-import com.fitpay.android.api.models.security.OAuthToken;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.utils.Listener;
 import com.fitpay.android.utils.NotificationManager;
@@ -23,20 +21,21 @@ import java.util.concurrent.CountDownLatch;
  * Created by ssteveli on 10/5/17.
  */
 
-public class BearerTokenTest extends TestActions {
+public class BearerTokenTest extends BaseTestActions {
     private AccessDeniedListener listener;
 
     @Before
-    @Override
     public void before() throws Exception {
         this.listener = new AccessDeniedListener();
         NotificationManager.getInstance().addListenerToCurrentThread(this.listener);
     }
 
+    @Override
     @After
-    public void cleanup() {
+    public void after() {
         NotificationManager.getInstance().removeListener(this.listener);
         this.listener = null;
+        super.after();
     }
 
     @Test
