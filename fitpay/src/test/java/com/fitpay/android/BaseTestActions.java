@@ -3,7 +3,6 @@ package com.fitpay.android;
 import android.content.Context;
 
 import com.fitpay.android.paymentdevice.DeviceSyncManager;
-import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.NotificationManager;
 import com.fitpay.android.utils.SecurityProvider;
@@ -14,6 +13,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.mockito.Mockito;
 
+import java.util.concurrent.Executor;
+
+import mockit.Mock;
+import mockit.MockUp;
 import rx.Scheduler;
 import rx.android.plugins.RxAndroidPlugins;
 import rx.android.plugins.RxAndroidSchedulersHook;
@@ -40,6 +43,13 @@ public class BaseTestActions {
         RxJavaHooks.setOnIOScheduler(scheduler -> Schedulers.immediate());
         RxJavaHooks.setOnComputationScheduler(scheduler -> Schedulers.immediate());
         RxJavaHooks.setOnNewThreadScheduler(scheduler -> Schedulers.immediate());
+
+        new MockUp<Schedulers>() {
+            @Mock
+            Scheduler from(Executor executor) {
+                return Schedulers.immediate();
+            }
+        };
     }
 
     @AfterClass
