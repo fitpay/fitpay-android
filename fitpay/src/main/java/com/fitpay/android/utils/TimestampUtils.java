@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import com.google.gson.internal.bind.util.ISO8601Utils;
 
 import org.joda.time.Days;
-import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
 import java.text.ParseException;

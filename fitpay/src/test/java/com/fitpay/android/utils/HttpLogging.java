@@ -17,7 +17,6 @@ package com.fitpay.android.utils;
  */
 
 import com.fitpay.android.api.ApiManager;
-import com.fitpay.android.api.services.FakeInterceptor;
 
 import java.io.BufferedReader;
 import java.io.EOFException;

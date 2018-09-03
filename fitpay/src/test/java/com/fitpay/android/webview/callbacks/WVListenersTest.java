@@ -1,6 +1,6 @@
 package com.fitpay.android.webview.callbacks;
 
-import com.fitpay.android.TestActions;
+import com.fitpay.android.BaseTestActions;
 import com.fitpay.android.a2averification.A2AVerificationRequest;
 import com.fitpay.android.utils.NotificationManager;
 import com.fitpay.android.utils.RxBus;
@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import rx.schedulers.Schedulers;
 
-public class WVListenersTest extends TestActions {
+public class WVListenersTest extends BaseTestActions {
 
     private String id = "12345";
 

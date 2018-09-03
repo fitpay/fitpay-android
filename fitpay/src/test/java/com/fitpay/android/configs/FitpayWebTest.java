@@ -6,10 +6,12 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import com.fitpay.android.TestActions;
+import com.fitpay.android.api.models.apdu.ApduExecutionResultTest;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.Listener;
+import com.fitpay.android.utils.NamedResource;
 import com.fitpay.android.utils.NotificationManager;
 import com.fitpay.android.utils.RxBus;
 import com.fitpay.android.webview.events.IdVerificationRequest;
@@ -20,8 +22,8 @@ import com.fitpay.android.webview.models.IdVerification;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.mockito.Mockito;
@@ -34,6 +36,9 @@ import rx.schedulers.Schedulers;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class FitpayWebTest extends TestActions {
+
+    @ClassRule
+    public static NamedResource rule = new NamedResource(FitpayWebTest.class);
 
     private Activity activity;
     private WebViewCommunicatorImpl webViewCommunicator;

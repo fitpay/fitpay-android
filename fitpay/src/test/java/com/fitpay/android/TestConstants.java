@@ -18,6 +18,8 @@ public final class TestConstants {
     private final static String PROPERTY_CLIENT_ID = "clientId";
     private final static String PROPERTY_REDIRECT_URL = "redirectUrl";
 
+    public static boolean USE_REAL_TESTS = true;
+
     public static String getClientId() {
         return System.getProperty(PROPERTY_CLIENT_ID, "fp_webapp_pJkVp2Rl");
     }

@@ -2,7 +2,6 @@ package com.fitpay.android.api.services;
 
 import android.os.Build;
 
-import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.utils.FPLog;
 
 import java.security.KeyStore;
@@ -16,7 +15,6 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-import okhttp3.Cache;
 import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.TlsVersion;

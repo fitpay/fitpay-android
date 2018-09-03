@@ -1,6 +1,5 @@
 package com.fitpay.android.paymentdevice.impl;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.fitpay.android.TestActions;
@@ -10,6 +9,7 @@ import com.fitpay.android.api.models.card.CreditCardInfo;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.models.user.LoginIdentity;
 import com.fitpay.android.api.models.user.UserCreateRequest;
+import com.fitpay.android.configs.FitpayWebTest;
 import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.paymentdevice.callbacks.DeviceSyncManagerCallback;
 import com.fitpay.android.paymentdevice.constants.States;
@@ -18,10 +18,12 @@ import com.fitpay.android.paymentdevice.events.CommitSuccess;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
 import com.fitpay.android.utils.Listener;
+import com.fitpay.android.utils.NamedResource;
 import com.fitpay.android.utils.NotificationManager;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
@@ -32,9 +34,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -45,6 +47,9 @@ import static org.mockito.Mockito.when;
 
 
 public class DeviceSyncManagerTest extends TestActions {
+
+    @ClassRule
+    public static NamedResource rule = new NamedResource(DeviceSyncManagerTest.class);
 
     private DeviceSyncManager syncManager;
     protected MockPaymentDeviceConnector mockPaymentDevice;

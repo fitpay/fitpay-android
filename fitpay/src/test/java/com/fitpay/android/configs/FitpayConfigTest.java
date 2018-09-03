@@ -3,9 +3,10 @@ package com.fitpay.android.configs;
 import com.fitpay.android.BaseTestActions;
 import com.fitpay.android.TestConstants;
 import com.fitpay.android.utils.Constants;
+import com.fitpay.android.utils.NamedResource;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
+import org.junit.ClassRule;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -15,6 +16,9 @@ import java.io.InputStream;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class FitpayConfigTest extends BaseTestActions {
+
+    @ClassRule
+    public static NamedResource rule = new NamedResource(FitpayConfigTest.class);
 
     @Test
     public void test01_checkDefaultApiUrl() {

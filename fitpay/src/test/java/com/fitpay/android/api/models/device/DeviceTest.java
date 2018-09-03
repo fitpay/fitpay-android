@@ -2,8 +2,6 @@ package com.fitpay.android.api.models.device;
 
 import com.fitpay.android.Steps;
 
-import com.fitpay.android.utils.HttpLogging;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;

@@ -1,27 +1,24 @@
 package com.fitpay.android.api.models.apdu;
 
-import com.fitpay.android.CommitTest;
 import com.fitpay.android.api.enums.ResponseState;
 import com.fitpay.android.utils.Hex;
-import com.fitpay.android.utils.HttpLogging;
+import com.fitpay.android.utils.NamedResource;
 
-import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import java.util.UUID;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by tgs on 5/27/16.
  */
 public class ApduExecutionResultTest {
 
-    @Before
-    public void init(){
-        HttpLogging.setTestName(ApduExecutionResultTest.class.getSimpleName());
-    }
+    @ClassRule
+    public static NamedResource rule = new NamedResource(ApduExecutionResultTest.class);
 
     @Test
     public void testIsSuccessResponseCode9000() {
@@ -60,13 +57,12 @@ public class ApduExecutionResultTest {
     @Test
     public void testIsSuccessResponseCode3() {
         ApduExecutionResult result = new ApduExecutionResult(UUID.randomUUID().toString());
-        result.addResponse(new ApduCommandResult.Builder().setResponseCode(Hex.bytesToHexString( new byte[] {(byte) 0x61, (byte) 0x00})).build());
+        result.addResponse(new ApduCommandResult.Builder().setResponseCode(Hex.bytesToHexString(new byte[]{(byte) 0x61, (byte) 0x00})).build());
         result.addResponse(new ApduCommandResult.Builder().setResponseCode("9000").build());
         assertEquals("state for response with 0x6100 and 9000", ResponseState.PROCESSED, result.getState());
         result.deriveState();
         assertEquals("derived state for response with 0x6100 and 9000", ResponseState.PROCESSED, result.getState());
     }
-
 
 
 }

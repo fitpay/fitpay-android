@@ -1,6 +1,5 @@
 package com.fitpay.android;
 
-import com.fitpay.android.a2averification.A2AVerificationRequest;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ResultProvidingCallback;
 import com.fitpay.android.api.enums.DeviceTypes;
@@ -19,7 +18,6 @@ import com.fitpay.android.api.models.user.LoginIdentity;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.api.models.user.UserCreateRequest;
 import com.fitpay.android.paymentdevice.impl.mock.SecureElementDataProvider;
-import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.TimestampUtils;
 import com.fitpay.android.utils.ValidationException;
 import com.google.gson.Gson;
@@ -31,9 +29,9 @@ import org.junit.Before;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class TestActions extends BaseTestActions {
 
@@ -45,6 +43,7 @@ public class TestActions extends BaseTestActions {
 
     public User user;
 
+    @Override
     @Before
     public void before() throws Exception {
         userName = TestUtils.getRandomLengthString(5, 10) + "@"
@@ -515,10 +514,5 @@ public class TestActions extends BaseTestActions {
 
         assertEquals("card never transitioned to ACTIVE state", "ACTIVE", retrievedCard.getState());
         return retrievedCard;
-    }
-
-    public A2AVerificationRequest getA2AVerificationRequest() {
-        String a2aVerificationRequest = "{\"cardType\":\"VISA\",\"returnLocation\":\"\\/idv\\/b3f70e43-c066-4e9d-b5ec-b7237302f9cc\\/select\\/3b42e65f-1608-4afd-bd72-646142b00a6e\",\"context\":{\"applicationId\":\"com.fitpay.issuerdemo\",\"action\":\"generate_auth_code\",\"payload\":\"eyJ1c2VySWQiOiIxNTdmMTUxOC1kYzRjLTRhYWMtYWRmNS03NjRkMDE2MTJjNGEiLCJ0b2tlbml6YXRpb25JZCI6ImIzZjcwZTQzLWMwNjYtNGU5ZC1iNWVjLWI3MjM3MzAyZjljYyIsInZlcmlmaWNhdGlvbklkIjoiM2I0MmU2NWYtMTYwOC00YWZkLWJkNzItNjQ2MTQyYjAwYTZlIn0=\"}}";
-        return Constants.getGson().fromJson(a2aVerificationRequest, A2AVerificationRequest.class);
     }
 }

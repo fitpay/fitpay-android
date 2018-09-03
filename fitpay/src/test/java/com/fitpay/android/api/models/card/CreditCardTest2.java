@@ -6,20 +6,23 @@ import com.fitpay.android.TestActions;
 import com.fitpay.android.api.callbacks.ResultProvidingCallback;
 import com.fitpay.android.api.enums.CardInitiators;
 import com.fitpay.android.api.models.Transaction;
+import com.fitpay.android.api.models.apdu.ApduExecutionResultTest;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
+import com.fitpay.android.utils.NamedResource;
 
+import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
@@ -27,6 +30,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * Created by tgs on 4/21/16.
  */
 public class CreditCardTest2 extends TestActions {
+
+    @ClassRule
+    public static NamedResource rule = new NamedResource(CreditCardTest2.class);
 
     @Test
     public void testCanAddCreditCard() throws Exception {

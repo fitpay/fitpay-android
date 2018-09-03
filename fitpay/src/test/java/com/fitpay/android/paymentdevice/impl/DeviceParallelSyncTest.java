@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import com.fitpay.android.TestActions;
 import com.fitpay.android.api.models.device.Device;
+import com.fitpay.android.configs.FitpayWebTest;
 import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.paymentdevice.callbacks.DeviceSyncManagerCallback;
 import com.fitpay.android.paymentdevice.constants.States;
@@ -13,10 +14,12 @@ import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
 import com.fitpay.android.utils.Listener;
+import com.fitpay.android.utils.NamedResource;
 import com.fitpay.android.utils.NotificationManager;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
@@ -30,7 +33,7 @@ import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -40,6 +43,9 @@ import static org.mockito.Mockito.when;
 
 
 public class DeviceParallelSyncTest extends TestActions {
+
+    @ClassRule
+    public static NamedResource rule = new NamedResource(DeviceParallelSyncTest.class);
 
     private DeviceSyncManager syncManager;
 

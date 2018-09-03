@@ -19,9 +19,8 @@ import com.fitpay.android.api.models.security.OAuthToken;
 import com.fitpay.android.api.models.user.LoginIdentity;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.api.models.user.UserCreateRequest;
-import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.paymentdevice.impl.mock.SecureElementDataProvider;
-import com.fitpay.android.utils.NotificationManager;
+import com.fitpay.android.utils.HttpLogging;
 import com.fitpay.android.utils.TimestampUtils;
 import com.fitpay.android.utils.ValidationException;
 
@@ -34,14 +33,14 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /***
  * Created by Vlad on 16.03.2016.
  */
-public class Steps extends BaseTestActions{
+public class Steps extends BaseTestActions {
 
     private final int TIMEOUT = 30;
 
@@ -59,7 +58,9 @@ public class Steps extends BaseTestActions{
     private Commit currentCommit;
     private Issuers currentIssuer;
 
-    public Steps() {
+    public Steps(Class clazz) {
+        HttpLogging.setTestName(clazz.getSimpleName());
+
         BaseTestActions.init();
 
         userName = TestUtils.getRandomLengthString(5, 10) + "@"

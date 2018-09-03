@@ -11,11 +11,9 @@ import com.fitpay.android.webview.enums.RtmType;
 import com.fitpay.android.webview.events.RtmMessage;
 import com.fitpay.android.webview.events.UnrecognizedRtmMessage;
 
-import junit.framework.Assert;
-
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -25,8 +23,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import rx.schedulers.Schedulers;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by Vlad on 19.07.2017.

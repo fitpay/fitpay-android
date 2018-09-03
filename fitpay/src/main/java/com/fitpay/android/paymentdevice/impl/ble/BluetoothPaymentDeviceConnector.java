@@ -7,7 +7,6 @@ import android.content.Context;
 
 import com.fitpay.android.api.models.apdu.ApduCommand;
 import com.fitpay.android.api.models.apdu.ApduPackage;
-import com.fitpay.android.api.models.card.TopOfWallet;
 import com.fitpay.android.paymentdevice.constants.States;
 import com.fitpay.android.paymentdevice.enums.NFC;
 import com.fitpay.android.paymentdevice.enums.SecureElement;
@@ -15,8 +14,6 @@ import com.fitpay.android.paymentdevice.impl.PaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.impl.ble.message.SecurityStateMessage;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.StringUtils;
-
-import java.util.List;
 
 /**
  * BLE implementation

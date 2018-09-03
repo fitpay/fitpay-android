@@ -17,7 +17,7 @@ public class UserTest {
 
     @BeforeClass
     public static void init() {
-        steps = new Steps();
+        steps = new Steps(UserTest.class);
     }
 
     @Test
