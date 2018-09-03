@@ -341,6 +341,7 @@ public final class Device extends DeviceModel implements Parcelable {
          * @param deviceIdentifier The device identifier parameter is used to read or write the identifier key of the device
          * @return a reference to this {@code Builder} object to fulfill the "Builder" pattern
          */
+        @Deprecated
         public Builder setDeviceIdentifier(@NonNull String deviceIdentifier) {
             this.deviceIdentifier = deviceIdentifier;
             return this;

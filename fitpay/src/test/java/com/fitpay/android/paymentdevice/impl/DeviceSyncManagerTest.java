@@ -17,7 +17,6 @@ import com.fitpay.android.paymentdevice.enums.Sync;
 import com.fitpay.android.paymentdevice.events.CommitSuccess;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
-import com.fitpay.android.utils.HttpLogging;
 import com.fitpay.android.utils.Listener;
 import com.fitpay.android.utils.NotificationManager;
 
@@ -60,9 +59,7 @@ public class DeviceSyncManagerTest extends TestActions {
 
     @Before
     @Override
-    public void setup() throws Exception {
-        super.setup();
-
+    public void before() throws Exception {
         final SharedPreferences mockPrefs = Mockito.mock(SharedPreferences.class);
         final SharedPreferences.Editor mockEditor = Mockito.mock(SharedPreferences.Editor.class);
 
@@ -112,6 +109,19 @@ public class DeviceSyncManagerTest extends TestActions {
 
         mockPaymentDevice = new MockPaymentDeviceConnector(mContext);
 
+        userName = TestUtils.getRandomLengthString(5, 10) + "@"
+                + TestUtils.getRandomLengthString(5, 10) + "." + TestUtils.getRandomLengthString(4, 10);
+        pin = TestUtils.getRandomLengthNumber(4, 4);
+
+        UserCreateRequest userCreateRequest = getNewTestUser(userName, pin);
+        createUser(userCreateRequest);
+
+        assertTrue(doLogin(new LoginIdentity.Builder()
+                .setPassword(pin)
+                .setUsername(userName)
+                .build()));
+        this.user = getUser();
+
         this.device = createDevice(this.user, getTestDevice());
         assertNotNull(this.device);
 
@@ -143,16 +153,16 @@ public class DeviceSyncManagerTest extends TestActions {
         NotificationManager.getInstance().addListener(this.listener);
     }
 
-    @After
     @Override
-    public void cleanup() throws InterruptedException {
-        super.cleanup();
+    @After
+    public void after() {
         if (syncManager != null) {
             syncManager.unsubscribe();
             syncManager.removeDeviceSyncManagerCallback(syncManagerCallback);
         }
 
         NotificationManager.getInstance().removeListener(this.listener);
+        super.after();
     }
 
     @Test

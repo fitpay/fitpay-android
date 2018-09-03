@@ -11,7 +11,7 @@ apply plugin: 'maven'
 
 
 group = 'com.fitpay.android'
-version = '1.0.2'
+version = '1.1.1'
 archivesBaseName = "android_sdk"
 
 uploadArchives {
@@ -125,8 +125,8 @@ dependencies {
 
     implementation 'me.alexrs:prefs:1.1.0'
 
-    implementation 'org.bouncycastle:bcprov-jdk15on:1.58'
-    implementation 'com.nimbusds:nimbus-jose-jwt:5.1'
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.60'
+    implementation 'com.nimbusds:nimbus-jose-jwt:6.0.1'
 
     implementation 'com.github.heremaps:oksse:0.9.0'
 
@@ -139,10 +139,10 @@ dependencies {
     javadocDeps "com.squareup.okhttp3:okhttp:${okhttpLib}"
     javadocDeps "io.reactivex:rxjava:${rxjavaLib}"
     javadocDeps 'me.alexrs:prefs:1.1.0'
-    javadocDeps 'org.bouncycastle:bcprov-jdk15on:1.58'
-    javadocDeps 'com.nimbusds:nimbus-jose-jwt:5.1'
+    javadocDeps 'org.bouncycastle:bcprov-jdk15on:1.60'
+    javadocDeps 'com.nimbusds:nimbus-jose-jwt:6.0.1'
 
-    testImplementation 'org.mockito:mockito-core:2.12.0'
+    testImplementation 'org.mockito:mockito-core:2.21.0'
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.jmockit:jmockit:1.37'
 }
@@ -184,18 +184,21 @@ artifacts {
 
 bintray {
     Properties properties = new Properties()
-    properties.load(project.rootProject.file('bintray.properties').newDataInputStream())
-    user = properties.getProperty("bintray_user")
-    key = properties.getProperty("bintray_key")
+    File propertiesFile = project.rootProject.file('bintray.properties')
+    if(propertiesFile.exists()) {
+        properties.load(propertiesFile.newDataInputStream())
+        user = properties.getProperty("bintray_user")
+        key = properties.getProperty("bintray_key")
 
-    pkg {
-        repo = 'maven'
-        name = 'com.fitpay'
-        userOrg = 'fit-pay'
-        licenses = ['MIT']
-        vcsUrl = 'https://github.com/fitpay/fitpay-android-sdk.git'
+        pkg {
+            repo = 'maven'
+            name = 'com.fitpay'
+            userOrg = 'fit-pay'
+            licenses = ['MIT']
+            vcsUrl = 'https://github.com/fitpay/fitpay-android-sdk.git'
+        }
+        configurations = ['archives']
     }
-    configurations = ['archives']
 }
 
 // Test Logging

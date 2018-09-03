@@ -64,8 +64,8 @@ public class DeviceParallelSyncTest extends TestActions {
 
     @Before
     @Override
-    public void setup() throws Exception {
-        super.setup();
+    public void before() throws Exception {
+        super.before();
 
         /*-----first_device-----*/
         firstDevice = createDevice(this.user, getTestDevice());
@@ -141,10 +141,9 @@ public class DeviceParallelSyncTest extends TestActions {
         secondLatch = new AtomicReference<>(new CountDownLatch(1));
     }
 
-    @After
     @Override
-    public void cleanup() throws InterruptedException {
-        super.cleanup();
+    @After
+    public void after() {
         if (syncManager != null) {
             syncManager.unsubscribe();
             syncManager.removeDeviceSyncManagerCallback(syncManagerCallback);
@@ -152,6 +151,7 @@ public class DeviceParallelSyncTest extends TestActions {
 
         NotificationManager.getInstance().removeListener(this.firstSyncListener);
         NotificationManager.getInstance().removeListener(this.secondSyncListener);
+        super.after();
     }
 
     private void initPrefs(String deviceId) {

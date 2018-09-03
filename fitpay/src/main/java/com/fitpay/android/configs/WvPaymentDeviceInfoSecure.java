@@ -9,26 +9,10 @@ class WvPaymentDeviceInfoSecure extends WvPaymentDeviceInfo {
     private String secureElementId;
     private String casd;
 
-    public WvPaymentDeviceInfoSecure(Device device) {
+    WvPaymentDeviceInfoSecure(Device device) {
         super(device);
         secureElementId = device.getSecureElementId();
         casd = device.getCasd();
-    }
-
-    public String getSecureElementId() {
-        return secureElementId;
-    }
-
-    public void setSecureElementId(String secureElementId) {
-        this.secureElementId = secureElementId;
-    }
-
-    public String getCASD() {
-        return casd;
-    }
-
-    public void setCASD(String casd) {
-        this.casd = casd;
     }
 
     @Override
@@ -41,8 +25,10 @@ class WvPaymentDeviceInfoSecure extends WvPaymentDeviceInfo {
 
         WvPaymentDeviceInfoSecure that = (WvPaymentDeviceInfoSecure) o;
 
-        if (casd != null ? !casd.equals(that.casd) : that.casd != null)
+        if (casd != null ? !casd.equals(that.casd) : that.casd != null) {
             return false;
+        }
+
         return secureElementId != null ? secureElementId.equals(that.secureElementId) : that.secureElementId == null;
     }
 

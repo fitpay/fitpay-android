@@ -9,7 +9,6 @@ import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.api.models.user.UserCreateRequest;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.utils.EventCallback;
-import com.fitpay.android.utils.HttpLogging;
 import com.fitpay.android.utils.Listener;
 import com.fitpay.android.utils.NotificationManager;
 import com.fitpay.android.webview.WebViewCommunicator;
@@ -32,25 +31,11 @@ import static junit.framework.Assert.assertNotNull;
  */
 public class WebViewCommunicatorTest extends TestActions {
 
-    @Before
     @Override
-    public void setup() throws Exception {
-        /*
-        HttpLogging.setTestName(WebViewCommunicatorTest.class.getSimpleName());
+    @Before
+    public void before() throws Exception {
+        super.before();
 
-        userName = TestUtils.getRandomLengthString(5, 10) + "@"
-                + TestUtils.getRandomLengthString(5, 10) + "." + TestUtils.getRandomLengthString(4, 10);
-        pin = TestUtils.getRandomLengthNumber(4, 4);
-
-        UserCreateRequest user = getNewTestUser(userName, pin);
-        User createdUser = createUser(user);
-        assertNotNull("user should have been created", createdUser);
-
-        loginIdentity = getTestLoginIdentity(userName, pin);
-        doLogin(loginIdentity);
-
-        this.user = getUser();
-        assertNotNull(user);*/
         Device device = getTestDevice();
 
         Device createdDevice = createDevice(this.user, device);

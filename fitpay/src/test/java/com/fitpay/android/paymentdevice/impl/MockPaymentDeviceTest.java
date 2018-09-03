@@ -37,22 +37,20 @@ public class MockPaymentDeviceTest extends TestActions {
     private NotificationManager manager;
     private Listener listener;
 
-    @Before
     @Override
-    public void setup() throws Exception {
-        super.setup();
-
+    @Before
+    public void before() throws Exception {
         paymentDeviceService = new MockPaymentDeviceConnector(mContext);
         manager = NotificationManager.getInstance();
     }
 
-    @After
     @Override
-    public void cleanup() throws InterruptedException {
-        super.cleanup();
+    @After
+    public void after() {
         if (null != listener) {
             manager.removeListener(listener);
         }
+        super.after();
     }
 
     @Test
