@@ -11,6 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Abstract web client.
+ *
  * @param <T>
  */
 public abstract class GenericClient<T> extends BaseClient {
@@ -21,7 +22,10 @@ public abstract class GenericClient<T> extends BaseClient {
 
     public GenericClient(String baseUrl) {
         OkHttpClient.Builder clientBuilder = getOkHttpClient();
-        clientBuilder.addInterceptor(getInterceptor());
+        Interceptor interceptor = getInterceptor();
+        if (interceptor != null) {
+            clientBuilder.addInterceptor(getInterceptor());
+        }
         client = constructClient(baseUrl, clientBuilder.build());
     }
 

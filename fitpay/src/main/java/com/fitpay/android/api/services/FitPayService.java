@@ -11,6 +11,8 @@ import com.fitpay.android.utils.RxBus;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.io.IOException;
+
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -34,50 +36,53 @@ final public class FitPayService extends GenericClient<FitPayClient> {
 
     @Override
     public Interceptor getInterceptor() {
-        return chain -> {
-            Request.Builder builder = chain.request().newBuilder()
-                    .header("Accept", "application/json")
-                    .header("Content-Type", "application/json")
-                    .header(FP_KEY_SDK_VER, BuildConfig.SDK_VERSION);
+        return new FitPayInterceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request.Builder builder = chain.request().newBuilder()
+                        .header("Accept", "application/json")
+                        .header("Content-Type", "application/json")
+                        .header(FP_KEY_SDK_VER, BuildConfig.SDK_VERSION);
 
-            String keyId = KeysManager.getInstance().getKeyId(KeysManager.KEY_API);
-            if (keyId != null) {
-                builder.header(FP_KEY_ID, keyId);
-            }
-
-            if (mAuthToken != null) {
-                if (!expiredNotificationSent && mAuthToken.isExpired()) {
-                    FPLog.w("current access token is expired, using anyways");
-                    RxBus.getInstance().post(AccessDenied.builder()
-                            .reason(AccessDenied.Reason.EXPIRED_TOKEN)
-                            .build());
-
-                    expiredNotificationSent = true;
+                String keyId = KeysManager.getInstance().getKeyId(KeysManager.KEY_API);
+                if (keyId != null) {
+                    builder.header(FP_KEY_ID, keyId);
                 }
 
-                final String value = AUTHORIZATION_BEARER + " " + mAuthToken.getAccessToken();
+                if (mAuthToken != null) {
+                    if (!expiredNotificationSent && mAuthToken.isExpired()) {
+                        FPLog.w("current access token is expired, using anyways");
+                        RxBus.getInstance().post(AccessDenied.builder()
+                                .reason(AccessDenied.Reason.EXPIRED_TOKEN)
+                                .build());
 
-                builder.header(HEADER_AUTHORIZATION, value);
-            }
+                        expiredNotificationSent = true;
+                    }
 
-            long startTime = System.currentTimeMillis();
-            Response response = null;
-            try {
-                response = chain.proceed(builder.build());
+                    final String value = AUTHORIZATION_BEARER + " " + mAuthToken.getAccessToken();
 
-                if (response != null && response.code() == AccessDenied.INVALID_TOKEN_RESPONSE_CODE) {
-                    RxBus.getInstance().post(AccessDenied.builder()
-                            .reason(AccessDenied.Reason.UNAUTHORIZED)
-                            .build());
+                    builder.header(HEADER_AUTHORIZATION, value);
                 }
 
-                return response;
-            } finally {
-                printLog(String.format("%s %s %s %dms",
-                        chain.request().method(),
-                        chain.request().url(),
-                        response != null ? response.code() : "null",
-                        System.currentTimeMillis() - startTime));
+                long startTime = System.currentTimeMillis();
+                Response response = null;
+                try {
+                    response = getResponse(chain, builder.build());
+
+                    if (response != null && response.code() == AccessDenied.INVALID_TOKEN_RESPONSE_CODE) {
+                        RxBus.getInstance().post(AccessDenied.builder()
+                                .reason(AccessDenied.Reason.UNAUTHORIZED)
+                                .build());
+                    }
+
+                    return response;
+                } finally {
+                    printLog(String.format("%s %s %s %dms",
+                            chain.request().method(),
+                            chain.request().url(),
+                            response != null ? response.code() : "null",
+                            System.currentTimeMillis() - startTime));
+                }
             }
         };
     }
