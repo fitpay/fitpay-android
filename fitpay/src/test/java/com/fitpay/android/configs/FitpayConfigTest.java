@@ -35,7 +35,7 @@ public class FitpayConfigTest extends BaseTestActions {
 
     @Test
     public void test03_readFromFile() throws IOException {
-        String fileName = "fitpayconfig.json";
+        String fileName = "fitpay_config.json";
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
         FitpayConfig.configure(mContext, inputStream);
         Assert.assertNotNull("demoCardGroup is missing", FitpayConfig.Web.demoCardGroup);

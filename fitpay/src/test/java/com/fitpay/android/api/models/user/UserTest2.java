@@ -8,7 +8,10 @@ import com.fitpay.android.api.models.apdu.ApduExecutionResultTest;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.security.OAuthToken;
 import com.fitpay.android.utils.NamedResource;
+import com.fitpay.android.utils.ValidationException;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -25,6 +28,19 @@ public class UserTest2 extends TestActions {
 
     @ClassRule
     public static NamedResource rule = new NamedResource(UserTest2.class);
+
+    @Override
+    @Before
+    public void before() throws Exception {
+        userName = "userName@useremail.com";
+        pin = TestUtils.getRandomLengthNumber(4, 4);
+
+        this.user = createUser(getNewTestUser(userName, pin));
+        assertNotNull(this.user);
+
+        loginIdentity = getTestLoginIdentity(userName, pin);
+        doLogin(loginIdentity);
+    }
 
     @Test
     public void testCanGetUser() throws Exception {

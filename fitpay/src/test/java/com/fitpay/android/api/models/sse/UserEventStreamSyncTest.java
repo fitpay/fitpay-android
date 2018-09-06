@@ -3,11 +3,11 @@ package com.fitpay.android.api.models.sse;
 import android.app.Activity;
 
 import com.fitpay.android.TestActions;
+import com.fitpay.android.TestConstants;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.SyncInitiator;
 import com.fitpay.android.api.models.UserStreamEvent;
-import com.fitpay.android.api.models.apdu.ApduExecutionResultTest;
 import com.fitpay.android.api.models.card.CreditCard;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.sse.UserEventStreamListener;
@@ -20,6 +20,8 @@ import com.fitpay.android.utils.NamedResource;
 import com.fitpay.android.utils.NotificationManager;
 import com.fitpay.android.webview.impl.WebViewCommunicatorImpl;
 
+import org.junit.Assume;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -38,6 +40,14 @@ public class UserEventStreamSyncTest extends TestActions {
 
     @ClassRule
     public static NamedResource rule = new NamedResource(UserEventStreamSyncTest.class);
+
+
+    @Override
+    @Before
+    public void before() throws Exception {
+        Assume.assumeTrue(TestConstants.testConfig.useRealTests());
+        super.before();
+    }
 
     @Test
     public void testWebviewCommunicatorUsesUserEventStream() throws Exception {
@@ -65,7 +75,7 @@ public class UserEventStreamSyncTest extends TestActions {
             subscribed = UserEventStreamManager.isSubscribed(user.getId());
 
             if (!subscribed) {
-                Thread.sleep(500);
+                TestConstants.waitForAction();
             }
         }
 

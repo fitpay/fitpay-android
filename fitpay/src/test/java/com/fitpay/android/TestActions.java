@@ -304,7 +304,7 @@ public class TestActions extends BaseTestActions {
     }
 
     public CreditCard acceptTerms(CreditCard creditCard) throws Exception {
-        final CountDownLatch latch = new CountDownLatch(2);
+        CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<CreditCard> callback = new ResultProvidingCallback<>(latch);
         creditCard.acceptTerms(callback);
         latch.await(TIMEOUT, TimeUnit.SECONDS);
@@ -315,9 +315,10 @@ public class TestActions extends BaseTestActions {
             return null;
         }
 
-        TestConstants.waitSomeActionsOnServer();
+        TestConstants.waitForAction();
 
         //getSelf
+        latch = new CountDownLatch(1);
         ResultProvidingCallback<CreditCard> callbackSelf = new ResultProvidingCallback<>(latch);
         acceptedCard.self(callbackSelf);
         latch.await(TIMEOUT, TimeUnit.SECONDS);
@@ -509,7 +510,7 @@ public class TestActions extends BaseTestActions {
                 break;
             }
 
-            Thread.sleep(1000);
+            TestConstants.waitForAction();
         }
 
         assertEquals("card never transitioned to ACTIVE state", "ACTIVE", retrievedCard.getState());

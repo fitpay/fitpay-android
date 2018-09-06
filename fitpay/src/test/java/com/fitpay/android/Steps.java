@@ -540,7 +540,7 @@ public class Steps extends BaseTestActions {
     public void selfCard() throws InterruptedException {
         Assert.assertNotNull(currentCard);
 
-        TestConstants.waitSomeActionsOnServer();
+        TestConstants.waitForAction();
 
         final CountDownLatch latch = new CountDownLatch(1);
         final boolean[] isRequestSuccess = {false};
@@ -596,7 +596,7 @@ public class Steps extends BaseTestActions {
             if (isCompleted[0]) {
                 return;
             } else {
-                Thread.sleep(1000);
+                TestConstants.waitForAction();
             }
         }
 
@@ -708,7 +708,7 @@ public class Steps extends BaseTestActions {
         String oSName = "A1111";
         String licenseKey = "aaaaaa-1111-1111-1111-111111111111";
         String bdAddress = "bbbbbb-1111-1111-1111-111111111111";
-        long pairingTs = System.currentTimeMillis();
+        long pairingTs = 1536178369692L;//System.currentTimeMillis();
         String stringTimestamp = TimestampUtils.getISO8601StringForTime(pairingTs);
 
         Device newDevice = new Device.Builder()
@@ -727,7 +727,8 @@ public class Steps extends BaseTestActions {
                 .setPairingTs(pairingTs)
                 .setSecureElement(new PaymentDevice.SecureElement(
                         SecureElementDataProvider.generateCasd(),
-                        SecureElementDataProvider.generateRandomSecureElementId()))
+                        "DEADBEEF0002000BA3035287D96A34D2E62CB23060A40823427208236250082462502041625008256250"))
+                        //SecureElementDataProvider.generateRandomSecureElementId()))
                 .build();
 
         final String[] errors = {""};
@@ -961,7 +962,7 @@ public class Steps extends BaseTestActions {
         }
         Assert.assertNotNull(currentDevice);
 
-        final CountDownLatch latch = new CountDownLatch(2);
+        final CountDownLatch latch = new CountDownLatch(1);
         final boolean[] isRequestSuccess = {false};
 
         currentDevice.getCommits(10, 0, new ApiCallback<Collections.CommitsCollection>() {

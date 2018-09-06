@@ -19,11 +19,9 @@ public abstract class GenericClient<T> extends BaseClient {
 
     public GenericClient(String baseUrl) {
         OkHttpClient.Builder clientBuilder = getOkHttpClient();
-        if (TestConstants.USE_REAL_TESTS) {
-            clientBuilder.addInterceptor(getInterceptor());
+        clientBuilder.addInterceptor(getInterceptor());
+        if (TestConstants.testConfig.useRealTests() && TestConstants.testConfig.saveRealTests()) {
             clientBuilder.addInterceptor(new HttpLogging());
-        } else {
-            clientBuilder.addInterceptor(new FakeInterceptor());
         }
         client = constructClient(baseUrl, clientBuilder.build());
     }

@@ -1,6 +1,7 @@
 package com.fitpay.android.api.models.card;
 
 import com.fitpay.android.TestActions;
+import com.fitpay.android.TestConstants;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.ResponseState;
 import com.fitpay.android.api.enums.ResultCode;
@@ -75,6 +76,7 @@ public class CommitTest2 extends TestActions {
                     @Override
                     public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
                         fail("commit confirm failed");
+                        latch.countDown();
                     }
                 });
             } else {
@@ -82,6 +84,7 @@ public class CommitTest2 extends TestActions {
 //                if (!commit.getCommitType().equals(CommitTypes.APDU_PACKAGE)) {
 //                    fail("expected confirm link on commit: " + commit);
 //                }
+                latch.countDown();
             }
 
             latch.await(5000, TimeUnit.MILLISECONDS);
@@ -121,7 +124,7 @@ public class CommitTest2 extends TestActions {
 
         for (Commit commit : commits.getResults()) {
             Collections.CommitsCollection lastCommits = getCommits(createdDevice, commit.getCommitId());
-            assertEquals("number of commits with lastId", totalResults--, lastCommits.getTotalResults());
+            assertEquals("number of commits with lastId", --totalResults, lastCommits.getTotalResults());
         }
     }
 
@@ -243,6 +246,8 @@ public class CommitTest2 extends TestActions {
             assertTrue("number of commits should be 10 or more.  Got: " + commits.getTotalResults(), commits.getTotalResults() >= 10);
 
             totalResults = commits.getTotalResults();
+
+            TestConstants.waitForAction();
         }
 
         assertEquals("number of commits should be 39.  Got: " + totalResults, totalResults, correctResult);

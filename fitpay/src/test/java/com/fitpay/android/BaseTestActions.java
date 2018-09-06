@@ -3,6 +3,7 @@ package com.fitpay.android;
 import android.content.Context;
 
 import com.fitpay.android.a2averification.A2AVerificationRequest;
+import com.fitpay.android.api.models.security.ECCKeyPair;
 import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.FPLog;
@@ -32,6 +33,7 @@ public abstract class BaseTestActions {
 
     @BeforeClass
     public static void init() {
+        cleanAll();
 
         SecurityProvider.getInstance().setProvider(new BouncyCastleProvider());
         TestConstants.configureFitpay(mContext = Mockito.mock(Context.class));
@@ -54,11 +56,24 @@ public abstract class BaseTestActions {
                 return Schedulers.immediate();
             }
         };
+
+        if (!TestConstants.testConfig.useRealTests) {
+            new MockUp<ECCKeyPair>() {
+                @Mock
+                public boolean isExpired() {
+                    return false;
+                }
+            };
+        }
     }
 
     @AfterClass
     public static void clean() {
         mContext = null;
+        cleanAll();
+    }
+
+    private static void cleanAll() {
         DeviceSyncManager.clean();
         NotificationManager.clean();
         FPLog.clean();
