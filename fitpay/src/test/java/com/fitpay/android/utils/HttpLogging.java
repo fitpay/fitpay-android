@@ -16,16 +16,15 @@ package com.fitpay.android.utils;
  * limitations under the License.
  */
 
+import com.fitpay.android.TestConfig;
 import com.fitpay.android.api.ApiManager;
 
 import java.io.BufferedReader;
-import java.io.EOFException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import okhttp3.Connection;
@@ -37,7 +36,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import okhttp3.internal.http.HttpHeaders;
 import okhttp3.internal.platform.Platform;
 import okio.Buffer;
 import okio.BufferedSource;
@@ -54,17 +52,18 @@ import static okhttp3.internal.platform.Platform.INFO;
  */
 public final class HttpLogging implements Interceptor {
     public static final Charset UTF8 = Charset.forName("UTF-8");
-
+    private static final String FILE_EXTENSION = ".json";
 
     private static String TEST_NAME = null;
-    public static void setTestName(String value){
+
+    public static void setTestName(String value) {
         TEST_NAME = value;
         //FakeInterceptor.callList.clear();
         KeysManager.clear();
         ApiManager.clean();
     }
 
-    public static String getTestName(){
+    public static String getTestName() {
         return TEST_NAME;
     }
 
@@ -132,12 +131,7 @@ public final class HttpLogging implements Interceptor {
         /**
          * A {@link HttpLogging.Logger} defaults output appropriate for the current platform.
          */
-        HttpLogging.Logger DEFAULT = new HttpLogging.Logger() {
-            @Override
-            public void log(String message) {
-                Platform.get().log(INFO, message, null);
-            }
-        };
+        HttpLogging.Logger DEFAULT = message -> Platform.get().log(INFO, message, null);
     }
 
     public HttpLogging() {
@@ -151,19 +145,6 @@ public final class HttpLogging implements Interceptor {
     private final HttpLogging.Logger logger;
 
     private volatile HttpLogging.Level level = Level.BODY;
-
-    /**
-     * Change the level at which this interceptor logs.
-     */
-    public HttpLogging setLevel(HttpLogging.Level level) {
-        if (level == null) throw new NullPointerException("level == null. Use Level.NONE instead.");
-        this.level = level;
-        return this;
-    }
-
-    public HttpLogging.Level getLevel() {
-        return level;
-    }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
@@ -190,224 +171,116 @@ public final class HttpLogging implements Interceptor {
         }
         logger.log(requestStartMessage);
 
-        if (logHeaders) {
-            if (hasRequestBody) {
-                // Request body headers are only present when installed as a network interceptor. Force
-                // them to be included (when available) so there values are known.
-                if (requestBody.contentType() != null) {
-//                    logger.log("Content-Type: " + requestBody.contentType());
-                }
-                if (requestBody.contentLength() != -1) {
-//                    logger.log("Content-Length: " + requestBody.contentLength());
-                }
-            }
-
-            Headers headers = request.headers();
-            for (int i = 0, count = headers.size(); i < count; i++) {
-                String name = headers.name(i);
-                // Skip headers from the request body as they are explicitly logged above.
-                if (!"Content-Type".equalsIgnoreCase(name) && !"Content-Length".equalsIgnoreCase(name)) {
-//                    logger.log(name + ": " + headers.value(i));
-                }
-            }
-
-            if (!logBody || !hasRequestBody) {
-//                logger.log("--> END " + request.method());
-            } else if (bodyHasUnknownEncoding(request.headers())) {
-//                logger.log("--> END " + request.method() + " (encoded body omitted)");
-            } else {
-                Buffer buffer = new Buffer();
-                requestBody.writeTo(buffer);
-
-                Charset charset = UTF8;
-                MediaType contentType = requestBody.contentType();
-                if (contentType != null) {
-                    charset = contentType.charset(UTF8);
-                }
-
-//                logger.log("");
-                if (isPlaintext(buffer)) {
-//                    logger.log(buffer.readString(charset));
-//                    logger.log("--> END " + request.method()
-//                            + " (" + requestBody.contentLength() + "-byte body)");
-                } else {
-//                    logger.log("--> END " + request.method() + " (binary "
-//                            + requestBody.contentLength() + "-byte body omitted)");
-                }
-            }
-        }
-
-        long startNs = System.nanoTime();
         Response response;
         try {
             response = chain.proceed(request);
         } catch (Exception e) {
-//            logger.log("<-- HTTP FAILED: " + e);
             throw e;
         }
-        long tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
 
         ResponseBody responseBody = response.body();
-        long contentLength = responseBody.contentLength();
-        String bodySize = contentLength != -1 ? contentLength + "-byte" : "unknown-length";
-//        logger.log("<-- "
-//                + response.code()
-//                + (response.message().isEmpty() ? "" : ' ' + response.message())
-//                + ' ' + response.request().url()
-//                + " (" + tookMs + "ms" + (!logHeaders ? ", " + bodySize + " body" : "") + ')');
-
         if (logHeaders) {
             Headers headers = response.headers();
-            for (int i = 0, count = headers.size(); i < count; i++) {
-//                logger.log(headers.name(i) + ": " + headers.value(i));
-            }
+            BufferedSource source = responseBody.source();
+            source.request(Long.MAX_VALUE); // Buffer the entire body.
+            Buffer buffer = source.buffer();
 
-            if (!logBody || !HttpHeaders.hasBody(response)) {
-//                logger.log("<-- END HTTP");
-            } else if (bodyHasUnknownEncoding(response.headers())) {
-//                logger.log("<-- END HTTP (encoded body omitted)");
-            } else {
-                BufferedSource source = responseBody.source();
-                source.request(Long.MAX_VALUE); // Buffer the entire body.
-                Buffer buffer = source.buffer();
-
-                Long gzippedLength = null;
-                if ("gzip".equalsIgnoreCase(headers.get("Content-Encoding"))) {
-                    gzippedLength = buffer.size();
-                    GzipSource gzippedResponseBody = null;
-                    try {
-                        gzippedResponseBody = new GzipSource(buffer.clone());
-                        buffer = new Buffer();
-                        buffer.writeAll(gzippedResponseBody);
-                    } finally {
-                        if (gzippedResponseBody != null) {
-                            gzippedResponseBody.close();
-                        }
+            Long gzippedLength = null;
+            if ("gzip".equalsIgnoreCase(headers.get("Content-Encoding"))) {
+                gzippedLength = buffer.size();
+                GzipSource gzippedResponseBody = null;
+                try {
+                    gzippedResponseBody = new GzipSource(buffer.clone());
+                    buffer = new Buffer();
+                    buffer.writeAll(gzippedResponseBody);
+                } finally {
+                    if (gzippedResponseBody != null) {
+                        gzippedResponseBody.close();
                     }
                 }
+            }
 
-                Charset charset = UTF8;
-                MediaType contentType = responseBody.contentType();
-                if (contentType != null) {
-                    charset = contentType.charset(UTF8);
+            Charset charset = UTF8;
+            MediaType contentType = responseBody.contentType();
+            if (contentType != null) {
+                charset = contentType.charset(UTF8);
+            }
+
+            MockResponseData responseData = new MockResponseData();
+            responseData.body = buffer.clone().readString(charset);
+            responseData.code = response.code();
+            responseData.message = response.message();
+
+            String str = Constants.getGson().toJson(responseData);
+            str = str.replaceAll("(\\\\n|\\\\r)\\s*", "");
+
+            /*save to file*/
+            String url = request.url().host() + request.url().encodedPath();
+            String path = TestConfig.TESTS_FOLDER
+                    .concat("SavedTests")
+                    .concat(File.separator)
+                    .concat(TEST_NAME)
+                    .concat(File.separator)
+                    .concat(url.replace("https://", "").replace("http://", "").replace("/", "\\"));
+
+            if (!path.endsWith(FILE_EXTENSION)) {
+                path = path + "\\" + request.method().toLowerCase() + "_" + getFileName(chain);
+            }
+
+            File file = new File((path));
+            file.getParentFile().mkdirs();
+
+            final String fileName = file.getName().substring(0, file.getName().indexOf(FILE_EXTENSION));
+            File[] files = file.getParentFile().listFiles((d, name) -> name.startsWith(fileName));
+
+            String pathWithoutExtension = path.substring(0, path.lastIndexOf(FILE_EXTENSION));
+
+            Integer endIndex = null;
+            if (files != null && files.length > 0) {
+                String name = files[files.length - 1].getAbsolutePath();
+                String nameWithoutExtension = name.substring(0, name.lastIndexOf(FILE_EXTENSION));
+                String extension = nameWithoutExtension.substring(pathWithoutExtension.length());
+                if (extension.length() > 1 && extension.startsWith("_")) {
+                    extension = extension.substring(1);
+                    endIndex = Integer.valueOf(extension);
+                } else {
+                    endIndex = 0;
                 }
+            }
+            if (endIndex != null) {
+                //CHECK FILE CONTENT
+                BufferedReader reader = new BufferedReader(new FileReader(file));
+                String fileStr = reader.lines().collect(Collectors.joining(System.lineSeparator()));
 
-                if (!isPlaintext(buffer)) {
-//                    logger.log("");
-//                    logger.log("<-- END HTTP (binary " + buffer.size() + "-byte body omitted)");
+                //str = str.replace("\n ","").replace("\n","").replace("\r","");
+                fileStr = fileStr.replaceAll("(\\\\n|\\\\r)\\s*", "");
+
+                if (str.equals(fileStr)) {
                     return response;
                 }
 
-                if (contentLength != 0) {
-//                    logger.log("");
-                    String str = buffer.clone().readString(charset);
-                    logger.log(str);
 
-
-
-                    /*save to file*/
-                    String url = request.url().host() + request.url().encodedPath();
-                    String path = "d:\\fitpay\\" + TEST_NAME + "\\" + url.replace("https://", "").replace("http://", "").replace("/", "\\");
-
-                    if(!path.endsWith(".json")) {
-                        path = path + "\\" + request.method().toLowerCase() + "_" + getFileName(chain);
-                    }
-
-                    File file = new File((path));
-                    file.getParentFile().mkdirs();
-
-                    final String fileName = file.getName();
-                    File[] files = file.getParentFile().listFiles((d, name) -> name.startsWith(fileName));
-
-                    Integer endIndex = null;
-                    if(files != null && files.length > 0){
-                        String name = files[files.length - 1].getAbsolutePath();
-                        String end = ".json_";
-                        int index = name.lastIndexOf(end);
-                        if(index > 0){
-                            endIndex = Integer.valueOf(name.substring(index + end.length()));
-                        } else {
-                            endIndex = 0;
-                        }
-                    }
-                    if(endIndex != null){
-
-
-                        //CHECK FILE CONTENT
-                        BufferedReader reader = new BufferedReader( new FileReader( file ) );
-                        String fileStr = reader.lines().collect(Collectors.joining(System.lineSeparator()));
-
-                        str = str.replace("\n ","").replace("\n","").replace("\r","");
-                        fileStr = fileStr.replace("\n ","").replace("\n","").replace("\r","");
-
-                        if(str.equals(fileStr)){
-                            return response;
-                        }
-
-
-
-
-                        path = path + "_" + ++endIndex;
-                        file = new File(path);
-                    }
-
-                    FileWriter fw = new FileWriter(file);
-                    fw.write(str);
-                    fw.flush();
-                    fw.close();
-                }
-
-                if (gzippedLength != null) {
-//                    logger.log("<-- END HTTP (" + buffer.size() + "-byte, "
-//                            + gzippedLength + "-gzipped-byte body)");
-                } else {
-//                    logger.log("<-- END HTTP (" + buffer.size() + "-byte body)");
-                }
+                path = pathWithoutExtension + "_" + ++endIndex + FILE_EXTENSION;
+                file = new File(path);
             }
+
+            FileWriter fw = new FileWriter(file);
+            fw.write(str);
+            fw.flush();
+            fw.close();
         }
 
         return response;
     }
 
-    /**
-     * Returns true if the body in question probably contains human readable text. Uses a small sample
-     * of code points to detect unicode control characters commonly used in binary file signatures.
-     */
-    static boolean isPlaintext(Buffer buffer) {
-        try {
-            Buffer prefix = new Buffer();
-            long byteCount = buffer.size() < 64 ? buffer.size() : 64;
-            buffer.copyTo(prefix, 0, byteCount);
-            for (int i = 0; i < 16; i++) {
-                if (prefix.exhausted()) {
-                    break;
-                }
-                int codePoint = prefix.readUtf8CodePoint();
-                if (Character.isISOControl(codePoint) && !Character.isWhitespace(codePoint)) {
-                    return false;
-                }
-            }
-            return true;
-        } catch (EOFException e) {
-            return false; // Truncated UTF-8 sequence.
-        }
-    }
-
-    private boolean bodyHasUnknownEncoding(Headers headers) {
-        String contentEncoding = headers.get("Content-Encoding");
-        return contentEncoding != null
-                && !contentEncoding.equalsIgnoreCase("identity")
-                && !contentEncoding.equalsIgnoreCase("gzip");
-    }
-
     private String getFileName(Chain chain) {
         String fileName = chain.request().url().pathSegments().get(chain.request().url().pathSegments().size() - 1);
-        if(!fileName.isEmpty()){
-            if(!fileName.endsWith(".json")){
-                fileName = fileName.concat(".json");
+        if (!fileName.isEmpty()) {
+            if (!fileName.endsWith(FILE_EXTENSION)) {
+                fileName = fileName.concat(FILE_EXTENSION);
             }
         } else {
-            fileName = "index" + ".json";
+            fileName = "index" + FILE_EXTENSION;
         }
         return fileName;
     }
