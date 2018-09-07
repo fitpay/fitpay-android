@@ -119,7 +119,7 @@ public abstract class FitPayInterceptor implements Interceptor {
             reader = new BufferedReader(new FileReader(file));
             fileStr = reader.lines().collect(Collectors.joining(System.lineSeparator()));
         } catch (FileNotFoundException e) {
-            fileStr = null;
+            FPLog.e(TAG, e);
         }
 
         return fileStr;
