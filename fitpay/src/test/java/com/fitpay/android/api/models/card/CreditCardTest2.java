@@ -3,6 +3,7 @@ package com.fitpay.android.api.models.card;
 import android.media.Image;
 
 import com.fitpay.android.TestActions;
+import com.fitpay.android.TestConstants;
 import com.fitpay.android.api.callbacks.ResultProvidingCallback;
 import com.fitpay.android.api.enums.CardInitiators;
 import com.fitpay.android.api.models.Transaction;
@@ -390,6 +391,9 @@ public class CreditCardTest2 extends TestActions {
         assertFalse("second card should not be default", !secondCard.canMakeDefault());
 
         makeDefaultCard(secondCard);
+
+        TestConstants.waitSomeActionsOnServer();
+
         createdCard = getCreditCard(createdCard);
         assertTrue("first card should not be default", createdCard.canMakeDefault());
         secondCard = getCreditCard(secondCard);
