@@ -57,10 +57,10 @@ public abstract class FitPayInterceptor implements Interceptor {
                 .concat(File.separator)
                 .concat(getTestName())
                 .concat(File.separator)
-                .concat(url.replace("https://", "").replace("http://", "").replace("/", "\\"));
+                .concat(url.replace("https://", "").replace("http://", "").replace("/", File.separator));
 
         if (!path.endsWith(".json")) {
-            path = path + "\\" + chain.request().method().toLowerCase() + "_" + getFileName(chain);
+            path = path + File.separator + chain.request().method().toLowerCase() + "_" + getFileName(chain);
         }
 
         if (callList.containsKey(path)) {
