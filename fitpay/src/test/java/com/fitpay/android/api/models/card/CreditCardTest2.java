@@ -374,7 +374,7 @@ public class CreditCardTest2 extends TestActions {
         createdCard = waitForActivation(createdCard);
 
         assertEquals("post deactivation card state", "ACTIVE", createdCard.getState());
-        assertTrue("should be default", createdCard.isDefault());
+        assertTrue("should be default", !createdCard.canMakeDefault());
 
         pan = "9999504454545451";
         creditCardInfo = getTestCreditCardInfo(pan);
@@ -387,19 +387,19 @@ public class CreditCardTest2 extends TestActions {
         secondCard = waitForActivation(secondCard);
 
         assertEquals("post deactivation card state", "ACTIVE", secondCard.getState());
-        assertFalse("second card should not be default", secondCard.isDefault());
+        assertFalse("second card should not be default", !secondCard.canMakeDefault());
 
         makeDefaultCard(secondCard);
         createdCard = getCreditCard(createdCard);
-        assertFalse("first card should not be default", createdCard.isDefault());
+        assertTrue("first card should not be default", createdCard.canMakeDefault());
         secondCard = getCreditCard(secondCard);
-        assertTrue("second card should be default", secondCard.isDefault());
+        assertFalse("second card should be default", secondCard.canMakeDefault());
 
         makeDefaultCard(createdCard);
         createdCard = getCreditCard(createdCard);
-        assertTrue("first card should be default", createdCard.isDefault());
+        assertFalse("first card should be default", createdCard.canMakeDefault());
         secondCard = getCreditCard(secondCard);
-        assertFalse("second card should not be default", secondCard.isDefault());
+        assertTrue("second card should not be default", secondCard.canMakeDefault());
     }
 
 
@@ -425,7 +425,8 @@ public class CreditCardTest2 extends TestActions {
         createdCard = waitForActivation(createdCard);
 
         assertEquals("post deactivation card state", "ACTIVE", createdCard.getState());
-        assertTrue("should be default", createdCard.isDefault());
+        assertTrue("should be default", !createdCard.canMakeDefault());
+
 
         Collections.TransactionCollection transactions = getCardTransactions(createdCard);
         assertNotNull("card should have transactions", transactions);
