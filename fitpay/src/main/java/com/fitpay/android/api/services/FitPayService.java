@@ -12,6 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -77,7 +78,7 @@ final public class FitPayService extends GenericClient<FitPayClient> {
 
                     return response;
                 } finally {
-                    printLog(String.format("%s %s %s %dms",
+                    printLog(String.format(Locale.US, "%s %s %s %dms",
                             chain.request().method(),
                             chain.request().url(),
                             response != null ? response.code() : "null",

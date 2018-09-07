@@ -31,6 +31,10 @@ public class TestConfig {
         return logLevel;
     }
 
+    public boolean showHTTPLogs() {
+        return showHTTPLogs;
+    }
+
     public boolean useRealTests() {
         return useRealTests;
     }

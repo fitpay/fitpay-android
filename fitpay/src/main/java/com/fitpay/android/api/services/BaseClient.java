@@ -2,6 +2,7 @@ package com.fitpay.android.api.services;
 
 import android.os.Build;
 
+import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.utils.FPLog;
 
 import java.security.KeyStore;
@@ -15,6 +16,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+import okhttp3.Cache;
 import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.TlsVersion;
@@ -59,8 +61,7 @@ public class BaseClient {
 
     private static OkHttpClient.Builder getDefaultOkHttpClient() {
         int cacheSize = 20 * 1024 * 1024; // 20MB
-        return new OkHttpClient.Builder();
-                //.cache(new Cache(FitpayConfig.appContext.getCacheDir(), cacheSize));
+        return new OkHttpClient.Builder().cache(new Cache(FitpayConfig.appContext.getCacheDir(), cacheSize));
     }
 
     private static OkHttpClient.Builder enableTls12OnPreLollipop(OkHttpClient.Builder client) {
@@ -102,9 +103,8 @@ public class BaseClient {
         return client;
     }
 
-    protected static void
-     printLog(String message){
-        if(FPLog.showHttpLogs()){
+    static void printLog(String message) {
+        if (FPLog.showHttpLogs()) {
             FPLog.v(TAG, message);
         }
     }

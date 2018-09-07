@@ -1,7 +1,5 @@
 package com.fitpay.android.api.services;
 
-import android.util.Log;
-
 import com.fitpay.android.TestConfig;
 import com.fitpay.android.TestConstants;
 import com.fitpay.android.utils.Constants;
@@ -48,7 +46,10 @@ public abstract class FitPayInterceptor implements Interceptor {
         Response response = null;
         // Get Request URI.
         final URI uri = chain.request().url().uri();
-        Log.d(TAG, "--> Request url: [" + method.toUpperCase() + "]" + uri.toString());
+
+        if (TestConstants.testConfig.showHTTPLogs()) {
+            FPLog.d(TAG, "--> Request url: [" + method.toUpperCase() + "]" + uri.toString());
+        }
 
         String url = chain.request().url().host() + chain.request().url().encodedPath();
         String path = TestConfig.TESTS_FOLDER
@@ -75,7 +76,9 @@ public abstract class FitPayInterceptor implements Interceptor {
         if (!StringUtils.isEmpty(fileStr)) {
             MockResponseData responseData = Constants.getGson().fromJson(fileStr, MockResponseData.class);
 
-            FPLog.d(TAG, "Response: " + fileStr);
+            if (TestConstants.testConfig.showHTTPLogs()) {
+                FPLog.d(TAG, "Response: " + fileStr);
+            }
 
             response = new Response.Builder()
                     .code(responseData.code)
@@ -89,7 +92,9 @@ public abstract class FitPayInterceptor implements Interceptor {
             response = chain.proceed(chain.request());
         }
 
-        Log.d(TAG, "<-- END [" + method.toUpperCase() + "]" + uri.toString());
+        if (TestConstants.testConfig.showHTTPLogs()) {
+            FPLog.d(TAG, "<-- END [" + method.toUpperCase() + "]" + uri.toString());
+        }
         return response;
     }
 

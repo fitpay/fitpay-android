@@ -12,8 +12,10 @@ import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.utils.NamedResource;
 
 import org.junit.ClassRule;
+import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -29,6 +31,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * Created by tgs on 4/21/16.
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CreditCardTest2 extends TestActions {
 
     @ClassRule
@@ -397,15 +400,15 @@ public class CreditCardTest2 extends TestActions {
 
         makeDefaultCard(secondCard);
         createdCard = getCreditCard(createdCard);
-        assertFalse("first card should not be default", !createdCard.canMakeDefault());
+        assertTrue("first card should not be default", createdCard.canMakeDefault());
         secondCard = getCreditCard(secondCard);
-        assertTrue("second card should be default", !secondCard.canMakeDefault());
+        assertFalse("second card should be default", secondCard.canMakeDefault());
 
         makeDefaultCard(createdCard);
         createdCard = getCreditCard(createdCard);
-        assertTrue("first card should be default", !createdCard.canMakeDefault());
+        assertFalse("first card should be default", createdCard.canMakeDefault());
         secondCard = getCreditCard(secondCard);
-        assertFalse("second card should not be default", !secondCard.canMakeDefault());
+        assertTrue("second card should not be default", secondCard.canMakeDefault());
     }
 
 
@@ -431,7 +434,7 @@ public class CreditCardTest2 extends TestActions {
         createdCard = waitForActivation(createdCard);
 
         assertEquals("post deactivation card state", "ACTIVE", createdCard.getState());
-        assertTrue("should be default", !createdCard.canMakeDefault());
+        assertFalse("should be default", createdCard.canMakeDefault());
 
         Collections.TransactionCollection transactions = getCardTransactions(createdCard);
         assertNotNull("card should have transactions", transactions);
