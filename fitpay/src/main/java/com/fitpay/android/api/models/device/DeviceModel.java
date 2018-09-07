@@ -73,64 +73,43 @@ abstract class DeviceModel extends PaymentDevice {
      */
     protected String profileId;
 
+    /**
+     * Will be present if makeDefault is called on a Credit Card with this deviceId
+     */
+    protected String defaultCreditCardId;
+
     protected DeviceModel() {
     }
 
-    public String getDeviceIdentifier() {
-        return deviceIdentifier;
-    }
+    public String getDeviceIdentifier() { return deviceIdentifier; }
 
-    public String getSerialNumber() {
-        return serialNumber;
-    }
+    public String getSerialNumber() { return serialNumber; }
 
-    public String getModelNumber() {
-        return modelNumber;
-    }
+    public String getModelNumber() { return modelNumber; }
 
-    public String getHardwareRevision() {
-        return hardwareRevision;
-    }
+    public String getHardwareRevision() { return hardwareRevision; }
 
-    public String getFirmwareRevision() {
-        return firmwareRevision;
-    }
+    public String getFirmwareRevision() { return firmwareRevision; }
 
-    public String getSoftwareRevision() {
-        return softwareRevision;
-    }
+    public String getSoftwareRevision() { return softwareRevision; }
 
-    public long getCreatedTsEpoch() {
-        return createdTsEpoch;
-    }
+    public long getCreatedTsEpoch() { return createdTsEpoch; }
 
-    public String getOsName() {
-        return osName;
-    }
+    public String getOsName() { return osName; }
 
-    public String getSystemId() {
-        return systemId;
-    }
+    public String getSystemId() { return systemId; }
 
-    public String getLicenseKey() {
-        return licenseKey;
-    }
+    public String getLicenseKey() { return licenseKey; }
 
-    public String getBdAddress() {
-        return bdAddress;
-    }
+    public String getBdAddress() { return bdAddress; }
 
-    public String getPairingTs() {
-        return pairingTs;
-    }
+    public String getPairingTs() { return pairingTs; }
 
-    public String getHostDeviceId() {
-        return hostDeviceId;
-    }
+    public String getHostDeviceId() { return hostDeviceId; }
 
-    public String getNotificationToken() {
-        return notificationToken;
-    }
+    public String getNotificationToken() { return notificationToken; }
 
-    public  String getProfileId() { return  profileId; }
+    public String getProfileId() { return profileId; }
+
+    public String getDefaultCreditCardId() { return defaultCreditCardId; }
 }

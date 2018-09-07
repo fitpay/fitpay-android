@@ -104,14 +104,27 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
 
 
     /**
-     * Mark the credit card as the default payment instrument.
+     * Mark the credit card as the default payment for device.
      * If another card is currently marked as the default,
      * the default will automatically transition to the indicated credit card.
+     * This function will automatically choose a device to assign default
      *
      * @param callback result callback
      */
-    public void makeDefault(@NonNull ApiCallback<Void> callback) {
+    public void makeDefault( @NonNull ApiCallback<Void> callback) {
         makePostCall(MAKE_DEFAULT, null, Void.class, callback);
+    }
+
+    /**
+     * Mark the credit card as the default payment for device.
+     * If another card is currently marked as the default,
+     * the default will automatically transition to the indicated credit card.
+     *
+     * @param deviceId id of the device
+     * @param callback result callback
+     */
+    public void makeDefault(String deviceId, @NonNull ApiCallback<Void> callback) {
+        makePostCall(MAKE_DEFAULT, deviceId, Void.class, callback);
     }
 
     public boolean canMakeDefault() {
@@ -133,7 +146,7 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
     }
 
     public boolean canDelete() {
-        return state != "DELETED" && hasLink(SELF);
+        return !state.equals("DELETED") && hasLink(SELF);
     }
 
     /**
@@ -151,7 +164,7 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
     }
 
     public boolean canUpdateCard() {
-        return state != "DELETED" && hasLink(SELF);
+        return !state.equals("DELETED") && hasLink(SELF);
     }
 
 
