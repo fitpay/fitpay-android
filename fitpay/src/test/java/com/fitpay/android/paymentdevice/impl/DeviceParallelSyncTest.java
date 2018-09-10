@@ -4,10 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.fitpay.android.TestActions;
-import com.fitpay.android.TestUtils;
 import com.fitpay.android.api.models.device.Device;
-import com.fitpay.android.api.models.user.LoginIdentity;
-import com.fitpay.android.api.models.user.UserCreateRequest;
 import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.paymentdevice.callbacks.DeviceSyncManagerCallback;
 import com.fitpay.android.paymentdevice.constants.States;
@@ -34,7 +31,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -68,21 +64,8 @@ public class DeviceParallelSyncTest extends TestActions {
 
     @Before
     @Override
-    public void testActionsSetup() throws Exception {
-        /*-----user-----*/
-        userName = TestUtils.getRandomLengthString(5, 10) + "@"
-                + TestUtils.getRandomLengthString(5, 10) + "." + TestUtils.getRandomLengthString(4, 10);
-        pin = TestUtils.getRandomLengthNumber(4, 4);
-
-        UserCreateRequest userCreateRequest = getNewTestUser(userName, pin);
-        createUser(userCreateRequest);
-
-        assertTrue(doLogin(new LoginIdentity.Builder()
-                .setPassword(pin)
-                .setUsername(userName)
-                .build()));
-        this.user = getUser();
-        /*-----user_end-----*/
+    public void before() throws Exception {
+        super.before();
 
         /*-----first_device-----*/
         firstDevice = createDevice(this.user, getTestDevice());
@@ -158,8 +141,9 @@ public class DeviceParallelSyncTest extends TestActions {
         secondLatch = new AtomicReference<>(new CountDownLatch(1));
     }
 
+    @Override
     @After
-    public void cleanup() {
+    public void after() {
         if (syncManager != null) {
             syncManager.unsubscribe();
             syncManager.removeDeviceSyncManagerCallback(syncManagerCallback);
@@ -167,6 +151,7 @@ public class DeviceParallelSyncTest extends TestActions {
 
         NotificationManager.getInstance().removeListener(this.firstSyncListener);
         NotificationManager.getInstance().removeListener(this.secondSyncListener);
+        super.after();
     }
 
     private void initPrefs(String deviceId) {

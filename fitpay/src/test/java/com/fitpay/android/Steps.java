@@ -1,7 +1,5 @@
 package com.fitpay.android;
 
-import android.content.Context;
-
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.CardInitiators;
@@ -21,14 +19,13 @@ import com.fitpay.android.api.models.security.OAuthToken;
 import com.fitpay.android.api.models.user.LoginIdentity;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.api.models.user.UserCreateRequest;
+import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.paymentdevice.impl.mock.SecureElementDataProvider;
-import com.fitpay.android.utils.SecurityProvider;
+import com.fitpay.android.utils.NotificationManager;
 import com.fitpay.android.utils.TimestampUtils;
 import com.fitpay.android.utils.ValidationException;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +41,7 @@ import static junit.framework.Assert.fail;
 /***
  * Created by Vlad on 16.03.2016.
  */
-public class Steps {
+public class Steps extends BaseTestActions{
 
     private final int TIMEOUT = 30;
 
@@ -62,10 +59,8 @@ public class Steps {
     private Commit currentCommit;
     private Issuers currentIssuer;
 
-    protected Steps() {
-        SecurityProvider.getInstance().setProvider(new BouncyCastleProvider());
-
-        TestConstants.configureFitpay(Mockito.mock(Context.class));
+    public Steps() {
+        BaseTestActions.init();
 
         userName = TestUtils.getRandomLengthString(5, 10) + "@"
                 + TestUtils.getRandomLengthString(5, 10) + "." + TestUtils.getRandomLengthString(4, 10);
@@ -77,6 +72,8 @@ public class Steps {
         cardsCollection = null;
         currentDevice = null;
         currentCommit = null;
+
+        BaseTestActions.clean();
     }
 
 
