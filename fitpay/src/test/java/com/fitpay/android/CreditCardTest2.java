@@ -23,14 +23,8 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
-import static net.bytebuddy.matcher.ElementMatchers.anyOf;
-import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-
-/**
- * Created by tgs on 4/21/16.
- */
 public class CreditCardTest2 extends TestActions {
 
     @Test
