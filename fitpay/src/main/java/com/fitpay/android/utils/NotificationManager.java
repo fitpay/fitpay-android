@@ -37,6 +37,21 @@ public final class NotificationManager {
         return sInstance;
     }
 
+    public static void clean() {
+        synchronized (NotificationManager.class) {
+            if (sInstance != null) {
+                for (Map.Entry<Class, Subscription> entry : sInstance.mSubscriptions.entrySet()) {
+                    Subscription subscription = entry.getValue();
+                    subscription.unsubscribe();
+                }
+                sInstance.mCommands.clear();
+                sInstance.mListeners.clear();
+                sInstance.mSubscriptions.clear();
+                sInstance = null;
+            }
+        }
+    }
+
     private NotificationManager() {
         mListeners = new CopyOnWriteArrayList<>();
         mCommands = new ConcurrentHashMap<>();
@@ -50,11 +65,11 @@ public final class NotificationManager {
      * @param scheduler thread for result
      */
     private void subscribeTo(final Class clazz, final Scheduler scheduler) {
-        FPLog.d(TAG, "subscribeTo class: " + clazz + " from thread: " + Thread.currentThread());
+        FPLog.v(TAG, "subscribeTo class: " + clazz + " from thread: " + Thread.currentThread());
 
         if (!mSubscriptions.containsKey(clazz)) {
             synchronized (this) {
-                FPLog.d(TAG, "subscribeTo doing put of class:  " + clazz + " from thread: " + Thread.currentThread());
+                FPLog.v(TAG, "subscribeTo doing put of class:  " + clazz + " from thread: " + Thread.currentThread());
 
                 mSubscriptions.put(clazz, RxBus.getInstance().register(clazz, scheduler, object -> {
                     synchronized (this) {
@@ -84,9 +99,9 @@ public final class NotificationManager {
      * @param clazz
      */
     private void unsubscribeFrom(Class clazz) {
-        FPLog.d(TAG, "unsubscribeFrom class: " + clazz + " called from thread: " + Thread.currentThread());
+        FPLog.v(TAG, "unsubscribeFrom class: " + clazz + " called from thread: " + Thread.currentThread());
         if (mSubscriptions.containsKey(clazz)) {
-            FPLog.d(TAG, "unsubscribeFrom removing class: " + clazz + " from thread: " + Thread.currentThread());
+            FPLog.v(TAG, "unsubscribeFrom removing class: " + clazz + " from thread: " + Thread.currentThread());
             mSubscriptions.get(clazz).unsubscribe();
             mSubscriptions.remove(clazz);
         }
@@ -118,10 +133,9 @@ public final class NotificationManager {
      */
     public void addListener(Listener listener, Scheduler observerScheduler) {
         synchronized (this) {
-            FPLog.d(TAG, "addListener " + listener + " on scheduler: " + observerScheduler + ", current thread: " + Thread.currentThread());
+            FPLog.v(TAG, "addListener " + listener + " on scheduler: " + observerScheduler + ", current thread: " + Thread.currentThread());
 
             if (!mListeners.contains(listener)) {
-                FPLog.d(TAG, "addListener: " + listener);
                 mListeners.add(listener);
 
                 Map<Class, Command> commands = listener.getCommandsForRx();
@@ -154,17 +168,17 @@ public final class NotificationManager {
         }
 
         synchronized (this) {
-            FPLog.d(TAG, "removeListener " + listener + " called from thread: " + Thread.currentThread());
+            FPLog.v(TAG, "removeListener " + listener + " called from thread: " + Thread.currentThread());
 
             if (mListeners.contains(listener)) {
                 Map<Class, Command> commands = listener.getCommandsForRx();
                 for (Map.Entry<Class, Command> map : commands.entrySet()) {
                     Class clazz = map.getKey();
-                    FPLog.d(TAG, "removeListener removing value " + map.getValue() + " from thread: " + Thread.currentThread());
+                    FPLog.v(TAG, "removeListener removing value " + map.getValue() + " from thread: " + Thread.currentThread());
 
                     mCommands.get(clazz).remove(map.getValue());
                     if (mCommands.get(clazz).size() == 0) {
-                        FPLog.d(TAG, "removeListener removing class: " + clazz + " from thread: " + Thread.currentThread());
+                        FPLog.v(TAG, "removeListener removing class: " + clazz + " from thread: " + Thread.currentThread());
 
                         mCommands.remove(clazz);
                         unsubscribeFrom(clazz);

@@ -1,8 +1,10 @@
 package com.fitpay.android.webview.impl;
 
 /**
+ * @deprecated as of v1.0.3 - not being used
  * Created by Ross on 5/27/2016.
  */
+@Deprecated
 public class AppCallbackModel {
 
     private String command;

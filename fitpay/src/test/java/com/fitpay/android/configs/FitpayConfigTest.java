@@ -1,6 +1,7 @@
-package com.fitpay.android;
+package com.fitpay.android.configs;
 
-import com.fitpay.android.configs.FitpayConfig;
+import com.fitpay.android.BaseTestActions;
+import com.fitpay.android.TestConstants;
 import com.fitpay.android.utils.Constants;
 
 import junit.framework.Assert;
@@ -13,7 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class FitpayConfigTest extends TestActions {
+public class FitpayConfigTest extends BaseTestActions {
+
     @Test
     public void test01_checkDefaultApiUrl() {
         Assert.assertEquals("api base url mismatch", FitpayConfig.apiURL, Constants.CONFIG_API_BASE_URL);

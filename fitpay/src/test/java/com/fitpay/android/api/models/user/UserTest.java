@@ -1,5 +1,7 @@
-package com.fitpay.android;
+package com.fitpay.android.api.models.user;
 
+
+import com.fitpay.android.Steps;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

@@ -1,4 +1,6 @@
-package com.fitpay.android;
+package com.fitpay.android.utils;
+
+import com.fitpay.android.Steps;
 
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;

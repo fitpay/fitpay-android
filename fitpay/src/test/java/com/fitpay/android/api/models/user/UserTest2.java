@@ -1,11 +1,11 @@
-package com.fitpay.android;
+package com.fitpay.android.api.models.user;
 
+import com.fitpay.android.TestActions;
+import com.fitpay.android.TestUtils;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ResultProvidingCallback;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.security.OAuthToken;
-import com.fitpay.android.api.models.user.LoginIdentity;
-import com.fitpay.android.api.models.user.User;
 
 import org.junit.Ignore;
 import org.junit.Test;

@@ -1,8 +1,9 @@
-package com.fitpay.android;
+package com.fitpay.android.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.fitpay.android.BaseTestActions;
 import com.fitpay.android.paymentdevice.interfaces.IRemoteCommitPtrHandler;
 import com.fitpay.android.paymentdevice.utils.DevicePreferenceData;
 
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.when;
  * Created by Vlad on 10/5/17.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class RemoteCommitPointerTest {
+public class RemoteCommitPointerTest  extends BaseTestActions {
 
     @Test
     public void storeCommitPointerRemote() throws Exception {

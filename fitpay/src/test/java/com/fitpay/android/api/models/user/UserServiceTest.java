@@ -1,8 +1,9 @@
-package com.fitpay.android;
+package com.fitpay.android.api.models.user;
 
-import com.fitpay.android.api.models.user.User;
-import com.fitpay.android.api.models.user.UserCreateRequest;
+import com.fitpay.android.TestActions;
+import com.fitpay.android.TestUtils;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Date;
@@ -13,6 +14,11 @@ import static junit.framework.Assert.assertNotNull;
  * Created by tgs on 4/27/16.
  */
 public class UserServiceTest extends TestActions {
+
+    @Override
+    @Before
+    public void before() {
+    }
 
     @Test
     public void canCreateUser() throws Exception {

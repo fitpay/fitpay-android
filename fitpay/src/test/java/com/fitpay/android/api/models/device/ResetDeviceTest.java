@@ -1,5 +1,6 @@
-package com.fitpay.android;
+package com.fitpay.android.api.models.device;
 
+import com.fitpay.android.TestActions;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.ResetDeviceStatus;

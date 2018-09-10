@@ -1,16 +1,16 @@
-package com.fitpay.android;
+package com.fitpay.android.api.models.card;
 
 import android.media.Image;
+import android.os.Debug;
 
+import com.fitpay.android.TestActions;
+import com.fitpay.android.TestConstants;
 import com.fitpay.android.api.callbacks.ResultProvidingCallback;
 import com.fitpay.android.api.enums.CardInitiators;
 import com.fitpay.android.api.models.Transaction;
-import com.fitpay.android.api.models.card.CreditCard;
-import com.fitpay.android.api.models.card.CreditCardInfo;
-import com.fitpay.android.api.models.card.Reason;
-import com.fitpay.android.api.models.card.VerificationMethod;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
+import com.fitpay.android.utils.FPLog;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -23,8 +23,6 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
-import static net.bytebuddy.matcher.ElementMatchers.anyOf;
-import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
@@ -379,7 +377,7 @@ public class CreditCardTest2 extends TestActions {
         createdCard = waitForActivation(createdCard);
 
         assertEquals("post deactivation card state", "ACTIVE", createdCard.getState());
-        assertTrue("should be default", createdCard.isDefault());
+        assertTrue("should be default", !createdCard.canMakeDefault());
 
         pan = "9999504454545451";
         creditCardInfo = getTestCreditCardInfo(pan);
@@ -392,21 +390,25 @@ public class CreditCardTest2 extends TestActions {
         secondCard = waitForActivation(secondCard);
 
         assertEquals("post deactivation card state", "ACTIVE", secondCard.getState());
-        assertFalse("second card should not be default", secondCard.isDefault());
+        assertFalse("second card should not be default", !secondCard.canMakeDefault());
 
         makeDefaultCard(secondCard);
+
+        //TODO: check the `device.getDefaultCreditCardId` once that is in place
+        /*
         createdCard = getCreditCard(createdCard);
-        assertFalse("first card should not be default", createdCard.isDefault());
+        assertTrue("first card should not be default", createdCard.canMakeDefault());
+
         secondCard = getCreditCard(secondCard);
-        assertTrue("second card should be default", secondCard.isDefault());
+        assertFalse("second card should be default", secondCard.canMakeDefault());
 
         makeDefaultCard(createdCard);
         createdCard = getCreditCard(createdCard);
-        assertTrue("first card should be default", createdCard.isDefault());
+        assertFalse("first card should be default", createdCard.canMakeDefault());
         secondCard = getCreditCard(secondCard);
-        assertFalse("second card should not be default", secondCard.isDefault());
+        assertTrue("second card should not be default", secondCard.canMakeDefault());
+        */
     }
-
 
     @Test
     public void canGetCardTransactions() throws Exception {
@@ -430,7 +432,8 @@ public class CreditCardTest2 extends TestActions {
         createdCard = waitForActivation(createdCard);
 
         assertEquals("post deactivation card state", "ACTIVE", createdCard.getState());
-        assertTrue("should be default", createdCard.isDefault());
+        assertTrue("should be default", !createdCard.canMakeDefault());
+
 
         Collections.TransactionCollection transactions = getCardTransactions(createdCard);
         assertNotNull("card should have transactions", transactions);

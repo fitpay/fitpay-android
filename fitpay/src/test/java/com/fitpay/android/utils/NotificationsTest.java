@@ -1,5 +1,6 @@
-package com.fitpay.android;
+package com.fitpay.android.utils;
 
+import com.fitpay.android.BaseTestActions;
 import com.fitpay.android.paymentdevice.callbacks.ConnectionListener;
 import com.fitpay.android.paymentdevice.constants.States;
 import com.fitpay.android.paymentdevice.enums.Connection;
@@ -29,7 +30,7 @@ import rx.schedulers.Schedulers;
 import static com.fitpay.android.api.enums.ResultCode.TIMEOUT;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class NotificationsTest {
+public class NotificationsTest extends BaseTestActions{
 
     private static Listener listener;
     private static NotificationManager manager;
@@ -45,6 +46,7 @@ public class NotificationsTest {
     @BeforeClass
     @SuppressWarnings("unchecked")
     public static void init() {
+        BaseTestActions.init();
         listener = new ConnectionListener() {
             @Override
             public void onDeviceStateChanged(@Connection.State int state) {
