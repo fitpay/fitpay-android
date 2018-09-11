@@ -27,7 +27,7 @@ import com.fitpay.android.utils.TimestampUtils;
 import com.fitpay.android.utils.ValidationException;
 import com.google.gson.Gson;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.conscrypt.Conscrypt;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -62,7 +62,7 @@ public class TestActions {
 
     @BeforeClass
     public static void init() {
-        SecurityProvider.getInstance().setProvider(new BouncyCastleProvider());
+        SecurityProvider.getInstance().setProvider(Conscrypt.newProvider());
         TestConstants.configureFitpay(mContext = Mockito.mock(Context.class));
 
         RxAndroidPlugins.getInstance().reset();

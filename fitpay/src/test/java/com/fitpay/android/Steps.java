@@ -26,16 +26,19 @@ import com.fitpay.android.utils.SecurityProvider;
 import com.fitpay.android.utils.TimestampUtils;
 import com.fitpay.android.utils.ValidationException;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.conscrypt.Conscrypt;
 import org.junit.Assert;
 import org.mockito.Mockito;
 
+import java.security.Provider;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import mockit.MockUp;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -63,7 +66,14 @@ public class Steps {
     private Issuers currentIssuer;
 
     protected Steps() {
-        SecurityProvider.getInstance().setProvider(new BouncyCastleProvider());
+        new MockUp<Conscrypt>() {
+            @mockit.Mock
+            Provider newProvider() {
+                return null;
+            }
+        };
+
+//        SecurityProvider.getInstance().setProvider(Conscrypt.newProvider());
 
         TestConstants.configureFitpay(Mockito.mock(Context.class));
 

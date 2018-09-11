@@ -2,7 +2,7 @@ package com.fitpay.android.utils;
 
 import android.support.annotation.NonNull;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.conscrypt.Conscrypt;
 
 import java.security.Provider;
 import java.security.Security;
@@ -57,10 +57,12 @@ public class SecurityProvider {
     void initProvider() {
         try {
             if (provider == null) {
-                setProvider(new BouncyCastleProvider());
+                provider = Conscrypt.newProvider();
             }
-            Security.removeProvider(provider.getName());
-            Security.insertProviderAt(provider, 1);
+            if (provider != null) {
+                Security.removeProvider(provider.getName());
+                Security.insertProviderAt(provider, 1);
+            }
         } catch (Exception e) {
             FPLog.e(TAG, e);
         }

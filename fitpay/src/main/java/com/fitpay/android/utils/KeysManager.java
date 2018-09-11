@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.crypto.KeyAgreement;
-import javax.crypto.SecretKey;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -44,7 +43,8 @@ final public class KeysManager {
     public static final int KEY_WV = KEY_API + 1;
     public static final int KEY_FPCTRL = KEY_WV + 1;
 
-    private static final String ALGORITHM = "ECDH";
+    private static final String ALGORITHM = "EC";
+    private static final String KEY_AGREEMENT = "ECDH";
     private static final String EC_CURVE = "secp256r1";
     private static final String KEY_TYPE = "AES";
 
@@ -76,8 +76,12 @@ final public class KeysManager {
 
     // Create the public and private keys
     private ECCKeyPair createECCKeyPair() throws Exception {
-        KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance(ALGORITHM,
-                SecurityProvider.getInstance().getProvider());
+        KeyPairGenerator keyGenerator = null;
+        if (SecurityProvider.getInstance().getProvider() != null) {
+            keyGenerator = KeyPairGenerator.getInstance(ALGORITHM, SecurityProvider.getInstance().getProvider());
+        } else {
+            keyGenerator = KeyPairGenerator.getInstance(ALGORITHM);
+        }
         keyGenerator.initialize(new ECGenParameterSpec(EC_CURVE), new SecureRandom());
 
         KeyPair keyPair = keyGenerator.generateKeyPair();
@@ -98,8 +102,12 @@ final public class KeysManager {
 
 
     public PrivateKey getPrivateKey(byte[] privateKey) throws Exception {
-        KeyFactory kf = KeyFactory.getInstance(ALGORITHM,
-                SecurityProvider.getInstance().getProvider());
+        KeyFactory kf = null;
+        if (SecurityProvider.getInstance().getProvider() != null) {
+            kf = KeyFactory.getInstance(ALGORITHM, SecurityProvider.getInstance().getProvider());
+        } else {
+            kf = KeyFactory.getInstance(ALGORITHM);
+        }
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKey);
         return kf.generatePrivate(keySpec);
     }
@@ -109,16 +117,20 @@ final public class KeysManager {
     }
 
     public PublicKey getPublicKey(String algorithm, byte[] publicKey) throws Exception {
-        KeyFactory kf = KeyFactory.getInstance(algorithm,
-                SecurityProvider.getInstance().getProvider());
+        KeyFactory kf = null;
+        if (SecurityProvider.getInstance().getProvider() != null) {
+            kf = KeyFactory.getInstance(algorithm, SecurityProvider.getInstance().getProvider());
+        } else {
+            kf = KeyFactory.getInstance(algorithm);
+        }
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKey);
         return kf.generatePublic(keySpec);
     }
 
-    public SecretKey getSecretKey(@KeyType int type) {
+    public byte[] getSecretKey(@KeyType int type) {
 
         ECCKeyPair keyPair = getPairForType(type);
-        SecretKey secretKey = keyPair.getSecretKey();
+        byte[] secretKey = keyPair.getSecretKey();
 
         if (secretKey == null) {
             secretKey = createSecretKey(keyPair.getPrivateKey(), keyPair.getServerPublicKey());
@@ -128,25 +140,23 @@ final public class KeysManager {
         return secretKey;
     }
 
-    private SecretKey createSecretKey(String privateKeyStr, String publicKeyStr) {
+    private byte[] createSecretKey(String privateKeyStr, String publicKeyStr) {
 
         try {
             PrivateKey privateKey = getPrivateKey(Hex.hexStringToBytes(privateKeyStr));
             PublicKey publicKey = getPublicKey(Hex.hexStringToBytes(publicKeyStr));
 
             KeyAgreement keyAgreement = null;
-            try {
-                keyAgreement = KeyAgreement.getInstance(ALGORITHM,
-                        SecurityProvider.getInstance().getProvider());
-            } catch (Exception e) {
-                //hack for unit tests
-                keyAgreement = KeyAgreement.getInstance(ALGORITHM);
+            if(SecurityProvider.getInstance().getProvider() != null){
+                keyAgreement = KeyAgreement.getInstance(KEY_AGREEMENT, SecurityProvider.getInstance().getProvider());
+            } else {
+                keyAgreement = KeyAgreement.getInstance(KEY_AGREEMENT);
             }
 
             keyAgreement.init(privateKey);
             keyAgreement.doPhase(publicKey, true);
 
-            return keyAgreement.generateSecret(KEY_TYPE);
+            return keyAgreement.generateSecret();
         } catch (Exception e) {
             FPLog.e(TAG, e);
             return null;
