@@ -5,6 +5,7 @@ import android.content.Context;
 import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.NotificationManager;
+import com.fitpay.android.utils.SecurityProvider;
 
 import org.conscrypt.Conscrypt;
 import org.junit.After;
@@ -29,14 +30,17 @@ public class BaseTestActions {
 
     @BeforeClass
     public static void init() {
-        new MockUp<Conscrypt>() {
-            @mockit.Mock
-            Provider newProvider() {
-                return null;
-            }
-        };
-
-//        SecurityProvider.getInstance().setProvider(Conscrypt.newProvider());
+        if (!Conscrypt.isAvailable()) {
+            //tests fix for UnsatisfiedLinkError: org.conscrypt.NativeCrypto.EVP_has_aes_hardware()I
+            new MockUp<Conscrypt>() {
+                @mockit.Mock
+                Provider newProvider() {
+                    return null;
+                }
+            };
+        } else {
+            SecurityProvider.getInstance().setProvider(Conscrypt.newProvider());
+        }
         TestConstants.configureFitpay(mContext = Mockito.mock(Context.class));
 
         RxAndroidPlugins.getInstance().reset();

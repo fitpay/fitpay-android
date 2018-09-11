@@ -59,24 +59,6 @@ public class TestActions extends BaseTestActions {
 
     protected static Context mContext;
 
-    @BeforeClass
-    public static void init() {
-        SecurityProvider.getInstance().setProvider(Conscrypt.newProvider());
-        TestConstants.configureFitpay(mContext = Mockito.mock(Context.class));
-
-        RxAndroidPlugins.getInstance().reset();
-        RxAndroidPlugins.getInstance().registerSchedulersHook(new RxAndroidSchedulersHook() {
-            @Override
-            public Scheduler getMainThreadScheduler() {
-                return Schedulers.immediate();
-            }
-        });
-
-        RxJavaHooks.setOnIOScheduler(scheduler -> Schedulers.immediate());
-        RxJavaHooks.setOnComputationScheduler(scheduler -> Schedulers.immediate());
-        RxJavaHooks.setOnNewThreadScheduler(scheduler -> Schedulers.immediate());
-    }
-
     @Before
     public void before() throws Exception {
         userName = TestUtils.getRandomLengthString(5, 10) + "@"
