@@ -57,8 +57,6 @@ public class TestActions extends BaseTestActions {
 
     public User user;
 
-    protected static Context mContext;
-
     @Before
     public void before() throws Exception {
         userName = TestUtils.getRandomLengthString(5, 10) + "@"
