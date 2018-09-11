@@ -31,6 +31,7 @@ public final class Device extends DeviceModel implements Parcelable {
     private static final String USER = "user";
     private static final String LAST_ACK_COMMIT = "lastAckCommit";
     private static final String DEVICE_RESET_TASKS = "deviceResetTasks";
+    private static final String DEFAULT_CREDIT_CARD = "defaultCreditCard";
 
     /**
      * Get current user
@@ -78,6 +79,15 @@ public final class Device extends DeviceModel implements Parcelable {
 
     public boolean canDelete() {
         return hasLink(SELF);
+    }
+
+    /**
+     * Get default credit card
+     *
+     * @param callback result callback with default credit card
+     */
+    public void getDefaultCreditCard(@NonNull ApiCallback<CreditCard> callback) {
+        makeGetCall(DEFAULT_CREDIT_CARD, null, CreditCard.class, callback);
     }
 
     /**
@@ -547,6 +557,7 @@ public final class Device extends DeviceModel implements Parcelable {
         dest.writeParcelable(this.links, flags);
         dest.writeString(this.notificationToken);
         dest.writeString(this.profileId);
+        dest.writeString(this.defaultCreditCardId);
         dest.writeString(this.deviceType);
         dest.writeString(this.manufacturerName);
         dest.writeString(this.deviceName);
@@ -574,6 +585,7 @@ public final class Device extends DeviceModel implements Parcelable {
         this.links = in.readParcelable(Links.class.getClassLoader());
         this.notificationToken = in.readString();
         this.profileId = in.readString();
+        this.defaultCreditCardId = in.readString();
         //noinspection ResourceType
         this.deviceType = in.readString();
         this.manufacturerName = in.readString();

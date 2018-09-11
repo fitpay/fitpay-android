@@ -350,15 +350,34 @@ public class TestActions extends BaseTestActions {
         return callback.getResult();
     }
 
+    public CreditCard getCreditCardSelf(CreditCard creditCard) throws InterruptedException {
+        final CountDownLatch latch = new CountDownLatch(1);
+        ResultProvidingCallback<CreditCard> callback = new ResultProvidingCallback<>(latch);
+        creditCard.self(callback);
+        latch.await(TIMEOUT, TimeUnit.SECONDS);
+        return callback.getResult();
+    }
 
     public void makeDefaultCard(CreditCard creditCard) throws Exception {
+        makeDefaultCard(null, creditCard);
+    }
+
+    public void makeDefaultCard(String deviceId, CreditCard creditCard) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<Void> callback = new ResultProvidingCallback<>(latch);
-        creditCard.makeDefault(callback);
+        creditCard.makeDefault(deviceId, callback);
         latch.await(TIMEOUT, TimeUnit.SECONDS);
         assertEquals("make default error code", -1, callback.getErrorCode());
     }
 
+    public CreditCard getDefaultCreditCard(Device device) throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+        ResultProvidingCallback<CreditCard> cardCallback = new ResultProvidingCallback<>(latch);
+        device.getDefaultCreditCard(cardCallback);
+        latch.await(TIMEOUT, TimeUnit.SECONDS);
+        assertNotNull("default card is empty", cardCallback.getResult());
+        return cardCallback.getResult();
+    }
 
     public void deleteCard(CreditCard creditCard) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
@@ -419,6 +438,14 @@ public class TestActions extends BaseTestActions {
         return callback.getResult();
     }
 
+    public Device getDeviceSelf(Device device) throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+        ResultProvidingCallback<Device> callback = new ResultProvidingCallback<>(latch);
+        device.self(callback);
+        latch.await(TIMEOUT, TimeUnit.SECONDS);
+        assertNotNull("device is empty", callback.getResult());
+        return callback.getResult();
+    }
 
     public Collections.CommitsCollection getCommits(Device device, String lastCommitId) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
