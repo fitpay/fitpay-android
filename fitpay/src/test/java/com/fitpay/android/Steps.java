@@ -1,7 +1,5 @@
 package com.fitpay.android;
 
-import android.content.Context;
-
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.CardInitiators;
@@ -21,14 +19,14 @@ import com.fitpay.android.api.models.security.OAuthToken;
 import com.fitpay.android.api.models.user.LoginIdentity;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.api.models.user.UserCreateRequest;
+import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.paymentdevice.impl.mock.SecureElementDataProvider;
-import com.fitpay.android.utils.SecurityProvider;
+import com.fitpay.android.utils.NotificationManager;
 import com.fitpay.android.utils.TimestampUtils;
 import com.fitpay.android.utils.ValidationException;
 
 import org.conscrypt.Conscrypt;
 import org.junit.Assert;
-import org.mockito.Mockito;
 
 import java.security.Provider;
 import java.util.ArrayList;
@@ -47,7 +45,7 @@ import static junit.framework.Assert.fail;
 /***
  * Created by Vlad on 16.03.2016.
  */
-public class Steps {
+public class Steps extends BaseTestActions{
 
     private final int TIMEOUT = 30;
 
@@ -87,6 +85,8 @@ public class Steps {
         cardsCollection = null;
         currentDevice = null;
         currentCommit = null;
+
+        BaseTestActions.clean();
     }
 
 

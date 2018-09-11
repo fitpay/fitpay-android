@@ -20,11 +20,12 @@ class WvPaymentDeviceInfo {
     private String licenseKey;
     private String bdAddress;
     private String notificationToken;
+    private String profileId;
 
     private WvPaymentDeviceInfo() {
     }
 
-    public WvPaymentDeviceInfo(Device device) {
+    WvPaymentDeviceInfo(Device device) {
         deviceType = device.getDeviceType();
         manufacturerName = device.getManufacturerName();
         deviceName = device.getDeviceName();
@@ -38,58 +39,7 @@ class WvPaymentDeviceInfo {
         licenseKey = device.getLicenseKey();
         bdAddress = device.getBdAddress();
         notificationToken = device.getNotificationToken();
-    }
-
-    public String getDeviceType() {
-        return deviceType;
-    }
-
-    public String getManufacturerName() {
-        return manufacturerName;
-    }
-
-    public String getDeviceName() {
-        return deviceName;
-    }
-
-    public String getFirmwareRevision() {
-        return firmwareRevision;
-    }
-
-    public String getOsName() {
-        return osName;
-    }
-
-    public String getSerialNumber() {
-        return serialNumber;
-    }
-
-    public String getModelNumber() {
-        return modelNumber;
-    }
-
-    public String getHardwareRevision() {
-        return hardwareRevision;
-    }
-
-    public String getSoftwareRevision() {
-        return softwareRevision;
-    }
-
-    public String getSystemId() {
-        return systemId;
-    }
-
-    public String getLicenseKey() {
-        return licenseKey;
-    }
-
-    public String getBdAddress() {
-        return bdAddress;
-    }
-
-    public String getNotificationToken() {
-        return notificationToken;
+        profileId = device.getProfileId();
     }
 
     @Override
@@ -107,7 +57,8 @@ class WvPaymentDeviceInfo {
             return false;
         if (firmwareRevision != null ? !firmwareRevision.equals(that.firmwareRevision) : that.firmwareRevision != null)
             return false;
-        if (osName != null ? !osName.equals(that.osName) : that.osName != null) return false;
+        if (osName != null ? !osName.equals(that.osName) : that.osName != null)
+            return false;
         if (serialNumber != null ? !serialNumber.equals(that.serialNumber) : that.serialNumber != null)
             return false;
         if (modelNumber != null ? !modelNumber.equals(that.modelNumber) : that.modelNumber != null)
@@ -122,7 +73,12 @@ class WvPaymentDeviceInfo {
             return false;
         if (bdAddress != null ? !bdAddress.equals(that.bdAddress) : that.bdAddress != null)
             return false;
-        return notificationToken != null ? notificationToken.equals(that.notificationToken) : that.notificationToken == null;
+        if (notificationToken != null ? !notificationToken.equals(that.notificationToken) : that.notificationToken != null)
+            return false;
+        if (profileId != null ? !profileId.equals(that.profileId) : that.profileId != null)
+            return false;
+
+        return true;
     }
 
     @Override
@@ -140,6 +96,8 @@ class WvPaymentDeviceInfo {
         result = 31 * result + (licenseKey != null ? licenseKey.hashCode() : 0);
         result = 31 * result + (bdAddress != null ? bdAddress.hashCode() : 0);
         result = 31 * result + (notificationToken != null ? notificationToken.hashCode() : 0);
+        result = 31 * result + (profileId != null ? profileId.hashCode() : 0);
+
         return result;
     }
 }

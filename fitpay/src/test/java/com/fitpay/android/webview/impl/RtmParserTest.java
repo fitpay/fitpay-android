@@ -2,9 +2,14 @@ package com.fitpay.android.webview.impl;
 
 import android.app.Activity;
 
+import com.fitpay.android.BaseTestActions;
+import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.utils.Constants;
+import com.fitpay.android.utils.Listener;
+import com.fitpay.android.utils.NotificationManager;
 import com.fitpay.android.webview.enums.RtmType;
 import com.fitpay.android.webview.events.RtmMessage;
+import com.fitpay.android.webview.events.UnrecognizedRtmMessage;
 
 import junit.framework.Assert;
 
@@ -14,25 +19,36 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
+import rx.schedulers.Schedulers;
+
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 
 /**
  * Created by Vlad on 19.07.2017.
  */
 
-public class RtmParserTest {
+public class RtmParserTest extends BaseTestActions {
 
     private WebViewCommunicatorImpl wvci;
 
     @Before
-    public void init() {
+    public void before() {
         Activity context = Mockito.mock(Activity.class);
-        wvci = new WebViewCommunicatorImpl(context, null, null);
+        MockPaymentDeviceConnector deviceConnector = new MockPaymentDeviceConnector(context);
+        wvci = new WebViewCommunicatorImpl(context, deviceConnector, null);
     }
 
+    @Override
     @After
-    public void terminate() {
+    public void after() {
+        wvci.destroy();
         wvci = null;
+        super.after();
     }
 
     @Test
@@ -83,21 +99,27 @@ public class RtmParserTest {
         Assert.assertNull(errorMsg);
     }
 
-    @Ignore("needs to be rewritten, we don't throw exceptions anymore... needs to listen to RxBus instead for the unrecognized message")
+    //@Ignore("needs to be rewritten, we don't throw exceptions anymore... needs to listen to RxBus instead for the unrecognized message")
     @Test
-    public void testWebAppVersionSameNoMethod() {
+    public void testWebAppVersionSameNoMethod() throws InterruptedException {
         String rtmMsgStr = "{\"callbackId\":\"9\",\"data\":\"{\\\"next\\\":\\\"\\\\/walletAccess\\\",\\\"previous\\\":\\\"\\\\/cards\\\"}\",\"type\":\"navigationStart\"}";
         RtmMessage msg = Constants.getGson().fromJson(rtmMsgStr, RtmMessage.class);
         int webAppRtmVersion = 3;
 
-        String errorMsg = "";
-        try {
-            RtmParserImpl.parse(wvci, webAppRtmVersion, msg);
-        } catch (IllegalStateException e) {
-            errorMsg = e.getMessage();
-        }
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<RtmMessage> rtmRef = new AtomicReference<>();
+        Listener listener = new UnrecognizedMessageListener(wvci.getConnectorId(), rtmRef, latch);
 
-        assertEquals("unsupported action value navigationStart", errorMsg);
+        NotificationManager.getInstance().addListener(listener, Schedulers.immediate());
+
+        RtmParserImpl.parse(wvci, webAppRtmVersion, msg);
+
+        latch.await(10, TimeUnit.SECONDS);
+
+        NotificationManager.getInstance().removeListener(listener);
+
+        assertNotNull(rtmRef.get());
+        assertEquals(msg, rtmRef.get());
     }
 
     @Test
@@ -115,4 +137,16 @@ public class RtmParserTest {
 
         assertEquals("missing required message data", errorMsg);
     }
+
+    class UnrecognizedMessageListener extends Listener {
+        private UnrecognizedMessageListener(String id, AtomicReference<RtmMessage> rtmRef, CountDownLatch latch) {
+            super(id);
+            mCommands.put(UnrecognizedRtmMessage.class, data -> {
+                rtmRef.set(((UnrecognizedRtmMessage) data).getMessage());
+                latch.countDown();
+            });
+        }
+    }
+
+    ;
 }

@@ -59,7 +59,7 @@ public class DeviceSyncManagerTest extends TestActions {
 
     @Before
     @Override
-    public void testActionsSetup() throws Exception {
+    public void before() throws Exception {
         final SharedPreferences mockPrefs = Mockito.mock(SharedPreferences.class);
         final SharedPreferences.Editor mockEditor = Mockito.mock(SharedPreferences.Editor.class);
 
@@ -153,14 +153,16 @@ public class DeviceSyncManagerTest extends TestActions {
         NotificationManager.getInstance().addListener(this.listener);
     }
 
+    @Override
     @After
-    public void cleanup() {
+    public void after() {
         if (syncManager != null) {
             syncManager.unsubscribe();
             syncManager.removeDeviceSyncManagerCallback(syncManagerCallback);
         }
 
         NotificationManager.getInstance().removeListener(this.listener);
+        super.after();
     }
 
     @Test

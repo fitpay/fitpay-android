@@ -133,7 +133,7 @@ public class DeviceSyncManager {
 
         SyncInfo syncInfo = request.getSyncInfo();
         if (syncInfo != null) {
-            syncInfo.sendAckSync(request.getSyncId(), new ApiCallback<Void>() {
+            syncInfo.sendAckSync(new ApiCallback<Void>() {
                 @Override
                 public void onSuccess(Void result) {
                     FPLog.i("ackSync has been sent successfully.");

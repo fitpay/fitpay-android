@@ -1,7 +1,6 @@
 package com.fitpay.android.configs;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.StringUtils;
@@ -15,7 +14,7 @@ class FitpayConfigModel {
     private String redirectUrl;
     private String apiURL;
     private String authURL;
-    private boolean supportA2A;
+    private boolean supportApp2App;
     private FitpayConfigWebModel web;
 
     FitpayConfigModel(@NonNull String clientId) {
@@ -45,8 +44,8 @@ class FitpayConfigModel {
         return !StringUtils.isEmpty(authURL) ? authURL : Constants.CONFIG_AUTH_BASE_URL;
     }
 
-    boolean isSupportA2A(){
-        return supportA2A;
+    boolean isApp2AppSupported(){
+        return supportApp2App;
     }
 
     FitpayConfigWebModel getWebConfig() {

@@ -86,7 +86,7 @@ public final class FitpayConfig {
         redirectURL = configModel.getRedirectUrl();
         apiURL = configModel.getApiURL();
         authURL = configModel.getAuthURL();
-        supportApp2App = configModel.isSupportA2A();
+        supportApp2App = configModel.isApp2AppSupported();
         Web.demoMode = configModel.getWebConfig().demoMode;
         Web.demoCardGroup = configModel.getWebConfig().demoCardGroup;
         Web.cssURL = configModel.getWebConfig().cssURL;

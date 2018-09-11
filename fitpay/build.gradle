@@ -11,7 +11,7 @@ apply plugin: 'maven'
 
 
 group = 'com.fitpay.android'
-version = '1.0.2'
+version = '1.1.1'
 archivesBaseName = "android_sdk"
 
 uploadArchives {
@@ -182,18 +182,21 @@ artifacts {
 
 bintray {
     Properties properties = new Properties()
-    properties.load(project.rootProject.file('bintray.properties').newDataInputStream())
-    user = properties.getProperty("bintray_user")
-    key = properties.getProperty("bintray_key")
+    File propertiesFile = project.rootProject.file('bintray.properties')
+    if(propertiesFile.exists()) {
+        properties.load(propertiesFile.newDataInputStream())
+        user = properties.getProperty("bintray_user")
+        key = properties.getProperty("bintray_key")
 
-    pkg {
-        repo = 'maven'
-        name = 'com.fitpay'
-        userOrg = 'fit-pay'
-        licenses = ['MIT']
-        vcsUrl = 'https://github.com/fitpay/fitpay-android-sdk.git'
+        pkg {
+            repo = 'maven'
+            name = 'com.fitpay'
+            userOrg = 'fit-pay'
+            licenses = ['MIT']
+            vcsUrl = 'https://github.com/fitpay/fitpay-android-sdk.git'
+        }
+        configurations = ['archives']
     }
-    configurations = ['archives']
 }
 
 // Test Logging

@@ -5,6 +5,10 @@ import android.support.annotation.IntDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+/**
+ * @deprecated as of v1.1.0 - not being used
+ */
+@Deprecated
 public final class ErrorCodes {
 
     public static final int UDEC_UNKNOWN = 0;
@@ -36,7 +40,7 @@ public final class ErrorCodes {
             SEC_UNAUTHORIZED,
             SEC_COMMITS_COULDNT_BE_APPLIED
     })
-    public @interface Sync{
+    public @interface Sync {
     }
 }
 

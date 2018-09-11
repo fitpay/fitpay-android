@@ -18,11 +18,11 @@ public final class TestConstants {
     private final static String PROPERTY_CLIENT_ID = "clientId";
     private final static String PROPERTY_REDIRECT_URL = "redirectUrl";
 
-    static String getClientId() {
+    public static String getClientId() {
         return System.getProperty(PROPERTY_CLIENT_ID, "fp_webapp_pJkVp2Rl");
     }
 
-    static void configureFitpay(Context context) {
+    public static void configureFitpay(Context context) {
         addLogs();
 
         Mockito.when(context.getCacheDir()).thenReturn(new File(System.getProperty("java.io.tmpdir")));
@@ -33,11 +33,11 @@ public final class TestConstants {
         FitpayConfig.redirectURL = System.getProperty(PROPERTY_REDIRECT_URL, "https://webapp.fit-pay.com");
     }
 
-    static void waitSomeActionsOnServer() throws InterruptedException {
+    public static void waitSomeActionsOnServer() throws InterruptedException {
         Thread.sleep(1000);
     }
 
-    static void addLogs(){
+    public static void addLogs(){
         FPLog.clean(); //in tests only one log impl should be used
         FPLog.addLogImpl(new FPLog.ILog() {
             @Override
