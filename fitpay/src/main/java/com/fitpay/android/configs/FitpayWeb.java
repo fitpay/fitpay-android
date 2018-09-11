@@ -302,15 +302,6 @@ public class FitpayWeb {
     }
 
     /**
-     * Get rtm message delegate
-     *
-     * @return delegate
-     */
-    public RtmDelegate getRtmDelegate() {
-        return rtmDelegate;
-    }
-
-    /**
      * Set id verification delegate
      *
      * @param idVerificationDelegate id verification delegate
@@ -320,30 +311,12 @@ public class FitpayWeb {
     }
 
     /**
-     * Get id verification delegate
-     *
-     * @return delegate
-     */
-    public IdVerificationDelegate getIdVerificationDelegate() {
-        return idVerificationDelegate;
-    }
-
-    /**
      * Set a2a verification delegate
      *
      * @param a2AVerificationDelegate a2a verification delegate
      */
     public void setA2AVerificationDelegate(@NonNull A2AVerificationDelegate a2AVerificationDelegate) {
         this.a2AVerificationDelegate = a2AVerificationDelegate;
-    }
-
-    /**
-     * Get a2a verification delegate
-     *
-     * @return delegate
-     */
-    public A2AVerificationDelegate getA2AVerificationDelegate() {
-        return a2AVerificationDelegate;
     }
 
     /**

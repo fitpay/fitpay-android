@@ -6,7 +6,10 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import com.fitpay.android.TestActions;
+import com.fitpay.android.a2averification.A2AIssuerResponse;
 import com.fitpay.android.api.models.apdu.ApduExecutionResultTest;
+import com.fitpay.android.a2averification.A2AVerificationFailed;
+import com.fitpay.android.a2averification.A2AVerificationRequest;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.utils.FPLog;
@@ -93,10 +96,13 @@ public class FitpayWebTest extends TestActions {
         Assert.assertEquals(baseConfig, fpConfig);
     }
 
-    //TODO: current test doesn't want to pass on travis, but it works on local machine. fix it later
     @Test
     public void test03_checkDelegates() throws InterruptedException {
-        final CountDownLatch latch = new CountDownLatch(2);
+        final CountDownLatch latch = new CountDownLatch(3);
+
+        FitpayConfig.supportApp2App = true;
+
+        //rtm delegate
         final AtomicReference<String> rtmTypeRef = new AtomicReference<>();
         final FitpayWeb.RtmDelegate rtmDelegate = rtmMessage -> {
             FPLog.d(FitpayWebTest.class.getSimpleName(), "event received:" + rtmMessage.toString());
@@ -105,15 +111,31 @@ public class FitpayWebTest extends TestActions {
         };
         fitpayWeb.setRtmDelegate(rtmDelegate);
 
-        Assert.assertNotNull(fitpayWeb.getRtmDelegate());
-        Assert.assertEquals(rtmDelegate, fitpayWeb.getRtmDelegate());
-
+        //idVerification delegate
         final IdVerification idVerification = new IdVerification.Builder().build();
         final FitpayWeb.IdVerificationDelegate idVerificationDelegate = () -> idVerification;
         fitpayWeb.setIdVerificationDelegate(idVerificationDelegate);
 
-        Assert.assertNotNull(fitpayWeb.getIdVerificationDelegate());
-        Assert.assertEquals(idVerificationDelegate, fitpayWeb.getIdVerificationDelegate());
+        //a2a delegate
+        final AtomicReference<A2AVerificationRequest> a2aRequest = new AtomicReference<>();
+        final FitpayWeb.A2AVerificationDelegate a2AVerificationDelegate = new FitpayWeb.A2AVerificationDelegate() {
+            @Override
+            public void onRequestReceived(A2AVerificationRequest verificationRequest) {
+                a2aRequest.set(verificationRequest);
+                latch.countDown();
+            }
+
+            @Override
+            public void processA2AIssuerResponse(A2AIssuerResponse successResponse) {
+
+            }
+
+            @Override
+            public void onA2AVerificationFailed(A2AVerificationFailed failedResponse) {
+
+            }
+        };
+        fitpayWeb.setA2AVerificationDelegate(a2AVerificationDelegate);
 
         AtomicReference<IdVerificationRequest> idRequestRef = new AtomicReference<>();
         IdVerificationRequestListener listener = new IdVerificationRequestListener(deviceConnector.id(), latch, idRequestRef);
@@ -123,12 +145,15 @@ public class FitpayWebTest extends TestActions {
         RxBus.getInstance().post(deviceConnector.id(), testMessage);
         RxBus.getInstance().post(deviceConnector.id(), new IdVerificationRequest("1"));
 
+        RxBus.getInstance().post(deviceConnector.id(), getA2AVerificationRequest());
+
         latch.await(30, TimeUnit.SECONDS);
 
         NotificationManager.getInstance().removeListener(listener);
 
         Assert.assertEquals("myEvent", rtmTypeRef.get());
         Assert.assertNotNull(idRequestRef.get());
+        Assert.assertNotNull(a2aRequest.get());
     }
 
     private String getConfig(String email, boolean hasAccount, String token, Device device) {
