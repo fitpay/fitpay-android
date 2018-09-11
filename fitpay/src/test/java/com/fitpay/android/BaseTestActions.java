@@ -5,14 +5,14 @@ import android.content.Context;
 import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.NotificationManager;
-import com.fitpay.android.utils.SecurityProvider;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.conscrypt.Conscrypt;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.mockito.Mockito;
 
+import java.security.Provider;
 import java.util.concurrent.Executor;
 
 import mockit.Mock;
@@ -29,7 +29,14 @@ public class BaseTestActions {
 
     @BeforeClass
     public static void init() {
-        SecurityProvider.getInstance().setProvider(new BouncyCastleProvider());
+        new MockUp<Conscrypt>() {
+            @mockit.Mock
+            Provider newProvider() {
+                return null;
+            }
+        };
+
+//        SecurityProvider.getInstance().setProvider(Conscrypt.newProvider());
         TestConstants.configureFitpay(mContext = Mockito.mock(Context.class));
 
         RxAndroidPlugins.getInstance().reset();

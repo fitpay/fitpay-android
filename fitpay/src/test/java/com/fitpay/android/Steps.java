@@ -19,24 +19,18 @@ import com.fitpay.android.api.models.security.OAuthToken;
 import com.fitpay.android.api.models.user.LoginIdentity;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.api.models.user.UserCreateRequest;
-import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.paymentdevice.impl.mock.SecureElementDataProvider;
-import com.fitpay.android.utils.NotificationManager;
 import com.fitpay.android.utils.TimestampUtils;
 import com.fitpay.android.utils.ValidationException;
 
-import org.conscrypt.Conscrypt;
 import org.junit.Assert;
 
-import java.security.Provider;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
-import mockit.MockUp;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -45,7 +39,7 @@ import static junit.framework.Assert.fail;
 /***
  * Created by Vlad on 16.03.2016.
  */
-public class Steps extends BaseTestActions{
+public class Steps extends BaseTestActions {
 
     private final int TIMEOUT = 30;
 
@@ -63,17 +57,8 @@ public class Steps extends BaseTestActions{
     private Commit currentCommit;
     private Issuers currentIssuer;
 
-    protected Steps() {
-        new MockUp<Conscrypt>() {
-            @mockit.Mock
-            Provider newProvider() {
-                return null;
-            }
-        };
-
-//        SecurityProvider.getInstance().setProvider(Conscrypt.newProvider());
-
-        TestConstants.configureFitpay(Mockito.mock(Context.class));
+    public Steps() {
+        BaseTestActions.init();
 
         userName = TestUtils.getRandomLengthString(5, 10) + "@"
                 + TestUtils.getRandomLengthString(5, 10) + "." + TestUtils.getRandomLengthString(4, 10);
