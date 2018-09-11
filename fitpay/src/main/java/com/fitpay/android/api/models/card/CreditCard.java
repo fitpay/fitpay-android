@@ -233,6 +233,7 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.creditCardId);
         dest.writeString(this.userId);
+        dest.writeValue(this.defaultX);
         dest.writeValue(this.createdTsEpoch);
         dest.writeValue(this.lastModifiedTsEpoch);
         dest.writeString(this.state);
@@ -253,6 +254,7 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
     protected CreditCard(Parcel in) {
         this.creditCardId = in.readString();
         this.userId = in.readString();
+        this.defaultX = (Boolean) in.readValue(Boolean.class.getClassLoader());
         this.createdTsEpoch = (Long) in.readValue(Long.class.getClassLoader());
         this.lastModifiedTsEpoch = (Long) in.readValue(Long.class.getClassLoader());
         this.state = in.readString();
