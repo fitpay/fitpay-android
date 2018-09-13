@@ -8,6 +8,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'maven'
+apply plugin: 'jacoco-android'
 
 
 group = 'com.fitpay.android'
