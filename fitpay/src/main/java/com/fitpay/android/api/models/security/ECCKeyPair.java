@@ -18,7 +18,7 @@ public class ECCKeyPair {
     private String clientPublicKey;
 
     private transient String privateKey;
-    private transient SecretKey secretKey = null;
+    private transient byte[] secretKey = null;
 
     public ECCKeyPair() {
     }
@@ -75,11 +75,11 @@ public class ECCKeyPair {
         this.privateKey = privateKey;
     }
 
-    public SecretKey getSecretKey() {
+    public byte[] getSecretKey() {
         return secretKey;
     }
 
-    public void setSecretKey(SecretKey secretKey) {
+    public void setSecretKey(byte[] secretKey) {
         this.secretKey = secretKey;
     }
 

@@ -3,13 +3,10 @@ package com.fitpay.android.utils;
 import android.support.annotation.Nullable;
 
 import com.google.gson.internal.bind.util.ISO8601Utils;
-
-import org.joda.time.Days;
-import org.joda.time.LocalDateTime;
-
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -55,7 +52,32 @@ public class TimestampUtils {
      * @param date specified date
      * @return days or null
      */
-    public static Integer getDaysBetweenDates(@Nullable Date date){
-        return date == null ? null : Days.daysBetween(new LocalDateTime(date), new LocalDateTime()).getDays();
+    public static Integer getDaysBetweenDates(@Nullable Date date) {
+
+        if (date == null) {
+            return null;
+        }
+
+        Calendar c = Calendar.getInstance();
+
+        long fromTime = date.getTime();
+        long toTime = System.currentTimeMillis();
+
+        int result = 0;
+        if (toTime <= fromTime) return result;
+
+        c.setTimeInMillis(toTime);
+        final int toYear = c.get(Calendar.YEAR);
+        result += c.get(Calendar.DAY_OF_YEAR);
+
+        c.setTimeInMillis(fromTime);
+        result -= c.get(Calendar.DAY_OF_YEAR);
+
+        while (c.get(Calendar.YEAR) < toYear) {
+            result += c.getActualMaximum(Calendar.DAY_OF_YEAR);
+            c.add(Calendar.YEAR, 1);
+        }
+
+        return result;
     }
 }

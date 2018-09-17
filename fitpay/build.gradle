@@ -125,12 +125,10 @@ dependencies {
 
     implementation 'me.alexrs:prefs:1.1.0'
 
-    implementation 'org.bouncycastle:bcprov-jdk15on:1.60'
-    implementation 'com.nimbusds:nimbus-jose-jwt:6.0.1'
+    implementation 'org.conscrypt:conscrypt-android:1.2.0'
+    implementation 'com.nimbusds:nimbus-jose-jwt:6.0.2'
 
     implementation 'com.github.heremaps:oksse:0.9.0'
-
-    implementation 'joda-time:joda-time:2.10'
 
     javadocDeps "com.android.support:support-annotations:${supportLib}"
     javadocDeps "com.squareup.retrofit2:retrofit:${retrofitLib}"
@@ -139,8 +137,8 @@ dependencies {
     javadocDeps "com.squareup.okhttp3:okhttp:${okhttpLib}"
     javadocDeps "io.reactivex:rxjava:${rxjavaLib}"
     javadocDeps 'me.alexrs:prefs:1.1.0'
-    javadocDeps 'org.bouncycastle:bcprov-jdk15on:1.60'
-    javadocDeps 'com.nimbusds:nimbus-jose-jwt:6.0.1'
+    javadocDeps 'org.conscrypt:conscrypt-android:1.2.0'
+    javadocDeps 'com.nimbusds:nimbus-jose-jwt:6.0.2'
 
     testImplementation 'org.mockito:mockito-core:2.21.0'
     testImplementation 'junit:junit:4.12'

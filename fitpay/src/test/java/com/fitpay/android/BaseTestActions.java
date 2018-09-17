@@ -10,13 +10,14 @@ import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.NotificationManager;
 import com.fitpay.android.utils.SecurityProvider;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.conscrypt.Conscrypt;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.mockito.Mockito;
 
+import java.security.Provider;
 import java.util.concurrent.Executor;
 
 import mockit.Mock;
@@ -35,7 +36,18 @@ public abstract class BaseTestActions {
     public static void init() {
         cleanAll();
 
-        SecurityProvider.getInstance().setProvider(new BouncyCastleProvider());
+        if (!Conscrypt.isAvailable()) {
+            //tests fix for UnsatisfiedLinkError: org.conscrypt.NativeCrypto.EVP_has_aes_hardware()I
+            new MockUp<Conscrypt>() {
+                @mockit.Mock
+                Provider newProvider() {
+                    return null;
+                }
+            };
+        } else {
+            SecurityProvider.getInstance().setProvider(Conscrypt.newProvider());
+        }
+
         TestConstants.configureFitpay(mContext = Mockito.mock(Context.class));
 
         RxAndroidPlugins.getInstance().reset();
