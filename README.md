@@ -4,7 +4,6 @@
 [![Build Status](https://travis-ci.com/fitpay/fitpay-android-sdk.svg?branch=develop)](https://travis-ci.com/fitpay/fitpay-android-sdk)
 [![Bintray](https://api.bintray.com/packages/fit-pay/maven/com.fitpay/images/download.svg)](https://bintray.com/fit-pay/maven/com.fitpay)
 [![codecov](https://codecov.io/gh/fitpay/fitpay-android-sdk/branch/develop/graph/badge.svg)](https://codecov.io/gh/fitpay/fitpay-android-sdk)
-[![Documentation coverage](docs/badge.svg)](docs/badge.svg)
 ## Building the library
 
 ### Building using Android Studio
