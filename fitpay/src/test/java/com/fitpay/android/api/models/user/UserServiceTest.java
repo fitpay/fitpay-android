@@ -2,18 +2,24 @@ package com.fitpay.android.api.models.user;
 
 import com.fitpay.android.TestActions;
 import com.fitpay.android.TestUtils;
+import com.fitpay.android.api.models.apdu.ApduExecutionResultTest;
+import com.fitpay.android.utils.NamedResource;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import java.util.Date;
 
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by tgs on 4/27/16.
  */
 public class UserServiceTest extends TestActions {
+
+    @ClassRule
+    public static NamedResource rule = new NamedResource(UserServiceTest.class);
 
     @Override
     @Before

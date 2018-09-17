@@ -5,6 +5,7 @@ import com.fitpay.android.api.enums.ResponseState;
 import com.fitpay.android.api.models.apdu.ApduExecutionResult;
 import com.fitpay.android.api.models.apdu.ApduPackage;
 import com.fitpay.android.api.models.device.Device;
+import com.fitpay.android.configs.FitpayWebTest;
 import com.fitpay.android.paymentdevice.callbacks.ApduExecutionListener;
 import com.fitpay.android.paymentdevice.callbacks.PaymentDeviceListener;
 import com.fitpay.android.paymentdevice.constants.States;
@@ -12,25 +13,28 @@ import com.fitpay.android.paymentdevice.enums.Connection;
 import com.fitpay.android.paymentdevice.events.PaymentDeviceOperationFailed;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.utils.Listener;
+import com.fitpay.android.utils.NamedResource;
 import com.fitpay.android.utils.NotificationManager;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by tgs on 5/3/16.
  */
 public class MockPaymentDeviceTest extends TestActions {
 
-    private final static String TAG = MockPaymentDeviceTest.class.getSimpleName();
+    @ClassRule
+    public static NamedResource rule = new NamedResource(MockPaymentDeviceTest.class);
 
     private MockPaymentDeviceConnector paymentDeviceService;
 

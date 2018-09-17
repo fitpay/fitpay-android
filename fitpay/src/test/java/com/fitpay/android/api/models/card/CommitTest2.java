@@ -1,30 +1,35 @@
 package com.fitpay.android.api.models.card;
 
 import com.fitpay.android.TestActions;
+import com.fitpay.android.TestConstants;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.ResponseState;
 import com.fitpay.android.api.enums.ResultCode;
-import com.fitpay.android.api.models.card.CreditCard;
-import com.fitpay.android.api.models.card.CreditCardInfo;
+import com.fitpay.android.api.models.apdu.ApduExecutionResultTest;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Commit;
 import com.fitpay.android.api.models.device.CommitConfirm;
 import com.fitpay.android.api.models.device.Device;
+import com.fitpay.android.utils.NamedResource;
 
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Created by tgs on 5/31/16.
  */
 public class CommitTest2 extends TestActions {
+
+    @ClassRule
+    public static NamedResource rule = new NamedResource(CommitTest2.class);
 
     @Test
     public void testCanConfirmCommits() throws Exception {
@@ -71,6 +76,7 @@ public class CommitTest2 extends TestActions {
                     @Override
                     public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
                         fail("commit confirm failed");
+                        latch.countDown();
                     }
                 });
             } else {
@@ -78,6 +84,7 @@ public class CommitTest2 extends TestActions {
 //                if (!commit.getCommitType().equals(CommitTypes.APDU_PACKAGE)) {
 //                    fail("expected confirm link on commit: " + commit);
 //                }
+                latch.countDown();
             }
 
             latch.await(5000, TimeUnit.MILLISECONDS);
@@ -239,6 +246,8 @@ public class CommitTest2 extends TestActions {
             assertTrue("number of commits should be 10 or more.  Got: " + commits.getTotalResults(), commits.getTotalResults() >= 10);
 
             totalResults = commits.getTotalResults();
+
+            TestConstants.waitForAction();
         }
 
         assertEquals("number of commits should be 39.  Got: " + totalResults, totalResults, correctResult);

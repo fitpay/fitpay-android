@@ -12,19 +12,12 @@ import com.fitpay.android.api.models.security.ECCKeyPair;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.SecureRandom;
-import java.security.interfaces.ECPrivateKey;
-import java.security.interfaces.ECPublicKey;
-import java.security.spec.ECGenParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.crypto.KeyAgreement;
 import javax.crypto.SecretKey;
@@ -80,20 +73,15 @@ final public class KeysManager {
 
     // Create the public and private keys
     private ECCKeyPair createECCKeyPair() throws Exception {
-        KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance(ALGORITHM,
-                SecurityProvider.getInstance().getProvider());
-        keyGenerator.initialize(new ECGenParameterSpec(EC_CURVE), new SecureRandom());
-
-        KeyPair keyPair = keyGenerator.generateKeyPair();
-
-        ECPublicKey publicKey = (ECPublicKey) keyPair.getPublic();
-        ECPrivateKey privateKey = (ECPrivateKey) keyPair.getPrivate();
+        String keyId = "e6b62e07-c4cc-4844-88ef-7b7d1ecb4709";
+        String strPrivateKey = "308193020100301306072a8648ce3d020106082a8648ce3d030107047930770201010420cb4f12b23191eae4c4fc0f23856d8a89684b020c68cc11000a0c8381d867e68ea00a06082a8648ce3d030107a1440342000406c1ff432f49b14f9318503226e42f905333d154fe884829b36ad67ab77714b4cbb3cdf278165c5c86781862bf4254f7081cef0f3730622e183b54ce31371247";
+        String strPublicKey = "3059301306072a8648ce3d020106082a8648ce3d0301070342000406c1ff432f49b14f9318503226e42f905333d154fe884829b36ad67ab77714b4cbb3cdf278165c5c86781862bf4254f7081cef0f3730622e183b54ce31371247";
 
         ECCKeyPair eccKeyPair = new ECCKeyPair();
-        eccKeyPair.setKeyId(UUID.randomUUID().toString());
+        eccKeyPair.setKeyId(keyId);
 
-        eccKeyPair.setPrivateKey(Hex.bytesToHexString(privateKey.getEncoded()));
-        eccKeyPair.setPublicKey(Hex.bytesToHexString(publicKey.getEncoded()));
+        eccKeyPair.setPrivateKey(strPrivateKey);
+        eccKeyPair.setPublicKey(strPublicKey);
 
         return eccKeyPair;
     }

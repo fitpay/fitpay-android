@@ -40,6 +40,10 @@ public class RxBus {
                 .asObservable()
                 .onBackpressureBuffer()
                 .filter(event -> {
+                    if(event == null || eventClass == null){
+                        FPLog.e(event + " " + eventClass);
+                        return false;
+                    }
                     if (event instanceof Wrapper) {
                         return eventClass.isAssignableFrom(((Wrapper) event).getClazz());
                     } else {

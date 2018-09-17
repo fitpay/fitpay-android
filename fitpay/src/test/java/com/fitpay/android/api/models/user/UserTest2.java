@@ -4,21 +4,43 @@ import com.fitpay.android.TestActions;
 import com.fitpay.android.TestUtils;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ResultProvidingCallback;
+import com.fitpay.android.api.models.apdu.ApduExecutionResultTest;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.security.OAuthToken;
+import com.fitpay.android.utils.NamedResource;
+import com.fitpay.android.utils.ValidationException;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class UserTest2 extends TestActions {
+
+    @ClassRule
+    public static NamedResource rule = new NamedResource(UserTest2.class);
+
+    @Override
+    @Before
+    public void before() throws Exception {
+        userName = "userName@useremail.com";
+        pin = TestUtils.getRandomLengthNumber(4, 4);
+
+        this.user = createUser(getNewTestUser(userName, pin));
+        assertNotNull(this.user);
+
+        loginIdentity = getTestLoginIdentity(userName, pin);
+        doLogin(loginIdentity);
+    }
 
     @Test
     public void testCanGetUser() throws Exception {
