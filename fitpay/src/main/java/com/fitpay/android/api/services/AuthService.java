@@ -1,49 +1,32 @@
 package com.fitpay.android.api.services;
 
 import com.fitpay.android.BuildConfig;
-import com.fitpay.android.utils.Constants;
+
+import java.io.IOException;
 
 import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import okhttp3.Response;
 
 
-final public class AuthService extends BaseClient {
-
-    private AuthClient mAuthClient;
+final public class AuthService extends GenericClient<AuthClient> {
 
     public AuthService(String baseUrl) {
+        super(baseUrl);
+    }
 
-        Interceptor interceptor = chain -> {
-            Request.Builder builder = chain.request().newBuilder()
-                    .header("Accept", "application/json")
-                    .header("Content-Type", "application/json")
-                    .header(FP_KEY_SDK_VER, BuildConfig.SDK_VERSION);
+    @Override
+    protected Interceptor getInterceptor() {
+        return new FitPayInterceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request.Builder builder = chain.request().newBuilder()
+                        .header("Accept", "application/json")
+                        .header("Content-Type", "application/json")
+                        .header(FP_KEY_SDK_VER, BuildConfig.SDK_VERSION);
 
-            return chain.proceed(builder.build());
+                return getResponse(chain, builder.build());
+            }
         };
-
-        //TODO remove unsafe once cert issues addressed
-        OkHttpClient.Builder clientBuilder = getOkHttpClient();
-        clientBuilder.addInterceptor(interceptor);
-
-        mAuthClient = constructClient(baseUrl, clientBuilder.build());
     }
-
-    private AuthClient constructClient(String apiBaseUrl, OkHttpClient okHttpClient) {
-        AuthClient client = new Retrofit.Builder()
-                .baseUrl(apiBaseUrl)
-                .addConverterFactory(GsonConverterFactory.create(Constants.getGson()))
-                .client(okHttpClient)
-                .build()
-                .create(AuthClient.class);
-        return client;
-    }
-
-    public AuthClient getClient() {
-        return mAuthClient;
-    }
-
 }

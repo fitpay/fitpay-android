@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.fitpay.android.TestActions;
+import com.fitpay.android.TestConstants;
+import com.fitpay.android.api.models.apdu.ApduPackage;
 import com.fitpay.android.api.models.device.Device;
+import com.fitpay.android.configs.FitpayWebTest;
 import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.paymentdevice.callbacks.DeviceSyncManagerCallback;
 import com.fitpay.android.paymentdevice.constants.States;
@@ -13,10 +16,13 @@ import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
 import com.fitpay.android.utils.Listener;
+import com.fitpay.android.utils.NamedResource;
 import com.fitpay.android.utils.NotificationManager;
+import com.fitpay.android.utils.TimestampUtils;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
@@ -30,7 +36,11 @@ import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static junit.framework.Assert.assertNotNull;
+import mockit.Mock;
+import mockit.MockUp;
+import mockit.internal.state.SavePoint;
+
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -40,6 +50,9 @@ import static org.mockito.Mockito.when;
 
 
 public class DeviceParallelSyncTest extends TestActions {
+
+    @ClassRule
+    public static NamedResource rule = new NamedResource(DeviceParallelSyncTest.class);
 
     private DeviceSyncManager syncManager;
 
@@ -171,6 +184,11 @@ public class DeviceParallelSyncTest extends TestActions {
 
     @Test
     public void syncTest() throws Exception {
+        SavePoint sp = new SavePoint();
+
+        if(!TestConstants.testConfig.useRealTests()){
+            mockAPDUValidation();
+        }
 
         new Thread(() -> {
             try {
@@ -193,6 +211,8 @@ public class DeviceParallelSyncTest extends TestActions {
 
         firstMockPaymentDevice.disconnect();
         secondMockPaymentDevice.disconnect();
+
+        sp.rollback();
 
         /*
         This test will emit three APDU packages for the newly boarded SE, therefore there should be 3 commits that show up...
@@ -251,7 +271,7 @@ public class DeviceParallelSyncTest extends TestActions {
 
         int count = 0;
         while (connector.getState() != States.CONNECTED || ++count < 5) {
-            Thread.sleep(500);
+            TestConstants.waitForAction();
         }
         assertEquals("payment service should be connected", States.CONNECTED, connector.getState());
     }
@@ -273,4 +293,12 @@ public class DeviceParallelSyncTest extends TestActions {
         }
     }
 
+    private void mockAPDUValidation() {
+        new MockUp<ApduPackage>() {
+            @Mock
+            public String getValidUntil() {
+                return TimestampUtils.getISO8601StringForTime(System.currentTimeMillis() + 1000 * 60 * 10);
+            }
+        };
+    }
 }

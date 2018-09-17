@@ -1,16 +1,22 @@
 package com.fitpay.android.api.models.card;
 
 import com.fitpay.android.TestActions;
+import com.fitpay.android.api.models.apdu.ApduExecutionResultTest;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
+import com.fitpay.android.utils.NamedResource;
 
+import org.junit.ClassRule;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 
 public class CreditCardTest3 extends TestActions {
+
+    @ClassRule
+    public static NamedResource rule = new NamedResource(CreditCardTest3.class);
 
     @Test
     public void testCanAcceptTerms() throws Exception {

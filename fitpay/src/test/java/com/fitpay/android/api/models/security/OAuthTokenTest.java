@@ -1,6 +1,9 @@
 package com.fitpay.android.api.models.security;
 
+import com.fitpay.android.utils.NamedResource;
+
 import org.junit.Assert;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import java.util.Date;
@@ -10,6 +13,9 @@ import java.util.Date;
  */
 
 public class OAuthTokenTest {
+
+    @ClassRule
+    public static NamedResource rule = new NamedResource(OAuthTokenTest.class);
 
     @Test
     public void ensureJwtParsingIsWorkingCorrectly() {

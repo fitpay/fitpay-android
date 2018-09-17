@@ -1,18 +1,18 @@
 package com.fitpay.android.a2averification;
 
-import com.fitpay.android.TestActions;
+import com.fitpay.android.BaseTestActions;
 import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.utils.Constants;
+import com.fitpay.android.utils.NamedResource;
 
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 
-public class A2AVerificationTest extends TestActions {
+public class A2AVerificationTest extends BaseTestActions {
 
-    @Override
-    @Before
-    public void before(){}
+    @ClassRule
+    public static NamedResource rule = new NamedResource(A2AVerificationTest.class);
 
     @Test
     public void a2aVerificationRequest() {

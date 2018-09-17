@@ -3,28 +3,19 @@ package com.fitpay.android.api.models.user;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.ResultCode;
 import com.fitpay.android.api.models.Links;
-import com.fitpay.android.api.models.card.Address;
 import com.fitpay.android.api.models.card.CreditCard;
 import com.fitpay.android.api.models.card.CreditCardInfo;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
-import com.fitpay.android.paymentdevice.DeviceOperationException;
-import com.fitpay.android.utils.KeysManager;
-import com.fitpay.android.utils.StringUtils;
 import com.fitpay.android.utils.TimestampUtils;
-import com.google.gson.JsonObject;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import rx.Observable;
-import rx.Subscriber;
 
 /**
  * User
