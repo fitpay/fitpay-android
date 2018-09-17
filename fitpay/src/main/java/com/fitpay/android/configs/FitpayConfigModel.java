@@ -10,8 +10,8 @@ import com.fitpay.android.utils.StringUtils;
  */
 class FitpayConfigModel {
     private String clientId;
-    private String webUrl;
-    private String redirectUrl;
+    private String webURL;
+    private String redirectURL;
     private String apiURL;
     private String authURL;
     private boolean supportApp2App;
@@ -29,11 +29,11 @@ class FitpayConfigModel {
     }
 
     String getWebUrl() {
-        return !StringUtils.isEmpty(webUrl) ? webUrl : Constants.CONFIG_WV_URL;
+        return !StringUtils.isEmpty(webURL) ? webURL : Constants.CONFIG_WV_URL;
     }
 
     String getRedirectUrl() {
-        return !StringUtils.isEmpty(redirectUrl) ? redirectUrl : Constants.CONFIG_REDIRECT_URL;
+        return !StringUtils.isEmpty(redirectURL) ? redirectURL : Constants.CONFIG_REDIRECT_URL;
     }
 
     String getApiURL() {
