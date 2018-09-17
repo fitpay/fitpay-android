@@ -1,5 +1,5 @@
 {
-  "logLevel": 3,
+  "logLevel": 4,
   "showHTTPLogs": false,
   "useRealTests": false,
   "saveRealTests": false,
