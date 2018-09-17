@@ -25,6 +25,7 @@ abstract class CreditCardModel extends BaseModel {
     protected Long createdTsEpoch;
     protected Long lastModifiedTsEpoch;
     protected String state;
+
     @CardInitiators.Initiator
     protected String causedBy;
     protected String cardType;
@@ -33,6 +34,7 @@ abstract class CreditCardModel extends BaseModel {
     protected String targetDeviceType;
     protected String externalTokenReference;
     protected List<VerificationMethod> verificationMethods;
+
     @SerializedName("encryptedData")
     protected CreditCardInfo creditCardInfo;
     protected String termsAssetId;

@@ -355,20 +355,17 @@ public class ApiManager {
     }
 
     public <T> void get(final String url, final Map<String, Object> queryMap, final Type type, final ApiCallback<T> callback) {
-        Call<JsonElement> getDataCall = queryMap != null ?
-                getClient().get(url, queryMap) : getClient().get(url);
+        Call<JsonElement> getDataCall = queryMap != null ? getClient().get(url, queryMap) : getClient().get(url);
         makeCall(getDataCall, type, callback);
     }
 
     public <T, U> void post(final String url, final U data, final Type type, final ApiCallback<T> callback) {
-        Call<JsonElement> postDataCall = data != null ?
-                getClient().post(url, data) : getClient().post(url);
+        Call<JsonElement> postDataCall = data != null ? getClient().post(url, data) : getClient().post(url);
         makeCall(postDataCall, type, callback);
     }
 
     public <U> void post(String url, final U data, final ApiCallback<Void> callback) {
-        Call<Void> postDataCall = data != null ?
-                getClient().postNoResponse(url, data) : getClient().postNoResponse(url);
+        Call<Void> postDataCall = data != null ? getClient().postNoResponse(url, data) : getClient().postNoResponse(url);
         postDataCall.enqueue(new CallbackWrapper<>(callback));
     }
 

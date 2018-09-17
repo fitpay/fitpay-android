@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,10 +41,11 @@ public final class TestConstants {
 
         Mockito.when(context.getCacheDir()).thenReturn(new File(System.getProperty("java.io.tmpdir")));
 
-        FitpayConfig.configure(context, getClientId());
-        FitpayConfig.apiURL = System.getProperty(PROPERTY_API_BASE_URL, "https://api.fit-pay.com");
-        FitpayConfig.authURL = System.getProperty(PROPERTY_AUTH_BASE_URL, "https://auth.fit-pay.com");
-        FitpayConfig.redirectURL = System.getProperty(PROPERTY_REDIRECT_URL, "https://webapp.fit-pay.com");
+        InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("fitpay_config.json");
+        FitpayConfig.configure(context, inputStream);
+        FitpayConfig.apiURL = System.getProperty(PROPERTY_API_BASE_URL, FitpayConfig.apiURL);
+        FitpayConfig.authURL = System.getProperty(PROPERTY_AUTH_BASE_URL, FitpayConfig.authURL);
+        FitpayConfig.redirectURL = System.getProperty(PROPERTY_REDIRECT_URL, FitpayConfig.redirectURL);
     }
 
     private static void initTestConfig(Class clazz) {
@@ -131,7 +133,7 @@ public final class TestConstants {
         while (zipEntry != null) {
             String fileName = zipEntry.getName();
             File newFile = new File(file.getAbsolutePath().concat(File.separator).concat(fileName));
-            if(zipEntry.isDirectory()) {
+            if (zipEntry.isDirectory()) {
                 if (!newFile.exists()) {
                     newFile.mkdir();
                 }

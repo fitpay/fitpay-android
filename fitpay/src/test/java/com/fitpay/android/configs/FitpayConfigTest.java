@@ -34,10 +34,16 @@ public class FitpayConfigTest extends BaseTestActions {
     }
 
     @Test
-    public void test03_readFromFile() throws IOException {
+    public void test03_readFromFile() {
         String fileName = "fitpay_config.json";
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
         FitpayConfig.configure(mContext, inputStream);
+        Assert.assertEquals("https://webapp.fit-pay.com", FitpayConfig.webURL);
+        Assert.assertEquals("https://webapp.fit-pay.com", FitpayConfig.redirectURL);
+        Assert.assertEquals("https://api.fit-pay.com", FitpayConfig.apiURL);
+        Assert.assertEquals("https://auth.fit-pay.com", FitpayConfig.authURL);
+        Assert.assertEquals("https://fitpaycss.github.io/pagare.css", FitpayConfig.Web.cssURL);
+        Assert.assertTrue(FitpayConfig.supportApp2App);
         Assert.assertNotNull("demoCardGroup is missing", FitpayConfig.Web.demoCardGroup);
         Assert.assertEquals("demoCardGroup mismatch", FitpayConfig.Web.demoCardGroup, "visa_only");
     }

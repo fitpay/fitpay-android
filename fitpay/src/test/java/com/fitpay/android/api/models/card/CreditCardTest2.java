@@ -30,10 +30,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-
-/**
- * Created by tgs on 4/21/16.
- */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CreditCardTest2 extends TestActions {
 
@@ -399,23 +395,17 @@ public class CreditCardTest2 extends TestActions {
         secondCard = waitForActivation(secondCard);
 
         assertEquals("post deactivation card state", "ACTIVE", secondCard.getState());
-        assertFalse("second card should not be default", !secondCard.canMakeDefault());
-
-        makeDefaultCard(secondCard);
-
-        //TODO: check the `device.getDefaultCreditCardId` once that is in place
-        /*
-        createdCard = getCreditCard(createdCard);
-        assertTrue("first card should not be default", createdCard.canMakeDefault());
-        secondCard = getCreditCard(secondCard);
-        assertFalse("second card should be default", secondCard.canMakeDefault());
-
-        makeDefaultCard(createdCard);
-        createdCard = getCreditCard(createdCard);
-        assertFalse("first card should be default", createdCard.canMakeDefault());
-        secondCard = getCreditCard(secondCard);
         assertTrue("second card should not be default", secondCard.canMakeDefault());
-        */
+
+        makeDefaultCard(createdDevice.getDeviceIdentifier(), secondCard);
+        TestConstants.waitForAction();
+        CreditCard defaultCard = getCreditCardSelf(secondCard);
+        assertFalse("second card should be default", defaultCard.canMakeDefault());
+
+        Device updatedDevice = getDeviceSelf(createdDevice);
+        CreditCard defaultCardFromDevice = getDefaultCreditCard(updatedDevice);
+        assertEquals("device has wrong default card", updatedDevice.getDefaultCreditCardId(), defaultCardFromDevice.getCreditCardId());
+        assertEquals("default card mismatch", defaultCard.getCreditCardId(), defaultCardFromDevice.getCreditCardId());
     }
 
     @Test
