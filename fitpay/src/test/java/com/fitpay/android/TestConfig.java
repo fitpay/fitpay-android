@@ -16,7 +16,11 @@ public class TestConfig {
     public static final String TESTS_FOLDER;
 
     static {
-        TESTS_FOLDER = System.getProperty("java.io.tmpdir").concat(File.separator).concat("Fitpay").concat(File.separator);
+        String tmpDir = System.getProperty("java.io.tmpdir");
+        if (!tmpDir.endsWith(File.separator)) {
+            tmpDir = tmpDir.concat(File.separator);
+        }
+        TESTS_FOLDER = tmpDir.concat("Fitpay").concat(File.separator);
     }
 
     @FPLog.LogLevel
