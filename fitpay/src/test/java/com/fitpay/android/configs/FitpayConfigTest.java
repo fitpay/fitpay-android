@@ -3,9 +3,10 @@ package com.fitpay.android.configs;
 import com.fitpay.android.BaseTestActions;
 import com.fitpay.android.TestConstants;
 import com.fitpay.android.utils.Constants;
+import com.fitpay.android.utils.NamedResource;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
+import org.junit.ClassRule;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -15,6 +16,9 @@ import java.io.InputStream;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class FitpayConfigTest extends BaseTestActions {
+
+    @ClassRule
+    public static NamedResource rule = new NamedResource(FitpayConfigTest.class);
 
     @Test
     public void test01_checkDefaultApiUrl() {
@@ -31,7 +35,7 @@ public class FitpayConfigTest extends BaseTestActions {
 
     @Test
     public void test03_readFromFile() throws IOException {
-        String fileName = "fitpayconfig.json";
+        String fileName = "fitpay_config.json";
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
         FitpayConfig.configure(mContext, inputStream);
         Assert.assertNotNull("demoCardGroup is missing", FitpayConfig.Web.demoCardGroup);

@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.webkit.JavascriptInterface;
 
 import com.fitpay.android.cardscanner.IFitPayCardScanner;
-import com.fitpay.android.cardscanner.ScannedCardInfo;
 import com.fitpay.android.paymentdevice.models.SyncInfo;
 
 import org.json.JSONException;

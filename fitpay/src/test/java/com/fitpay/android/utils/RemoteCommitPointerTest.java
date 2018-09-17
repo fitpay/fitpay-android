@@ -8,6 +8,8 @@ import com.fitpay.android.paymentdevice.interfaces.IRemoteCommitPtrHandler;
 import com.fitpay.android.paymentdevice.utils.DevicePreferenceData;
 
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -24,6 +26,9 @@ import static org.mockito.Mockito.when;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RemoteCommitPointerTest  extends BaseTestActions {
+
+    @ClassRule
+    public static NamedResource rule = new NamedResource(RemoteCommitPointerTest.class);
 
     @Test
     public void storeCommitPointerRemote() throws Exception {

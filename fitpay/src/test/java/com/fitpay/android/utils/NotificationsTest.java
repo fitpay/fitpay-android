@@ -4,10 +4,6 @@ import com.fitpay.android.BaseTestActions;
 import com.fitpay.android.paymentdevice.callbacks.ConnectionListener;
 import com.fitpay.android.paymentdevice.constants.States;
 import com.fitpay.android.paymentdevice.enums.Connection;
-import com.fitpay.android.utils.Command;
-import com.fitpay.android.utils.Listener;
-import com.fitpay.android.utils.NotificationManager;
-import com.fitpay.android.utils.RxBus;
 
 import org.junit.AfterClass;
 import org.junit.Assert;

@@ -1,7 +1,6 @@
 package com.fitpay.android.webview.impl;
 
 import com.fitpay.android.BaseTestActions;
-import com.fitpay.android.TestActions;
 import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.Listener;
@@ -18,8 +17,8 @@ import java.util.concurrent.TimeUnit;
 
 import rx.schedulers.Schedulers;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by Vlad on 04.12.2017.

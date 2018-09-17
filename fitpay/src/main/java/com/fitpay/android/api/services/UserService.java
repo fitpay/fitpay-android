@@ -1,54 +1,38 @@
 package com.fitpay.android.api.services;
 
 import com.fitpay.android.BuildConfig;
-import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.KeysManager;
 
+import java.io.IOException;
+
 import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import okhttp3.Response;
 
 
-final public class UserService extends BaseClient {
-
-    private UserClient mClient;
+final public class UserService extends GenericClient<UserClient> {
 
     public UserService(String apiBaseUrl) {
+        super(apiBaseUrl);
+    }
 
-        Interceptor interceptor = chain -> {
-            Request.Builder builder = chain.request().newBuilder()
-                    .header("Accept", "application/json")
-                    .header("Content-Type", "application/json")
-                    .header(FP_KEY_SDK_VER, BuildConfig.SDK_VERSION);
+    @Override
+    protected Interceptor getInterceptor() {
+        return new FitPayInterceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request.Builder builder = chain.request().newBuilder()
+                        .header("Accept", "application/json")
+                        .header("Content-Type", "application/json")
+                        .header(FP_KEY_SDK_VER, BuildConfig.SDK_VERSION);
 
-            String keyId = KeysManager.getInstance().getKeyId(KeysManager.KEY_API);
-            if (keyId != null) {
-                builder.header(FP_KEY_ID, keyId);
+                String keyId = KeysManager.getInstance().getKeyId(KeysManager.KEY_API);
+                if (keyId != null) {
+                    builder.header(FP_KEY_ID, keyId);
+                }
+
+                return getResponse(chain, builder.build());
             }
-
-            return chain.proceed(builder.build());
         };
-
-        OkHttpClient.Builder clientBuilder = getOkHttpClient();
-        clientBuilder.addInterceptor(interceptor);
-
-        mClient = constructClient(apiBaseUrl, clientBuilder.build());
-
-    }
-
-    private UserClient constructClient(String apiBaseUrl, OkHttpClient okHttpClient) {
-        UserClient client = new Retrofit.Builder()
-                .baseUrl(apiBaseUrl)
-                .addConverterFactory(GsonConverterFactory.create(Constants.getGson()))
-                .client(okHttpClient)
-                .build()
-                .create(UserClient.class);
-        return client;
-    }
-
-    public UserClient getClient() {
-        return mClient;
     }
 }

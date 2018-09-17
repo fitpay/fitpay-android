@@ -15,7 +15,7 @@ public class IssuersTest {
 
     @BeforeClass
     public static void init() {
-        steps = new Steps();
+        steps = new Steps(IssuersTest.class);
     }
 
     @Test

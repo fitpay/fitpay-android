@@ -20,6 +20,7 @@ import com.fitpay.android.api.models.user.LoginIdentity;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.api.models.user.UserCreateRequest;
 import com.fitpay.android.paymentdevice.impl.mock.SecureElementDataProvider;
+import com.fitpay.android.utils.HttpLogging;
 import com.fitpay.android.utils.TimestampUtils;
 import com.fitpay.android.utils.ValidationException;
 
@@ -32,9 +33,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /***
  * Created by Vlad on 16.03.2016.
@@ -57,7 +58,9 @@ public class Steps extends BaseTestActions {
     private Commit currentCommit;
     private Issuers currentIssuer;
 
-    public Steps() {
+    public Steps(Class clazz) {
+        HttpLogging.setTestName(clazz.getSimpleName());
+
         BaseTestActions.init();
 
         userName = TestUtils.getRandomLengthString(5, 10) + "@"
@@ -537,7 +540,7 @@ public class Steps extends BaseTestActions {
     public void selfCard() throws InterruptedException {
         Assert.assertNotNull(currentCard);
 
-        TestConstants.waitSomeActionsOnServer();
+        TestConstants.waitForAction();
 
         final CountDownLatch latch = new CountDownLatch(1);
         final boolean[] isRequestSuccess = {false};
@@ -593,7 +596,7 @@ public class Steps extends BaseTestActions {
             if (isCompleted[0]) {
                 return;
             } else {
-                Thread.sleep(1000);
+                TestConstants.waitForAction();
             }
         }
 
@@ -705,7 +708,7 @@ public class Steps extends BaseTestActions {
         String oSName = "A1111";
         String licenseKey = "aaaaaa-1111-1111-1111-111111111111";
         String bdAddress = "bbbbbb-1111-1111-1111-111111111111";
-        long pairingTs = System.currentTimeMillis();
+        long pairingTs = 1536178369692L;//System.currentTimeMillis();
         String stringTimestamp = TimestampUtils.getISO8601StringForTime(pairingTs);
 
         Device newDevice = new Device.Builder()
@@ -724,7 +727,8 @@ public class Steps extends BaseTestActions {
                 .setPairingTs(pairingTs)
                 .setSecureElement(new PaymentDevice.SecureElement(
                         SecureElementDataProvider.generateCasd(),
-                        SecureElementDataProvider.generateRandomSecureElementId()))
+                        "DEADBEEF0002000BA3035287D96A34D2E62CB23060A40823427208236250082462502041625008256250"))
+                        //SecureElementDataProvider.generateRandomSecureElementId()))
                 .build();
 
         final String[] errors = {""};
@@ -958,7 +962,7 @@ public class Steps extends BaseTestActions {
         }
         Assert.assertNotNull(currentDevice);
 
-        final CountDownLatch latch = new CountDownLatch(2);
+        final CountDownLatch latch = new CountDownLatch(1);
         final boolean[] isRequestSuccess = {false};
 
         currentDevice.getCommits(10, 0, new ApiCallback<Collections.CommitsCollection>() {

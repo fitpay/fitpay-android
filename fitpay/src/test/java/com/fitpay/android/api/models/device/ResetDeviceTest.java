@@ -4,10 +4,11 @@ import com.fitpay.android.TestActions;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.ResetDeviceStatus;
+import com.fitpay.android.api.models.apdu.ApduExecutionResultTest;
 import com.fitpay.android.api.models.collection.Collections;
-import com.fitpay.android.api.models.device.Device;
-import com.fitpay.android.api.models.device.ResetDeviceResult;
+import com.fitpay.android.utils.NamedResource;
 
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import java.util.Objects;
@@ -18,10 +19,13 @@ import java.util.concurrent.atomic.AtomicReference;
 import rx.Observable;
 import rx.functions.Func1;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class ResetDeviceTest extends TestActions {
+
+    @ClassRule
+    public static NamedResource rule = new NamedResource(ResetDeviceTest.class);
 
     @Test
     public void testResetDevice() throws Exception {
@@ -69,7 +73,7 @@ public class ResetDeviceTest extends TestActions {
                 }))
                 .repeatWhen(observable -> observable.flatMap((Func1<Void, Observable<?>>) aVoid -> {
                     if (status.get() == null || ResetDeviceStatus.IN_PROGRESS.equals(status.get())) {
-                        return Observable.timer(1, TimeUnit.SECONDS);
+                        return Observable.timer(10, TimeUnit.SECONDS);
                     } else {
                         return Observable.just(null);
                     }
@@ -78,7 +82,7 @@ public class ResetDeviceTest extends TestActions {
                 }, throwable -> {
                 }, latch::countDown);
 
-        latch.await(30, TimeUnit.SECONDS);
+        latch.await(120, TimeUnit.SECONDS);
         assertEquals("reset device status", ResetDeviceStatus.RESET_COMPLETE, status.get());
     }
 }

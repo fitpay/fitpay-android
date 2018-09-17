@@ -1,6 +1,7 @@
 package com.fitpay.android.webview.callbacks;
 
-import com.fitpay.android.TestActions;
+import com.fitpay.android.BaseTestActions;
+import com.fitpay.android.TestConstants;
 import com.fitpay.android.a2averification.A2AVerificationRequest;
 import com.fitpay.android.utils.NotificationManager;
 import com.fitpay.android.utils.RxBus;
@@ -18,7 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import rx.schedulers.Schedulers;
 
-public class WVListenersTest extends TestActions {
+public class WVListenersTest extends BaseTestActions {
 
     private String id = "12345";
 
@@ -45,7 +46,7 @@ public class WVListenersTest extends TestActions {
         A2AVerificationRequest request = getA2AVerificationRequest();
         RxBus.getInstance().post(id, request);
 
-        Thread.sleep(1000);
+        TestConstants.waitForAction();
         latch.await(10, TimeUnit.SECONDS);
 
         NotificationManager.getInstance().removeListener(listener);
@@ -70,7 +71,7 @@ public class WVListenersTest extends TestActions {
 
         NotificationManager.getInstance().addListener(requestListener, Schedulers.immediate());
 
-        Thread.sleep(1000);
+        TestConstants.waitForAction();
         RxBus.getInstance().post(id, new IdVerificationRequest("1"));
 
         latch.await(10, TimeUnit.SECONDS);
@@ -94,7 +95,7 @@ public class WVListenersTest extends TestActions {
 
         NotificationManager.getInstance().addListener(listener, Schedulers.immediate());
 
-        Thread.sleep(1000);
+        TestConstants.waitForAction();
         RxBus.getInstance().post(id, new UserReceived("userId-1234", "test@test.test"));
 
         latch.await(10, TimeUnit.SECONDS);

@@ -1,7 +1,10 @@
 package com.fitpay.android.api;
 
 import com.fitpay.android.BaseTestActions;
+import com.fitpay.android.a2averification.A2AVerificationTest;
+import com.fitpay.android.utils.NamedResource;
 
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
@@ -11,6 +14,9 @@ import static org.junit.Assert.assertNotNull;
  */
 
 public class PlatformConfigTest extends BaseTestActions {
+
+    @ClassRule
+    public static NamedResource rule = new NamedResource(PlatformConfigTest.class);
 
     @Test
     public void ensurePlatformConfigurationIsSetupCorrectly() {
