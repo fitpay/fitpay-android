@@ -4,13 +4,16 @@ import com.fitpay.android.BaseTestActions;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.ResultCode;
+import com.fitpay.android.api.models.apdu.ApduExecutionResultTest;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.utils.Listener;
+import com.fitpay.android.utils.NamedResource;
 import com.fitpay.android.utils.NotificationManager;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -22,6 +25,10 @@ import java.util.concurrent.CountDownLatch;
  */
 
 public class BearerTokenTest extends BaseTestActions {
+
+    @ClassRule
+    public static NamedResource rule = new NamedResource(BearerTokenTest.class);
+
     private AccessDeniedListener listener;
 
     @Before

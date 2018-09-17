@@ -11,99 +11,91 @@ import com.fitpay.android.utils.RxBus;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.io.IOException;
+import java.util.Locale;
+
 import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import rx.schedulers.Schedulers;
 
-final public class FitPayService extends BaseClient {
+final public class FitPayService extends GenericClient<FitPayClient> {
 
     private static final String HEADER_AUTHORIZATION = "Authorization";
     private static final String AUTHORIZATION_BEARER = "Bearer";
     private static final String FP_KEY_ID = "fp-key-id";
 
-    private FitPayClient mAPIClient;
     private OAuthToken mAuthToken;
     private boolean expiredNotificationSent;
 
     private PlatformConfig platformConfig = new PlatformConfig();
 
     public FitPayService(String apiBaseUrl) {
-
-        Interceptor interceptor = chain -> {
-            Request.Builder builder = chain.request().newBuilder()
-                    .header("Accept", "application/json")
-                    .header("Content-Type", "application/json")
-                    .header(FP_KEY_SDK_VER, BuildConfig.SDK_VERSION);
-
-            String keyId = KeysManager.getInstance().getKeyId(KeysManager.KEY_API);
-            if (keyId != null) {
-                builder.header(FP_KEY_ID, keyId);
-            }
-
-            if (mAuthToken != null) {
-                if (!expiredNotificationSent && mAuthToken.isExpired()) {
-                    FPLog.w("current access token is expired, using anyways");
-                    RxBus.getInstance().post(AccessDenied.builder()
-                            .reason(AccessDenied.Reason.EXPIRED_TOKEN)
-                            .build());
-
-                    expiredNotificationSent = true;
-                }
-
-                final String value = AUTHORIZATION_BEARER + " " + mAuthToken.getAccessToken();
-
-                builder.header(HEADER_AUTHORIZATION, value);
-            }
-
-            long startTime = System.currentTimeMillis();
-            Response response = null;
-            try {
-                response = chain.proceed(builder.build());
-
-                if (response != null && response.code() == AccessDenied.INVALID_TOKEN_RESPONSE_CODE) {
-                    RxBus.getInstance().post(AccessDenied.builder()
-                            .reason(AccessDenied.Reason.UNAUTHORIZED)
-                            .build());
-                }
-
-                return response;
-            } finally {
-                printLog(String.format("%s %s %s %dms",
-                        chain.request().method(),
-                        chain.request().url(),
-                        response != null ? response.code() : "null",
-                        System.currentTimeMillis() - startTime));
-            }
-        };
-
-        OkHttpClient.Builder clientBuilder = getOkHttpClient();
-        clientBuilder.addInterceptor(interceptor);
-
-        mAPIClient = constructClient(apiBaseUrl, clientBuilder.build());
+        super(apiBaseUrl);
         constructPlatformConfig();
     }
 
-    private FitPayClient constructClient(String apiBaseUrl, OkHttpClient okHttpClient) {
-        return new Retrofit.Builder()
-                .baseUrl(apiBaseUrl)
-                .addConverterFactory(GsonConverterFactory.create(Constants.getGson()))
-                .client(okHttpClient)
-                .build()
-                .create(FitPayClient.class);
+    @Override
+    public Interceptor getInterceptor() {
+        return new FitPayInterceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request.Builder builder = chain.request().newBuilder()
+                        .header("Accept", "application/json")
+                        .header("Content-Type", "application/json")
+                        .header(FP_KEY_SDK_VER, BuildConfig.SDK_VERSION);
+
+                String keyId = KeysManager.getInstance().getKeyId(KeysManager.KEY_API);
+                if (keyId != null) {
+                    builder.header(FP_KEY_ID, keyId);
+                }
+
+                if (mAuthToken != null) {
+                    if (!expiredNotificationSent && mAuthToken.isExpired()) {
+                        FPLog.w("current access token is expired, using anyways");
+                        RxBus.getInstance().post(AccessDenied.builder()
+                                .reason(AccessDenied.Reason.EXPIRED_TOKEN)
+                                .build());
+
+                        expiredNotificationSent = true;
+                    }
+
+                    final String value = AUTHORIZATION_BEARER + " " + mAuthToken.getAccessToken();
+
+                    builder.header(HEADER_AUTHORIZATION, value);
+                }
+
+                long startTime = System.currentTimeMillis();
+                Response response = null;
+                try {
+                    response = getResponse(chain, builder.build());
+
+                    if (response != null && response.code() == AccessDenied.INVALID_TOKEN_RESPONSE_CODE) {
+                        RxBus.getInstance().post(AccessDenied.builder()
+                                .reason(AccessDenied.Reason.UNAUTHORIZED)
+                                .build());
+                    }
+
+                    return response;
+                } finally {
+                    printLog(String.format(Locale.US, "%s %s %s %dms",
+                            chain.request().method(),
+                            chain.request().url(),
+                            response != null ? response.code() : "null",
+                            System.currentTimeMillis() - startTime));
+                }
+            }
+        };
     }
 
     private void constructPlatformConfig() {
-        if (mAPIClient == null) {
+        if (client == null) {
             throw new IllegalStateException("invalid state, not okhttp client is currently set");
         }
 
         rx.Observable.defer(() -> {
             try {
-                retrofit2.Response<JsonElement> response = mAPIClient.getPlatformConfig().execute();
+                retrofit2.Response<JsonElement> response = client.getPlatformConfig().execute();
 
                 if (response.isSuccessful() && response.errorBody() == null) {
                     JsonObject body = response.body().getAsJsonObject();
@@ -121,10 +113,6 @@ final public class FitPayService extends BaseClient {
         }).subscribeOn(Schedulers.io()).toBlocking().subscribe();
 
         FPLog.d("platformConfiguration: " + platformConfig);
-    }
-
-    public FitPayClient getClient() {
-        return mAPIClient;
     }
 
     public void updateToken(OAuthToken token) {

@@ -1,13 +1,12 @@
 package com.fitpay.android.utils;
 
 import com.fitpay.android.Steps;
+import com.fitpay.android.api.models.security.ECCKeyPair;
 
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-
-import java.util.concurrent.TimeUnit;
 
 import mockit.Mock;
 import mockit.MockUp;
@@ -17,10 +16,11 @@ import mockit.internal.state.SavePoint;
 public class ExpiredKeysTest {
 
     private static Steps steps = null;
+    private int expiredCounter;
 
     @BeforeClass
     public static void init() {
-        steps = new Steps();
+        steps = new Steps(ExpiredKeysTest.class);
     }
 
     @Test
@@ -31,7 +31,9 @@ public class ExpiredKeysTest {
     @Test
     public void test01_loginUser() throws InterruptedException {
         SavePoint sp = new SavePoint();
-        emulateOneHourDelay();
+        //emulateOneHourDelay();
+
+        emulateExpiredKey();
 
         steps.login();
         steps.getUser();
@@ -39,13 +41,11 @@ public class ExpiredKeysTest {
         sp.rollback();
     }
 
-    private void emulateOneHourDelay() {
-        final long curTime = System.currentTimeMillis();
-
-        new MockUp<System>() {
+    private void emulateExpiredKey() {
+        new MockUp<ECCKeyPair>() {
             @Mock
-            long currentTimeMillis() {
-                return curTime + TimeUnit.HOURS.toMillis(1);
+            public boolean isExpired() {
+                return expiredCounter++ == 0;
             }
         };
     }

@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.fitpay.android.webview.models.IdVerification;
-import com.google.gson.Gson;
 
 import java.util.Calendar;
 import java.util.IllegalFormatException;

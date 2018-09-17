@@ -1,10 +1,11 @@
 package com.fitpay.android.paymentdevice.impl;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.fitpay.android.TestActions;
+import com.fitpay.android.TestConstants;
 import com.fitpay.android.TestUtils;
+import com.fitpay.android.api.models.apdu.ApduPackage;
 import com.fitpay.android.api.models.card.CreditCard;
 import com.fitpay.android.api.models.card.CreditCardInfo;
 import com.fitpay.android.api.models.device.Device;
@@ -18,10 +19,13 @@ import com.fitpay.android.paymentdevice.events.CommitSuccess;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
 import com.fitpay.android.utils.Listener;
+import com.fitpay.android.utils.NamedResource;
 import com.fitpay.android.utils.NotificationManager;
+import com.fitpay.android.utils.TimestampUtils;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
@@ -32,9 +36,13 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import mockit.Mock;
+import mockit.MockUp;
+import mockit.internal.state.SavePoint;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -45,6 +53,9 @@ import static org.mockito.Mockito.when;
 
 
 public class DeviceSyncManagerTest extends TestActions {
+
+    @ClassRule
+    public static NamedResource rule = new NamedResource(DeviceSyncManagerTest.class);
 
     private DeviceSyncManager syncManager;
     protected MockPaymentDeviceConnector mockPaymentDevice;
@@ -135,7 +146,7 @@ public class DeviceSyncManagerTest extends TestActions {
 
         int count = 0;
         while (mockPaymentDevice.getState() != States.CONNECTED || ++count < 5) {
-            Thread.sleep(500);
+            TestConstants.waitForAction();
         }
 
         mockPaymentDevice.setUser(user);
@@ -175,7 +186,7 @@ public class DeviceSyncManagerTest extends TestActions {
         executionLatch.await();
 
         //wait for new event
-        Thread.sleep(1000);
+        TestConstants.waitForAction();
 
         assertEquals(1, listener.getSyncEvents().stream()
                 .filter(syncEvent -> syncEvent.getState() == States.SKIPPED)
@@ -193,7 +204,7 @@ public class DeviceSyncManagerTest extends TestActions {
         executionLatch.await();
 
         //wait for new event
-        Thread.sleep(1000);
+        TestConstants.waitForAction();
 
         assertEquals(1, listener.getSyncEvents().stream()
                 .filter(syncEvent -> syncEvent.getState() == States.SKIPPED)
@@ -211,7 +222,7 @@ public class DeviceSyncManagerTest extends TestActions {
         executionLatch.await();
 
         //wait for new event
-        Thread.sleep(1000);
+        TestConstants.waitForAction();
 
         assertEquals(1, listener.getSyncEvents().stream()
                 .filter(syncEvent -> syncEvent.getState() == States.SKIPPED)
@@ -224,7 +235,7 @@ public class DeviceSyncManagerTest extends TestActions {
         mockPaymentDevice.disconnect();
 
         while (mockPaymentDevice.getState() != States.DISCONNECTED) {
-            Thread.sleep(500);
+            TestConstants.waitForAction();
         }
 
         syncManager.add(SyncRequest.builder()
@@ -243,6 +254,12 @@ public class DeviceSyncManagerTest extends TestActions {
 
     @Test
     public void happyPathSyncTest() throws Exception {
+        SavePoint sp = new SavePoint();
+
+        if(!TestConstants.testConfig.useRealTests()){
+            mockAPDUValidation();
+        }
+
         int syncCount = 10;
 
         for (int i = 0; i < syncCount; i++) {
@@ -271,6 +288,8 @@ public class DeviceSyncManagerTest extends TestActions {
 
         mockPaymentDevice.disconnect();
 
+        sp.rollback();
+
         assertEquals(syncCount,
                 listener.getSyncEvents().stream()
                         .filter(syncEvent -> syncEvent.getState() == States.COMPLETED_NO_UPDATES || syncEvent.getState() == States.COMPLETED)
@@ -283,6 +302,15 @@ public class DeviceSyncManagerTest extends TestActions {
                 listener.getCommits().stream()
                         .filter(commit -> commit.getCommitType().equals("APDU_PACKAGE"))
                         .count());
+    }
+
+    private void mockAPDUValidation() {
+        new MockUp<ApduPackage>() {
+            @Mock
+            public String getValidUntil() {
+                return TimestampUtils.getISO8601StringForTime(System.currentTimeMillis() + 1000 * 60 * 10);
+            }
+        };
     }
 
     private class SyncCompleteListener extends Listener {

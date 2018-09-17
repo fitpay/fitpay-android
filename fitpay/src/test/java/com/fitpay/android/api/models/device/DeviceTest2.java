@@ -3,10 +3,13 @@ package com.fitpay.android.api.models.device;
 import com.fitpay.android.TestActions;
 import com.fitpay.android.api.callbacks.ResultProvidingCallback;
 import com.fitpay.android.api.enums.ResetDeviceStatus;
+import com.fitpay.android.api.models.apdu.ApduExecutionResultTest;
 import com.fitpay.android.api.models.card.CreditCard;
 import com.fitpay.android.api.models.card.CreditCardInfo;
 import com.fitpay.android.api.models.collection.Collections;
+import com.fitpay.android.utils.NamedResource;
 
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import java.util.Objects;
@@ -17,15 +20,18 @@ import java.util.concurrent.atomic.AtomicReference;
 import rx.Observable;
 import rx.functions.Func1;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Created by tgs on 4/21/16.
  */
 public class DeviceTest2 extends TestActions {
+
+    @ClassRule
+    public static NamedResource rule = new NamedResource(DeviceTest2.class);
 
     @Test
     public void testCanAddDevice() throws Exception {

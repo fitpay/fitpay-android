@@ -3,17 +3,17 @@ package com.fitpay.android.webview.impl;
 import android.app.Activity;
 
 import com.fitpay.android.TestActions;
-import com.fitpay.android.TestUtils;
 import com.fitpay.android.api.models.device.Device;
-import com.fitpay.android.api.models.user.User;
-import com.fitpay.android.api.models.user.UserCreateRequest;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.utils.EventCallback;
 import com.fitpay.android.utils.Listener;
+import com.fitpay.android.utils.NamedResource;
 import com.fitpay.android.utils.NotificationManager;
+import com.fitpay.android.utils.RemoteCommitPointerTest;
 import com.fitpay.android.webview.WebViewCommunicator;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -23,13 +23,16 @@ import java.util.concurrent.TimeUnit;
 
 import rx.schedulers.Schedulers;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by tgs on 5/20/16.
  */
 public class WebViewCommunicatorTest extends TestActions {
+
+    @ClassRule
+    public static NamedResource rule = new NamedResource(WebViewCommunicatorTest.class);
 
     @Override
     @Before

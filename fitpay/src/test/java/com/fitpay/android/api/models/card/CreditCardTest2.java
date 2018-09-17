@@ -8,24 +8,33 @@ import com.fitpay.android.TestConstants;
 import com.fitpay.android.api.callbacks.ResultProvidingCallback;
 import com.fitpay.android.api.enums.CardInitiators;
 import com.fitpay.android.api.models.Transaction;
+import com.fitpay.android.api.models.apdu.ApduExecutionResultTest;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
+import com.fitpay.android.utils.NamedResource;
 import com.fitpay.android.utils.FPLog;
 
+import org.junit.ClassRule;
+import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CreditCardTest2 extends TestActions {
+
+    @ClassRule
+    public static NamedResource rule = new NamedResource(CreditCardTest2.class);
 
     @Test
     public void testCanAddCreditCard() throws Exception {
@@ -389,13 +398,12 @@ public class CreditCardTest2 extends TestActions {
         assertTrue("second card should not be default", secondCard.canMakeDefault());
 
         makeDefaultCard(createdDevice.getDeviceIdentifier(), secondCard);
-        TestConstants.waitSomeActionsOnServer();
+        TestConstants.waitForAction();
         CreditCard defaultCard = getCreditCardSelf(secondCard);
         assertFalse("second card should be default", defaultCard.canMakeDefault());
 
         Device updatedDevice = getDeviceSelf(createdDevice);
         CreditCard defaultCardFromDevice = getDefaultCreditCard(updatedDevice);
-
         assertEquals("device has wrong default card", updatedDevice.getDefaultCreditCardId(), defaultCardFromDevice.getCreditCardId());
         assertEquals("default card mismatch", defaultCard.getCreditCardId(), defaultCardFromDevice.getCreditCardId());
     }
@@ -422,7 +430,7 @@ public class CreditCardTest2 extends TestActions {
         createdCard = waitForActivation(createdCard);
 
         assertEquals("post deactivation card state", "ACTIVE", createdCard.getState());
-        assertTrue("should be default", !createdCard.canMakeDefault());
+        assertFalse("should be default", createdCard.canMakeDefault());
 
 
         Collections.TransactionCollection transactions = getCardTransactions(createdCard);

@@ -15,7 +15,6 @@ import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.paymentdevice.DeviceOperationException;
 import com.fitpay.android.utils.TimestampUtils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 

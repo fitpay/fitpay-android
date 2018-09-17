@@ -37,12 +37,16 @@ public class IdVerificationTest extends BaseTestActions{
     @Test
     public void test03_daysBetweenDatesTest() {
         Date date = new Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(5));
+        Date date2 = new Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(12));
 
         IdVerification verificationResponse = new IdVerification.Builder()
                 .setDeviceLostModeDate(date)
+                .setLastOemAccountActivityDate(date2)
                 .build();
+
         Assert.assertNotNull(verificationResponse.getDeviceLostModeDate());
         Assert.assertEquals(verificationResponse.getDeviceLostModeDate().intValue(), 5);
+        Assert.assertEquals(verificationResponse.getLastOemAccountActivityDate().intValue(), 12);
     }
 
     @Test

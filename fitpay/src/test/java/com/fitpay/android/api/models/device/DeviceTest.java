@@ -15,7 +15,7 @@ public class DeviceTest {
 
     @BeforeClass
     public static void init() {
-        steps = new Steps();
+        steps = new Steps(DeviceTest.class);
     }
 
     @Test

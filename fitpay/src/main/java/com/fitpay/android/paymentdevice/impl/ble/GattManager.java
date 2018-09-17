@@ -20,8 +20,8 @@ import com.fitpay.android.paymentdevice.impl.ble.message.ContinuationControlMess
 import com.fitpay.android.paymentdevice.impl.ble.message.ContinuationPacketMessage;
 import com.fitpay.android.paymentdevice.impl.ble.message.NotificationMessage;
 import com.fitpay.android.paymentdevice.impl.ble.message.SecurityStateMessage;
-import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
 import com.fitpay.android.paymentdevice.interfaces.ISecureMessage;
+import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
 import com.fitpay.android.paymentdevice.utils.Crc32;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.Hex;
