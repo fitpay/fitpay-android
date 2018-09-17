@@ -398,7 +398,7 @@ public class CreditCardTest2 extends TestActions {
         assertTrue("second card should not be default", secondCard.canMakeDefault());
 
         makeDefaultCard(createdDevice.getDeviceIdentifier(), secondCard);
-        TestConstants.waitSomeActionsOnServer();
+        TestConstants.waitForAction();
         CreditCard defaultCard = getCreditCardSelf(secondCard);
         assertFalse("second card should be default", defaultCard.canMakeDefault());
 
