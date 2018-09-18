@@ -39,7 +39,7 @@ public class OAuthTokenTest {
                 .expiresIn(1) // in seconds
                 .build();
 
-        TestConstants.waitForAction(2000);
+        Thread.sleep(2000); //Wait when token expired.
 
         Assert.assertEquals("0ad12a04-2d74-4fb5-b1f2-4fedf700de0d", token.getUserId());
         Assert.assertNotNull(token.getIssuedTs());
