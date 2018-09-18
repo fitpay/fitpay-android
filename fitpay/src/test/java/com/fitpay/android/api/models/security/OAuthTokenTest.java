@@ -1,5 +1,6 @@
 package com.fitpay.android.api.models.security;
 
+import com.fitpay.android.TestConstants;
 import com.fitpay.android.utils.NamedResource;
 
 import org.junit.Assert;
@@ -38,7 +39,7 @@ public class OAuthTokenTest {
                 .expiresIn(1) // in seconds
                 .build();
 
-        Thread.sleep(2000);
+        TestConstants.waitForAction(2000);
 
         Assert.assertEquals("0ad12a04-2d74-4fb5-b1f2-4fedf700de0d", token.getUserId());
         Assert.assertNotNull(token.getIssuedTs());

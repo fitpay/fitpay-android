@@ -61,7 +61,11 @@ public final class TestConstants {
     }
 
     public static void waitForAction() throws InterruptedException {
-        Thread.sleep(testConfig.useRealTests ? 1000 : 10);
+        waitForAction(1000);
+    }
+
+    public static void waitForAction(long delay) throws InterruptedException {
+        Thread.sleep(testConfig.useRealTests ? delay : 10);
     }
 
     public static void addLogs() {

@@ -185,7 +185,7 @@ public class DeviceParallelSyncTest extends TestActions {
     public void syncTest() throws Exception {
         SavePoint sp = new SavePoint();
 
-        if(!TestConstants.testConfig.useRealTests()){
+        if (!TestConstants.testConfig.useRealTests()) {
             mockAPDUValidation();
         }
 
@@ -252,7 +252,7 @@ public class DeviceParallelSyncTest extends TestActions {
             System.out.println("###############################################################################################################");
             System.out.println("");
 
-            Thread.sleep(5000);
+            TestConstants.waitForAction(5000);
         }
 
         finishLatch.get().countDown();
