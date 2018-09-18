@@ -2,9 +2,6 @@ package com.fitpay.android;
 
 import java.util.Random;
 
-/**
- * Created by tgs on 4/29/16.
- */
 public class TestUtils {
 
     private static final Random random = new Random();

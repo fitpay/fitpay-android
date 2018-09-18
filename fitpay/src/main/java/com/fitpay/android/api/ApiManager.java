@@ -71,9 +71,6 @@ public class ApiManager {
     private AuthService authService;
 
     private ApiManager() {
-        if (null == FitpayConfig.apiURL) {
-            throw new IllegalStateException("The SdkConfig must be initialized prior to use. API base url required");
-        }
         apiService = new FitPayService(FitpayConfig.apiURL);
     }
 
@@ -97,20 +94,9 @@ public class ApiManager {
         if (null == authService) {
             synchronized (this) {
                 String baseUrl = FitpayConfig.authURL;
-                if (null == baseUrl) {
-                    baseUrl = FitpayConfig.apiURL;
-                }
-                if (null == baseUrl) {
-                    throw new IllegalArgumentException("The configuration must contain one of the following two properties: "
-                            + FitpayConfig.authURL + " or " + FitpayConfig.apiURL);
-                }
                 if (null == FitpayConfig.clientId) {
                     throw new IllegalArgumentException("The configuration must contain the following property: "
                             + FitpayConfig.clientId);
-                }
-                if (null == FitpayConfig.redirectURL) {
-                    throw new IllegalArgumentException("The configuration must contain the following property: "
-                            + FitpayConfig.redirectURL);
                 }
                 authService = new AuthService(baseUrl);
             }
@@ -121,9 +107,6 @@ public class ApiManager {
     public UserClient getUserClient() {
         if (null == userService) {
             synchronized (this) {
-                if (null == FitpayConfig.apiURL) {
-                    throw new IllegalStateException("The SdkConfig must be initialized prior to use.  API base url required");
-                }
                 userService = new UserService(FitpayConfig.apiURL);
             }
         }
