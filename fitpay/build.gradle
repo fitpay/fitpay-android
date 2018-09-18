@@ -8,8 +8,8 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'maven'
+apply plugin: 'jacoco'
 apply plugin: 'jacoco-android'
-
 
 group = 'com.fitpay.android'
 version = '1.1.1'
@@ -141,9 +141,9 @@ dependencies {
     javadocDeps 'org.conscrypt:conscrypt-android:1.2.0'
     javadocDeps 'com.nimbusds:nimbus-jose-jwt:6.0.2'
 
-    testImplementation 'org.mockito:mockito-core:2.21.0'
+    testImplementation 'org.mockito:mockito-core:2.22.0'
+    testImplementation 'org.jmockit:jmockit:1.41' //WARNING: don't update to 1.42. Put this line before junit
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.jmockit:jmockit:1.37'
 }
 
 task generateSourcesJar(type: Jar) {
@@ -205,4 +205,13 @@ tasks.withType(Test) {
     testLogging {
         events "started", "passed", "skipped", "failed"
     }
+}
+
+jacoco {
+    toolVersion = "0.8.2"
+}
+jacocoAndroidUnitTestReport {
+    csv.enabled false
+    html.enabled true
+    xml.enabled true
 }
