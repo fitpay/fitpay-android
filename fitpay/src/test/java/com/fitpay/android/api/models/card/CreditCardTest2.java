@@ -1,18 +1,15 @@
 package com.fitpay.android.api.models.card;
 
 import android.media.Image;
-import android.os.Debug;
 
 import com.fitpay.android.TestActions;
 import com.fitpay.android.TestConstants;
 import com.fitpay.android.api.callbacks.ResultProvidingCallback;
 import com.fitpay.android.api.enums.CardInitiators;
 import com.fitpay.android.api.models.Transaction;
-import com.fitpay.android.api.models.apdu.ApduExecutionResultTest;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.utils.NamedResource;
-import com.fitpay.android.utils.FPLog;
 
 import org.junit.ClassRule;
 import org.junit.FixMethodOrder;
@@ -23,12 +20,12 @@ import org.junit.runners.MethodSorters;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CreditCardTest2 extends TestActions {

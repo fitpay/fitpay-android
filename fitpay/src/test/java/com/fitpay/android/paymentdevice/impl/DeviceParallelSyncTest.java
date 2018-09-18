@@ -7,7 +7,6 @@ import com.fitpay.android.TestActions;
 import com.fitpay.android.TestConstants;
 import com.fitpay.android.api.models.apdu.ApduPackage;
 import com.fitpay.android.api.models.device.Device;
-import com.fitpay.android.configs.FitpayWebTest;
 import com.fitpay.android.paymentdevice.DeviceSyncManager;
 import com.fitpay.android.paymentdevice.callbacks.DeviceSyncManagerCallback;
 import com.fitpay.android.paymentdevice.constants.States;
@@ -40,8 +39,8 @@ import mockit.Mock;
 import mockit.MockUp;
 import mockit.internal.state.SavePoint;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
 /**

@@ -5,7 +5,6 @@ import com.fitpay.android.api.enums.ResponseState;
 import com.fitpay.android.api.models.apdu.ApduExecutionResult;
 import com.fitpay.android.api.models.apdu.ApduPackage;
 import com.fitpay.android.api.models.device.Device;
-import com.fitpay.android.configs.FitpayWebTest;
 import com.fitpay.android.paymentdevice.callbacks.ApduExecutionListener;
 import com.fitpay.android.paymentdevice.callbacks.PaymentDeviceListener;
 import com.fitpay.android.paymentdevice.constants.States;

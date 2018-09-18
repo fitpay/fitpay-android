@@ -8,7 +8,6 @@ import com.fitpay.android.paymentdevice.interfaces.IRemoteCommitPtrHandler;
 import com.fitpay.android.paymentdevice.utils.DevicePreferenceData;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.FixMethodOrder;
 import org.junit.Test;

@@ -4,7 +4,6 @@ import com.fitpay.android.TestActions;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.ResetDeviceStatus;
-import com.fitpay.android.api.models.apdu.ApduExecutionResultTest;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.utils.NamedResource;
 

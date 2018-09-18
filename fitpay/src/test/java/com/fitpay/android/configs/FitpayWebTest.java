@@ -7,7 +7,6 @@ import android.webkit.WebView;
 
 import com.fitpay.android.TestActions;
 import com.fitpay.android.a2averification.A2AIssuerResponse;
-import com.fitpay.android.api.models.apdu.ApduExecutionResultTest;
 import com.fitpay.android.a2averification.A2AVerificationFailed;
 import com.fitpay.android.a2averification.A2AVerificationRequest;
 import com.fitpay.android.api.models.device.Device;
