@@ -83,6 +83,6 @@ public class FitpayWebClient extends WebViewClient {
 
     @Override
     public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-        handler.proceed();
+        handler.cancel();
     }
 }
