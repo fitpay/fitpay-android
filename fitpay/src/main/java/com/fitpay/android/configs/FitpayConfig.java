@@ -57,7 +57,7 @@ public final class FitpayConfig {
     /**
      * By default the app-to-app verification capability should be disabled.
      * Called by the parser when it receives {#value {@link com.fitpay.android.webview.enums.RtmType#SUPPORTS_ISSUER_APP_VERIFICATION}} event
-     *
+     * <p>
      * Mark whether you support app-to-app verifications.
      */
     public static boolean supportApp2App;
@@ -65,8 +65,8 @@ public final class FitpayConfig {
     /**
      * Setup FitpaySDK with default params and custom clientId
      *
-     * @param context app context
-     * @param clientId   clientId
+     * @param context  app context
+     * @param clientId clientId
      */
     public static void configure(@NonNull Context context, @NonNull String clientId) {
         configure(context, new FitpayConfigModel(clientId));
@@ -76,7 +76,7 @@ public final class FitpayConfig {
      * Setup FitpaySDK with data from other source: file or web.
      * Internal use only
      *
-     * @param context app context
+     * @param context     app context
      * @param configModel parsed config model
      */
     private static void configure(@NonNull Context context, @NonNull FitpayConfigModel configModel) {
@@ -151,7 +151,8 @@ public final class FitpayConfig {
         /**
          * Turn on when you are ready to implement card scanning methods
          */
-        public static boolean supportCardScanner;
+        @Deprecated
+        public static boolean supportCardScanner; //will be moved to package protected
 
         /**
          * Turn off SSE connection to reduce overhead if not in use
@@ -163,6 +164,14 @@ public final class FitpayConfig {
          * {@link #automaticallySubscribeToUserEventStream} must also be on to sync
          */
         public static boolean automaticallySyncFromUserEventStream;
+
+        public static boolean isCardScannerSupported() {
+            return supportCardScanner;
+        }
+
+        static void setCardScannerSupported(boolean value) {
+            supportCardScanner = value;
+        }
     }
 
     /**

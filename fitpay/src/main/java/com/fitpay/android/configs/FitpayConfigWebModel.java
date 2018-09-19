@@ -8,6 +8,7 @@ class FitpayConfigWebModel {
     String demoCardGroup;
     String cssURL;
     String baseLanguageURL;
+    @Deprecated
     boolean supportCardScanner = false;
     boolean automaticallySubscribeToUserEventStream = true;
     boolean automaticallySyncFromUserEventStream = true;
