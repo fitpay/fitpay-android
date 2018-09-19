@@ -67,6 +67,7 @@ class WvConfig {
             return this;
         }
 
+        @Deprecated
         public Builder useWebCardScanner(boolean value) {
             data.put("useWebCardScanner", value);
             return this;

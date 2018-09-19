@@ -2,6 +2,8 @@ package com.fitpay.android.webview.enums;
 
 import android.support.annotation.StringDef;
 
+import com.fitpay.android.utils.StringUtils;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -25,10 +27,11 @@ public class RtmType {
     public static final String SUPPORTS_ISSUER_APP_VERIFICATION = "supportsIssuerAppVerification";
     public static final String APP_TO_APP_VERIFICATION = "appToAppVerification";
     public static final String API_ERROR_DETAILS = "apiErrorDetails";
+    public static final String SUPPORT_CARD_SCANNER = "supportCardScanner";
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({VERSION, SYNC, USER_DATA, NO_HISTORY, SCAN_REQUEST, SDK_VERSION_REQUEST, ID_VERIFICATION_REQUEST,
-            SUPPORTS_ISSUER_APP_VERIFICATION, APP_TO_APP_VERIFICATION, API_ERROR_DETAILS})
+            SUPPORTS_ISSUER_APP_VERIFICATION, APP_TO_APP_VERIFICATION, API_ERROR_DETAILS, SUPPORT_CARD_SCANNER})
     public @interface Request {
     }
 
@@ -39,7 +42,7 @@ public class RtmType {
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({DEVICE_STATUS, LOGOUT, RESOLVE, VERSION, CARD_SCANNED, SDK_VERSION, UNRECOGNIZED, ID_VERIFICATION,
-            SUPPORTS_ISSUER_APP_VERIFICATION, APP_TO_APP_VERIFICATION})
+            SUPPORTS_ISSUER_APP_VERIFICATION, APP_TO_APP_VERIFICATION, SUPPORT_CARD_SCANNER})
     public @interface Response {
     }
 }

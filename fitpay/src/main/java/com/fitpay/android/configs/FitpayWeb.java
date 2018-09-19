@@ -326,6 +326,7 @@ public class FitpayWeb {
      */
     public void setCardScannerDelegate(@NonNull IFitPayCardScanner cardScanner) {
         this.mCommunicator.setCardScanner(cardScanner);
+        FitpayConfig.Web.setCardScannerSupported(true);
     }
 
     /**

@@ -6,6 +6,7 @@ import com.fitpay.android.a2averification.A2AIssuerAppVerification;
 import com.fitpay.android.a2averification.A2AVerificationError;
 import com.fitpay.android.a2averification.A2AVerificationFailed;
 import com.fitpay.android.a2averification.A2AVerificationRequest;
+import com.fitpay.android.cardscanner.CardScannerResponse;
 import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.FPLog;
@@ -56,11 +57,11 @@ public class RtmParserV5 extends RtmParserV4 {
                 int code = 0;
                 String message = "Unknown error";
 
-                if(apiErrorDetails != null) {
+                if (apiErrorDetails != null) {
                     code = apiErrorDetails.getCode();
                     if (!TextUtils.isEmpty(apiErrorDetails.getDetailedMessage())) {
                         message = apiErrorDetails.getDetailedMessage();
-                    } else if(!TextUtils.isEmpty(apiErrorDetails.getFullMessage())) {
+                    } else if (!TextUtils.isEmpty(apiErrorDetails.getFullMessage())) {
                         message = apiErrorDetails.getFullMessage();
                     }
 
@@ -69,6 +70,10 @@ public class RtmParserV5 extends RtmParserV4 {
 
                 FPLog.e(RtmParser.TAG, String.format(Locale.getDefault(), "API Error - Code: %d Message:%s", code, message));
 
+                break;
+
+            case RtmType.SUPPORT_CARD_SCANNER:
+                impl.postMessage(new RtmMessageResponse(msg.getCallbackId(), true, new CardScannerResponse(), RtmType.SUPPORT_CARD_SCANNER));
                 break;
 
             default:
