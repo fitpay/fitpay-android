@@ -12,7 +12,7 @@ apply plugin: 'jacoco'
 apply plugin: 'jacoco-android'
 
 group = 'com.fitpay.android'
-version = '1.1.1'
+version = '1.2'
 archivesBaseName = "android_sdk"
 
 uploadArchives {
