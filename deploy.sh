@@ -27,15 +27,15 @@ sed -i'.original' -e "s/$1/$2/g" build.gradle
 rm *.original
 cd ..
 
-#git process
-#git add -A
-#git commit -m "v$2"
-#git push
+git process
+git add -A
+git commit -m "v$2"
+git push
 
-#git checkout master
-#git pull
-#git merge develop
-#git push
+git checkout master
+git pull
+git merge develop -m "v$2 merge develop"
+git push
 
 #deploy
 #./gradlew bintrayUpload
