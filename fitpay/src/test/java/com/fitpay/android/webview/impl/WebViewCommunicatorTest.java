@@ -9,7 +9,6 @@ import com.fitpay.android.utils.EventCallback;
 import com.fitpay.android.utils.Listener;
 import com.fitpay.android.utils.NamedResource;
 import com.fitpay.android.utils.NotificationManager;
-import com.fitpay.android.utils.RemoteCommitPointerTest;
 import com.fitpay.android.webview.WebViewCommunicator;
 
 import org.junit.Before;

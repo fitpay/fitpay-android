@@ -1,7 +1,6 @@
 package com.fitpay.android.api;
 
 import com.fitpay.android.BaseTestActions;
-import com.fitpay.android.a2averification.A2AVerificationTest;
 import com.fitpay.android.utils.NamedResource;
 
 import org.junit.ClassRule;

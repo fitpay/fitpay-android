@@ -2,7 +2,6 @@ package com.fitpay.android.api.models.user;
 
 import com.fitpay.android.TestActions;
 import com.fitpay.android.TestUtils;
-import com.fitpay.android.api.models.apdu.ApduExecutionResultTest;
 import com.fitpay.android.utils.NamedResource;
 
 import org.junit.Before;

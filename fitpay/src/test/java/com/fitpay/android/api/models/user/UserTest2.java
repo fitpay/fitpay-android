@@ -4,14 +4,11 @@ import com.fitpay.android.TestActions;
 import com.fitpay.android.TestUtils;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ResultProvidingCallback;
-import com.fitpay.android.api.models.apdu.ApduExecutionResultTest;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.security.OAuthToken;
 import com.fitpay.android.utils.NamedResource;
-import com.fitpay.android.utils.ValidationException;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;

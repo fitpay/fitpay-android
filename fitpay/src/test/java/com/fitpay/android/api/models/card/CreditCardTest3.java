@@ -1,7 +1,6 @@
 package com.fitpay.android.api.models.card;
 
 import com.fitpay.android.TestActions;
-import com.fitpay.android.api.models.apdu.ApduExecutionResultTest;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.utils.NamedResource;

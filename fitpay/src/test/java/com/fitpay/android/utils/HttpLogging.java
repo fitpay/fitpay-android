@@ -39,7 +39,6 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSource;
-import okio.GzipSource;
 
 /**
  * An OkHttp interceptor which logs request and response information. Can be applied as an

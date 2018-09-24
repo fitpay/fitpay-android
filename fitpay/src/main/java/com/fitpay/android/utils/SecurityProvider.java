@@ -56,7 +56,7 @@ public class SecurityProvider {
      */
     void initProvider() {
         try {
-            if (provider == null) {
+            if (provider == null && Conscrypt.isAvailable()) {
                 provider = Conscrypt.newProvider();
             }
             if (provider != null) {

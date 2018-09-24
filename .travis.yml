@@ -1,5 +1,6 @@
 language: android
 jdk: openjdk8
+sudo: false # faster builds
 
 android:
   components:
@@ -25,7 +26,7 @@ licenses:
   - 'google-gdk-license-.+'
 
 script:
-  - ./gradlew clean test
+  - ./gradlew clean test jacocoTestReport
 
 after_success:
 - bash <(curl -s https://codecov.io/bash)

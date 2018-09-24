@@ -1,3 +1,2 @@
 ignore:
 - "fitpay/src/test/**/*"
-- "FitpaySDKTests/*"
