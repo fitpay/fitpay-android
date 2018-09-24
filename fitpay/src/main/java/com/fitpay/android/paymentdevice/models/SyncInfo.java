@@ -8,6 +8,7 @@ import com.fitpay.android.api.models.BaseModel;
 import com.fitpay.android.api.models.card.CreditCard;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.models.sync.SyncMetricsData;
+import com.fitpay.android.paymentdevice.enums.PushNotification;
 
 /**
  * Sync notification model (receiving it from push notification or webhook)
@@ -26,6 +27,7 @@ public final class SyncInfo extends BaseModel {
     private String deviceId;
     private String userId;
     private String clientId;
+    @PushNotification.Type
     private String type;
     private String creditCardId;
 
@@ -51,6 +53,7 @@ public final class SyncInfo extends BaseModel {
         return clientId;
     }
 
+    @PushNotification.Type
     public String getType() {
         return type;
     }
@@ -100,10 +103,20 @@ public final class SyncInfo extends BaseModel {
         makeNoResponsePostCall(COMPLETE_SYNC, data, callback);
     }
 
+    /**
+     * Get credit card
+     *
+     * @param callback credit card
+     */
     public void getCreditCard(@NonNull ApiCallback<CreditCard> callback) {
         makeGetCall(CREDIT_CARD, null, null, CreditCard.class, callback);
     }
 
+    /**
+     * Get device
+     *
+     * @param callback device
+     */
     public void getDevice(@NonNull ApiCallback<Device> callback) {
         makeGetCall(DEVICE, null, null, Device.class, callback);
     }
