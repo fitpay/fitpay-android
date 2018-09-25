@@ -3,7 +3,6 @@ package com.fitpay.android.paymentdevice.events;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringDef;
 
-import com.fitpay.android.api.enums.SyncInitiator;
 import com.fitpay.android.paymentdevice.models.SyncInfo;
 import com.fitpay.android.utils.Constants;
 

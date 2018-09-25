@@ -3,7 +3,6 @@ package com.fitpay.android.paymentdevice.models;
 import com.fitpay.android.api.enums.SyncInitiator;
 import com.fitpay.android.paymentdevice.events.NotificationSyncRequest;
 import com.fitpay.android.paymentdevice.events.PushNotificationRequest;
-import com.fitpay.android.utils.Constants;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,7 +12,7 @@ public class PushNotificationDataTest {
     @Test
     public void test1_NotificationDetails() {
         String data = "{\"_links\":{\"user\":{\"href\":\"https://api.fit-pay.com/users/73dc1dfa-fbf5-4fc6-86d1-4f9ca45ac786\"},\"creditCard\":{\"href\":\"https://api.fit-pay.com/users/73dc1dfa-fbf5-4fc6-86d1-4f9ca45ac786/creditCards/38a511c3-7e03-4711-b657-91d22c72db38\"},\"device\":{\"href\":\"https://api.fit-pay.com/users/73dc1dfa-fbf5-4fc6-86d1-4f9ca45ac786/devices/4f593dbc-89ec-4408-a92e-c252cdc5e231\"}},\"userId\":\"73dc1dfa-fbf5-4fc6-86d1-4f9ca45ac786\",\"deviceId\":\"4f593dbc-89ec-4408-a92e-c252cdc5e231\",\"creditCardId\":\"38a511c3-7e03-4711-b657-91d22c72db38\",\"clientId\":\"testId\"}";
-        PushNotificationRequest details = Constants.getGson().fromJson(data, PushNotificationRequest.class);
+        PushNotificationRequest details = new PushNotificationRequest(data);
         Assert.assertNotNull(details);
 
         SyncInfo syncInfo = details.getSyncInfo();
