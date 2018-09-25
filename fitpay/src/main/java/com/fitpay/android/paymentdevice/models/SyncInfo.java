@@ -1,6 +1,7 @@
 package com.fitpay.android.paymentdevice.models;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.SyncInitiator;
@@ -8,11 +9,12 @@ import com.fitpay.android.api.models.BaseModel;
 import com.fitpay.android.api.models.card.CreditCard;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.models.sync.SyncMetricsData;
-import com.fitpay.android.paymentdevice.enums.PushNotification;
+import com.fitpay.android.api.models.user.User;
+import com.fitpay.android.paymentdevice.events.PushNotificationRequest;
 
 /**
  * Sync notification model (receiving it from push notification or webhook)
- *
+ * <p>
  * Equivalent to NotificationDetail in iOS
  */
 public final class SyncInfo extends BaseModel {
@@ -21,22 +23,29 @@ public final class SyncInfo extends BaseModel {
     private static final String COMPLETE_SYNC = "completeSync";
     private static final String CREDIT_CARD = "creditCard";
     private static final String DEVICE = "device";
+    private static final String USER = "user";
 
+    //common data
+    private String deviceId;
+    private String clientId;
+
+    @PushNotificationRequest.Type
+    private String type;
+
+    //sync request data
     private String id;
     private String syncId;
-    private String deviceId;
-    private String userId;
-    private String clientId;
-    @PushNotification.Type
-    private String type;
-    private String creditCardId;
-
     @SyncInitiator.Initiator
     private String initiator;
+
+    //card request data
+    private String userId;
+    private String creditCardId;
 
     private SyncInfo() {
     }
 
+    @Nullable
     public String getSyncId() {
         return syncId != null ? syncId : id;
     }
@@ -45,6 +54,7 @@ public final class SyncInfo extends BaseModel {
         return deviceId;
     }
 
+    @Nullable
     public String getUserId() {
         return userId;
     }
@@ -53,11 +63,26 @@ public final class SyncInfo extends BaseModel {
         return clientId;
     }
 
-    @PushNotification.Type
+    /**
+     * Set push notification type {@link com.fitpay.android.paymentdevice.events.PushNotificationRequest.Type}
+     * @param type type
+     */
+    public void setType(@PushNotificationRequest.Type String type) {
+        this.type = type;
+    }
+
+    @Nullable
+    @PushNotificationRequest.Type
     public String getType() {
         return type;
     }
 
+    @Nullable
+    public String getCreditCardId() {
+        return creditCardId;
+    }
+
+    @Nullable
     public String getInitiator() {
         return initiator;
     }
@@ -74,9 +99,8 @@ public final class SyncInfo extends BaseModel {
     /**
      * Send ack sync data
      *
-     * @param syncId sync id
+     * @param syncId   sync id
      * @param callback result callback
-     *
      * @deprecated as of v1.1.0 - call sendAckSync without syncId
      */
     @Deprecated
@@ -96,11 +120,20 @@ public final class SyncInfo extends BaseModel {
     /**
      * Send metrics data
      *
-     * @param data metrics data
+     * @param data     metrics data
      * @param callback result callback
      */
     public void sendSyncMetrics(@NonNull SyncMetricsData data, @NonNull ApiCallback<Void> callback) {
         makeNoResponsePostCall(COMPLETE_SYNC, data, callback);
+    }
+
+    /**
+     * Get user
+     *
+     * @param callback user
+     */
+    public void getUser(@NonNull ApiCallback<User> callback) {
+        makeGetCall(USER, null, null, User.class, callback);
     }
 
     /**

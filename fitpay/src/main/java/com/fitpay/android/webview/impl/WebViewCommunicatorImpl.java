@@ -22,6 +22,7 @@ import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.paymentdevice.constants.States;
 import com.fitpay.android.paymentdevice.enums.Sync;
 import com.fitpay.android.paymentdevice.events.NotificationSyncRequest;
+import com.fitpay.android.paymentdevice.events.PushNotificationRequest;
 import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
 import com.fitpay.android.paymentdevice.models.SyncInfo;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
@@ -445,7 +446,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
             switch (syncEvent.getState()) {
                 case States.COMPLETED:
                 case States.COMPLETED_NO_UPDATES:
-                case States.SKIPPED:{
+                case States.SKIPPED: {
                     if (callbackId != null) {
                         onTaskSuccess(EventCallback.SYNC_COMPLETED, callbackId);
                     }
@@ -504,6 +505,12 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
     private class PushNotificationSyncListener extends Listener {
         private PushNotificationSyncListener() {
             mCommands.put(NotificationSyncRequest.class, data -> sync(null, ((NotificationSyncRequest) data).getSyncInfo()));
+            mCommands.put(PushNotificationRequest.class, data -> {
+                SyncInfo syncInfo = ((PushNotificationRequest) data).getSyncInfo();
+                if (syncInfo != null && syncInfo.getType() != null && PushNotificationRequest.SYNC.equals(syncInfo.getType())) {
+                    sync(null, syncInfo);
+                }
+            });
         }
     }
 }

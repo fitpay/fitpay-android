@@ -7,8 +7,10 @@ import com.fitpay.android.paymentdevice.models.SyncInfo;
 import com.fitpay.android.utils.Constants;
 
 /**
+ * @deprecated Use {@link PushNotificationRequest}
  * Request to sync from push notification.
  */
+@Deprecated
 public class NotificationSyncRequest {
     private final SyncInfo syncInfo;
 
