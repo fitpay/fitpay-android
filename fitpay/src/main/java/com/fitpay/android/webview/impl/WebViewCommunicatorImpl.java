@@ -274,9 +274,12 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                                     public void onUserEvent(UserStreamEvent event) {
                                         if ("SYNC".equals(event.getType())) {
                                             SyncInfo syncInfo = Constants.getGson().fromJson(event.getPayload(), SyncInfo.class);
-                                            syncInfo.setInitiator(SyncInitiator.PLATFORM);
-
-                                            createSyncRequest(syncInfo);
+                                            if(syncInfo != null) {
+                                                syncInfo.setInitiator(SyncInitiator.PLATFORM);
+                                                createSyncRequest(syncInfo);
+                                            } else {
+                                                FPLog.w(TAG, "syncInfo is null");
+                                            }
                                         }
                                     }
                                 };
@@ -507,7 +510,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
             mCommands.put(NotificationSyncRequest.class, data -> sync(null, ((NotificationSyncRequest) data).getSyncInfo()));
             mCommands.put(PushNotificationRequest.class, data -> {
                 SyncInfo syncInfo = ((PushNotificationRequest) data).getSyncInfo();
-                if (syncInfo != null && syncInfo.getType() != null && PushNotificationRequest.SYNC.equals(syncInfo.getType())) {
+                if (syncInfo != null) {
                     sync(null, syncInfo);
                 }
             });
