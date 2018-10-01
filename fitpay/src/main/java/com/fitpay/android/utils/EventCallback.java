@@ -206,6 +206,7 @@ public class EventCallback {
                 break;
             case CommitTypes.CREDITCARD_METADATA_UPDATED:
                 command = CREDITCARD_METADATA_UPDATED;
+                break;
             case CommitTypes.CREDITCARD_PROVISION_FAILED:
                 command = CREDITCARD_PROVISION_FAILED;
                 break;

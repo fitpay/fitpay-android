@@ -39,7 +39,7 @@ public class ContinuationControlBeginMessage extends ContinuationControlMessage 
             throw new IllegalArgumentException("message is not a valid continuation control begin message: " + Hex.bytesToHexString(message));
         }
 
-        ParcelUuid targetUuid = null;
+        ParcelUuid targetUuid;
         byte[] uuidBytes = new byte[16];
         System.arraycopy(message, 1, uuidBytes, 0, 16);
         targetUuid = BluetoothUuid.parseUuidFrom(uuidBytes);

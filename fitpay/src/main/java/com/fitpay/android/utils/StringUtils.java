@@ -84,7 +84,7 @@ public final class StringUtils {
                     SignedJWT signedJwt = jweObject.getPayload().toSignedJWT();
                     ECCKeyPair keyPair = keysManager.getPairForType(type);
 
-                    ECPublicKey key = null;
+                    ECPublicKey key;
                     if ("https://fit-pay.com".equals(signedJwt.getJWTClaimsSet().getIssuer())) {
                         key = (ECPublicKey)keysManager.getPublicKey("EC", Hex.hexStringToBytes(keyPair.getServerPublicKey()));
                     } else {

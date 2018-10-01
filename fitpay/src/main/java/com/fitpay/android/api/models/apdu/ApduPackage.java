@@ -36,8 +36,4 @@ public final class ApduPackage extends ApduPackageModel {
         return null;
     }
 
-    @Override
-    public String toString() {
-        return super.toString();
-    }
 }

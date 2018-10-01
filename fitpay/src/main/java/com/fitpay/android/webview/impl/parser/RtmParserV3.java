@@ -1,6 +1,5 @@
 package com.fitpay.android.webview.impl.parser;
 
-import com.fitpay.android.webview.events.RtmMessage;
 import com.fitpay.android.webview.impl.WebViewCommunicatorImpl;
 
 /**
@@ -12,8 +11,4 @@ public class RtmParserV3 extends RtmParserV2 {
         super(impl);
     }
 
-    @Override
-    public void parseMessage(RtmMessage msg) {
-        super.parseMessage(msg);
-    }
 }

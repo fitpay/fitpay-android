@@ -1,6 +1,5 @@
 package com.fitpay.android.paymentdevice.impl.ble;
 
-import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattDescriptor;
 
 import java.util.UUID;
@@ -12,11 +11,6 @@ class GattSetIndicationOperation extends GattSetNotificationOperation {
 
     public GattSetIndicationOperation(UUID serviceUuid, UUID characteristicUuid, UUID descriptorUuid) {
         super(serviceUuid, characteristicUuid, descriptorUuid);
-    }
-
-    @Override
-    public void execute(BluetoothGatt gatt) {
-        super.execute(gatt);
     }
 
     @Override
