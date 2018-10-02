@@ -365,7 +365,7 @@ public class ApiManager {
             updateData.add(item);
         }
 
-        Call<JsonElement> patchDataCall = null;
+        Call<JsonElement> patchDataCall;
 
         if (encrypt) {
             String userString = updateData.toString();

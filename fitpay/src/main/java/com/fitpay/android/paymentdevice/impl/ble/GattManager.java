@@ -245,7 +245,7 @@ final class GattManager {
                             FPLog.d(TAG, "continuation control end received.  process update to characteristic: " + mContinuationPayload.getTargetUuid());
 
                             UUID targetUuid = mContinuationPayload.getTargetUuid();
-                            byte[] payloadValue = null;
+                            byte[] payloadValue;
                             try {
                                 payloadValue = mContinuationPayload.getValue();
                                 mContinuationPayload = null;

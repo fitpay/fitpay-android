@@ -2,8 +2,6 @@ package com.fitpay.android.api.models.security;
 
 import java.util.Date;
 
-import javax.crypto.SecretKey;
-
 /**
  * Created by Vlad on 17.02.2016.
  */

@@ -112,11 +112,6 @@ public class FitpayWebChromeClient extends WebChromeClient {
         }
     }
 
-    @Override
-    public void onProgressChanged(WebView view, int newProgress) {
-        super.onProgressChanged(view, newProgress);
-    }
-
     // file upload callback (Android 2.2 (API level 8) -- Android 2.3 (API level 10)) (hidden method)
     @SuppressWarnings("unused")
     public void openFileChooser(ValueCallback<Uri> uploadMsg) {

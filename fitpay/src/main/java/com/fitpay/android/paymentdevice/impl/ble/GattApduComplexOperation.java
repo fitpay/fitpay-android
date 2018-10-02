@@ -30,7 +30,7 @@ class GattApduComplexOperation extends GattApduBaseOperation {
         /*packets*/
         int currentPos = 0;
         int sortOrder = 0;
-        byte[] dataToSend = null;
+        byte[] dataToSend;
 
         byte[] byteSequenceId = Hex.sequenceToBytes(command.getSequence());
         byte[] apduCommand = command.getCommand();

@@ -40,11 +40,6 @@ public final class ImageAssetWithOptionsReference extends ImageAssetReference {
         return 0;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        super.writeToParcel(dest, flags);
-    }
-
     public ImageAssetWithOptionsReference() {
     }
 

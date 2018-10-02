@@ -20,7 +20,7 @@ public abstract class ApiCallbackExt<T> implements ApiCallback<T> {
 
     @Override
     public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
-        ErrorResponse errorResponse = null;
+        ErrorResponse errorResponse;
         try {
             errorResponse = Constants.getGson().fromJson(errorMessage, ErrorResponse.class);
         } catch (Exception e) {

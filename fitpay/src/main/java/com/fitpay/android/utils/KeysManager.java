@@ -80,7 +80,7 @@ final public class KeysManager {
 
     // Create the public and private keys
     private ECCKeyPair createECCKeyPair() throws Exception {
-        KeyPairGenerator keyGenerator = null;
+        KeyPairGenerator keyGenerator;
         if (SecurityProvider.getInstance().getProvider() != null) {
             keyGenerator = KeyPairGenerator.getInstance(ALGORITHM, SecurityProvider.getInstance().getProvider());
         } else {
@@ -106,7 +106,7 @@ final public class KeysManager {
 
 
     public PrivateKey getPrivateKey(byte[] privateKey) throws Exception {
-        KeyFactory kf = null;
+        KeyFactory kf;
         if (SecurityProvider.getInstance().getProvider() != null) {
             kf = KeyFactory.getInstance(ALGORITHM, SecurityProvider.getInstance().getProvider());
         } else {
@@ -121,7 +121,7 @@ final public class KeysManager {
     }
 
     public PublicKey getPublicKey(String algorithm, byte[] publicKey) throws Exception {
-        KeyFactory kf = null;
+        KeyFactory kf;
         if (SecurityProvider.getInstance().getProvider() != null) {
             kf = KeyFactory.getInstance(algorithm, SecurityProvider.getInstance().getProvider());
         } else {
@@ -150,7 +150,7 @@ final public class KeysManager {
             PrivateKey privateKey = getPrivateKey(Hex.hexStringToBytes(privateKeyStr));
             PublicKey publicKey = getPublicKey(Hex.hexStringToBytes(publicKeyStr));
 
-            KeyAgreement keyAgreement = null;
+            KeyAgreement keyAgreement;
             if(SecurityProvider.getInstance().getProvider() != null){
                 keyAgreement = KeyAgreement.getInstance(KEY_AGREEMENT, SecurityProvider.getInstance().getProvider());
             } else {
@@ -180,9 +180,7 @@ final public class KeysManager {
     }
 
     public void removePairForType(@KeyType int type) {
-        if (mKeysMap.containsKey(type)) {
-            mKeysMap.remove(type);
-        }
+        mKeysMap.remove(type);
     }
 
     public void updateECCKey(final @KeyType int type, @NonNull final Runnable successRunnable, final ApiCallback callback) {
@@ -210,9 +208,7 @@ final public class KeysManager {
             eccKeyPair.setPrivateKey(mKeysMap.get(type).getPrivateKey());
             mKeysMap.put(type, eccKeyPair);
 
-            if (successRunnable != null) {
-                successRunnable.run();
-            }
+            successRunnable.run();
         }, throwable -> {
             FPLog.e(TAG, throwable);
             callback.onFailure(ResultCode.REQUEST_FAILED, throwable.toString());

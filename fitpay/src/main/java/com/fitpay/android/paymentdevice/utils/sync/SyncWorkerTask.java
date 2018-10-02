@@ -80,7 +80,6 @@ public final class SyncWorkerTask implements Runnable {
         SyncListener listener = new SyncListener(connectorId);
         NotificationManager.getInstance().addListenerToCurrentThread(listener);
 
-        Exception err = null;
         try {
             for (DeviceSyncManagerCallback callback : syncManagerCallbacks) {
                 callback.syncTaskStarted(syncRequest);
@@ -103,7 +102,6 @@ public final class SyncWorkerTask implements Runnable {
                     + listener.getCommitSkippedCount());
         } catch (Exception e) {
             FPLog.e(TAG, e);
-            err = e;
         } finally {
             NotificationManager.getInstance().removeListener(listener);
         }
@@ -189,7 +187,7 @@ public final class SyncWorkerTask implements Runnable {
         // get all the new commits from the last commit pointer processed
         FPLog.d(TAG, "retrieving commits from the lastCommitId: " + deviceData.getLastCommitId() + ", for syncRequest: " + syncRequest);
 
-        Observable<com.fitpay.android.api.models.collection.Collections.CommitsCollection> observable = null;
+        Observable<com.fitpay.android.api.models.collection.Collections.CommitsCollection> observable;
 
         String lastCommitId = deviceData.getLastCommitId();
 
