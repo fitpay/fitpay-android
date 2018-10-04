@@ -2,6 +2,7 @@ package com.fitpay.android.api.models.device;
 
 import com.fitpay.android.api.enums.DeviceTypes;
 import com.fitpay.android.api.models.BaseModel;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Payment device
@@ -67,6 +68,8 @@ public class PaymentDevice extends BaseModel {
      */
     public static class SecureElement {
         final String secureElementId;
+
+        @SerializedName("casdCert")
         final String casd;
 
         public SecureElement(String casd, String secureElementId) {
