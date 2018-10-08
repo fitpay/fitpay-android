@@ -11,6 +11,7 @@ if [ -z "$2" ]; then
     exit 1
 fi
 
+# checkout develop
 git checkout develop
 
 # exit if not clean
@@ -19,23 +20,39 @@ if ! git diff-index --quiet HEAD --; then
   exit 1
 fi
 
-#update docs
-
 #update versions
 cd fitpay
 sed -i'.original' -e "s/$1/$2/g" build.gradle
 rm *.original
 cd ..
 
-git process
+#update docs
+
+# commit and push develop
 git add -A
 git commit -m "v$2"
 git push
 
+# switch to master and merge develop
 git checkout master
 git pull
 git merge develop -m "v$2 merge develop"
 git push
 
-#deploy
-#./gradlew bintrayUpload
+# check for conflicts
+CONFLICTS=$(git ls-files -u | wc -l)
+if [ "$CONFLICTS" -gt 0 ] ; then
+    echo "There is a merge conflict. Aborting"
+    git merge --abort
+    exit 1
+fi
+
+# push
+git push
+
+# create tag
+git tag -a "v$2" -m "v$2"
+git push origin "v$2"
+
+# deploy
+./gradlew bintrayUpload
