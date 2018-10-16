@@ -23,6 +23,7 @@ import com.fitpay.android.paymentdevice.impl.ble.message.SecurityStateMessage;
 import com.fitpay.android.paymentdevice.interfaces.ISecureMessage;
 import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
 import com.fitpay.android.paymentdevice.utils.Crc32;
+import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.Hex;
 import com.fitpay.android.utils.RxBus;
@@ -30,7 +31,10 @@ import com.fitpay.android.utils.RxBus;
 import java.io.IOException;
 import java.util.UUID;
 
-import rx.Observable;
+import io.reactivex.Completable;
+import io.reactivex.CompletableEmitter;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Manager that works with Bluetooth GATT Profile.
@@ -395,17 +399,14 @@ final class GattManager {
         }.execute();
     }
 
+    @SuppressWarnings("CheckResult")
     private void postMessage(final ApduResultMessage message) {
         RxBus.getInstance().post(paymentDeviceConnector.id(), message);
 
-        Observable.create(
-                subscriber -> {
-                    subscriber.onNext(null);
-                    subscriber.onCompleted();
-                })
-                .compose(RxBus.applySchedulersMainThread())
-                .subscribe(o -> {
-                }, throwable -> {
-                }, this::driveNext);
+        Completable.create(CompletableEmitter::onComplete)
+                .compose(upstream -> upstream
+                            .subscribeOn(Schedulers.from(Constants.getExecutor()))
+                            .observeOn(AndroidSchedulers.mainThread()))
+                .subscribe(this::driveNext, throwable -> {});
     }
 }

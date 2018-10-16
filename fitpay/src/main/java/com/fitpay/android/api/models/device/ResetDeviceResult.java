@@ -9,7 +9,7 @@ import com.fitpay.android.paymentdevice.DeviceOperationException;
 import java.util.HashMap;
 import java.util.Map;
 
-import rx.Observable;
+import io.reactivex.Single;
 
 /**
  * Response data for {@link Device#resetDevice}
@@ -50,12 +50,11 @@ public class ResetDeviceResult extends BaseModel {
      *
      * @return observable
      */
-    public Observable<ResetDeviceResult> getStatus() {
-        return Observable.create(subscriber -> getStatus(new ApiCallback<ResetDeviceResult>() {
+    public Single<ResetDeviceResult> getStatus() {
+        return Single.create(subscriber -> getStatus(new ApiCallback<ResetDeviceResult>() {
             @Override
             public void onSuccess(ResetDeviceResult result) {
-                subscriber.onNext(result);
-                subscriber.onCompleted();
+                subscriber.onSuccess(result);
             }
 
             @Override

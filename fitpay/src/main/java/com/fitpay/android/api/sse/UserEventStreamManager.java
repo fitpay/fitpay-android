@@ -14,9 +14,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Completable;
 import retrofit2.Response;
-import rx.Observable;
-import rx.schedulers.Schedulers;
 
 /**
  * This class manages the subscribing and unsubscribing from the user event stream of the FitPay platform.  The subscription
@@ -59,7 +58,7 @@ public class UserEventStreamManager {
 
                 UserEventStream[] result = new UserEventStream[1];
 
-                Observable.defer(() -> {
+                Completable.create(emitter -> {
                     try {
                         FitPayClient client = ApiManager.getInstance().getClient();
                         Response<User> user = client.getUser(userId).execute();
@@ -79,9 +78,7 @@ public class UserEventStreamManager {
                     } catch (IOException e) {
                         FPLog.e(e);
                     }
-
-                    return Observable.empty();
-                }).subscribeOn(Schedulers.io()).toBlocking().subscribe();
+                }).blockingAwait();
 
                 return result[0];
             });

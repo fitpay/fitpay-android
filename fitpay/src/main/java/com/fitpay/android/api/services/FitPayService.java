@@ -14,10 +14,10 @@ import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.util.Locale;
 
+import io.reactivex.Completable;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
-import rx.schedulers.Schedulers;
 
 final public class FitPayService extends GenericClient<FitPayClient> {
 
@@ -93,7 +93,7 @@ final public class FitPayService extends GenericClient<FitPayClient> {
             throw new IllegalStateException("invalid state, not okhttp client is currently set");
         }
 
-        rx.Observable.defer(() -> {
+        Completable.fromAction(() -> {
             try {
                 retrofit2.Response<JsonElement> response = client.getPlatformConfig().execute();
 
@@ -108,9 +108,7 @@ final public class FitPayService extends GenericClient<FitPayClient> {
             } catch (Exception e) {
                 FPLog.e("error getting platform configuration from platform, using defaults", e);
             }
-
-            return rx.Observable.empty();
-        }).subscribeOn(Schedulers.io()).toBlocking().subscribe();
+        }).blockingAwait();
 
         FPLog.d("platformConfiguration: " + platformConfig);
     }
