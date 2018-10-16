@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Completable;
+import io.reactivex.Single;
 import retrofit2.Response;
 
 /**
@@ -54,11 +54,10 @@ public class UserEventStreamManager {
         // why this background execution, well android.. we don't want these network calls to
         // occur on the UI thread, therefore they're backgrounded.
         if (stream == null) {
+
             return executor.submit(() -> {
 
-                UserEventStream[] result = new UserEventStream[1];
-
-                Completable.create(emitter -> {
+                UserEventStream result = Single.<UserEventStream>create(emitter -> {
                     try {
                         FitPayClient client = ApiManager.getInstance().getClient();
                         Response<User> user = client.getUser(userId).execute();
@@ -73,14 +72,14 @@ public class UserEventStreamManager {
                                 eventStream = existing;
                             }
 
-                            result[0] = eventStream;
+                            emitter.onSuccess(eventStream);
                         }
                     } catch (IOException e) {
-                        FPLog.e(e);
+                        emitter.onError(e);
                     }
-                }).blockingAwait();
+                }).blockingGet();
 
-                return result[0];
+                return result;
             });
 
         }

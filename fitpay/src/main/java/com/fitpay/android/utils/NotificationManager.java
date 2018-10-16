@@ -4,8 +4,6 @@ package com.fitpay.android.utils;
 import com.fitpay.android.paymentdevice.constants.States;
 import com.fitpay.android.paymentdevice.enums.Sync;
 
-import org.reactivestreams.Subscription;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

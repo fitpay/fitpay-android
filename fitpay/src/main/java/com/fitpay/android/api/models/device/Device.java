@@ -18,9 +18,7 @@ import com.fitpay.android.utils.TimestampUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.reactivex.Observable;
 import io.reactivex.Single;
-import io.reactivex.SingleObserver;
 
 /**
  * Payment Device Information
