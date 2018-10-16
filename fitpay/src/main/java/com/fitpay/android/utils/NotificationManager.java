@@ -1,15 +1,20 @@
 package com.fitpay.android.utils;
 
 
+import com.fitpay.android.paymentdevice.constants.States;
+import com.fitpay.android.paymentdevice.enums.Sync;
+
+import org.reactivestreams.Subscription;
+
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import rx.Scheduler;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Notification manager. Support any {@link Listener} object
@@ -22,7 +27,7 @@ public final class NotificationManager {
 
     private List<Listener> mListeners;
 
-    private Map<Class, Subscription> mSubscriptions;
+    private Map<Class, Disposable> mSubscriptions;
     private Map<Class, List<Command>> mCommands;
 
     public static NotificationManager getInstance() {
@@ -40,9 +45,9 @@ public final class NotificationManager {
     public static void clean() {
         synchronized (NotificationManager.class) {
             if (sInstance != null) {
-                for (Map.Entry<Class, Subscription> entry : sInstance.mSubscriptions.entrySet()) {
-                    Subscription subscription = entry.getValue();
-                    subscription.unsubscribe();
+                for (Map.Entry<Class, Disposable> entry : sInstance.mSubscriptions.entrySet()) {
+                    Disposable subscription = entry.getValue();
+                    subscription.dispose();
                 }
                 sInstance.mCommands.clear();
                 sInstance.mListeners.clear();
@@ -78,7 +83,11 @@ public final class NotificationManager {
                                 if (command instanceof FilterCommand) {
                                     String filter = ((FilterCommand) command).filter();
                                     if (filter != null && filter.equals(((Wrapper) object).getFilter())) {
-                                        command.execute(((Wrapper) object).getObject());
+                                        Object t = ((Wrapper) object).getObject();
+                                        if(t instanceof Sync && ((Sync)t).getState() == States.STARTED){
+                                            FPLog.w("--------> Filter:" + filter);
+                                        }
+                                        command.execute(t);
                                     }
                                 } else {
                                     command.execute(((Wrapper) object).getObject());
@@ -102,7 +111,7 @@ public final class NotificationManager {
         FPLog.v(TAG, "unsubscribeFrom class: " + clazz + " called from thread: " + Thread.currentThread());
         if (mSubscriptions.containsKey(clazz)) {
             FPLog.v(TAG, "unsubscribeFrom removing class: " + clazz + " from thread: " + Thread.currentThread());
-            mSubscriptions.get(clazz).unsubscribe();
+            mSubscriptions.get(clazz).dispose();
             mSubscriptions.remove(clazz);
         }
     }

@@ -4,15 +4,13 @@ package com.fitpay.android.utils;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import rx.Observable;
-import rx.Scheduler;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
-import rx.subjects.PublishSubject;
-import rx.subjects.SerializedSubject;
-import rx.subjects.Subject;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
+import io.reactivex.processors.PublishProcessor;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Vlad on 28.03.2016.
@@ -29,18 +27,17 @@ public class RxBus {
         return sInstance;
     }
 
-    private final Subject<Object, Object> mBus = new SerializedSubject<>(PublishSubject.create());
+    private final PublishProcessor<Object> mBus = PublishProcessor.create();
 
-    public <T> Subscription register(final Class<T> eventClass, Action1<T> onNext) {
+    public <T> Disposable register(final Class<T> eventClass, Consumer<T> onNext) {
         return register(eventClass, AndroidSchedulers.mainThread(), onNext);
     }
 
-    public <T> Subscription register(final Class<T> eventClass, final Scheduler scheduler, final Action1<T> onNext) {
+    public <T> Disposable register(final Class<T> eventClass, final Scheduler scheduler, final Consumer<T> onNext) {
         return mBus
-                .asObservable()
-                .onBackpressureBuffer()
+                .toObservable()
                 .filter(event -> {
-                    if(event == null || eventClass == null){
+                    if (event == null || eventClass == null) {
                         FPLog.e(event + " " + eventClass);
                         return false;
                     }
@@ -76,13 +73,37 @@ public class RxBus {
         return sw.toString(); // stack trace as a string
     }
 
-    public static <T> Observable.Transformer<T, T> applySchedulersMainThread() {
-        return observable -> observable.subscribeOn(Schedulers.from(Constants.getExecutor()))
-                .observeOn(AndroidSchedulers.mainThread());
+    /*
+    public static <T> T applySchedulersMainThread(Class<? extends T> type) {
+        return applySchedulers(type, Schedulers.from(Constants.getExecutor()), AndroidSchedulers.mainThread());
     }
 
-    public static <T> Observable.Transformer<T, T> applySchedulersExecutorThread() {
-        return observable -> observable.subscribeOn(Schedulers.from(Constants.getExecutor()))
-                .observeOn(Schedulers.from(Constants.getExecutor()));
+    public static <T> T applySchedulersExecutorThread(Class<? extends T> type){
+        return applySchedulers(type, Schedulers.from(Constants.getExecutor()), Schedulers.from(Constants.getExecutor()));
     }
+
+    private static <T> T applySchedulers(Class<? extends T> type, Scheduler subscribe, Scheduler observe){
+        if (type.isAssignableFrom(Completable.class)) {
+            return (T)(CompletableTransformer) upstream -> upstream
+                    .subscribeOn(subscribe)
+                    .observeOn(observe);
+        } else if (type.isAssignableFrom(Maybe.class)) {
+            return  (T)(MaybeTransformer<T, T>) upstream -> upstream
+                    .subscribeOn(subscribe)
+                    .observeOn(observe);
+        } else if (type.isAssignableFrom(Single.class)) {
+            return  (T)(SingleTransformer<T, T>) upstream -> upstream
+                    .subscribeOn(subscribe)
+                    .observeOn(observe);
+        } else if (type.isAssignableFrom(Observable.class)) {
+            return  (T)(ObservableTransformer<T, T>) upstream -> upstream
+                    .subscribeOn(subscribe)
+                    .observeOn(observe);
+        } else {
+            throw new IllegalArgumentException("Class not found");
+        }
+
+        return result;
+    }
+    */
 }
