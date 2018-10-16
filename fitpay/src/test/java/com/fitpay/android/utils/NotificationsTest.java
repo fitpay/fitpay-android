@@ -11,6 +11,7 @@ import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.reactivestreams.Subscription;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -19,14 +20,13 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import rx.Observable;
-import rx.Subscription;
-import rx.schedulers.Schedulers;
+import io.reactivex.Completable;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.fitpay.android.api.enums.ResultCode.TIMEOUT;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class NotificationsTest extends BaseTestActions{
+public class NotificationsTest extends BaseTestActions {
 
     private static Listener listener;
     private static NotificationManager manager;
@@ -67,7 +67,7 @@ public class NotificationsTest extends BaseTestActions{
 
     @Test
     public void test02_addListener() throws InterruptedException {
-        manager.addListener(listener, Schedulers.immediate());
+        manager.addListener(listener, Schedulers.trampoline());
 
         Assert.assertEquals(1, listeners.size());
         Assert.assertEquals(1, subscriptions.size());
@@ -80,22 +80,21 @@ public class NotificationsTest extends BaseTestActions{
         AtomicBoolean changed = new AtomicBoolean(false);
         log("checkNotification start");
 
-        Observable.defer(() -> {
+        Completable.create(emitter -> {
             log("checkNotification send state");
             RxBus.getInstance().post(new Connection(States.CONNECTED));
-            return Observable.empty();
-        }).observeOn(Schedulers.immediate()).subscribeOn(Schedulers.immediate()).subscribe(
-                o -> {
-                },
-                e -> {
-                    log("checkNotification error:" + e.getMessage());
-                    latch.countDown();
-                },
-                () -> {
-                    log("checkNotification complete");
-                    changed.set(testState != null && testState == States.CONNECTED);
-                    latch.countDown();
-                });
+            emitter.onComplete();
+        }).observeOn(Schedulers.trampoline()).subscribeOn(Schedulers.trampoline())
+                .subscribe(
+                        () -> {
+                            log("checkNotification complete");
+                            changed.set(testState != null && testState == States.CONNECTED);
+                            latch.countDown();
+                        },
+                        e -> {
+                            log("checkNotification error:" + e.getMessage());
+                            latch.countDown();
+                        });
 
         latch.await(TIMEOUT, TimeUnit.SECONDS);
         log("checkNotification finish");

@@ -17,7 +17,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import rx.schedulers.Schedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class WVListenersTest extends BaseTestActions {
 
@@ -41,7 +41,7 @@ public class WVListenersTest extends BaseTestActions {
             }
         };
 
-        NotificationManager.getInstance().addListener(listener, Schedulers.immediate());
+        NotificationManager.getInstance().addListener(listener, Schedulers.trampoline());
 
         A2AVerificationRequest request = getA2AVerificationRequest();
         RxBus.getInstance().post(id, request);
@@ -69,7 +69,7 @@ public class WVListenersTest extends BaseTestActions {
             }
         };
 
-        NotificationManager.getInstance().addListener(requestListener, Schedulers.immediate());
+        NotificationManager.getInstance().addListener(requestListener, Schedulers.trampoline());
 
         TestConstants.waitForAction();
         RxBus.getInstance().post(id, new IdVerificationRequest("1"));
@@ -93,7 +93,7 @@ public class WVListenersTest extends BaseTestActions {
             }
         };
 
-        NotificationManager.getInstance().addListener(listener, Schedulers.immediate());
+        NotificationManager.getInstance().addListener(listener, Schedulers.trampoline());
 
         TestConstants.waitForAction();
         RxBus.getInstance().post(id, new UserReceived("userId-1234", "test@test.test"));

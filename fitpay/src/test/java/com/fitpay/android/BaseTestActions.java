@@ -18,15 +18,15 @@ import org.junit.BeforeClass;
 import org.mockito.Mockito;
 
 import java.security.Provider;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 
+import io.reactivex.Scheduler;
+import io.reactivex.android.plugins.RxAndroidPlugins;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import mockit.Mock;
 import mockit.MockUp;
-import rx.Scheduler;
-import rx.android.plugins.RxAndroidPlugins;
-import rx.android.plugins.RxAndroidSchedulersHook;
-import rx.plugins.RxJavaHooks;
-import rx.schedulers.Schedulers;
 
 public abstract class BaseTestActions {
 
@@ -50,22 +50,24 @@ public abstract class BaseTestActions {
 
         TestConstants.configureFitpay(mContext = Mockito.mock(Context.class));
 
-        RxAndroidPlugins.getInstance().reset();
-        RxAndroidPlugins.getInstance().registerSchedulersHook(new RxAndroidSchedulersHook() {
+        RxAndroidPlugins.setInitMainThreadSchedulerHandler(new Function<Callable<Scheduler>, Scheduler>() {
             @Override
-            public Scheduler getMainThreadScheduler() {
-                return Schedulers.immediate();
+            public Scheduler apply(Callable<Scheduler> schedulerCallable) throws Exception {
+                return Schedulers.trampoline();
             }
         });
 
-        RxJavaHooks.setOnIOScheduler(scheduler -> Schedulers.immediate());
-        RxJavaHooks.setOnComputationScheduler(scheduler -> Schedulers.immediate());
-        RxJavaHooks.setOnNewThreadScheduler(scheduler -> Schedulers.immediate());
+        RxAndroidPlugins.setMainThreadSchedulerHandler(new Function<Scheduler, Scheduler>() {
+            @Override
+            public Scheduler apply(Scheduler scheduler) throws Exception {
+                return Schedulers.trampoline();
+            }
+        });
 
         new MockUp<Schedulers>() {
             @Mock
             Scheduler from(Executor executor) {
-                return Schedulers.immediate();
+                return Schedulers.trampoline();
             }
         };
 

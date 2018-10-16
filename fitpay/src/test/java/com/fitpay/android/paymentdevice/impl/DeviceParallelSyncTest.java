@@ -14,6 +14,7 @@ import com.fitpay.android.paymentdevice.events.CommitSuccess;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
+import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.Listener;
 import com.fitpay.android.utils.NamedResource;
 import com.fitpay.android.utils.NotificationManager;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import mockit.Mock;
@@ -231,11 +233,11 @@ public class DeviceParallelSyncTest extends TestActions {
         int syncCount = 10;
 
         for (int i = 0; i < syncCount; i++) {
-            System.out.println("");
-            System.out.println("###############################################################################################################");
-            System.out.println("################ sync #" + (i + 1) + " of " + syncCount + " started for connector:" + deviceConnector.id());
-            System.out.println("###############################################################################################################");
-            System.out.println("");
+            FPLog.i("");
+            FPLog.i("###############################################################################################################");
+            FPLog.i("################ sync #" + (i + 1) + " of " + syncCount + " started for connector:" + deviceConnector.id());
+            FPLog.i("###############################################################################################################");
+            FPLog.i("");
 
             syncManager.add(SyncRequest.builder()
                     .setConnector(deviceConnector)
@@ -243,14 +245,14 @@ public class DeviceParallelSyncTest extends TestActions {
                     .setDevice(device)
                     .build());
 
-            executionLatch.get().await();
+            executionLatch.get().await(30, TimeUnit.SECONDS);
             executionLatch.set(new CountDownLatch(1));
 
-            System.out.println("");
-            System.out.println("###############################################################################################################");
-            System.out.println("################ sync #" + (i + 1) + " of " + syncCount + " completed for connector:" + deviceConnector.id());
-            System.out.println("###############################################################################################################");
-            System.out.println("");
+            FPLog.i("");
+            FPLog.i("###############################################################################################################");
+            FPLog.i("################ sync #" + (i + 1) + " of " + syncCount + " completed for connector:" + deviceConnector.id());
+            FPLog.i("###############################################################################################################");
+            FPLog.i("");
 
             TestConstants.waitForAction(5000);
         }
@@ -278,12 +280,16 @@ public class DeviceParallelSyncTest extends TestActions {
     private class SyncCompleteListener extends Listener {
         private final List<CommitSuccess> commits = new ArrayList<>();
 
+        private String f;
+
         private SyncCompleteListener(String filter) {
             super(filter);
+            f = filter;
             mCommands.put(CommitSuccess.class, data -> onCommitSuccess((CommitSuccess) data));
         }
 
         public void onCommitSuccess(CommitSuccess commit) {
+            FPLog.i("-----------", f + " " + commit.getCommitId());
             commits.add(commit);
         }
 

@@ -21,10 +21,10 @@ import java.util.Map;
 
 import javax.crypto.KeyAgreement;
 
+import io.reactivex.Single;
+import io.reactivex.SingleOnSubscribe;
 import retrofit2.Call;
 import retrofit2.Response;
-import rx.Observable;
-import rx.schedulers.Schedulers;
 
 /**
  * KeysManager is designed to create and manage @ECCKeyPair object.
@@ -61,7 +61,7 @@ final public class KeysManager {
         return sInstance;
     }
 
-    public static void clear(){
+    public static void clear() {
         sInstance = null;
     }
 
@@ -135,7 +135,7 @@ final public class KeysManager {
             PublicKey publicKey = getPublicKey(Hex.hexStringToBytes(publicKeyStr));
 
             KeyAgreement keyAgreement = null;
-            if(SecurityProvider.getInstance().getProvider() != null){
+            if (SecurityProvider.getInstance().getProvider() != null) {
                 keyAgreement = KeyAgreement.getInstance(KEY_AGREEMENT, SecurityProvider.getInstance().getProvider());
             } else {
                 keyAgreement = KeyAgreement.getInstance(KEY_AGREEMENT);
@@ -169,38 +169,37 @@ final public class KeysManager {
         }
     }
 
+    @SuppressWarnings("CheckResult")
     public void updateECCKey(final @KeyType int type, @NonNull final Runnable successRunnable, final ApiCallback callback) {
-        Observable.defer(() -> {
+        Single.create((SingleOnSubscribe<ECCKeyPair>) emitter -> {
             try {
                 ECCKeyPair keyPair = createPairForType(type);
                 Call<ECCKeyPair> getKeyCall = ApiManager.getInstance().getClient().createEncryptionKey(keyPair);
                 Response<ECCKeyPair> response = getKeyCall.execute();
                 if (response.isSuccessful() && response.errorBody() == null) {
-                    return Observable.just(response.body());
+                    emitter.onSuccess(response.body());
                 } else if (response.errorBody() != null) {
                     try {
-                        return Observable.error(new Throwable(response.errorBody().toString()));
+                        emitter.onError(new Throwable(response.errorBody().toString()));
                     } catch (Exception e) {
-                        return Observable.error(e);
+                        emitter.onError(e);
                     }
                 } else {
-                    return Observable.error(new Throwable(response.message()));
+                    emitter.onError(new Throwable(response.message()));
                 }
 
             } catch (Exception e) {
-                return Observable.error(e);
+                emitter.onError(e);
             }
-        }).subscribeOn(Schedulers.io()).toBlocking().subscribe(eccKeyPair -> {
+        }).doOnError(throwable -> {
+            FPLog.e(TAG, throwable);
+            callback.onFailure(ResultCode.REQUEST_FAILED, throwable.toString());
+        }).doOnSuccess(eccKeyPair -> {
             eccKeyPair.setPrivateKey(mKeysMap.get(type).getPrivateKey());
             mKeysMap.put(type, eccKeyPair);
 
-            if (successRunnable != null) {
-                successRunnable.run();
-            }
-        }, throwable -> {
-            FPLog.e(TAG, throwable);
-            callback.onFailure(ResultCode.REQUEST_FAILED, throwable.toString());
-        });
+            successRunnable.run();
+        }).blockingGet();
     }
 
     public String getKeyId(@KeyType int type) {

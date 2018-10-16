@@ -11,13 +11,9 @@ import com.fitpay.android.utils.NamedResource;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-
-import rx.Observable;
-import rx.functions.Func1;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -237,16 +233,16 @@ public class DeviceTest2 extends TestActions {
 
         final AtomicReference<String> status = new AtomicReference<>();
 
-        createdDevice.resetDevice().flatMap(result -> result.getStatus().repeatWhen(observable -> {
-            return observable.flatMap((Func1<Void, Observable<?>>) aVoid -> {
-                if (status.get() == null || ResetDeviceStatus.IN_PROGRESS.equals(status.get())) {
-                    return Observable.timer(1, TimeUnit.SECONDS);
-                } else {
-                    return Observable.just(null);
-                }
-            }).takeWhile(Objects::nonNull);
-        })).subscribe(resetDeviceResult -> status.set(resetDeviceResult.getResetStatus()), throwable -> {
-        }, latch::countDown);
+        createdDevice.resetDevice().flatMap(resetDeviceResult -> resetDeviceResult.getStatus()
+                .toFlowable()
+                .repeatWhen(objectFlowable -> objectFlowable.delay(2, TimeUnit.SECONDS))
+                .takeUntil(o -> !ResetDeviceStatus.IN_PROGRESS.equals(status.get()))
+                .lastOrError())
+                .subscribe(resetDeviceResult -> {
+                    status.set(resetDeviceResult.getResetStatus());
+                    latch.countDown();
+                }, throwable -> {
+                });
 
         latch.await(30, TimeUnit.SECONDS);
         assertEquals("reset device status", ResetDeviceStatus.RESET_COMPLETE, status.get());

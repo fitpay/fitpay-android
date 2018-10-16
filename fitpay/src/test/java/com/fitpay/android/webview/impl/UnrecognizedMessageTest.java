@@ -15,7 +15,7 @@ import org.junit.Test;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import rx.schedulers.Schedulers;
+import io.reactivex.schedulers.Schedulers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -35,7 +35,7 @@ public class UnrecognizedMessageTest extends BaseTestActions{
     public void before() throws Exception {
         latch = new CountDownLatch(1);
         this.listener = new UnrecognizedRtmMessageListener(latch);
-        NotificationManager.getInstance().addListener(listener, Schedulers.immediate());
+        NotificationManager.getInstance().addListener(listener, Schedulers.trampoline());
     }
 
     @Override
