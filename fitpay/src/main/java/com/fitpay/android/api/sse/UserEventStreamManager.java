@@ -15,6 +15,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 
 /**
@@ -77,7 +78,7 @@ public class UserEventStreamManager {
                     } catch (IOException e) {
                         emitter.onError(e);
                     }
-                }).blockingGet();
+                }).subscribeOn(Schedulers.io()).blockingGet();
 
                 return result;
             });

@@ -244,7 +244,7 @@ public class DeviceTest2 extends TestActions {
                 }, throwable -> {
                 });
 
-        latch.await(30, TimeUnit.SECONDS);
+        latch.await(60, TimeUnit.SECONDS);
         assertEquals("reset device status", ResetDeviceStatus.RESET_COMPLETE, status.get());
     }
 }

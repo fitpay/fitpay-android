@@ -245,7 +245,7 @@ public class DeviceParallelSyncTest extends TestActions {
                     .setDevice(device)
                     .build());
 
-            executionLatch.get().await(30, TimeUnit.SECONDS);
+            executionLatch.get().await();
             executionLatch.set(new CountDownLatch(1));
 
             FPLog.i("");
@@ -289,7 +289,6 @@ public class DeviceParallelSyncTest extends TestActions {
         }
 
         public void onCommitSuccess(CommitSuccess commit) {
-            FPLog.i("-----------", f + " " + commit.getCommitId());
             commits.add(commit);
         }
 

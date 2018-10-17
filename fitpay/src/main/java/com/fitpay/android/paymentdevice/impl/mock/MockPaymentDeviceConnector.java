@@ -98,12 +98,11 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
                 .flatMap(o -> setStateWithDelay(CONFIG_CONNECTED_RESPONSE_TIME, States.CONNECTED))
                 .toMaybe()
                 .subscribe(
-                        x -> FPLog.d(TAG, "connect successful"),
-                        throwable -> FPLog.e(TAG, "connect error:" + throwable.toString()),
-                        () -> {
-                            FPLog.d(TAG, "connect complete");
+                        x -> {
+                            FPLog.d(TAG, "connect successful");
                             readDeviceInfo();
-                        });
+                        },
+                        throwable -> FPLog.e(TAG, "connect error:" + throwable.toString()));
     }
 
     @Override
@@ -306,12 +305,15 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
             // process with a delay to mock device response time
             getDelayObservable(100).toMaybe()
                     .subscribe(
-                            o -> FPLog.d(TAG, "processCommit " + commit.getCommitType()),
-                            throwable -> FPLog.e(TAG, String.format("processCommit %s error:%s", commit.getCommitType(), throwable.toString())),
-                            () -> {
+                            o -> {
+                                FPLog.d(TAG, "processCommit " + commit.getCommitType());
                                 CreditCardCommit card = (CreditCardCommit) commit.getPayload();
                                 FPLog.d(TAG, "Mock wallet has been updated. Card removed: " + card.getCreditCardId());
                                 postData(new CommitSuccess.Builder().commit(commit).build());
+                            },
+                            throwable -> {
+                                FPLog.e(TAG, String.format("processCommit %s error:%s", commit.getCommitType(), throwable.toString()));
+                                postData(new CommitFailed.Builder().commit(commit).build());
                             }
                     );
         }
@@ -334,14 +336,16 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
 
             // process with a delay to mock device response time
             getDelayObservable(100).toMaybe()
-                    .subscribe(o -> FPLog.d(TAG, "processCommit " + commit.getCommitType()),
-                            throwable -> FPLog.e(TAG, String.format("processCommit %s error:%s", commit.getCommitType(), throwable.toString())),
-                            () -> {
+                    .subscribe(o -> {
+                                FPLog.d(TAG, "processCommit " + commit.getCommitType());
                                 CreditCardCommit card = (CreditCardCommit) commit.getPayload();
                                 FPLog.d(TAG, "Mock wallet has been updated. Card updated: " + card.getCreditCardId());
                                 postData(new CommitSuccess.Builder().commit(commit).build());
-                            }
-                    );
+                            },
+                            throwable -> {
+                                FPLog.e(TAG, String.format("processCommit %s error:%s", commit.getCommitType(), throwable.toString()));
+                                postData(new CommitFailed.Builder().commit(commit).build());
+                            });
         }
     }
 }

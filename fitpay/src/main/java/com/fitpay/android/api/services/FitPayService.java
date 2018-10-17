@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.Locale;
 
 import io.reactivex.Completable;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -108,7 +109,7 @@ final public class FitPayService extends GenericClient<FitPayClient> {
             } catch (Exception e) {
                 FPLog.e("error getting platform configuration from platform, using defaults", e);
             }
-        }).blockingAwait();
+        }).subscribeOn(Schedulers.io()).blockingAwait();
 
         FPLog.d("platformConfiguration: " + platformConfig);
     }

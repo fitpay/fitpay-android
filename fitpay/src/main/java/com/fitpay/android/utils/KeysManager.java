@@ -30,6 +30,7 @@ import javax.crypto.KeyAgreement;
 
 import io.reactivex.Single;
 import io.reactivex.SingleOnSubscribe;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -211,9 +212,8 @@ final public class KeysManager {
         }).doOnSuccess(eccKeyPair -> {
             eccKeyPair.setPrivateKey(mKeysMap.get(type).getPrivateKey());
             mKeysMap.put(type, eccKeyPair);
-
             successRunnable.run();
-        }).blockingGet();
+        }).subscribeOn(Schedulers.io()).blockingGet();
     }
 
     public String getKeyId(@KeyType int type) {

@@ -72,37 +72,4 @@ public class RxBus {
         return sw.toString(); // stack trace as a string
     }
 
-    /*
-    public static <T> T applySchedulersMainThread(Class<? extends T> type) {
-        return applySchedulers(type, Schedulers.from(Constants.getExecutor()), AndroidSchedulers.mainThread());
-    }
-
-    public static <T> T applySchedulersExecutorThread(Class<? extends T> type){
-        return applySchedulers(type, Schedulers.from(Constants.getExecutor()), Schedulers.from(Constants.getExecutor()));
-    }
-
-    private static <T> T applySchedulers(Class<? extends T> type, Scheduler subscribe, Scheduler observe){
-        if (type.isAssignableFrom(Completable.class)) {
-            return (T)(CompletableTransformer) upstream -> upstream
-                    .subscribeOn(subscribe)
-                    .observeOn(observe);
-        } else if (type.isAssignableFrom(Maybe.class)) {
-            return  (T)(MaybeTransformer<T, T>) upstream -> upstream
-                    .subscribeOn(subscribe)
-                    .observeOn(observe);
-        } else if (type.isAssignableFrom(Single.class)) {
-            return  (T)(SingleTransformer<T, T>) upstream -> upstream
-                    .subscribeOn(subscribe)
-                    .observeOn(observe);
-        } else if (type.isAssignableFrom(Observable.class)) {
-            return  (T)(ObservableTransformer<T, T>) upstream -> upstream
-                    .subscribeOn(subscribe)
-                    .observeOn(observe);
-        } else {
-            throw new IllegalArgumentException("Class not found");
-        }
-
-        return result;
-    }
-    */
 }
