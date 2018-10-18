@@ -82,6 +82,23 @@ public class RxBus {
         return sw.toString(); // stack trace as a string
     }
 
+    /**
+     * @deprecated Will be removed with RxJava1. Use RxJava2
+     */
+    @Deprecated
+    public static <T> rx.Observable.Transformer<T, T> applySchedulersMainThread() {
+        return observable -> observable.subscribeOn(rx.schedulers.Schedulers.from(Constants.getExecutor()))
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread());
+    }
+
+    /**
+     * @deprecated Will be removed with RxJava1. Use RxJava2
+     */
+    @Deprecated
+    public static <T> rx.Observable.Transformer<T, T> applySchedulersExecutorThread() {
+        return observable -> observable.subscribeOn(rx.schedulers.Schedulers.from(Constants.getExecutor()))
+                .observeOn(rx.schedulers.Schedulers.from(Constants.getExecutor()));
+    }
 
     public static <T, K> T applySchedulersMainThread(Class<K> type) {
         return applySchedulers(type, Schedulers.from(Constants.getExecutor()), AndroidSchedulers.mainThread());
