@@ -4,7 +4,17 @@ package com.fitpay.android.utils;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import io.reactivex.Completable;
+import io.reactivex.CompletableTransformer;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableTransformer;
+import io.reactivex.Maybe;
+import io.reactivex.MaybeTransformer;
+import io.reactivex.Observable;
+import io.reactivex.ObservableTransformer;
 import io.reactivex.Scheduler;
+import io.reactivex.Single;
+import io.reactivex.SingleTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -72,4 +82,34 @@ public class RxBus {
         return sw.toString(); // stack trace as a string
     }
 
+
+    public static <T, K> T applySchedulersMainThread(Class<K> type) {
+        return applySchedulers(type, Schedulers.from(Constants.getExecutor()), AndroidSchedulers.mainThread());
+    }
+
+    public static <T, K> T applySchedulersExecutorThread(Class<K> type) {
+        return applySchedulers(type, Schedulers.from(Constants.getExecutor()), Schedulers.from(Constants.getExecutor()));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T, K> T applySchedulers(Class<K> type, Scheduler subscribe, Scheduler observe) {
+        if (type.isAssignableFrom(Completable.class)) {
+            return (T) (CompletableTransformer) upstream -> upstream
+                    .subscribeOn(subscribe).observeOn(observe);
+        } else if (type.isAssignableFrom(Maybe.class)) {
+            return (T) (MaybeTransformer<T, T>) upstream -> upstream
+                    .subscribeOn(subscribe).observeOn(observe);
+        } else if (type.isAssignableFrom(Single.class)) {
+            return (T) (SingleTransformer<T, T>) upstream -> upstream
+                    .subscribeOn(subscribe).observeOn(observe);
+        } else if (type.isAssignableFrom(Observable.class)) {
+            return (T) (ObservableTransformer<T, T>) upstream -> upstream
+                    .subscribeOn(subscribe).observeOn(observe);
+        } else if (type.isAssignableFrom(Flowable.class)) {
+            return (T) (FlowableTransformer<T, T>) upstream -> upstream
+                    .subscribeOn(subscribe).observeOn(observe);
+        } else {
+            throw new IllegalArgumentException("Class not found. Implement your own Transformer");
+        }
+    }
 }

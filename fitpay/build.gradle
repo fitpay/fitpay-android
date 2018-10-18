@@ -135,7 +135,7 @@ dependencies {
     javadocDeps "com.squareup.retrofit2:converter-gson:${retrofitLib}"
     javadocDeps "com.squareup.okhttp3:logging-interceptor:${okhttpLib}"
     javadocDeps "com.squareup.okhttp3:okhttp:${okhttpLib}"
-    javadocDeps "io.reactivex:rxjava:${rxjavaLib}"
+    javadocDeps "io.reactivex.rxjava2:rxjava:${rxjavaLib}"
     javadocDeps 'me.alexrs:prefs:1.1.0'
     javadocDeps 'org.conscrypt:conscrypt-android:1.2.0'
     javadocDeps 'com.nimbusds:nimbus-jose-jwt:6.0.2'

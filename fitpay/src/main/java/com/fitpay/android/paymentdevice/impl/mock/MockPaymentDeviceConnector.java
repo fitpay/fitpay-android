@@ -21,10 +21,10 @@ import com.fitpay.android.paymentdevice.enums.Sync;
 import com.fitpay.android.paymentdevice.events.CommitFailed;
 import com.fitpay.android.paymentdevice.events.CommitSuccess;
 import com.fitpay.android.paymentdevice.impl.PaymentDeviceConnector;
-import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.Listener;
 import com.fitpay.android.utils.NotificationManager;
+import com.fitpay.android.utils.RxBus;
 import com.google.gson.Gson;
 
 import java.util.Properties;
@@ -34,7 +34,6 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 @SuppressLint({"SupportAnnotationUsage", "CheckResult"})
 public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
@@ -195,9 +194,7 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
 
     private Single<Long> getDelayObservable(int responseDelay) {
         return Single.timer(responseDelay, TimeUnit.MILLISECONDS)
-                .compose(upstream -> upstream
-                        .subscribeOn(Schedulers.from(Constants.getExecutor()))
-                        .observeOn(Schedulers.from(Constants.getExecutor())));
+                .compose(RxBus.applySchedulersExecutorThread(Single.class));
     }
 
     private Single<Long> setStateWithDelay(final String timeValue, final @Connection.State int targetState) {
