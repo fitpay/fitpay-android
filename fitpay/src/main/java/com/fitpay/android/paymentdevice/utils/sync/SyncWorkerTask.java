@@ -116,8 +116,6 @@ public final class SyncWorkerTask implements Runnable {
             return;
         }
 
-        FPLog.w("--------> Before:" + syncRequest.getConnector().id());
-
         RxBus.getInstance().post(connectorId, Sync.builder()
                 .syncId(syncRequest.getSyncId())
                 .state(States.STARTED)
@@ -356,8 +354,6 @@ public final class SyncWorkerTask implements Runnable {
 
             switch (syncEvent.getState()) {
                 case States.STARTED:
-
-                    FPLog.w("--------> After:" + syncRequest.getConnector().id());
 
                     FPLog.d(TAG, "sync started: " + syncEvent);
                     syncProcess = new SyncProcess(syncRequest);

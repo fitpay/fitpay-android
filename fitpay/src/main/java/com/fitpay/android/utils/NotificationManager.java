@@ -82,9 +82,6 @@ public final class NotificationManager {
                                     String filter = ((FilterCommand) command).filter();
                                     if (filter != null && filter.equals(((Wrapper) object).getFilter())) {
                                         Object t = ((Wrapper) object).getObject();
-                                        if(t instanceof Sync && ((Sync)t).getState() == States.STARTED){
-                                            FPLog.w("--------> Filter:" + filter);
-                                        }
                                         command.execute(t);
                                     }
                                 } else {
