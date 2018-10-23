@@ -1,6 +1,7 @@
 package com.fitpay.android.api.models.user;
 
 import com.fitpay.android.TestActions;
+import com.fitpay.android.TestConstants;
 import com.fitpay.android.TestUtils;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ResultProvidingCallback;
@@ -8,7 +9,6 @@ import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.security.OAuthToken;
 import com.fitpay.android.utils.NamedResource;
 
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -26,25 +26,12 @@ public class UserTest2 extends TestActions {
     @ClassRule
     public static NamedResource rule = new NamedResource(UserTest2.class);
 
-    @Override
-    @Before
-    public void before() throws Exception {
-        userName = "userName@useremail.com";
-        pin = TestUtils.getRandomLengthNumber(4, 4);
-
-        this.user = createUser(getNewTestUser(userName, pin));
-        assertNotNull(this.user);
-
-        loginIdentity = getTestLoginIdentity(userName, pin);
-        doLogin(loginIdentity);
-    }
-
     @Test
     public void testCanGetUser() throws Exception {
-        this.user = getUser();
-        assertNotNull(user);
-        assertEquals("userName", userName, user.getUsername());
-        assertEquals("email", userName, user.getEmail());
+        if (TestConstants.testConfig.useRealTests()) {
+            assertEquals("userName", userName, user.getUsername());
+            assertEquals("email", userName, user.getEmail());
+        }
         assertNotNull("user connectorId", user.getId());
         assertNotNull("created ts", user.getCreatedTsEpoch());
     }
@@ -52,8 +39,6 @@ public class UserTest2 extends TestActions {
     @Test
     @Ignore  // this test does not work in demo environment since does auto-login
     public void testCantLoginWithDifferentPassword() throws Exception {
-        this.user = getUser();
-        assertNotNull(user);
         LoginIdentity badCredentials = getTestLoginIdentity(userName, TestUtils.getRandomLengthNumber(4, 4));
 
         final CountDownLatch latch = new CountDownLatch(1);
@@ -67,17 +52,13 @@ public class UserTest2 extends TestActions {
 
     @Test
     public void testCanRepeatLogin() throws Exception {
-        this.user = getUser();
-        assertNotNull(user);
         doLogin(loginIdentity);
-        User user2  = getUser();
+        User user2 = getUser();
         assertEquals("should be the same user", user.getId(), user2.getId());
     }
 
     @Test
     public void testUserCanGetSelf() throws Exception {
-        this.user = getUser();
-
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<User> callback = new ResultProvidingCallback<>(latch);
         user.self(callback);
@@ -93,8 +74,6 @@ public class UserTest2 extends TestActions {
 
     @Test
     public void testNewUserCanGetCards() throws Exception {
-        this.user = getUser();
-
         Collections.CreditCardCollection creditCards = getCreditCards(user);
 
         assertNotNull("credit card collection", creditCards);
@@ -104,8 +83,6 @@ public class UserTest2 extends TestActions {
 
     @Test
     public void testNewUserCanGetDevices() throws Exception {
-        this.user = getUser();
-
         Collections.DeviceCollection collection = getDevices(user);
 
         assertNotNull("device collection", collection);
@@ -118,9 +95,6 @@ public class UserTest2 extends TestActions {
     @Ignore
     //TODO Comparing to edge tests, should not be able to get user after delete.   Why can we here?
     public void testCantGetDeletedUser() throws Exception {
-        this.user = getUser();
-        assertNotNull(user);
-
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<Void> callback = new ResultProvidingCallback<>(latch);
         this.user.deleteUser(callback);

@@ -6,6 +6,7 @@ import com.fitpay.android.R;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.ResponseState;
 import com.fitpay.android.api.enums.ResultCode;
+import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Commit;
 import com.fitpay.android.api.models.device.CommitConfirm;
 import com.fitpay.android.api.models.device.Device;
@@ -36,7 +37,9 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import rx.Observable;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
+import io.reactivex.disposables.Disposable;
 
 import static com.fitpay.android.utils.Constants.SYNC_DATA;
 
@@ -187,7 +190,7 @@ public final class SyncWorkerTask implements Runnable {
         // get all the new commits from the last commit pointer processed
         FPLog.d(TAG, "retrieving commits from the lastCommitId: " + deviceData.getLastCommitId() + ", for syncRequest: " + syncRequest);
 
-        Observable<com.fitpay.android.api.models.collection.Collections.CommitsCollection> observable;
+        Single<Collections.CommitsCollection> observable;
 
         String lastCommitId = deviceData.getLastCommitId();
 
@@ -197,54 +200,62 @@ public final class SyncWorkerTask implements Runnable {
             observable = device.getAllCommits(lastCommitId);
         }
 
-        observable.compose(RxBus.applySchedulersExecutorThread())
-                .subscribe(
-                        commitsCollection -> {
-                            syncProcess.setCommits(commitsCollection.getResults());
+        observable.subscribe(new SingleObserver<Collections.CommitsCollection>() {
+            @Override
+            public void onSubscribe(Disposable d) {
 
-                            FPLog.i(SYNC_DATA, "Commits Received: " + syncProcess.size());
+            }
 
-                            if (syncProcess.size() > 0) {
-                                RxBus.getInstance().post(connectorId, new DeviceStatusMessage(
-                                        mContext.getString(R.string.fp_updates_available),
-                                        deviceId,
-                                        DeviceStatusMessage.SUCCESS));
+            @Override
+            public void onSuccess(Collections.CommitsCollection commitsCollection) {
+                syncProcess.setCommits(commitsCollection.getResults());
 
-                                RxBus.getInstance().post(connectorId, new DeviceStatusMessage(
-                                        mContext.getString(R.string.fp_sync_started),
-                                        deviceId,
-                                        DeviceStatusMessage.PROGRESS));
+                FPLog.i(SYNC_DATA, "Commits Received: " + syncProcess.size());
 
-                                processNextCommit();
-                            } else {
-                                RxBus.getInstance().post(connectorId, new DeviceStatusMessage(
-                                        mContext.getString(R.string.fp_no_pending_updates),
-                                        deviceId,
-                                        DeviceStatusMessage.SUCCESS));
+                if (syncProcess.size() > 0) {
+                    RxBus.getInstance().post(connectorId, new DeviceStatusMessage(
+                            mContext.getString(R.string.fp_updates_available),
+                            deviceId,
+                            DeviceStatusMessage.SUCCESS));
 
-                                RxBus.getInstance().post(connectorId, Sync.builder()
-                                        .syncId(syncRequest.getSyncId())
-                                        .state(States.COMPLETED_NO_UPDATES)
-                                        .build());
-                            }
-                        },
-                        throwable -> {
-                            FPLog.e(TAG, throwable);
+                    RxBus.getInstance().post(connectorId, new DeviceStatusMessage(
+                            mContext.getString(R.string.fp_sync_started),
+                            deviceId,
+                            DeviceStatusMessage.PROGRESS));
 
-                            if (throwable instanceof DeviceOperationException) {
-                                DeviceOperationException doe = (DeviceOperationException) throwable;
-                                FPLog.e(TAG, "get commits failed.  reasonCode: " + doe.getErrorCode() + ",  " + doe.getMessage());
+                    processNextCommit();
+                } else {
+                    RxBus.getInstance().post(connectorId, new DeviceStatusMessage(
+                            mContext.getString(R.string.fp_no_pending_updates),
+                            deviceId,
+                            DeviceStatusMessage.SUCCESS));
 
-                            } else {
-                                FPLog.e(TAG, "get commits failed. " + throwable.getMessage());
-                            }
+                    RxBus.getInstance().post(connectorId, Sync.builder()
+                            .syncId(syncRequest.getSyncId())
+                            .state(States.COMPLETED_NO_UPDATES)
+                            .build());
+                }
+            }
 
-                            RxBus.getInstance().post(connectorId, Sync.builder()
-                                    .syncId(syncRequest.getSyncId())
-                                    .state(States.FAILED)
-                                    .message(throwable.getMessage())
-                                    .build());
-                        });
+            @Override
+            public void onError(Throwable throwable) {
+                FPLog.e(TAG, throwable);
+
+                if (throwable instanceof DeviceOperationException) {
+                    DeviceOperationException doe = (DeviceOperationException) throwable;
+                    FPLog.e(TAG, "get commits failed.  reasonCode: " + doe.getErrorCode() + ",  " + doe.getMessage());
+
+                } else {
+                    FPLog.e(TAG, "get commits failed. " + throwable.getMessage());
+                }
+
+                RxBus.getInstance().post(connectorId, Sync.builder()
+                        .syncId(syncRequest.getSyncId())
+                        .state(States.FAILED)
+                        .message(throwable.getMessage())
+                        .build());
+            }
+        });
     }
 
     private void processNextCommit() {
@@ -343,6 +354,7 @@ public final class SyncWorkerTask implements Runnable {
 
             switch (syncEvent.getState()) {
                 case States.STARTED:
+
                     FPLog.d(TAG, "sync started: " + syncEvent);
                     syncProcess = new SyncProcess(syncRequest);
                     syncProcess.start();

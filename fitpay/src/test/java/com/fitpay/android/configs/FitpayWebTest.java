@@ -34,7 +34,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import rx.schedulers.Schedulers;
+import io.reactivex.schedulers.Schedulers;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class FitpayWebTest extends TestActions {
@@ -138,7 +138,7 @@ public class FitpayWebTest extends TestActions {
 
         AtomicReference<IdVerificationRequest> idRequestRef = new AtomicReference<>();
         IdVerificationRequestListener listener = new IdVerificationRequestListener(deviceConnector.id(), latch, idRequestRef);
-        NotificationManager.getInstance().addListener(listener, Schedulers.immediate());
+        NotificationManager.getInstance().addListener(listener, Schedulers.trampoline());
 
         RtmMessage testMessage = new RtmMessage("1", "", "myEvent");
         RxBus.getInstance().post(deviceConnector.id(), testMessage);

@@ -1,6 +1,5 @@
 package com.fitpay.android.api.models.security;
 
-import com.fitpay.android.TestConstants;
 import com.fitpay.android.utils.NamedResource;
 
 import org.junit.Assert;

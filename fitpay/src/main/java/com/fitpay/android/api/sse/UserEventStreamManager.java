@@ -14,9 +14,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
-import rx.Observable;
-import rx.schedulers.Schedulers;
 
 /**
  * This class manages the subscribing and unsubscribing from the user event stream of the FitPay platform.  The subscription
@@ -55,11 +55,10 @@ public class UserEventStreamManager {
         // why this background execution, well android.. we don't want these network calls to
         // occur on the UI thread, therefore they're backgrounded.
         if (stream == null) {
+
             return executor.submit(() -> {
 
-                UserEventStream[] result = new UserEventStream[1];
-
-                Observable.defer(() -> {
+                UserEventStream result = Single.<UserEventStream>create(emitter -> {
                     try {
                         FitPayClient client = ApiManager.getInstance().getClient();
                         Response<User> user = client.getUser(userId).execute();
@@ -74,16 +73,14 @@ public class UserEventStreamManager {
                                 eventStream = existing;
                             }
 
-                            result[0] = eventStream;
+                            emitter.onSuccess(eventStream);
                         }
                     } catch (IOException e) {
-                        FPLog.e(e);
+                        emitter.onError(e);
                     }
+                }).subscribeOn(Schedulers.io()).blockingGet();
 
-                    return Observable.empty();
-                }).subscribeOn(Schedulers.io()).toBlocking().subscribe();
-
-                return result[0];
+                return result;
             });
 
         }

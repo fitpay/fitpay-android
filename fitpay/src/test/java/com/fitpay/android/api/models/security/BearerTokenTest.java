@@ -5,6 +5,7 @@ import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.ResultCode;
 import com.fitpay.android.api.models.user.User;
+import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.Listener;
 import com.fitpay.android.utils.NamedResource;
 import com.fitpay.android.utils.NotificationManager;
@@ -64,7 +65,7 @@ public class BearerTokenTest extends BaseTestActions {
 
             @Override
             public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
-                System.out.println(errorMessage);
+                FPLog.e(errorMessage);
                 codes.add(errorCode);
                 latch.countDown();
 

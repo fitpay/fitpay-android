@@ -5,18 +5,17 @@ import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.ResetDeviceStatus;
 import com.fitpay.android.api.models.collection.Collections;
+import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.NamedResource;
 
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import rx.Observable;
-import rx.functions.Func1;
+import io.reactivex.Single;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -42,46 +41,40 @@ public class ResetDeviceTest extends TestActions {
 
         final AtomicReference<String> status = new AtomicReference<>();
 
-        rx.Observable.create((Observable.OnSubscribe<ResetDeviceResult>) subscriber ->
-                ApiManager.getInstance().resetPaymentDevice(user.getId(), createdDevice.getDeviceIdentifier(), new ApiCallback<ResetDeviceResult>() {
-                    @Override
-                    public void onSuccess(ResetDeviceResult result) {
-                        subscriber.onNext(result);
-                        subscriber.onCompleted();
-                    }
+        Single.<ResetDeviceResult>create(emitter -> {
+            ApiManager.getInstance().resetPaymentDevice(user.getId(), createdDevice.getDeviceIdentifier(), new ApiCallback<ResetDeviceResult>() {
+                @Override
+                public void onSuccess(ResetDeviceResult result) {
+                    emitter.onSuccess(result);
+                }
 
-                    @Override
-                    public void onFailure(int errorCode, String errorMessage) {
-                        subscriber.onError(new Exception(errorMessage));
-                    }
-                })).flatMap(resetDeviceResult -> Observable.create((Observable.OnSubscribe<String>) subscriber ->
+                @Override
+                public void onFailure(int errorCode, String errorMessage) {
+                    emitter.onError(new Exception(errorMessage));
+                }
+            });
+        }).flatMap(resetDeviceResult -> {
+            return Single.create(emitter -> {
                 ApiManager.getInstance().getResetPaymentDeviceStatus(resetDeviceResult.getResetId(), new ApiCallback<ResetDeviceResult>() {
                     @Override
                     public void onSuccess(ResetDeviceResult result) {
                         String resetStatus = result.getResetStatus();
                         status.set(resetStatus);
-
-                        subscriber.onNext(resetStatus);
-                        subscriber.onCompleted();
+                        emitter.onSuccess(resetStatus);
                     }
 
                     @Override
                     public void onFailure(int errorCode, String errorMessage) {
-                        subscriber.onError(new Exception(errorMessage));
+                        emitter.onError(new Exception(errorMessage));
                     }
-                }))
-                .repeatWhen(observable -> observable.flatMap((Func1<Void, Observable<?>>) aVoid -> {
-                    if (status.get() == null || ResetDeviceStatus.IN_PROGRESS.equals(status.get())) {
-                        return Observable.timer(10, TimeUnit.SECONDS);
-                    } else {
-                        return Observable.just(null);
-                    }
-                }).takeWhile(Objects::nonNull)))
-                .subscribe(resetStatus -> {
-                }, throwable -> {
-                }, latch::countDown);
+                });
+            }).repeatWhen(objectFlowable -> objectFlowable.delay(10, TimeUnit.SECONDS))
+                    .takeUntil(o -> status.get() != null && !ResetDeviceStatus.IN_PROGRESS.equals(status.get()))
+                    .lastOrError();
+        }).subscribe(resetStatus -> latch.countDown(), throwable -> FPLog.e(throwable.toString()));
 
         latch.await(120, TimeUnit.SECONDS);
+
         assertEquals("reset device status", ResetDeviceStatus.RESET_COMPLETE, status.get());
     }
 }

@@ -7,7 +7,6 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
-import android.os.AsyncTask;
 
 import com.fitpay.android.paymentdevice.constants.States;
 import com.fitpay.android.paymentdevice.enums.ApduExecutionError;
@@ -29,8 +28,12 @@ import com.fitpay.android.utils.RxBus;
 
 import java.io.IOException;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
-import rx.Observable;
+import io.reactivex.Completable;
+import io.reactivex.CompletableEmitter;
+import io.reactivex.Single;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Manager that works with Bluetooth GATT Profile.
@@ -51,7 +54,7 @@ final class GattManager {
     private ContinuationPayload mContinuationPayload = null;
     private int mLastApduSequenceId;
 
-    private AsyncTask<Void, Void, Void> mCurrentOperationTimeout;
+    private Disposable mCurrentOperationTimeout;
 
     public GattManager(PaymentDeviceConnectable paymentDeviceConnector, Context context, BluetoothDevice device) {
         this.paymentDeviceConnector = paymentDeviceConnector;
@@ -66,7 +69,7 @@ final class GattManager {
 
     public synchronized void disconnect() {
         if (mCurrentOperationTimeout != null) {
-            mCurrentOperationTimeout.cancel(true);
+            mCurrentOperationTimeout.dispose();
         }
 
         setCurrentOperation(null);
@@ -110,7 +113,7 @@ final class GattManager {
             FPLog.i(TAG, "Queue empty, drive loop stopped.");
             mCurrentOperation = null;
             if (mCurrentOperationTimeout != null) {
-                mCurrentOperationTimeout.cancel(true);
+                mCurrentOperationTimeout.dispose();
             }
             return;
         }
@@ -367,45 +370,24 @@ final class GattManager {
 
     private void resetTimer(final long timeout) {
         if (mCurrentOperationTimeout != null) {
-            mCurrentOperationTimeout.cancel(true);
+            mCurrentOperationTimeout.dispose();
         }
-        mCurrentOperationTimeout = new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected synchronized Void doInBackground(Void... voids) {
-                try {
-                    FPLog.i(TAG, "Starting to do a background timeout");
-                    wait(timeout);
-                } catch (InterruptedException e) {
-                    FPLog.i(TAG, "was interrupted out of the timeout");
-                }
-                if (isCancelled()) {
-                    FPLog.i(TAG, "The timeout was cancelled, so we do nothing.");
-                    return null;
-                }
-                FPLog.i(TAG, "Timeout ran to completion, time to cancel the entire operation bundle. Abort, abort!");
-                cancelCurrentOperationBundle();
-                return null;
-            }
-
-            @Override
-            protected synchronized void onCancelled() {
-                super.onCancelled();
-                notify();
-            }
-        }.execute();
+        mCurrentOperationTimeout = Single.timer(timeout, TimeUnit.MILLISECONDS)
+                .doOnDispose(() -> FPLog.i(TAG, "The timeout was cancelled, so we do nothing."))
+                .subscribe(x -> {
+                    FPLog.i(TAG, "Timeout ran to completion, time to cancel the entire operation bundle. Abort, abort!");
+                    cancelCurrentOperationBundle();
+                });
     }
 
+    @SuppressWarnings("CheckResult")
     private void postMessage(final ApduResultMessage message) {
         RxBus.getInstance().post(paymentDeviceConnector.id(), message);
 
-        Observable.create(
-                subscriber -> {
-                    subscriber.onNext(null);
-                    subscriber.onCompleted();
-                })
-                .compose(RxBus.applySchedulersMainThread())
-                .subscribe(o -> {
-                }, throwable -> {
-                }, this::driveNext);
+
+        Completable.create(CompletableEmitter::onComplete)
+                .compose(RxBus.applySchedulersMainThread(Completable.class))
+                .subscribe(this::driveNext, throwable -> {
+                });
     }
 }

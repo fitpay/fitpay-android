@@ -18,8 +18,7 @@ import com.fitpay.android.utils.TimestampUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-import rx.Observable;
-import rx.Subscriber;
+import io.reactivex.Single;
 
 /**
  * Payment Device Information
@@ -185,29 +184,22 @@ public final class Device extends DeviceModel implements Parcelable {
      * @param lastCommitId last commit id
      * @return observable
      */
-    public Observable<Collections.CommitsCollection> getAllCommits(final String lastCommitId) {
-        return Observable.create(new Observable.OnSubscribe<Collections.CommitsCollection>() {
+    public Single<Collections.CommitsCollection> getAllCommits(final String lastCommitId) {
+        return Single.create(emitter -> getAllCommits(lastCommitId, new ApiCallback<Collections.CommitsCollection>() {
             @Override
-            public void call(Subscriber<? super Collections.CommitsCollection> subscriber) {
-                getAllCommits(lastCommitId, new ApiCallback<Collections.CommitsCollection>() {
-                    @Override
-                    public void onSuccess(Collections.CommitsCollection result) {
-                        if (result == null) {
-                            subscriber.onError(new Exception("commits result is null"));
-                            return;
-                        }
-
-                        subscriber.onNext(result);
-                        subscriber.onCompleted();
-                    }
-
-                    @Override
-                    public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
-                        subscriber.onError(new DeviceOperationException(errorMessage, errorCode));
-                    }
-                });
+            public void onSuccess(Collections.CommitsCollection result) {
+                if (result == null) {
+                    emitter.onError(new Exception("commits result is null"));
+                } else {
+                    emitter.onSuccess(result);
+                }
             }
-        });
+
+            @Override
+            public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
+                emitter.onError(new DeviceOperationException(errorMessage, errorCode));
+            }
+        }));
     }
 
     /**
@@ -225,17 +217,16 @@ public final class Device extends DeviceModel implements Parcelable {
      *
      * @return observable
      */
-    public Observable<Commit> getLastAckCommit() {
-        return Observable.create(subscriber -> getLastAckCommit(new ApiCallback<Commit>() {
+    public Single<Commit> getLastAckCommit() {
+        return Single.create(emitter -> getLastAckCommit(new ApiCallback<Commit>() {
             @Override
             public void onSuccess(Commit result) {
-                subscriber.onNext(result);
-                subscriber.onCompleted();
+                emitter.onSuccess(result);
             }
 
             @Override
             public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
-                subscriber.onError(new DeviceOperationException(errorMessage, errorCode));
+                emitter.onError(new DeviceOperationException(errorMessage, errorCode));
             }
         }));
     }
@@ -245,7 +236,7 @@ public final class Device extends DeviceModel implements Parcelable {
      *
      * @return observable
      */
-    public Observable<Collections.CommitsCollection> getAllCommitsAfterLastAckCommit() {
+    public Single<Collections.CommitsCollection> getAllCommitsAfterLastAckCommit() {
         return getLastAckCommit().flatMap(commit -> getAllCommits(commit != null ? commit.commitId : null));
     }
 
@@ -268,17 +259,16 @@ public final class Device extends DeviceModel implements Parcelable {
      *
      * @return observable
      */
-    public Observable<ResetDeviceResult> resetDevice() {
-        return Observable.create(subscriber -> resetDevice(new ApiCallback<ResetDeviceResult>() {
+    public Single<ResetDeviceResult> resetDevice() {
+        return Single.create(emitter -> resetDevice(new ApiCallback<ResetDeviceResult>() {
             @Override
             public void onSuccess(ResetDeviceResult result) {
-                subscriber.onNext(result);
-                subscriber.onCompleted();
+                emitter.onSuccess(result);
             }
 
             @Override
             public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
-                subscriber.onError(new DeviceOperationException(errorMessage, errorCode));
+                emitter.onError(new DeviceOperationException(errorMessage, errorCode));
             }
         }));
     }
