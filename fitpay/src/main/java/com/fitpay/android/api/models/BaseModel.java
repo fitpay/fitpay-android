@@ -1,6 +1,7 @@
 package com.fitpay.android.api.models;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
@@ -30,6 +31,7 @@ public class BaseModel {
         makeGetCall(SELF, null, getClass(), callback);
     }
 
+    @Nullable
     public String getLinkUrl(String key) {
         if (null == links) {
             return null;
@@ -38,6 +40,7 @@ public class BaseModel {
         return links.getLink(key);
     }
 
+    @Nullable
     public Link getLink(String key) {
         if (null == links) {
             return null;

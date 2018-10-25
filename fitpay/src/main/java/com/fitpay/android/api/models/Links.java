@@ -6,6 +6,8 @@ import android.os.Parcelable;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.reactivex.annotations.Nullable;
+
 /**
  * Generated server links. HATEOAS representation
  */
@@ -25,6 +27,7 @@ public final class Links implements Parcelable {
         links.put(key, link);
     }
 
+    @Nullable
     public String getLink(String key) {
         if (links.containsKey(key)) {
             Link link = links.get(key);
@@ -42,6 +45,7 @@ public final class Links implements Parcelable {
         return "none";
     }
 
+    @Nullable
     Link getFullLink(String key) {
         if (links.containsKey(key)) {
             return links.get(key);
