@@ -280,7 +280,7 @@ public class FitpayWeb {
      *
      * @param link returned from User or CreditCard object
      */
-    public void loadUrl(Link link) {
+    public void loadLink(Link link) {
         String url = link.getHref();
 
         if (link.getTemplated()) {
