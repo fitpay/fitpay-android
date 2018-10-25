@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.CardInitiators;
 import com.fitpay.android.api.models.AssetReference;
+import com.fitpay.android.api.models.Link;
 import com.fitpay.android.api.models.Links;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.user.User;
@@ -29,6 +30,18 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
     private static final String MAKE_DEFAULT = "makeDefault";
     private static final String SELECTED_VERIFICATION = "selectedVerification";
     private static final String VERIFICATION_METHODS = "verificationMethods";
+    private static final String WEBAPP_CARD = "webapp.card";
+
+
+    /**
+     * Get webappWallet url
+     *
+     * @return webappWallet url
+     */
+    @Nullable
+    public Link getWebappCardLink() {
+        return getLink(WEBAPP_CARD);
+    }
 
     /**
      * Indicate a user has accepted the terms and conditions presented
@@ -38,10 +51,10 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
      *
      * <b>Important note:</b>
      * <p>
-     * @see User#createCreditCard
-     * <p>
      *
      * @param callback result callback
+     * @see User#createCreditCard
+     * <p>
      */
     public void acceptTerms(@NonNull ApiCallback<CreditCard> callback) {
         makePostCall(ACCEPT_TERMS, null, CreditCard.class, callback);
@@ -51,6 +64,14 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
         return hasLink(ACCEPT_TERMS);
     }
 
+    /**
+     * Returns if variable has Link
+     *
+     * @param linkName key for link
+     * @return Boolean
+     * @deprecated as of v1.3 use can... functions instead
+     */
+    @Deprecated
     public boolean hasLink(String linkName) {
         return null != links.getLink(linkName);
     }
@@ -68,7 +89,7 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
     }
 
     public boolean canDeclineTerms() {
-        return hasLink(DECLINE_TERMS);
+        return links.getLink(DECLINE_TERMS) != null;
     }
 
     /**
@@ -83,7 +104,7 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
     }
 
     public boolean canReactivate() {
-        return hasLink(REACTIVATE);
+        return links.getLink(REACTIVATE) != null;
     }
 
     /**
@@ -98,7 +119,7 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
     }
 
     public boolean canDeactivate() {
-        return hasLink(DEACTIVATE);
+        return links.getLink(DEACTIVATE) != null;
     }
 
 
@@ -110,7 +131,7 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
      *
      * @param callback result callback
      */
-    public void makeDefault( @NonNull ApiCallback<Void> callback) {
+    public void makeDefault(@NonNull ApiCallback<Void> callback) {
         makePostCall(MAKE_DEFAULT, null, Void.class, callback);
     }
 
@@ -127,7 +148,7 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
     }
 
     public boolean canMakeDefault() {
-        return hasLink(MAKE_DEFAULT);
+        return links.getLink(MAKE_DEFAULT) != null;
     }
 
 
@@ -145,15 +166,15 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
     }
 
     public boolean canDelete() {
-        return !state.equals("DELETED") && hasLink(SELF);
+        return links.getLink(SELF) != null;
     }
 
     /**
      * Update the details of an existing credit card.
      *
-     * @param name name
-     * @param address address {@link Address}
-     * @param callback   result callback
+     * @param name     name
+     * @param address  address {@link Address}
+     * @param callback result callback
      */
     public void updateCard(String name, Address address, @NonNull ApiCallback<CreditCard> callback) {
         CreditCardUpdateModel updateModel = new CreditCardUpdateModel();
@@ -163,9 +184,8 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
     }
 
     public boolean canUpdateCard() {
-        return !state.equals("DELETED") && hasLink(SELF);
+        return links.getLink(SELF) != null;
     }
-
 
     /**
      * Get all transactions.
@@ -182,17 +202,17 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
     }
 
     public boolean canGetTransactions() {
-        return hasLink(TRANSACTIONS);
+        return links.getLink(TRANSACTIONS) != null;
     }
 
     /**
      * Get acceptTerms url
      *
      * <p>
-     * @see User#createCreditCard
-     * <p>
      *
      * @return acceptTerms url
+     * @see User#createCreditCard
+     * <p>
      */
     @Nullable
     public String getAcceptTermsUrl() {
@@ -203,13 +223,13 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
      * Update acceptTerms url
      *
      * <p>
-     * @see User#createCreditCard
-     * </p>
      *
      * @param acceptTermsUrl url
+     * @see User#createCreditCard
+     * </p>
      */
-    public void setAcceptTermsUrl(@NonNull String acceptTermsUrl) throws IllegalAccessException{
-        if (hasLink(ACCEPT_TERMS)) {
+    public void setAcceptTermsUrl(@NonNull String acceptTermsUrl) throws IllegalAccessException {
+        if (getLinkUrl(ACCEPT_TERMS) != null) {
             links.setLink(ACCEPT_TERMS, acceptTermsUrl);
         } else {
             throw new IllegalAccessException("The card is not in a state to accept terms anymore");
@@ -246,7 +266,6 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.creditCardId);
         dest.writeString(this.userId);
-        dest.writeValue(this.defaultX);
         dest.writeValue(this.createdTsEpoch);
         dest.writeValue(this.lastModifiedTsEpoch);
         dest.writeString(this.state);
@@ -267,7 +286,6 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
     protected CreditCard(Parcel in) {
         this.creditCardId = in.readString();
         this.userId = in.readString();
-        this.defaultX = (Boolean) in.readValue(Boolean.class.getClassLoader());
         this.createdTsEpoch = (Long) in.readValue(Long.class.getClassLoader());
         this.lastModifiedTsEpoch = (Long) in.readValue(Long.class.getClassLoader());
         this.state = in.readString();

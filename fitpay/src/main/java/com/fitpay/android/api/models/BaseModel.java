@@ -38,6 +38,14 @@ public class BaseModel {
         return links.getLink(key);
     }
 
+    public Link getLink(String key) {
+        if (null == links) {
+            return null;
+        }
+
+        return links.getFullLink(key);
+    }
+
     private <T> String getLink(String key, ApiCallback<T> callback) {
         if (null == links) {
             callback.onFailure(ResultCode.NOT_FOUND, "The hypermedia link relationship [" + key + "] was not found, no links available for: " + this);

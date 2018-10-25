@@ -7,23 +7,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Generated server links. HATEOS representation
+ * Generated server links. HATEOAS representation
  */
 public final class Links implements Parcelable {
 
-    private final Map<String, String> links;
+    private final Map<String, Link> links;
 
     public Links() {
         links = new HashMap<>();
     }
 
     public void setLink(String key, String value) {
-        links.put(key, value);
+        links.put(key, new Link(value, false));
+    }
+
+    public void setLink(String key, Link link) {
+        links.put(key, link);
     }
 
     public String getLink(String key) {
         if (links.containsKey(key)) {
-            return links.get(key);
+            Link link = links.get(key);
+            return link.getHref();
         }
 
         return null;
@@ -31,14 +36,18 @@ public final class Links implements Parcelable {
 
     public String getReadableKeys() {
         if (links.keySet().size() > 0) {
-            String availableLinks = links.keySet().toString();
-            if (!availableLinks.contains("self")) {
-                availableLinks = "self, " + availableLinks;
-            }
-            return availableLinks;
+            return links.keySet().toString();
         }
 
-        return "self";
+        return "none";
+    }
+
+    Link getFullLink(String key) {
+        if (links.containsKey(key)) {
+            return links.get(key);
+        }
+
+        return null;
     }
 
     @Override
@@ -51,20 +60,20 @@ public final class Links implements Parcelable {
         final int N = links.size();
         dest.writeInt(N);
         if (N > 0) {
-            for (Map.Entry<String, String> entry : links.entrySet()) {
+            for (Map.Entry<String, Link> entry : links.entrySet()) {
                 dest.writeString(entry.getKey());
-                dest.writeString(entry.getValue());
+                dest.writeString(entry.getValue().toString());
             }
         }
     }
 
-    protected Links(Parcel in) {
+    private Links(Parcel in) {
         final int N = in.readInt();
         links = new HashMap<>();
         for (int i = 0; i < N; i++) {
             String key = in.readString();
             String value = in.readString();
-            links.put(key, value);
+            links.put(key, new Link(value, false));
         }
     }
 
