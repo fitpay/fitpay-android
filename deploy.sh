@@ -37,7 +37,6 @@ git push
 git checkout master
 git pull
 git merge develop -m "v$2 merge develop"
-git push
 
 # check for conflicts
 CONFLICTS=$(git ls-files -u | wc -l)
