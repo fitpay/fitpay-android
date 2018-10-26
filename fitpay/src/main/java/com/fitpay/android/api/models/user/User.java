@@ -3,10 +3,12 @@ package com.fitpay.android.api.models.user;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.ResultCode;
+import com.fitpay.android.api.models.Link;
 import com.fitpay.android.api.models.Links;
 import com.fitpay.android.api.models.card.CreditCard;
 import com.fitpay.android.api.models.card.CreditCardInfo;
@@ -24,6 +26,8 @@ public final class User extends UserModel implements Parcelable {
 
     private static final String GET_DEVICES = "devices";
     private static final String GET_CARDS = "creditCards";
+    private static final String EVENT_STREAM = "eventStream";
+    private static final String WEBAPP_WALLET = "webapp.wallet";
 
     public User() {
     }
@@ -66,6 +70,26 @@ public final class User extends UserModel implements Parcelable {
             return new User[size];
         }
     };
+
+    /**
+     * Get eventStream url
+     *
+     * @return eventStream url
+     */
+    @Nullable
+    public Link getEventStreamLink() {
+        return getLink(EVENT_STREAM);
+    }
+
+    /**
+     * Get webappWallet url
+     *
+     * @return webappWallet url
+     */
+    @Nullable
+    public Link getWebappWalletLink() {
+        return getLink(WEBAPP_WALLET);
+    }
 
     /**
      * Delete user from your organization.
@@ -121,7 +145,9 @@ public final class User extends UserModel implements Parcelable {
      *
      * @param cardId   the Id of the device to be retrieved
      * @param callback result callback
+     * @deprecated as of v1.3 - Follow HATEOAS from getCreditCards instead
      */
+    @Deprecated
     public void getCreditCard(String cardId, @NonNull ApiCallback<CreditCard> callback) {
         makeGetCall(GET_CARDS, cardId, null, CreditCard.class, callback);
     }
@@ -145,7 +171,9 @@ public final class User extends UserModel implements Parcelable {
      *
      * @param deviceId the Id of the device to be retrieved
      * @param callback result callback
+     * @deprecated as of v1.3 - Follow HATEOAS from getDevices instead
      */
+    @Deprecated
     public void getDevice(String deviceId, @NonNull ApiCallback<Device> callback) {
         makeGetCall(GET_DEVICES, deviceId, null, Device.class, callback);
     }
@@ -154,7 +182,9 @@ public final class User extends UserModel implements Parcelable {
      * retrieve the user's current payment enabled device, if not found a null will be returned
      *
      * @param callback result callback
+     * @deprecated as of v1.3 - Use getDevices and filter client side instead
      */
+    @Deprecated
     public void getPaymentDevice(@NonNull ApiCallback<Device> callback) {
         getDevices(1, 0, new ApiCallback<Collections.DeviceCollection>() {
             @Override
@@ -198,8 +228,8 @@ public final class User extends UserModel implements Parcelable {
      * </p>
      *
      * @param creditCardInfo credit card data:(pan, expMonth, expYear, cvv, name,
-     *                   address data:(street1, street2, street3, city, state, postalCode, country))
-     * @param callback result callback
+     *                       address data:(street1, street2, street3, city, state, postalCode, country))
+     * @param callback       result callback
      */
     public void createCreditCard(@NonNull CreditCardInfo creditCardInfo, @NonNull ApiCallback<CreditCard> callback) {
         Map<String, Object> queryMap = new HashMap<>(1);
@@ -223,9 +253,9 @@ public final class User extends UserModel implements Parcelable {
      * </p>
      *
      * @param creditCardInfo credit card data:(pan, expMonth, expYear, cvv, name,
-     *                   address data:(street1, street2, street3, city, state, postalCode, country))
-     * @param deviceId id of the device the credit card should create a credential for
-     * @param callback result callback
+     *                       address data:(street1, street2, street3, city, state, postalCode, country))
+     * @param deviceId       id of the device the credit card should create a credential for
+     * @param callback       result callback
      */
     public void createCreditCard(@NonNull CreditCardInfo creditCardInfo, @NonNull String deviceId, @NonNull ApiCallback<CreditCard> callback) {
         Map<String, Object> queryMap = new HashMap<>(2);
@@ -323,7 +353,6 @@ public final class User extends UserModel implements Parcelable {
          */
         public Builder setOriginAccountCreatedAt(long originAccountCreatedAt) {
             this.originAccountCreatedAtEpoch = originAccountCreatedAt;
-//            this.originAccountCreatedAt = TimestampUtils.getISO8601StringForTime(originAccountCreatedAt);
             return this;
         }
 
@@ -335,7 +364,6 @@ public final class User extends UserModel implements Parcelable {
          */
         public Builder setTermsAcceptedAt(long termsAcceptedAt) {
             this.termsAcceptedAtEpoch = termsAcceptedAt;
-//            this.termsAcceptedAt = TimestampUtils.getISO8601StringForTime(termsAcceptedAt);
             return this;
         }
 

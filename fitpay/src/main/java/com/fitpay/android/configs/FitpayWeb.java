@@ -17,6 +17,7 @@ import com.fitpay.android.a2averification.A2AIssuerResponse;
 import com.fitpay.android.a2averification.A2AVerificationError;
 import com.fitpay.android.a2averification.A2AVerificationFailed;
 import com.fitpay.android.a2averification.A2AVerificationRequest;
+import com.fitpay.android.api.models.Link;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.cardscanner.IFitPayCardScanner;
 import com.fitpay.android.paymentdevice.interfaces.PaymentDeviceConnectable;
@@ -271,6 +272,21 @@ public class FitpayWeb {
         if (StringUtils.isEmpty(FitpayConfig.webURL)) {
             throw new NullPointerException("Fitpay config is not initialized");
         }
+        mWebView.loadUrl(url);
+    }
+
+    /**
+     * Loads valid web links
+     *
+     * @param link returned from User or CreditCard object
+     */
+    public void loadLink(Link link) {
+        String url = link.getHref();
+
+        if (link.getTemplated()) {
+            url = url.replace("{config}", mConfig.getEncodedString());
+        }
+
         mWebView.loadUrl(url);
     }
 

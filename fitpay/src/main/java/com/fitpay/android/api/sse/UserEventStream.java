@@ -1,5 +1,6 @@
 package com.fitpay.android.api.sse;
 
+import com.fitpay.android.api.models.Link;
 import com.fitpay.android.api.models.UserStreamEvent;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.api.services.BaseClient;
@@ -39,10 +40,10 @@ public class UserEventStream {
 
         this.user = user;
 
-        String eventStreamUrl = user.getLinkUrl("eventStream");
+        Link eventStreamUrl = user.getEventStreamLink();
         assert eventStreamUrl != null;
 
-        Request request = new Request.Builder().url(eventStreamUrl).build();
+        Request request = new Request.Builder().url(eventStreamUrl.getHref()).build();
         OkSse okSse = new OkSse(BaseClient
                 .getOkHttpClient(false) // don't enable logging, that interceptor doesn't work with SSE streams
                 .readTimeout(0, TimeUnit.MILLISECONDS)

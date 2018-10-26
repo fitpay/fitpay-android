@@ -1,7 +1,7 @@
 package com.fitpay.android.utils;
 
-
 import com.fitpay.android.api.models.ErrorResponse;
+import com.fitpay.android.api.models.Link;
 import com.fitpay.android.api.models.Links;
 import com.fitpay.android.api.models.Payload;
 import com.fitpay.android.api.models.apdu.ApduPackage;
@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- */
 final class ModelAdapter {
 
     private static final String TAG = ModelAdapter.class.getSimpleName();
@@ -119,7 +117,10 @@ final class ModelAdapter {
 
             Set<Map.Entry<String, JsonElement>> listsSet = json.getAsJsonObject().entrySet();
             for (Map.Entry<String, JsonElement> entry : listsSet) {
-                links.setLink(entry.getKey(), entry.getValue().getAsJsonObject().get("href").getAsString());
+                JsonObject jo = entry.getValue().getAsJsonObject();
+                Boolean templated = jo.get("templated") != null && jo.get("templated").getAsBoolean();
+                Link link = new Link(jo.get("href").getAsString(), templated);
+                links.setLink(entry.getKey(), link);
             }
 
             return links;
@@ -144,9 +145,10 @@ final class ModelAdapter {
         public ErrorResponse.ErrorMessage deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             try {
                 return new ErrorResponse.ErrorMessage(
-                        new Gson().fromJson(json.getAsString(), new TypeToken<List<ErrorResponse.ErrorMessageInfo>>(){}.getType())
+                        new Gson().fromJson(json.getAsString(), new TypeToken<List<ErrorResponse.ErrorMessageInfo>>() {
+                        }.getType())
                 );
-            } catch (Exception e){
+            } catch (Exception e) {
                 return null;
             }
         }
