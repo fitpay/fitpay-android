@@ -66,7 +66,7 @@ public final class Links implements Parcelable {
         if (N > 0) {
             for (Map.Entry<String, Link> entry : links.entrySet()) {
                 dest.writeString(entry.getKey());
-                dest.writeString(entry.getValue().toString());
+                dest.writeParcelable(entry.getValue(), flags);
             }
         }
     }
@@ -76,8 +76,8 @@ public final class Links implements Parcelable {
         links = new HashMap<>();
         for (int i = 0; i < N; i++) {
             String key = in.readString();
-            String value = in.readString();
-            links.put(key, new Link(value, false));
+            Link value = in.readParcelable(Links.class.getClassLoader());
+            links.put(key, value);
         }
     }
 
