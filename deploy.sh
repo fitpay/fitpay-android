@@ -22,11 +22,12 @@ fi
 
 #update versions
 cd fitpay
-sed -i'.original' -e "s/$1/$2/g" build.gradle
+sed -i'.original' -e "s/version = '$1'/version = '$2'/g" build.gradle
 rm *.original
 cd ..
 
 #update docs
+./gradlew javadoc
 
 # commit and push develop
 git add -A
