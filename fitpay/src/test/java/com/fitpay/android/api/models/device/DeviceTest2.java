@@ -253,7 +253,7 @@ public class DeviceTest2 extends TestActions {
         Device device = getTestFailedDevice();
         assertNotNull("device", device);
         assertEquals("device state", device.getDeviceState(), "FAILED_INITIALIZATION");
-        assertEquals("device lastStateTransitionReasonCode", (int)device.getLastStateTransitionReasonCode(), 321);
+        assertEquals("device lastStateTransitionReasonCode", device.getLastStateTransitionReasonCode(), "321");
         assertEquals("firmware lastStateTransitionReasonMessage", device.getLastStateTransitionReasonMessage(), "SomeError");
     }
 }

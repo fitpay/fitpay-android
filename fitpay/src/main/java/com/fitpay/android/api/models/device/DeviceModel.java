@@ -83,7 +83,7 @@ abstract class DeviceModel extends PaymentDevice {
     /**
      * Failed initialization reason: code
      */
-    protected Integer lastStateTransitionReasonCode;
+    protected String lastStateTransitionReasonCode;
 
     /**
      * Failed initialization reason: message
@@ -126,7 +126,7 @@ abstract class DeviceModel extends PaymentDevice {
     public String getDefaultCreditCardId() { return defaultCreditCardId; }
 
     @Nullable
-    public Integer getLastStateTransitionReasonCode() {
+    public String getLastStateTransitionReasonCode() {
         return lastStateTransitionReasonCode;
     }
 

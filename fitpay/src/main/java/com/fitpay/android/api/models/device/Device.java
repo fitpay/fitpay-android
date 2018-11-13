@@ -547,7 +547,7 @@ public final class Device extends DeviceModel implements Parcelable {
         dest.writeString(this.notificationToken);
         dest.writeString(this.profileId);
         dest.writeString(this.defaultCreditCardId);
-        dest.writeValue(this.lastStateTransitionReasonCode);
+        dest.writeString(this.lastStateTransitionReasonCode);
         dest.writeString(this.lastStateTransitionReasonMessage);
         dest.writeString(this.deviceType);
         dest.writeString(this.manufacturerName);
@@ -577,7 +577,7 @@ public final class Device extends DeviceModel implements Parcelable {
         this.notificationToken = in.readString();
         this.profileId = in.readString();
         this.defaultCreditCardId = in.readString();
-        this.lastStateTransitionReasonCode = (Integer)in.readValue(Integer.class.getClassLoader());
+        this.lastStateTransitionReasonCode = in.readString();
         this.lastStateTransitionReasonMessage = in.readString();
         //noinspection ResourceType
         this.deviceType = in.readString();
