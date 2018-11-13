@@ -1,5 +1,7 @@
 package com.fitpay.android.api.models.device;
 
+import android.support.annotation.Nullable;
+
 /**
  * Device model
  */
@@ -78,6 +80,16 @@ abstract class DeviceModel extends PaymentDevice {
      */
     protected String defaultCreditCardId;
 
+    /**
+     * Failed initialization reason: code
+     */
+    protected Integer lastStateTransitionReasonCode;
+
+    /**
+     * Failed initialization reason: message
+     */
+    protected String lastStateTransitionReasonMessage;
+
     protected DeviceModel() {
     }
 
@@ -112,4 +124,14 @@ abstract class DeviceModel extends PaymentDevice {
     public String getProfileId() { return profileId; }
 
     public String getDefaultCreditCardId() { return defaultCreditCardId; }
+
+    @Nullable
+    public Integer getLastStateTransitionReasonCode() {
+        return lastStateTransitionReasonCode;
+    }
+
+    @Nullable
+    public String getLastStateTransitionReasonMessage() {
+        return lastStateTransitionReasonMessage;
+    }
 }
