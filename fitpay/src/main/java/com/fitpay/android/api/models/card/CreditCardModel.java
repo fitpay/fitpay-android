@@ -115,26 +115,71 @@ abstract class CreditCardModel extends BaseModel {
         return termsAssetReferences;
     }
 
+    /**
+     * Credit card inf
+     *
+     * @return creditCardInfo
+     */
+    public CreditCardInfo getCreditCardInfo() {
+        return creditCardInfo;
+    }
+
+    /**
+     * @deprecated as of v1.3.2
+     *
+     * use getCreditCardInfo
+     * */
+    @Deprecated
     public String getName() {
         return creditCardInfo.name;
     }
 
+    /**
+     * @deprecated as of v1.3.2
+     *
+     * use getCreditCardInfo
+     * */
+    @Deprecated
     public String getCVV() {
         return creditCardInfo.cvv;
     }
 
+    /**
+     * @deprecated as of v1.3.2
+     *
+     * use getCreditCardInfo
+     * */
+    @Deprecated
     public String getPan() {
         return creditCardInfo.pan;
     }
 
+    /**
+     * @deprecated as of v1.3.2
+     *
+     * use getCreditCardInfo
+     * */
+    @Deprecated
     public Integer getExpMonth() {
         return creditCardInfo.expMonth;
     }
 
+    /**
+     * @deprecated as of v1.3.2
+     *
+     * use getCreditCardInfo
+     * */
+    @Deprecated
     public Integer getExpYear() {
         return creditCardInfo.expYear;
     }
 
+    /**
+     * @deprecated as of v1.3.2
+     *
+     * use getCreditCardInfo
+     * */
+    @Deprecated
     public Address getAddress() {
         return creditCardInfo.address;
     }
