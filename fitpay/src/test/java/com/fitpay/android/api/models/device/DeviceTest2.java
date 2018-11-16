@@ -247,4 +247,13 @@ public class DeviceTest2 extends TestActions {
         latch.await(60, TimeUnit.SECONDS);
         assertEquals("reset device status", ResetDeviceStatus.RESET_COMPLETE, status.get());
     }
+
+    @Test
+    public void testFailedDevice() throws Exception {
+        Device device = getTestFailedDevice();
+        assertNotNull("device", device);
+        assertEquals("device state", device.getDeviceState(), "FAILED_INITIALIZATION");
+        assertEquals("device lastStateTransitionReasonCode", device.getLastStateTransitionReasonCode(), "321");
+        assertEquals("firmware lastStateTransitionReasonMessage", device.getLastStateTransitionReasonMessage(), "SomeError");
+    }
 }
