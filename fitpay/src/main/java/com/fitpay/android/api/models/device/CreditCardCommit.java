@@ -1,6 +1,7 @@
 package com.fitpay.android.api.models.device;
 
 import com.fitpay.android.api.enums.CardInitiators;
+import com.fitpay.android.api.enums.ProvisioningFailedReasons;
 import com.fitpay.android.api.models.AssetReference;
 import com.fitpay.android.api.models.card.Address;
 import com.fitpay.android.api.models.card.CardMetaData;
@@ -26,6 +27,7 @@ public class CreditCardCommit {
     protected Long createdTsEpoch;
     protected Long lastModifiedTsEpoch;
     protected String state;
+
     @CardInitiators.Initiator
     protected String causedBy;
     protected String cardType;
@@ -35,20 +37,24 @@ public class CreditCardCommit {
     protected String externalTokenReference;
     protected String termsAssetId;
     protected Long eligibilityExpirationEpoch;
-    protected List<AssetReference> termsAssetReferences;
 
     @SerializedName("encryptedData")
     private CreditCard creditCard;
 
-    //TODO eliminate the duplicates
+    @SerializedName("reason")
+    @ProvisioningFailedReasons.Reason
+    protected String provisioningFailedReason;
+
+    protected List<AssetReference> termsAssetReferences;
+
+    // TODO: eliminate the duplicates between these and creditCard
     private String pan;
     private int expMonth;
     private int expYear;
     private String cvv;
     private String name;
-    private Address address;
 
-    //TODO resolve with above
+    private Address address;
 
     protected CreditCardCommit() {
     }
