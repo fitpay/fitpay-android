@@ -15,34 +15,12 @@ import java.util.IllegalFormatException;
  */
 public final class CreditCardInfo implements Parcelable {
 
-    /**
-     * description : Card holder name
-     */
     String name;
-
-    /**
-     * description : The credit card cvv2 code
-     */
     String cvv;
-
-    /**
-     * description : The credit card number, also known as a Primary Account Number (PAN)
-     */
     String pan;
-
-    /**
-     * description : The credit card expiration month
-     */
     Integer expMonth;
-
-    /**
-     * description : The credit card expiration year
-     */
     Integer expYear;
-
-    /**
-     * description : Card holder address
-     */
+    String language;
     Address address;
 
     /**
@@ -53,28 +31,76 @@ public final class CreditCardInfo implements Parcelable {
     CreditCardInfo() {
     }
 
+    /**
+     * The Card holder name
+     *
+     * @return name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * TThe credit card cvv2 code
+     *
+     * @return cvv
+     */
     public String getCVV() {
         return cvv;
     }
 
+    /**
+     * The credit card number, also known as a Primary Account Number (PAN)
+     *
+     * @return pan
+     */
     public String getPan() {
         return pan;
     }
 
+    /**
+     * The credit card expiration month
+     *
+     * @return expMonth
+     */
     public Integer getExpMonth() {
         return expMonth;
     }
 
+    /**
+     * The credit card expiration year
+     *
+     * @return expYear
+     */
     public Integer getExpYear() {
         return expYear;
     }
 
+    /**
+     * Credit card language. Should use the format [language designator ISO-639-1]‌
+     *
+     * @return language
+     */
+    public String getLanguage() {
+        return language;
+    }
+
+    /**
+     * Card holder address
+     *
+     * @return address
+     */
     public Address getAddress() {
         return address;
+    }
+
+    /**
+     * Risk data
+     *
+     * @return riskData
+     */
+    public IdVerification getRiskData() {
+        return riskData;
     }
 
     @Override
@@ -94,6 +120,7 @@ public final class CreditCardInfo implements Parcelable {
         dest.writeString(this.pan);
         dest.writeValue(this.expMonth);
         dest.writeValue(this.expYear);
+        dest.writeValue(this.language);
         dest.writeParcelable(this.address, flags);
         dest.writeParcelable(this.riskData, flags);
     }
@@ -104,6 +131,7 @@ public final class CreditCardInfo implements Parcelable {
         this.pan = in.readString();
         this.expMonth = (Integer) in.readValue(Integer.class.getClassLoader());
         this.expYear = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.language = in.readString();
         this.address = in.readParcelable(Address.class.getClassLoader());
         this.riskData = in.readParcelable(IdVerification.class.getClassLoader());
     }
@@ -127,6 +155,7 @@ public final class CreditCardInfo implements Parcelable {
         private String pan;
         private Integer expMonth;
         private Integer expYear;
+        private String language;
         private Address address;
         private IdVerification riskData;
 
@@ -152,6 +181,7 @@ public final class CreditCardInfo implements Parcelable {
             creditCardInfo.pan = pan;
             creditCardInfo.expYear = expYear;
             creditCardInfo.expMonth = expMonth;
+            creditCardInfo.language = language;
             creditCardInfo.address = address;
             creditCardInfo.riskData = riskData;
             return creditCardInfo;
@@ -215,6 +245,17 @@ public final class CreditCardInfo implements Parcelable {
 
             this.expYear = expYear;
             this.expMonth = expMonth;
+            return this;
+        }
+
+        /**
+         * Set card holder address
+         *
+         * @param language credit card language
+         * @return a reference to this {@code Builder} object to fulfill the "Builder" pattern
+         */
+        public Builder setLanguage(@NonNull String language) {
+            this.language = language;
             return this;
         }
 

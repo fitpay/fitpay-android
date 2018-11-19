@@ -541,13 +541,13 @@ public class CreditCardTest2 extends TestActions {
     protected void verifyCardContents(CreditCardInfo creditCardInfo, CreditCard createdCard) {
         assertNotNull("card not created",createdCard);
         if (null != creditCardInfo.getCVV()) {
-            assertEquals("cvv should be masked", "###", createdCard.getCVV());
+            assertEquals("cvv should be masked", "###", createdCard.getCreditCardInfo().getCVV());
         }
         if (creditCardInfo.getExpMonth() != null) {
-            assertEquals("exp month", creditCardInfo.getExpMonth(), createdCard.getExpMonth());
+            assertEquals("exp month", creditCardInfo.getExpMonth(), createdCard.getCreditCardInfo().getExpMonth());
         }
         if (creditCardInfo.getExpYear() != null) {
-            assertEquals("exp year", creditCardInfo.getExpYear(), createdCard.getExpYear());
+            assertEquals("exp year", creditCardInfo.getExpYear(), createdCard.getCreditCardInfo().getExpYear());
         }
         assertEquals("street 1", creditCardInfo.getAddress().getStreet1(), createdCard.getAddress().getStreet1());
         assertEquals("postal code", creditCardInfo.getAddress().getPostalCode(), createdCard.getAddress().getPostalCode());

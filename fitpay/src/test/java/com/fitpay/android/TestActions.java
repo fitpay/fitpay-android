@@ -126,6 +126,7 @@ public class TestActions extends BaseTestActions {
         String cardName = "TEST CARD";
         int expYear = 2018;
         int expMonth = 10;
+        String language = "en";
         String city = "Boulder";
         String state = "CO";
         String postalCode = "80302";
@@ -145,6 +146,7 @@ public class TestActions extends BaseTestActions {
                 .setPAN(pan)
                 .setExpDate(expYear, expMonth)
                 .setAddress(address)
+                .setLanguage(language)
                 .setName(cardName)
                 .build();
     }
