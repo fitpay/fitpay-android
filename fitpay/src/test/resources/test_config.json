@@ -3,5 +3,5 @@
   "showHTTPLogs": false,
   "useRealTests": false,
   "saveRealTests": false,
-  "testsVersion": "0.0.3"
+  "testsVersion": "0.0.4"
 }
