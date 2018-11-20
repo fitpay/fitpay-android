@@ -26,8 +26,8 @@ sed -i'.original' -e "s/version = '$1'/version = '$2'/g" build.gradle
 rm *.original
 cd ..
 
-#update docs
-./gradlew javadoc
+#update docs - enable once Dokka is set up
+#./gradlew javadoc
 
 # commit and push develop
 git add -A
