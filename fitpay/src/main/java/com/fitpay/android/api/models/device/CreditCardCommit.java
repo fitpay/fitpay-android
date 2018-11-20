@@ -150,6 +150,15 @@ public class CreditCardCommit {
         return termsAssetReferences;
     }
 
+    /**
+     * The reason a card provisioning failed. Returned in the payload of a non-apdu commit
+     *
+     * @return provisioningFailedReason
+     */
+    public String getProvisioningFailedReason() {
+        return provisioningFailedReason;
+    }
+
     private static class CreditCard {
         private String pan;
         private int expMonth;
