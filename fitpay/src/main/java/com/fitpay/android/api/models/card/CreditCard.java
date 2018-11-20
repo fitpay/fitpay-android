@@ -32,7 +32,6 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
     private static final String VERIFICATION_METHODS = "verificationMethods";
     private static final String WEBAPP_CARD = "webapp.card";
 
-
     /**
      * Get webappWallet url
      *

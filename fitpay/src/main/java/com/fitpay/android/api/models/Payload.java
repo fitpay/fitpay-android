@@ -7,7 +7,7 @@ import com.fitpay.android.api.models.device.CreditCardCommit;
 /**
  * Payload
  */
-public final class Payload{
+public final class Payload {
     private CreditCardCommit creditCard;
     private ApduPackage apduPackage;
 
