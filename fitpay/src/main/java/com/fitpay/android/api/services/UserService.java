@@ -9,7 +9,6 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
-
 final public class UserService extends GenericClient<UserClient> {
 
     public UserService(String apiBaseUrl) {

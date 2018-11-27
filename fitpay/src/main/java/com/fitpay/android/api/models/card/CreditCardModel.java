@@ -28,6 +28,7 @@ abstract class CreditCardModel extends BaseModel {
 
     @CardInitiators.Initiator
     protected String causedBy;
+    
     protected String cardType;
     protected CardMetaData cardMetaData;
     protected String targetDeviceId;
@@ -37,6 +38,7 @@ abstract class CreditCardModel extends BaseModel {
 
     @SerializedName("encryptedData")
     protected CreditCardInfo creditCardInfo;
+
     protected String termsAssetId;
     protected Long eligibilityExpirationEpoch;
     protected List<AssetReference> termsAssetReferences;
