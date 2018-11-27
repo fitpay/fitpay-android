@@ -37,9 +37,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-/***
- * Created by Vlad on 16.03.2016.
- */
 public class Steps extends BaseTestActions {
 
     private final int TIMEOUT = 30;
@@ -48,8 +45,6 @@ public class Steps extends BaseTestActions {
     private String password;
 
     private User currentUser;
-    private int currentErrorCode;
-    private String currentErrorMessage;
     private Collections.CreditCardCollection cardsCollection;
     private Collections.DeviceCollection devicesCollection;
     private Device paymentDevice;
@@ -78,7 +73,7 @@ public class Steps extends BaseTestActions {
     }
 
 
-    public User createUser() throws InterruptedException {
+    public void createUser() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
 
         UserCreateRequest ucr = new UserCreateRequest.Builder()
@@ -90,14 +85,11 @@ public class Steps extends BaseTestActions {
             @Override
             public void onSuccess(User result) {
                 currentUser = result;
-                resetErrorFields();
                 latch.countDown();
             }
 
             @Override
             public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
-                currentErrorCode = errorCode;
-                currentErrorMessage = errorMessage;
                 latch.countDown();
             }
         });
@@ -105,8 +97,6 @@ public class Steps extends BaseTestActions {
         latch.await(TIMEOUT, TimeUnit.SECONDS);
         Assert.assertNotNull(currentUser);
         Assert.assertNotNull(currentUser.getUsername());
-        return currentUser;
-
     }
 
     public void login() throws InterruptedException {
@@ -151,14 +141,11 @@ public class Steps extends BaseTestActions {
             @Override
             public void onSuccess(User result) {
                 currentUser = result;
-                resetErrorFields();
                 latch.countDown();
             }
 
             @Override
             public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
-                currentErrorCode = errorCode;
-                currentErrorMessage = errorMessage;
                 latch.countDown();
             }
         });
@@ -169,12 +156,7 @@ public class Steps extends BaseTestActions {
         return currentUser;
     }
 
-    private void resetErrorFields() {
-        currentErrorCode = -1;
-        currentErrorMessage = null;
-    }
-
-    public User selfUser() throws InterruptedException {
+    public void selfUser() throws InterruptedException {
         Assert.assertNotNull(currentUser);
 
         final CountDownLatch latch = new CountDownLatch(1);
@@ -183,7 +165,6 @@ public class Steps extends BaseTestActions {
         currentUser.self(new ApiCallback<User>() {
             @Override
             public void onSuccess(User result) {
-                resetErrorFields();
                 isRequestSuccess[0] = true;
                 currentUser = result;
                 latch.countDown();
@@ -191,8 +172,6 @@ public class Steps extends BaseTestActions {
 
             @Override
             public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
-                currentErrorCode = errorCode;
-                currentErrorMessage = errorMessage;
                 latch.countDown();
             }
         });
@@ -201,7 +180,6 @@ public class Steps extends BaseTestActions {
         Assert.assertTrue(isRequestSuccess[0]);
         Assert.assertNotNull(currentUser);
         Assert.assertNotNull(currentUser.getUsername());
-        return currentUser;
     }
 
     public void updateUser() throws InterruptedException {
@@ -672,7 +650,6 @@ public class Steps extends BaseTestActions {
         final CountDownLatch latch = new CountDownLatch(1);
         final Collections.TransactionCollection[] transactionCollection = {null};
 
-
         currentCard.getTransactions(10, 0, new ApiCallback<Collections.TransactionCollection>() {
             @Override
             public void onSuccess(Collections.TransactionCollection result) {
@@ -688,8 +665,9 @@ public class Steps extends BaseTestActions {
 
         latch.await(TIMEOUT, TimeUnit.SECONDS);
         Assert.assertNotNull(cardsCollection);
-        Assert.assertNotNull(transactionCollection[0]);
+        Assert.assertNotNull(transactionCollection);
         Assert.assertNotNull(transactionCollection[0].getResults());
+        Assert.assertEquals(transactionCollection[0].getResults().get(0).getAuthorizationStatus(), "APPROVED");
     }
 
     public void createDevice() throws InterruptedException {
@@ -895,28 +873,6 @@ public class Steps extends BaseTestActions {
         Assert.assertNotNull(currentUser);
     }
 
-    public void deleteDevice() throws InterruptedException {
-        Assert.assertNotNull(currentDevice);
-
-        final CountDownLatch latch = new CountDownLatch(1);
-        final boolean[] isRequestSuccess = {false};
-
-        currentDevice.deleteDevice(new ApiCallback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                isRequestSuccess[0] = true;
-                latch.countDown();
-            }
-
-            @Override
-            public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
-                latch.countDown();
-            }
-        });
-        latch.await(TIMEOUT, TimeUnit.SECONDS);
-        Assert.assertTrue(isRequestSuccess[0]);
-    }
-
     public void deleteTestDevices() throws InterruptedException {
         getDevices();
 
@@ -1019,14 +975,11 @@ public class Steps extends BaseTestActions {
             @Override
             public void onSuccess(Issuers result) {
                 currentIssuer = result;
-                resetErrorFields();
                 latch.countDown();
             }
 
             @Override
             public void onFailure(@ResultCode.Code int errorCode, String errorMessage) {
-                currentErrorCode = errorCode;
-                currentErrorMessage = errorMessage;
                 latch.countDown();
             }
         });

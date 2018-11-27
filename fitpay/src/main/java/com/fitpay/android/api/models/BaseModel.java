@@ -72,6 +72,13 @@ public class BaseModel {
         }
     }
 
+    protected <T> void makeGetV2Call(String key, Map<String, Object> queryMap, Type type, ApiCallback<T> callback) {
+        String url = getLink(key, callback);
+        if (url != null) {
+            ApiManager.getInstance().getV2(url, queryMap, type, callback);
+        }
+    }
+
     protected <T> void makeGetCall(String key, String additionalPath, Map<String, Object> queryMap, Type type, ApiCallback<T> callback) {
         String url = getLink(key, callback);
         if (url != null) {

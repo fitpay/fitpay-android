@@ -14,6 +14,7 @@ abstract class CommitModel extends BaseModel {
     @CommitTypes.Type
     protected String commitType;
     protected Long createdTs;
+
     @SerializedName("encryptedData")
     protected Payload payload;
 

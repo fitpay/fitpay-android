@@ -197,7 +197,7 @@ public final class CreditCard extends CreditCardModel implements Parcelable {
         Map<String, Object> queryMap = new HashMap<>();
         queryMap.put("limit", limit);
         queryMap.put("offset", offset);
-        makeGetCall(TRANSACTIONS, queryMap, Collections.TransactionCollection.class, callback);
+        makeGetV2Call(TRANSACTIONS, queryMap, Collections.TransactionCollection.class, callback);
     }
 
     public boolean canGetTransactions() {

@@ -342,6 +342,11 @@ public class ApiManager {
         makeCall(getDataCall, type, callback);
     }
 
+    public <T> void getV2(final String url, final Map<String, Object> queryMap, final Type type, final ApiCallback<T> callback) {
+        Call<JsonElement> getDataCall = queryMap != null ? getClient().get("application/vnd.fitpay-v2+json", url, queryMap) : getClient().get("application/vnd.fitpay-v2+json", url);
+        makeCall(getDataCall, type, callback);
+    }
+
     public <T, U> void post(final String url, final U data, final Type type, final ApiCallback<T> callback) {
         Call<JsonElement> postDataCall = data != null ? getClient().post(url, data) : getClient().post(url);
         makeCall(postDataCall, type, callback);

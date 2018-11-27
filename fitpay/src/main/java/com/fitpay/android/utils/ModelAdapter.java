@@ -6,7 +6,6 @@ import com.fitpay.android.api.models.Links;
 import com.fitpay.android.api.models.Payload;
 import com.fitpay.android.api.models.apdu.ApduPackage;
 import com.fitpay.android.api.models.device.CreditCardCommit;
-import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.models.security.ECCKeyPair;
 import com.fitpay.android.api.models.security.OAuthToken;
 import com.google.gson.Gson;
@@ -85,17 +84,6 @@ final class ModelAdapter {
             }
 
             return null;
-        }
-    }
-
-    public static final class DeviceSerializer implements JsonSerializer<Device> {
-        public JsonElement serialize(Device data, Type typeOfSrc, JsonSerializationContext context) {
-
-            final String encryptedString = StringUtils.getEncryptedString(KeysManager.KEY_API, new GsonBuilder().create().toJson(data));
-
-            JsonObject jo = new JsonObject();
-            jo.addProperty("encryptedData", encryptedString);
-            return jo;
         }
     }
 

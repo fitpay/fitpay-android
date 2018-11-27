@@ -38,9 +38,6 @@ public class CreditCardCommit {
     protected String termsAssetId;
     protected Long eligibilityExpirationEpoch;
 
-    @SerializedName("encryptedData")
-    private CreditCard creditCard;
-
     @SerializedName("reason")
     @ProvisioningFailedReasons.Reason
     protected String provisioningFailedReason;
@@ -119,27 +116,27 @@ public class CreditCardCommit {
     }
 
     public Address getAddress() {
-        return creditCard != null ? creditCard.address : address;
+        return address;
     }
 
     public String getCvv() {
-        return creditCard != null ? creditCard.cvv : cvv;
+        return cvv;
     }
 
     public int getExpMonth() {
-        return creditCard != null ? creditCard.expMonth : expMonth;
+        return expMonth;
     }
 
     public int getExpYear() {
-        return creditCard != null ? creditCard.expYear : expYear;
+        return expYear;
     }
 
     public String getName() {
-        return creditCard != null ? creditCard.name : name;
+        return name;
     }
 
     public String getPan() {
-        return creditCard != null ? creditCard.pan : pan;
+        return pan;
     }
 
     public String getTermsAssetId() {
@@ -159,12 +156,4 @@ public class CreditCardCommit {
         return provisioningFailedReason;
     }
 
-    private static class CreditCard {
-        private String pan;
-        private int expMonth;
-        private int expYear;
-        private String cvv;
-        private String name;
-        private Address address;
-    }
 }
