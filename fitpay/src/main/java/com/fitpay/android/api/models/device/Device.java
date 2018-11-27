@@ -4,10 +4,12 @@ package com.fitpay.android.api.models.device;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.DeviceTypes;
 import com.fitpay.android.api.enums.ResultCode;
+import com.fitpay.android.api.models.Link;
 import com.fitpay.android.api.models.Links;
 import com.fitpay.android.api.models.card.CreditCard;
 import com.fitpay.android.api.models.collection.Collections;
@@ -30,6 +32,17 @@ public final class Device extends DeviceModel implements Parcelable {
     private static final String LAST_ACK_COMMIT = "lastAckCommit";
     private static final String DEVICE_RESET_TASKS = "deviceResetTasks";
     private static final String DEFAULT_CREDIT_CARD = "defaultCreditCard";
+    private static final String WEBAPP_ADD_CREDENTIAL = "webapp.addCredential";
+
+    /**
+     * Get webappAddCredential url
+     *
+     * @return webappAddCredential url
+     */
+    @Nullable
+    public Link getWebappAddCredentialLink() {
+        return getLink(WEBAPP_ADD_CREDENTIAL);
+    }
 
     /**
      * Get current user
