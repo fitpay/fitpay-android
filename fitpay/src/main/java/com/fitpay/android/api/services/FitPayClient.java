@@ -13,6 +13,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -124,6 +125,12 @@ public interface FitPayClient {
 
     @GET
     Call<JsonElement> get(@Url String url, @QueryMap Map<String, Object> queryMap);
+
+    @GET
+    Call<JsonElement> get(@Header("Accept") String accept, @Url String url);
+
+    @GET
+    Call<JsonElement> get(@Header("Accept") String accept, @Url String url, @QueryMap Map<String, Object> queryMap);
 
     @POST
     Call<JsonElement> post(@Url String url);
