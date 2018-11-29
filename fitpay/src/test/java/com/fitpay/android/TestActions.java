@@ -18,6 +18,7 @@ import com.fitpay.android.api.models.user.LoginIdentity;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.api.models.user.UserCreateRequest;
 import com.fitpay.android.paymentdevice.impl.mock.SecureElementDataProvider;
+import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.ValidationException;
 import com.google.gson.Gson;
 
@@ -179,11 +180,11 @@ public class TestActions extends BaseTestActions {
     }
 
     public Device getTestFailedDevice() {
-        return new Gson().fromJson("{\"deviceType\":\"WATCH\",\"deviceIdentifier\":\"c30b6235-d652-4d08-8c62-54ff044a6362\",\"state\":\"FAILED_INITIALIZATION\",\"manufacturerName\":\"Fitpay\",\"deviceName\":\"Test\",\"modelNumber\":\"Test123\",\"hardwareRevision\":\"1.0.0.0\",\"firmwareRevision\":\"1030.6408.1309.0001\",\"softwareRevision\":\"2.0.242009.6\",\"createdTs\":\"2018-11-09T14:36:14.705+0000\",\"createdTsEpoch\":1541774174705, \"lastStateTransitionReasonCode\":\"321\", \"lastStateTransitionReasonMessage\":\"SomeError\"}", Device.class);
+        return Constants.getGson().fromJson("{\"deviceType\":\"WATCH\",\"deviceIdentifier\":\"c30b6235-d652-4d08-8c62-54ff044a6362\",\"state\":\"FAILED_INITIALIZATION\",\"manufacturerName\":\"Fitpay\",\"deviceName\":\"Test\",\"modelNumber\":\"Test123\",\"hardwareRevision\":\"1.0.0.0\",\"firmwareRevision\":\"1030.6408.1309.0001\",\"softwareRevision\":\"2.0.242009.6\",\"createdTs\":\"2018-11-09T14:36:14.705+0000\",\"createdTsEpoch\":1541774174705, \"lastStateTransitionReasonCode\":\"321\", \"lastStateTransitionReasonMessage\":\"SomeError\"}", Device.class);
     }
 
     public Device getDeviceWithWebappLink() {
-        return new Gson().fromJson("{\"deviceType\":\"WATCH\",\"deviceIdentifier\":\"c30b6235-d652-4d08-8c62-54ff044a6362\",\"state\":\"ACTIVE\",\"manufacturerName\":\"Fitpay\",\"deviceName\":\"Test\",\"modelNumber\":\"Test123\",\"hardwareRevision\":\"1.0.0.0\",\"firmwareRevision\":\"1030.6408.1309.0001\",\"softwareRevision\":\"2.0.242009.6\",\"createdTs\":\"2018-11-09T14:36:14.705+0000\",\"createdTsEpoch\":1541774174705, \"_links\": {\"webapp.addCredential\": {\"href\":\"https://webapp.com/addCredential?deviceId=123&config={config}\", \"templated\": true}}}", Device.class);
+        return Constants.getGson().fromJson("{\"deviceType\":\"WATCH\",\"deviceIdentifier\":\"c30b6235-d652-4d08-8c62-54ff044a6362\",\"state\":\"ACTIVE\",\"manufacturerName\":\"Fitpay\",\"deviceName\":\"Test\",\"modelNumber\":\"Test123\",\"hardwareRevision\":\"1.0.0.0\",\"firmwareRevision\":\"1030.6408.1309.0001\",\"softwareRevision\":\"2.0.242009.6\",\"createdTs\":\"2018-11-09T14:36:14.705+0000\",\"createdTsEpoch\":1541774174705, \"_links\": {\"webapp.addCredential\": {\"href\":\"https://webapp.com/addCredential?deviceId=123&config={config}\", \"templated\": true}}}", Device.class);
     }
 
     public Device getTestDevice(boolean paymentDevice) {
