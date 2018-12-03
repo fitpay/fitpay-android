@@ -725,6 +725,7 @@ public class Steps extends BaseTestActions {
                 latch.countDown();
             }
         });
+
         latch.await(TIMEOUT, TimeUnit.SECONDS);
         assertEquals("build device had an error.  (Message: " + errors[0] + ")", -1, errorCodes[0]);
         Assert.assertNotNull(currentDevice);
@@ -737,10 +738,6 @@ public class Steps extends BaseTestActions {
         Assert.assertEquals(softwareRevision, currentDevice.getSoftwareRevision());
         Assert.assertEquals(systemId, currentDevice.getSystemId());
         Assert.assertEquals(oSName, currentDevice.getOsName());
-        if (DeviceTypes.SMART_STRAP.equals(currentDevice.getDeviceType())) {
-            Assert.assertEquals(licenseKey, currentDevice.getLicenseKey());//todo check
-            Assert.assertEquals(bdAddress, currentDevice.getBdAddress());
-        }
         Assert.assertEquals(stringTimestamp, currentDevice.getPairingTs());
         Assert.assertEquals(newDevice.getSecureElementId(), currentDevice.getSecureElementId());
     }
@@ -968,7 +965,7 @@ public class Steps extends BaseTestActions {
         Assert.assertNotNull(currentCommit);
     }
 
-    public Issuers getIssuers() throws InterruptedException {
+    public void getIssuers() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
 
         ApiManager.getInstance().getIssuers(new ApiCallback<Issuers>() {
@@ -987,6 +984,6 @@ public class Steps extends BaseTestActions {
         latch.await(TIMEOUT, TimeUnit.SECONDS);
         Assert.assertNotNull(currentIssuer);
         Assert.assertNotNull(currentIssuer.getCountries());
-        return currentIssuer;
     }
+
 }
