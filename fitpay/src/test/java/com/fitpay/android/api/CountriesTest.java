@@ -1,15 +1,15 @@
 package com.fitpay.android.api;
 
-import com.fitpay.android.Steps;
 import com.fitpay.android.api.callbacks.ApiCallbackExt;
 import com.fitpay.android.api.models.Country;
 import com.fitpay.android.api.models.ErrorResponse;
 import com.fitpay.android.api.models.Province;
 import com.fitpay.android.api.models.collection.CountryCollection;
-import com.fitpay.android.api.models.collection.ProvincesCollection;
+import com.fitpay.android.api.models.collection.ProvinceCollection;
+import com.fitpay.android.utils.NamedResource;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -20,12 +20,8 @@ import java.util.concurrent.TimeUnit;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CountriesTest {
 
-    private static Steps steps = null;
-
-    @BeforeClass
-    public static void init() {
-        steps = new Steps(CountriesTest.class);
-    }
+    @ClassRule
+    public static NamedResource rule = new NamedResource(CountriesTest.class);
 
     @Test
     public void test1_getCountries() throws InterruptedException {
@@ -55,15 +51,15 @@ public class CountriesTest {
 
         final CountDownLatch latch2 = new CountDownLatch(1);
 
-        ProvincesCollection[] provincesCollections = new ProvincesCollection[1];
-        country.getProvinces(new ApiCallbackExt<ProvincesCollection>() {
+        ProvinceCollection[] provincesCollections = new ProvinceCollection[1];
+        country.getProvinces(new ApiCallbackExt<ProvinceCollection>() {
             @Override
             public void onFailure(ErrorResponse apiErrorResponse) {
                 latch2.countDown();
             }
 
             @Override
-            public void onSuccess(ProvincesCollection result) {
+            public void onSuccess(ProvinceCollection result) {
                 provincesCollections[0] = result;
                 latch2.countDown();
             }
