@@ -1,5 +1,6 @@
 package com.fitpay.android.api;
 
+import com.fitpay.android.BaseTestActions;
 import com.fitpay.android.api.callbacks.ApiCallbackExt;
 import com.fitpay.android.api.models.Country;
 import com.fitpay.android.api.models.ErrorResponse;
@@ -18,7 +19,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class CountriesTest {
+public class CountriesTest extends BaseTestActions {
 
     @ClassRule
     public static NamedResource rule = new NamedResource(CountriesTest.class);
