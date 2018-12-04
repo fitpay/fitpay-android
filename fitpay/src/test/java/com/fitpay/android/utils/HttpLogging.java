@@ -126,7 +126,10 @@ public final class HttpLogging implements Interceptor {
             for(File f : files){
                 String name = f.getAbsolutePath();
                 String nameWithoutExtension = name.substring(0, name.lastIndexOf(FILE_EXTENSION));
-                String extension = nameWithoutExtension.substring(pathWithoutExtension.length());
+                String extension = null;
+                try{
+                    extension = nameWithoutExtension.substring(pathWithoutExtension.length());
+                } catch (Exception e){}
                 if (extension.length() > 1 && extension.startsWith("_")) {
                     extension = extension.substring(1);
                     fileIndexes.add(Integer.valueOf(extension));

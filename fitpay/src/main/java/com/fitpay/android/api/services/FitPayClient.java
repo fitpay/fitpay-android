@@ -1,5 +1,6 @@
 package com.fitpay.android.api.services;
 
+import com.fitpay.android.api.models.RootLinks;
 import com.fitpay.android.api.models.card.VerificationMethods;
 import com.fitpay.android.api.models.device.ResetDeviceResult;
 import com.fitpay.android.api.models.issuer.Issuers;
@@ -23,6 +24,13 @@ import retrofit2.http.QueryMap;
 import retrofit2.http.Url;
 
 public interface FitPayClient {
+
+    /**
+     * Retrieve root webapp links
+     *
+     */
+    @GET()
+    Call<RootLinks> getRootLinks(@Url String baseUrl);
 
     /**
      * Retrieves the details of an existing user.
