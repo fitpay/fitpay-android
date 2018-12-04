@@ -113,7 +113,7 @@ public abstract class FitPayInterceptor implements Interceptor {
     private String getFile(String fileName) {
         File file = new File(fileName);
 
-        BufferedReader reader = null;
+        BufferedReader reader;
         String fileStr = null;
         try {
             reader = new BufferedReader(new FileReader(file));

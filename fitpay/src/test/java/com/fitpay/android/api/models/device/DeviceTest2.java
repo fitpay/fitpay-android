@@ -15,14 +15,12 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-/**
- * Created by tgs on 4/21/16.
- */
 public class DeviceTest2 extends TestActions {
 
     @ClassRule
@@ -57,7 +55,7 @@ public class DeviceTest2 extends TestActions {
 
     @Test
     public void testCantAddDeviceWithMissingInfo() throws Exception {
-        Device device = getPoorlyDeviceTestSmartStrapDevice();
+        Device device = getPoorlyDefinedDevice2();
 
         final CountDownLatch latch = new CountDownLatch(1);
         ResultProvidingCallback<Device> callback = new ResultProvidingCallback<>(latch);
@@ -107,7 +105,6 @@ public class DeviceTest2 extends TestActions {
 
     }
 
-
     @Test
     public void testCanDevicesWhenOnlyOneInCollection() throws Exception {
         Device device = getTestDevice();
@@ -150,7 +147,6 @@ public class DeviceTest2 extends TestActions {
         assertNotNull("retrieved device", retrievedDevice);
         assertEquals("device connectorId", firstDevice.getDeviceIdentifier(), retrievedDevice.getDeviceIdentifier());
     }
-
 
     @Test
     public void testCanDevicesWhenTwoInCollection() throws Exception {
@@ -249,11 +245,23 @@ public class DeviceTest2 extends TestActions {
     }
 
     @Test
-    public void testFailedDevice() throws Exception {
+    public void testFailedDevice() {
         Device device = getTestFailedDevice();
         assertNotNull("device", device);
         assertEquals("device state", device.getDeviceState(), "FAILED_INITIALIZATION");
         assertEquals("device lastStateTransitionReasonCode", device.getLastStateTransitionReasonCode(), "321");
         assertEquals("firmware lastStateTransitionReasonMessage", device.getLastStateTransitionReasonMessage(), "SomeError");
     }
+
+    @Test
+    public void testDeviceWebappLink() {
+        Device device = getDeviceWithWebappLink();
+
+        assertNotNull(device);
+        assertNotNull(device.getWebappAddCredentialLink());
+        assertTrue(device.getWebappAddCredentialLink().getTemplated());
+        assertEquals(device.getWebappAddCredentialLink().getHref(), "https://webapp.com/addCredential?deviceId=123&config={config}");
+
+    }
+
 }

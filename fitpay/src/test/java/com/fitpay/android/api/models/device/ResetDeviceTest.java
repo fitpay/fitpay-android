@@ -53,28 +53,27 @@ public class ResetDeviceTest extends TestActions {
                     emitter.onError(new Exception(errorMessage));
                 }
             });
-        }).flatMap(resetDeviceResult -> {
-            return Single.create(emitter -> {
-                ApiManager.getInstance().getResetPaymentDeviceStatus(resetDeviceResult.getResetId(), new ApiCallback<ResetDeviceResult>() {
-                    @Override
-                    public void onSuccess(ResetDeviceResult result) {
-                        String resetStatus = result.getResetStatus();
-                        status.set(resetStatus);
-                        emitter.onSuccess(resetStatus);
-                    }
+        }).flatMap(resetDeviceResult -> Single.create(emitter -> {
+            ApiManager.getInstance().getResetPaymentDeviceStatus(resetDeviceResult.getResetId(), new ApiCallback<ResetDeviceResult>() {
+                @Override
+                public void onSuccess(ResetDeviceResult result) {
+                    String resetStatus = result.getResetStatus();
+                    status.set(resetStatus);
+                    emitter.onSuccess(resetStatus);
+                }
 
-                    @Override
-                    public void onFailure(int errorCode, String errorMessage) {
-                        emitter.onError(new Exception(errorMessage));
-                    }
-                });
-            }).repeatWhen(objectFlowable -> objectFlowable.delay(10, TimeUnit.SECONDS))
-                    .takeUntil(o -> status.get() != null && !ResetDeviceStatus.IN_PROGRESS.equals(status.get()))
-                    .lastOrError();
-        }).subscribe(resetStatus -> latch.countDown(), throwable -> FPLog.e(throwable.toString()));
+                @Override
+                public void onFailure(int errorCode, String errorMessage) {
+                    emitter.onError(new Exception(errorMessage));
+                }
+            });
+        }).repeatWhen(objectFlowable -> objectFlowable.delay(10, TimeUnit.SECONDS))
+                .takeUntil(o -> status.get() != null && !ResetDeviceStatus.IN_PROGRESS.equals(status.get()))
+                .lastOrError()).subscribe(resetStatus -> latch.countDown(), throwable -> FPLog.e(throwable.toString()));
 
         latch.await(120, TimeUnit.SECONDS);
 
         assertEquals("reset device status", ResetDeviceStatus.RESET_COMPLETE, status.get());
     }
+
 }

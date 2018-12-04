@@ -1,6 +1,7 @@
 package com.fitpay.android.paymentdevice.callbacks;
 
 import com.fitpay.android.api.models.device.Device;
+import com.fitpay.android.paymentdevice.enums.Connection;
 import com.fitpay.android.paymentdevice.events.PaymentDeviceOperationFailed;
 import com.fitpay.android.paymentdevice.interfaces.IControlMessage;
 import com.fitpay.android.paymentdevice.interfaces.INotificationMessage;
@@ -13,6 +14,10 @@ public abstract class PaymentDeviceListener extends ConnectionListener implement
     public PaymentDeviceListener(String filter) {
         super(filter);
         mCommands.put(Device.class, data -> onDeviceInfoReceived((Device) data));
+        mCommands.put(Connection.class, data -> {
+            Connection event = (Connection) data;
+            onDeviceStateChanged(event.getState());
+        });
         mCommands.put(PaymentDeviceOperationFailed.class, data -> onDeviceOperationFailed((PaymentDeviceOperationFailed) data));
         mCommands.put(IControlMessage.class, data -> {
             IControlMessage message = (IControlMessage) data;

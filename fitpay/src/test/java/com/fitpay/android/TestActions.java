@@ -18,7 +18,7 @@ import com.fitpay.android.api.models.user.LoginIdentity;
 import com.fitpay.android.api.models.user.User;
 import com.fitpay.android.api.models.user.UserCreateRequest;
 import com.fitpay.android.paymentdevice.impl.mock.SecureElementDataProvider;
-import com.fitpay.android.utils.TimestampUtils;
+import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.ValidationException;
 import com.google.gson.Gson;
 
@@ -180,7 +180,11 @@ public class TestActions extends BaseTestActions {
     }
 
     public Device getTestFailedDevice() {
-        return new Gson().fromJson("{\"deviceType\":\"WATCH\",\"deviceIdentifier\":\"c30b6235-d652-4d08-8c62-54ff044a6362\",\"state\":\"FAILED_INITIALIZATION\",\"manufacturerName\":\"Fitpay\",\"deviceName\":\"Test\",\"modelNumber\":\"Test123\",\"hardwareRevision\":\"1.0.0.0\",\"firmwareRevision\":\"1030.6408.1309.0001\",\"softwareRevision\":\"2.0.242009.6\",\"createdTs\":\"2018-11-09T14:36:14.705+0000\",\"createdTsEpoch\":1541774174705, \"lastStateTransitionReasonCode\":\"321\", \"lastStateTransitionReasonMessage\":\"SomeError\"}", Device.class);
+        return Constants.getGson().fromJson("{\"deviceType\":\"WATCH\",\"deviceIdentifier\":\"c30b6235-d652-4d08-8c62-54ff044a6362\",\"state\":\"FAILED_INITIALIZATION\",\"manufacturerName\":\"Fitpay\",\"deviceName\":\"Test\",\"modelNumber\":\"Test123\",\"hardwareRevision\":\"1.0.0.0\",\"firmwareRevision\":\"1030.6408.1309.0001\",\"softwareRevision\":\"2.0.242009.6\",\"createdTs\":\"2018-11-09T14:36:14.705+0000\",\"createdTsEpoch\":1541774174705, \"lastStateTransitionReasonCode\":\"321\", \"lastStateTransitionReasonMessage\":\"SomeError\"}", Device.class);
+    }
+
+    public Device getDeviceWithWebappLink() {
+        return Constants.getGson().fromJson("{\"deviceType\":\"WATCH\",\"deviceIdentifier\":\"c30b6235-d652-4d08-8c62-54ff044a6362\",\"state\":\"ACTIVE\",\"manufacturerName\":\"Fitpay\",\"deviceName\":\"Test\",\"modelNumber\":\"Test123\",\"hardwareRevision\":\"1.0.0.0\",\"firmwareRevision\":\"1030.6408.1309.0001\",\"softwareRevision\":\"2.0.242009.6\",\"createdTs\":\"2018-11-09T14:36:14.705+0000\",\"createdTsEpoch\":1541774174705, \"_links\": {\"webapp.addCredential\": {\"href\":\"https://webapp.com/addCredential?deviceId=123&config={config}\", \"templated\": true}}}", Device.class);
     }
 
     public Device getTestDevice(boolean paymentDevice) {
@@ -226,50 +230,20 @@ public class TestActions extends BaseTestActions {
     }
 
     public Device getPoorlyDefinedDevice() {
-
         String deviceName = "TEST_DEVICE";
-        String firmwareRevision = "111.111";
-        String hardwareRevision = "1.1.1";
-        String modelNumber = "AB111";
-        String serialNumber = "1111AB";
-        String softwareRevision = "1.1.1";
-        String systemId = "0x111AA";
-        String oSName = "A1111";
-        String licenseKey = "aaaaaa-1111-1111-1111-111111111111";
-        String bdAddress = "bbbbbb-1111-1111-1111-111111111111";
-        long pairingTs = System.currentTimeMillis();
-        String stringTimestamp = TimestampUtils.getISO8601StringForTime(pairingTs);
-        String secureElementId = "cccccc-1111-1111-1111-1111111111";
-        Device newDevice = new Device.Builder()
+
+        return new Device.Builder()
                 .setDeviceName(deviceName)
                 .build();
-
-        return newDevice;
-
     }
 
-    public Device getPoorlyDeviceTestSmartStrapDevice() {
-
-        String manufacturerName = "X111";
+    public Device getPoorlyDefinedDevice2() {
         String deviceName = "TEST_DEVICE";
-        String firmwareRevision = "111.111";
-        String hardwareRevision = "1.1.1";
-        String modelNumber = "AB111";
-        String serialNumber = "1111AB";
-        String softwareRevision = "1.1.1";
-        String systemId = "0x111AA";
-        String oSName = "A1111";
-        String licenseKey = "aaaaaa-1111-1111-1111-111111111111";
-        String bdAddress = "bbbbbb-1111-1111-1111-111111111111";
-        long pairingTs = System.currentTimeMillis();
-        String stringTimestamp = TimestampUtils.getISO8601StringForTime(pairingTs);
-        String secureElementId = "cccccc-1111-1111-1111-1111111111";
-        Device newDevice = new Device.Builder()
-                .setDeviceType(DeviceTypes.SMART_STRAP)
+
+        return new Device.Builder()
+                .setDeviceType(DeviceTypes.WATCH)
                 .setDeviceName(deviceName)
                 .build();
-
-        return newDevice;
 
     }
 
