@@ -39,7 +39,7 @@ public class RootApiTest extends BaseTestActions {
         latch.await(10, TimeUnit.SECONDS);
 
         Assert.assertNotNull("Result is empty", apiResult[0]);
-        Assert.assertNotNull("webapp.privacy-policy is empty", apiResult[0].getPrivacyPolicy());
-        Assert.assertNotNull("webapp.terms is empty", apiResult[0].getTerms());
+        Assert.assertNotNull("webapp.privacyPolicy is empty", apiResult[0].getWebappPrivacyPolicy());
+        Assert.assertNotNull("webapp.terms is empty", apiResult[0].getWebappTerms());
     }
 }

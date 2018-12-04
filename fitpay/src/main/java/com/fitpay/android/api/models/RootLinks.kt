@@ -6,7 +6,7 @@ package com.fitpay.android.api.models
  */
 class RootLinks(val train: String) : BaseModel() {
     companion object {
-        private val WEBAPP_PRIVACY_POLICY = "webapp.privacy-policy"
+        private val WEBAPP_PRIVACY_POLICY = "webapp.privacyPolicy"
         private val WEBAPP_TERMS = "webapp.terms"
     }
 
@@ -15,7 +15,7 @@ class RootLinks(val train: String) : BaseModel() {
      *
      * @return webappPrivacyPolicy url
      */
-    fun getPrivacyPolicy(): Link? {
+    fun getWebappPrivacyPolicy(): Link? {
         return getLink(WEBAPP_PRIVACY_POLICY)
     }
 
@@ -24,7 +24,7 @@ class RootLinks(val train: String) : BaseModel() {
      *
      * @return webappTerms url
      */
-    fun getTerms(): Link? {
+    fun getWebappTerms(): Link? {
         return getLink(WEBAPP_TERMS)
     }
 }
