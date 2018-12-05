@@ -10,6 +10,7 @@ import com.fitpay.android.api.models.ErrorResponse;
 import com.fitpay.android.api.models.PlatformConfig;
 import com.fitpay.android.api.models.RootLinks;
 import com.fitpay.android.api.models.card.VerificationMethods;
+import com.fitpay.android.api.models.collection.CountryCollection;
 import com.fitpay.android.api.models.device.ResetDeviceResult;
 import com.fitpay.android.api.models.issuer.Issuers;
 import com.fitpay.android.api.models.security.OAuthToken;
@@ -327,6 +328,16 @@ public class ApiManager {
 
             checkKeyAndMakeCall(onSuccess, callback);
         }
+    }
+
+    /**
+     * Retrieve all countries
+     *
+     * @param callback result callback
+     */
+    public void getCountries(final ApiCallback<CountryCollection> callback) {
+        Call<CountryCollection> getCountriesCall = getClient().getCountries();
+        getCountriesCall.enqueue(new CallbackWrapper<>(callback));
     }
 
     private <T> void makeCall(final Call<JsonElement> call, final Type type, final ApiCallback<T> callback) {

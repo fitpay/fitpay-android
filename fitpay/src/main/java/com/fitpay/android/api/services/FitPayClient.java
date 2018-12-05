@@ -2,6 +2,7 @@ package com.fitpay.android.api.services;
 
 import com.fitpay.android.api.models.RootLinks;
 import com.fitpay.android.api.models.card.VerificationMethods;
+import com.fitpay.android.api.models.collection.CountryCollection;
 import com.fitpay.android.api.models.device.ResetDeviceResult;
 import com.fitpay.android.api.models.issuer.Issuers;
 import com.fitpay.android.api.models.security.ECCKeyPair;
@@ -47,6 +48,13 @@ public interface FitPayClient {
      */
     @GET("mobile/config")
     Call<JsonElement> getPlatformConfig();
+
+    /**
+     * Retrieves all countries
+     *
+     */
+    @GET("iso/countries")
+    Call<CountryCollection> getCountries();
 
     /**
      * Provides a fresh list of available verification methods for the credit card
