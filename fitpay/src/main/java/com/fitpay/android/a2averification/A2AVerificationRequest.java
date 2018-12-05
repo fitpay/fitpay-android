@@ -5,6 +5,8 @@ package com.fitpay.android.a2averification;
  */
 public class A2AVerificationRequest {
     private String cardType;
+    private String creditCardId;
+    private String verificationId;
     private String returnLocation;
     private A2AContext context;
     private String callbackId; //internal usage
@@ -36,9 +38,26 @@ public class A2AVerificationRequest {
         this.callbackId = callbackId;
     }
 
+    /**
+     * The card type: Mastercard, Visa, Discover, Maestro, etc
+     */
     public String getCardType() {
         return cardType;
     }
 
+    /**
+     * The unique identifier for the card
+     */
+    public String getCreditCardId() {
+        return creditCardId;
+    }
+
+    /**
+     * The verification identifier associated with the app to app verification
+     * method for the card
+     */
+    public String getVerificationId(){
+        return verificationId;
+    }
 
 }
