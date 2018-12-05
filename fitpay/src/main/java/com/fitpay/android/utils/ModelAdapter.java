@@ -1,10 +1,12 @@
 package com.fitpay.android.utils;
 
+import com.fitpay.android.api.models.Country;
 import com.fitpay.android.api.models.ErrorResponse;
 import com.fitpay.android.api.models.Link;
 import com.fitpay.android.api.models.Links;
 import com.fitpay.android.api.models.Payload;
 import com.fitpay.android.api.models.apdu.ApduPackage;
+import com.fitpay.android.api.models.collection.CountryCollection;
 import com.fitpay.android.api.models.device.CreditCardCommit;
 import com.fitpay.android.api.models.security.ECCKeyPair;
 import com.fitpay.android.api.models.security.OAuthToken;
@@ -21,6 +23,7 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -136,6 +139,25 @@ final class ModelAdapter {
                         new Gson().fromJson(json.getAsString(), new TypeToken<List<ErrorResponse.ErrorMessageInfo>>() {
                         }.getType())
                 );
+            } catch (Exception e) {
+                return null;
+            }
+        }
+    }
+
+    public static final class CountryCollectionDeserializer implements JsonDeserializer<CountryCollection> {
+
+        @Override
+        public CountryCollection deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            try {
+                Map<String, Country> countriesData = new HashMap<>();
+
+                Set<Map.Entry<String, JsonElement>> listsSet = json.getAsJsonObject().entrySet();
+                for (Map.Entry<String, JsonElement> entry : listsSet) {
+                    countriesData.put(entry.getKey(), Constants.getGson().fromJson(entry.getValue(), Country.class));
+                }
+
+                return new CountryCollection(countriesData);
             } catch (Exception e) {
                 return null;
             }
