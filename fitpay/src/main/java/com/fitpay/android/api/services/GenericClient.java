@@ -1,11 +1,13 @@
 package com.fitpay.android.api.services;
 
+import com.fitpay.android.BuildConfig;
 import com.fitpay.android.utils.Constants;
 
 import java.lang.reflect.ParameterizedType;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -27,6 +29,14 @@ public abstract class GenericClient<T> extends BaseClient {
             clientBuilder.addInterceptor(getInterceptor());
         }
         client = constructClient(baseUrl, clientBuilder.build());
+    }
+
+    public Request.Builder getRequestBuilder(Interceptor.Chain chain){
+        return chain.request().newBuilder()
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .header("Cache-Control", "max-age=300, no-transform, no-cache")
+                .header(FP_KEY_SDK_VER, BuildConfig.SDK_VERSION);
     }
 
     private T constructClient(String apiBaseUrl, OkHttpClient okHttpClient) {

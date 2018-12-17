@@ -1,8 +1,5 @@
 package com.fitpay.android.api.services;
 
-import android.util.Log;
-
-import com.fitpay.android.BuildConfig;
 import com.fitpay.android.api.models.PlatformConfig;
 import com.fitpay.android.api.models.security.AccessDenied;
 import com.fitpay.android.api.models.security.OAuthToken;
@@ -43,9 +40,7 @@ final public class FitPayService extends GenericClient<FitPayClient> {
         return new FitPayInterceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
-                Request.Builder builder = chain.request().newBuilder()
-                        .header("Content-Type", "application/json")
-                        .header(FP_KEY_SDK_VER, BuildConfig.SDK_VERSION);
+                Request.Builder builder = getRequestBuilder(chain);
 
                 String acceptHeader = chain.request().header("Accept");
                 if (acceptHeader == null) { // don't override accept header if already present
