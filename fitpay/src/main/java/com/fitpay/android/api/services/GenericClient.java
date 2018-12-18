@@ -31,11 +31,11 @@ public abstract class GenericClient<T> extends BaseClient {
         client = constructClient(baseUrl, clientBuilder.build());
     }
 
-    public Request.Builder getRequestBuilder(Interceptor.Chain chain){
+    protected Request.Builder getRequestBuilder(Interceptor.Chain chain){
         return chain.request().newBuilder()
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
-                .header("Cache-Control", "max-age=300, no-transform, no-cache")
+                .header("Cache-Control", "no-transform, no-cache")
                 .header(FP_KEY_SDK_VER, BuildConfig.SDK_VERSION);
     }
 

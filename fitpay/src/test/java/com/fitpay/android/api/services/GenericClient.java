@@ -13,6 +13,11 @@ import okhttp3.Request;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Current file used in tests only. It overloads original GenericClient
+ *
+ * @param <T>
+ */
 public abstract class GenericClient<T> extends BaseClient {
 
     protected abstract Interceptor getInterceptor();
@@ -28,11 +33,11 @@ public abstract class GenericClient<T> extends BaseClient {
         client = constructClient(baseUrl, clientBuilder.build());
     }
 
-    public Request.Builder getRequestBuilder(Interceptor.Chain chain){
+    protected Request.Builder getRequestBuilder(Interceptor.Chain chain){
         return chain.request().newBuilder()
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
-                .header("Cache-Control", "max-age=300, no-transform, no-cache")
+                .header("Cache-Control", "no-transform, no-cache")
                 .header(FP_KEY_SDK_VER, BuildConfig.SDK_VERSION);
     }
 
