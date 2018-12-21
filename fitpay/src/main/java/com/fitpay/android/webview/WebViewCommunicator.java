@@ -26,7 +26,7 @@ public interface WebViewCommunicator {
 
     /**
      * Internal use only. this method is called by the WV to initiate the sync sequence in the SDK
-     *dd
+     *
      * @param callBackId       js callback id
      * @param syncInfo sync notification data
      */
