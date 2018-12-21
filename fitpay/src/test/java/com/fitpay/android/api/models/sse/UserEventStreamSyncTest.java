@@ -15,6 +15,7 @@ import com.fitpay.android.api.sse.UserEventStreamManager;
 import com.fitpay.android.configs.FitpayConfig;
 import com.fitpay.android.paymentdevice.impl.mock.MockPaymentDeviceConnector;
 import com.fitpay.android.paymentdevice.models.SyncRequest;
+import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.Listener;
 import com.fitpay.android.utils.NamedResource;
 import com.fitpay.android.utils.NotificationManager;
@@ -23,6 +24,7 @@ import com.fitpay.android.webview.impl.WebViewCommunicatorImpl;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -30,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import io.reactivex.disposables.Disposable;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -152,7 +156,7 @@ public class UserEventStreamSyncTest extends TestActions {
             }
         });
 
-        UserEventStreamManager.subscribe(user.getId());
+        UserEventStreamManager.subscribeUser(user.getId());
 
         CreditCard createdCard = createCreditCard(user, getTestCreditCardInfo("9999504454545450"));
 
@@ -172,6 +176,52 @@ public class UserEventStreamSyncTest extends TestActions {
         eventLatch.await(30000, TimeUnit.MILLISECONDS);
 
         assertTrue(events.size() > 0);
+    }
+
+    @Test
+    public void testUserEventResubscribeEvents() throws Exception {
+        this.user = getUser();
+        assertNotNull(user);
+
+        // just to ensure events are going out, we'll just wait for the CREDITCARD_CREATED event
+        final CountDownLatch eventLatch = new CountDownLatch(1);
+        final int[] eventsCount = new int[1];
+        NotificationManager.getInstance().addListener(new UserEventStreamListener() {
+            @Override
+            public void onUserEvent(UserStreamEvent event) {
+                FPLog.d("event: " + event.getType());
+                if ("STREAM_CONNECTED".equals(event.getType())) {
+                    eventsCount[0]++;
+                }
+
+                if (eventsCount[0] == 4) {
+                    eventLatch.countDown();
+                }
+            }
+        });
+
+        UserEventStreamManager.subscribeUser(user.getId());
+
+        Disposable disposable = UserEventStreamManager.getUserEventStream(user.getId()).subscribeToEvents(event -> {
+            FPLog.d("event: " + event.getType());
+            if ("STREAM_CONNECTED".equals(event.getType())) {
+                eventsCount[0]++;
+            }
+
+            if (eventsCount[0] == 4) {
+                eventLatch.countDown();
+            }
+        });
+
+        eventLatch.await(600000, TimeUnit.MILLISECONDS);
+
+        disposable.dispose();
+
+        assertTrue(UserEventStreamManager.isSubscribed(user.getId()));
+
+        UserEventStreamManager.unsubscribeUser(user.getId());
+
+        assertFalse(UserEventStreamManager.isSubscribed(user.getId()));
     }
 
     private class SyncListener extends Listener {

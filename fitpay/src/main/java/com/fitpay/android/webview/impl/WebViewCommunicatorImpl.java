@@ -112,7 +112,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
         NotificationManager.getInstance().removeListener(userEventStreamSyncListener);
 
         if (user != null) {
-            UserEventStreamManager.unsubscribe(user.getId());
+            UserEventStreamManager.unsubscribeUser(user.getId());
         }
     }
 
@@ -265,7 +265,7 @@ public class WebViewCommunicatorImpl implements WebViewCommunicator {
                         boolean automaticallySubscribeToUserEventStream = FitpayConfig.Web.automaticallySubscribeToUserEventStream;
                         if (automaticallySubscribeToUserEventStream) {
 
-                            UserEventStreamManager.subscribe(user.getId());
+                            UserEventStreamManager.subscribeUser(user.getId());
 
                             boolean automaticSyncThroughUserEventStream = FitpayConfig.Web.automaticallySyncFromUserEventStream;
                             if (automaticSyncThroughUserEventStream) {

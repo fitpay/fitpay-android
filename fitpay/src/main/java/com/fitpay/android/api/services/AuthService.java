@@ -1,7 +1,5 @@
 package com.fitpay.android.api.services;
 
-import com.fitpay.android.BuildConfig;
-
 import java.io.IOException;
 
 import okhttp3.Interceptor;
@@ -19,11 +17,7 @@ final public class AuthService extends GenericClient<AuthClient> {
         return new FitPayInterceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
-                Request.Builder builder = chain.request().newBuilder()
-                        .header("Accept", "application/json")
-                        .header("Content-Type", "application/json")
-                        .header(FP_KEY_SDK_VER, BuildConfig.SDK_VERSION);
-
+                Request.Builder builder = getRequestBuilder(chain);
                 return getResponse(chain, builder.build());
             }
         };
