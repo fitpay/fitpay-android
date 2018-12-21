@@ -73,14 +73,16 @@ public class UserEventStream {
             subject = PublishSubject.create();
         }
 
-        disposable = getUserStreamEvents().subscribe(
-                userStreamEvent -> {
-                    if (subject != null) {
-                        subject.onNext(userStreamEvent);
-                    }
-                    RxBus.getInstance().post(userStreamEvent);
-                },
-                throwable -> FPLog.e(TAG, throwable.getMessage()));
+        if (disposable == null || disposable.isDisposed()) {
+            disposable = getUserStreamEvents().subscribe(
+                    userStreamEvent -> {
+                        if (subject != null) {
+                            subject.onNext(userStreamEvent);
+                        }
+                        RxBus.getInstance().post(userStreamEvent);
+                    },
+                    throwable -> FPLog.e(TAG, throwable.getMessage()));
+        }
     }
 
     /**
@@ -91,10 +93,11 @@ public class UserEventStream {
         subject = null;
 
         disposable.dispose();
+        disposable = null;
     }
 
     /**
-     * Subscribe to events
+     * Subscribe to events. It will be auto disposed on {@link #unsubscribe()}
      *
      * @param consumer event consumer
      * @return disposable
@@ -163,8 +166,7 @@ public class UserEventStream {
 
                         @Override
                         public boolean onRetryError(ServerSentEvent sse, Throwable throwable, Response response) {
-                            FPLog.e(TAG, "sse onRetryError: " + response);
-                            FPLog.e(TAG, throwable);
+                            FPLog.w(TAG, "sse onRetryError: " + throwable.getMessage());
 
                             emitter.onError(new ClosedChannelException());
                             return false;
