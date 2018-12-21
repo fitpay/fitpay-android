@@ -25,7 +25,6 @@ public final class CommitTypes {
     public static final String USER_DELETED = "USER_DELETED";
     public static final String APDU_RESPONSE = "APDU_RESPONSE";
     public static final String SYNC = "SYNC";
-    public static final String HEARTBEAT = "HEARTBEAT";
     public static final String DEVICE_CREATED = "DEVICE_CREATED";
     public static final String DEVICE_STATE_UPDATED = "DEVICE_STATE_UPDATED";
     public static final String DEVICE_DELETED = "DEVICE_DELETED";
@@ -36,7 +35,7 @@ public final class CommitTypes {
     public static final String CREDENTIAL_REACTIVATED = "CREDENTIAL_REACTIVATED";
     public static final String STREAM_CONNECTED = "STREAM_CONNECTED";
     public static final String STREAM_DISCONNECTED = "STREAM_DISCONNECTED";
-    public static final String STREAM_HEARTBEAT = "STREAM_HEARTBEAT";
+    public static final String HEARTBEAT = "STREAM_HEARTBEAT";
 
 
     @Retention(RetentionPolicy.SOURCE)
@@ -57,7 +56,6 @@ public final class CommitTypes {
             USER_DELETED,
             APDU_RESPONSE,
             SYNC,
-            HEARTBEAT,
             DEVICE_CREATED,
             DEVICE_STATE_UPDATED,
             DEVICE_DELETED,
@@ -66,10 +64,9 @@ public final class CommitTypes {
             RESET_DEFAULT_CREDENTIAL,
             CREDENTIAL_DEACTIVATED,
             CREDENTIAL_REACTIVATED,
-            CREDENTIAL_REACTIVATED,
             STREAM_CONNECTED,
             STREAM_DISCONNECTED,
-            STREAM_HEARTBEAT
+            HEARTBEAT
 
     })
     public @interface Type {
