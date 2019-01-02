@@ -8,6 +8,7 @@ import com.fitpay.android.api.callbacks.CallbackWrapper;
 import com.fitpay.android.api.enums.ResultCode;
 import com.fitpay.android.api.models.ErrorResponse;
 import com.fitpay.android.api.models.PlatformConfig;
+import com.fitpay.android.api.models.RootLinks;
 import com.fitpay.android.api.models.card.VerificationMethods;
 import com.fitpay.android.api.models.collection.CountryCollection;
 import com.fitpay.android.api.models.device.ResetDeviceResult;
@@ -130,6 +131,16 @@ public class ApiManager {
         } else {
             successRunnable.run();
         }
+    }
+
+
+    /**
+     * Get root webapp links
+     *
+     */
+    public void getRootLinks(final ApiCallback<RootLinks> callback){
+        Call<RootLinks> rootLinksCall = getClient().getRootLinks(FitpayConfig.apiURL);
+        rootLinksCall.enqueue(new CallbackWrapper<>(callback));
     }
 
     /**
