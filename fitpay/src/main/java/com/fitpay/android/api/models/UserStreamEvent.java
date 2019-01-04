@@ -1,9 +1,9 @@
 package com.fitpay.android.api.models;
 
-import com.google.gson.JsonObject;
+        import com.google.gson.JsonObject;
 
-import java.util.Date;
-import java.util.Map;
+        import java.util.Date;
+        import java.util.Map;
 
 /**
  * This model class encapsulates an event received over a {@link com.fitpay.android.api.sse.UserEventStream}, the payload is specifically determined dynamically
@@ -29,6 +29,14 @@ public class UserStreamEvent {
     public String getType() {
         return type;
     }
+
+    //    @EventTypes.Type
+//    public String getEventType() {
+//        if (event != null) {
+//            return event.getEventType();
+//        }
+//        return null;
+//    }
 
     public void setType(String type) {
         this.type = type;
