@@ -227,15 +227,20 @@ public class FitpayWeb {
      * Loads the main page on Fitpay based on user variables
      */
     public void load() {
-        load(RelativeWebPath.PAGE_DEFAULT);
+        Uri.Builder builder = new Uri.Builder()
+                .encodedPath(FitpayConfig.webURL)
+                .appendQueryParameter("config", mConfig.getEncodedString());
+        loadUrl(builder.build().toString());
     }
 
     /**
+     * @deprecated. Use {@link #loadUrl(String)} or {@link #loadLink(Link)}
      * Loads a specific page on Fitpay based on user variables.
      * Use default {@link RelativeWebPath.Value}
      *
      * @param relativePath relative path
      */
+    @Deprecated
     public void load(@NonNull @RelativeWebPath.Value String relativePath) {
         Uri.Builder builder = new Uri.Builder()
                 .encodedPath(FitpayConfig.webURL)

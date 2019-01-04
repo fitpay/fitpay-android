@@ -28,6 +28,7 @@ public final class User extends UserModel implements Parcelable {
     private static final String GET_CARDS = "creditCards";
     private static final String EVENT_STREAM = "eventStream";
     private static final String WEBAPP_WALLET = "webapp.wallet";
+    private static final String WEBAPP_ADD_CARD = "webapp.addCard";
 
     public User() {
     }
@@ -89,6 +90,16 @@ public final class User extends UserModel implements Parcelable {
     @Nullable
     public Link getWebappWalletLink() {
         return getLink(WEBAPP_WALLET);
+    }
+
+    /**
+     * Get webappAddCard url
+     *
+     * @return webappAddCard url
+     */
+    @Nullable
+    public Link getWebappAddCardLink() {
+        return getLink(WEBAPP_ADD_CARD);
     }
 
     /**
