@@ -29,7 +29,7 @@ public class UserStreamEvent {
 
     @EventTypes.Type
     public String getType() {
-      return type;
+        return type;
     }
 
     @EventTypes.Type
