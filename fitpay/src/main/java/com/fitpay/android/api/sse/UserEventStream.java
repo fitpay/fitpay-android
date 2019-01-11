@@ -81,7 +81,13 @@ public class UserEventStream {
                         }
                         RxBus.getInstance().post(userStreamEvent);
                     },
-                    throwable -> FPLog.e(TAG, throwable.getMessage()));
+                    throwable -> {
+                        FPLog.w(TAG, throwable.getMessage());
+
+                        if (sse != null) {
+                            sse.close();
+                        }
+                    });
         }
     }
 
@@ -115,6 +121,7 @@ public class UserEventStream {
      *
      * @return observable
      */
+
     private Observable<UserStreamEvent> getSse() {
         return Observable.create(emitter -> {
             FitPayClient client = ApiManager.getInstance().getClient();
@@ -148,8 +155,19 @@ public class UserEventStream {
 
                             String payload = StringUtils.getDecryptedString(KeysManager.KEY_API, message);
 
+                            if (payload == null) {
+                                FPLog.w(TAG, "payload is null");
+                                return;
+                            }
+
                             Gson gson = Constants.getGson();
                             UserStreamEvent fitpayEvent = gson.fromJson(payload, UserStreamEvent.class);
+
+                            if (fitpayEvent == null) {
+                                FPLog.w(TAG, "fitpayEvent is null");
+                                return;
+                            }
+
                             emitter.onNext(fitpayEvent);
                         }
 
@@ -208,7 +226,12 @@ public class UserEventStream {
                         });
                     }
                 })
+                .doOnSubscribe(disposable1 -> {
+                    FPLog.i(TAG, "subscribe to event stream");
+                })
                 .doOnDispose(() -> {
+                    FPLog.i(TAG, "unsubscribe from event stream");
+
                     if (sse != null) {
                         sse.close();
                     }
