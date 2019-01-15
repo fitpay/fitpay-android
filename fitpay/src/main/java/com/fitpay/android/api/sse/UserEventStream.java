@@ -35,7 +35,7 @@ import okhttp3.Response;
 /**
  * This class is responsible for listening to a single user event stream, listening only for SYNC events
  * right now and initiating a sync with the SDK when received.
- * <p>
+ *
  * Created by ssteveli on 3/15/18.
  */
 
