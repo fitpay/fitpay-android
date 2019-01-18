@@ -408,7 +408,7 @@ Please contact the team via a github issue, OR, feel free to email us: sdk@fit-p
 
 # Fit Pay Internal Instructions 
 ## Release Steps
-Note: You must have bintray permissions set up to deploy. [Fitpay bintray](https://bintray.com/fit-pay)
+Note: You must have bintray permissions set up to deploy. Once permissions are set, create a bintray.properties file with `bintray_user` and `bintray_key` properties.  [Fitpay bintray](https://bintray.com/fit-pay)
 
 1. Run deploy script with old and new version numbers (maintain 3 digit semantic versioning)
 	* Example: `sh deploy.sh 1.2.0 1.2.1`
