@@ -84,6 +84,7 @@ public class UserEventStream {
                     throwable -> {
                         FPLog.w(TAG, throwable.getMessage());
 
+                        //we shouldn't be here. leave it just in case of something unpredictable.
                         if (sse != null) {
                             sse.close();
                         }
@@ -121,7 +122,6 @@ public class UserEventStream {
      *
      * @return observable
      */
-
     private Observable<UserStreamEvent> getSse() {
         return Observable.create(emitter -> {
             FitPayClient client = ApiManager.getInstance().getClient();
@@ -164,7 +164,7 @@ public class UserEventStream {
                             UserStreamEvent fitpayEvent = gson.fromJson(payload, UserStreamEvent.class);
 
                             if (fitpayEvent == null) {
-                                FPLog.w(TAG, "fitpayEvent is null");
+                                FPLog.w(TAG, "payload can't be converted into UserStreamEvent");
                                 return;
                             }
 
@@ -216,13 +216,11 @@ public class UserEventStream {
         return getSse()
                 .retryWhen(new Function<Observable<Throwable>, ObservableSource<?>>() {
                     @Override
-                    public ObservableSource<?> apply(Observable<Throwable> throwableObservable) throws Exception {
+                    public ObservableSource<?> apply(Observable<Throwable> throwableObservable) {
                         return throwableObservable.flatMap(throwable -> {
-                            if (throwable instanceof ClosedChannelException) {
-                                return Observable.timer(1, TimeUnit.SECONDS);
-                            } else {
-                                return Observable.error(throwable);
-                            }
+                            //lets double check that previous stream was closed.
+                            closeSse();
+                            return Observable.timer(1, TimeUnit.SECONDS);
                         });
                     }
                 })
@@ -231,10 +229,16 @@ public class UserEventStream {
                 })
                 .doOnDispose(() -> {
                     FPLog.i(TAG, "unsubscribe from event stream");
-
-                    if (sse != null) {
-                        sse.close();
-                    }
+                    closeSse();
                 });
+    }
+
+    /**
+     * Close Sse stream
+     */
+    private void closeSse() {
+        if (sse != null) {
+            sse.close();
+        }
     }
 }
