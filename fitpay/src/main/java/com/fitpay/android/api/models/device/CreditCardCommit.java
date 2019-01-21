@@ -38,19 +38,23 @@ public class CreditCardCommit {
     protected String termsAssetId;
     protected Long eligibilityExpirationEpoch;
 
+    @SerializedName("encryptedData")
+    private CreditCard creditCard;
+
     @SerializedName("reason")
     @ProvisioningFailedReasons.Reason
     protected String provisioningFailedReason;
 
     protected List<AssetReference> termsAssetReferences;
 
-    // TODO: eliminate the duplicates between these and creditCard
+    /**
+     * Don't remove next lines and {@link #creditCard} as well
+     */
     private String pan;
     private int expMonth;
     private int expYear;
     private String cvv;
     private String name;
-
     private Address address;
 
     protected CreditCardCommit() {
@@ -116,27 +120,27 @@ public class CreditCardCommit {
     }
 
     public Address getAddress() {
-        return address;
+        return creditCard != null ? creditCard.address : address;
     }
 
     public String getCvv() {
-        return cvv;
+        return creditCard != null ? creditCard.cvv : cvv;
     }
 
     public int getExpMonth() {
-        return expMonth;
+        return creditCard != null ? creditCard.expMonth : expMonth;
     }
 
     public int getExpYear() {
-        return expYear;
+        return creditCard != null ? creditCard.expYear : expYear;
     }
 
     public String getName() {
-        return name;
+        return creditCard != null ? creditCard.name : name;
     }
 
     public String getPan() {
-        return pan;
+        return creditCard != null ? creditCard.pan : pan;
     }
 
     public String getTermsAssetId() {
@@ -156,4 +160,12 @@ public class CreditCardCommit {
         return provisioningFailedReason;
     }
 
+    private static class CreditCard {
+        private String pan;
+        private int expMonth;
+        private int expYear;
+        private String cvv;
+        private String name;
+        private Address address;
+    }
 }
