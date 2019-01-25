@@ -85,9 +85,7 @@ public class UserEventStream {
                         FPLog.w(TAG, throwable.getMessage());
 
                         //we shouldn't be here. leave it just in case of something unpredictable.
-                        if (sse != null) {
-                            sse.close();
-                        }
+                        closeSse();
                     });
         }
     }

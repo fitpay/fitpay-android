@@ -1,5 +1,6 @@
 package com.fitpay.android.api.models;
 
+import com.fitpay.android.api.enums.EventTypes;
 import com.google.gson.JsonObject;
 
 import java.util.Date;
@@ -26,10 +27,12 @@ public class UserStreamEvent {
     private Map<String, String> metadata;
     private JsonObject payload;
 
+    @EventTypes.Type
     public String getType() {
         return type;
     }
 
+    @EventTypes.Type
     public void setType(String type) {
         this.type = type;
     }

@@ -220,21 +220,6 @@ That's it! You are now able to build from your local repository.
 ## Contributing to the SDK
 We welcome contributions to the SDK. For your first few contributions please fork the repo, make your changes and submit a pull request. Internally we branch off of develop, test, and PR-review the branch before merging to develop (moderately stable). Releases to Master happen less frequently, undergo more testing, and can be considered stable. For more information, please read:  [http://nvie.com/posts/a-successful-git-branching-model/](http://nvie.com/posts/a-successful-git-branching-model/)
 
-## Release Steps
-
-This instructions are for only those that have the credentials for pushing public FitPay Android SDK releases.
-
-* Please add a release name in GitHub using the following convention: `FitPay SDK for Android vX.X.X`
-* Please also include notes in GitHub using proper markdown about each major PR in the release.
-* Create `release-X.X.X` branch, ensuring the release version used has been properly incremented from the last release.
-* If the release was not set at the end of the previous release, set the version in `fitpay/build.gradle` and commit/push the change.
-* Update `bintray.properties` with release credentials, **don't commit into git**.
-* Run `./gradlew bintrayUpload`.
-* Authenticate to bintray.com and publish the new artifact so it's publicly accessible.
-* Merge `release-X.X.X` branch into `develop` and `master`
-* Create tagged release on github with general release notes.
-* Delete `release-X.X.X` branch
-
 ## Progaurd Setup
 
 For those building your application using progaurd, FitPay has created the following suggestions:
@@ -419,3 +404,22 @@ This code is licensed under the MIT license. More information can be found in th
 
 ## Questions? Comments? Concerns?
 Please contact the team via a github issue, OR, feel free to email us: sdk@fit-pay.com
+
+
+# Fit Pay Internal Instructions 
+## Release Steps
+Note: You must have bintray permissions set up to deploy. Once permissions are set, create a bintray.properties file with `bintray_user` and `bintray_key` properties.  [Fitpay bintray](https://bintray.com/fit-pay)
+
+1. Run deploy script with old and new version numbers (maintain 3 digit semantic versioning)
+	* Example: `sh deploy.sh 1.2.0 1.2.1`
+	* You should be on develop branch
+	* The script will exit early if you don't supply two arguments or have uncommitted changed
+* Release app in bintray
+	* Click into Maven section
+	* There will be a yellow banner asking if you would like to release the latest version
+* Create a release in Github 
+	* Use the following convention for name: `FitPay SDK for Android vX.X.X`
+	* Include notes using proper markdown about each major PR in the release.
+		* notes can be gathered from commit messages and from github releases page (commits since this release)
+
+* Confirm release was successful by updating the gradle file and syncing in Pagare
