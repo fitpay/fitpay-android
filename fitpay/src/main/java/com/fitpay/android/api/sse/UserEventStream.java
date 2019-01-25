@@ -35,7 +35,7 @@ import okhttp3.Response;
 /**
  * This class is responsible for listening to a single user event stream, listening only for SYNC events
  * right now and initiating a sync with the SDK when received.
- *
+ * <p>
  * Created by ssteveli on 3/15/18.
  */
 
@@ -81,7 +81,12 @@ public class UserEventStream {
                         }
                         RxBus.getInstance().post(userStreamEvent);
                     },
-                    throwable -> FPLog.e(TAG, throwable.getMessage()));
+                    throwable -> {
+                        FPLog.w(TAG, throwable.getMessage());
+
+                        //we shouldn't be here. leave it just in case of something unpredictable.
+                        closeSse();
+                    });
         }
     }
 
@@ -148,8 +153,19 @@ public class UserEventStream {
 
                             String payload = StringUtils.getDecryptedString(KeysManager.KEY_API, message);
 
+                            if (payload == null) {
+                                FPLog.w(TAG, "payload is null");
+                                return;
+                            }
+
                             Gson gson = Constants.getGson();
                             UserStreamEvent fitpayEvent = gson.fromJson(payload, UserStreamEvent.class);
+
+                            if (fitpayEvent == null) {
+                                FPLog.w(TAG, "payload can't be converted into UserStreamEvent");
+                                return;
+                            }
+
                             emitter.onNext(fitpayEvent);
                         }
 
@@ -198,20 +214,29 @@ public class UserEventStream {
         return getSse()
                 .retryWhen(new Function<Observable<Throwable>, ObservableSource<?>>() {
                     @Override
-                    public ObservableSource<?> apply(Observable<Throwable> throwableObservable) throws Exception {
+                    public ObservableSource<?> apply(Observable<Throwable> throwableObservable) {
                         return throwableObservable.flatMap(throwable -> {
-                            if (throwable instanceof ClosedChannelException) {
-                                return Observable.timer(1, TimeUnit.SECONDS);
-                            } else {
-                                return Observable.error(throwable);
-                            }
+                            //lets double check that previous stream was closed.
+                            closeSse();
+                            return Observable.timer(1, TimeUnit.SECONDS);
                         });
                     }
                 })
+                .doOnSubscribe(disposable1 -> {
+                    FPLog.i(TAG, "subscribe to event stream");
+                })
                 .doOnDispose(() -> {
-                    if (sse != null) {
-                        sse.close();
-                    }
+                    FPLog.i(TAG, "unsubscribe from event stream");
+                    closeSse();
                 });
+    }
+
+    /**
+     * Close Sse stream
+     */
+    private void closeSse() {
+        if (sse != null) {
+            sse.close();
+        }
     }
 }

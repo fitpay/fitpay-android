@@ -1,6 +1,8 @@
 package com.fitpay.android.utils;
 
 
+import android.support.annotation.NonNull;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -62,12 +64,12 @@ public class RxBus {
                 .subscribe(onNext, throwable -> FPLog.e(throwable.toString() + ", " + getStackTrace(throwable)));
     }
 
-    public void post(Object object) {
+    public void post(@NonNull Object object) {
         FPLog.d("RxBus", "post event: " + object);
         mBus.onNext(object);
     }
 
-    public <T> void post(String filter, T object) {
+    public <T> void post(String filter, @NonNull T object) {
         if (filter != null) {
             post(new Wrapper<T>(filter, object));
         } else {
