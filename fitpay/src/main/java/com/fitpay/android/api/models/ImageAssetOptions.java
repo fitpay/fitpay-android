@@ -14,7 +14,8 @@ public class ImageAssetOptions {
         TEXT_POSITION_X_SCALE("txs"),
         TEXT_POSITION_Y_SCALE("tys"),
         FONT_NAME("fn"),
-        FONT_BOLD("fb");
+        FONT_BOLD("fb"),
+        ROUNDED_CORNERS("rc");
 
         public String value;
 
@@ -32,6 +33,7 @@ public class ImageAssetOptions {
     private Float textPositionYScale;
     private String fontName;
     private Boolean fontBold;
+    private Boolean roundedCorners;
 
     public Integer getWidth() {
         return width;
@@ -107,6 +109,14 @@ public class ImageAssetOptions {
         this.fontBold = fontBold;
     }
 
+    public Boolean isRoundedCorners() {
+        return roundedCorners;
+    }
+
+    public void setRoundedCorners(Boolean roundedCorners) {
+        this.roundedCorners = roundedCorners;
+    }
+
     public static class Builder {
 
         public Builder() {}
@@ -120,6 +130,7 @@ public class ImageAssetOptions {
         private float textPositionYScale;
         private String fontName;
         private boolean fontBold;
+        private boolean roundedCorners;
 
         public ImageAssetOptions build() {
             ImageAssetOptions options = new ImageAssetOptions();
@@ -132,6 +143,7 @@ public class ImageAssetOptions {
             options.textPositionYScale = this.textPositionYScale;
             options.fontName = this.fontName;
             options.fontBold = this.fontBold;
+            options.roundedCorners = this.roundedCorners;
             return options;
         }
 
@@ -180,6 +192,10 @@ public class ImageAssetOptions {
             return this;
         }
 
+        public Builder setRoundedCorners(boolean roundedCorners) {
+            this.roundedCorners = roundedCorners;
+            return this;
+        }
     }
 
     public Map<String, String> getParamToValueMap() {
@@ -202,7 +218,8 @@ public class ImageAssetOptions {
             paramToValueMap.put(ImageAssetParams.FONT_NAME.value, String.valueOf(this.fontName));
         if (null != this.fontBold)
             paramToValueMap.put(ImageAssetParams.FONT_BOLD.value, String.valueOf(this.fontBold));
-
+        if (null != this.roundedCorners)
+            paramToValueMap.put(ImageAssetParams.ROUNDED_CORNERS.value, String.valueOf(this.roundedCorners));
         return paramToValueMap;
     }
 
