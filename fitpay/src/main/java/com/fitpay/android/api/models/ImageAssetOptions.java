@@ -220,6 +220,7 @@ public class ImageAssetOptions {
             paramToValueMap.put(ImageAssetParams.FONT_BOLD.value, String.valueOf(this.fontBold));
         if (null != this.roundedCorners)
             paramToValueMap.put(ImageAssetParams.ROUNDED_CORNERS.value, String.valueOf(this.roundedCorners));
+            
         return paramToValueMap;
     }
 
