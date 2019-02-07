@@ -101,9 +101,11 @@ android {
 
 ext {
     supportLib = "28.0.0"
-    retrofitLib = "2.4.0"
-    okhttpLib = "3.11.0"
-    rxjavaLib = "2.2.2"
+    retrofitLib = "2.5.0"
+    okhttpLib = "3.13.1"
+    rxjavaLib = "2.2.6"
+    conscrypt = "1.4.2"
+    nimbus = "7.0"
 }
 
 configurations {
@@ -131,8 +133,8 @@ dependencies {
 
     implementation 'me.alexrs:prefs:1.1.0'
 
-    implementation 'org.conscrypt:conscrypt-android:1.2.0'
-    implementation 'com.nimbusds:nimbus-jose-jwt:6.0.2'
+    implementation "org.conscrypt:conscrypt-android:${conscrypt}"
+    implementation "com.nimbusds:nimbus-jose-jwt:${nimbus}"
 
     implementation 'com.github.heremaps:oksse:0.9.0'
 
@@ -145,8 +147,8 @@ dependencies {
     javadocDeps "com.squareup.okhttp3:okhttp:${okhttpLib}"
     javadocDeps "io.reactivex.rxjava2:rxjava:${rxjavaLib}"
     javadocDeps 'me.alexrs:prefs:1.1.0'
-    javadocDeps 'org.conscrypt:conscrypt-android:1.2.0'
-    javadocDeps 'com.nimbusds:nimbus-jose-jwt:6.0.2'
+    javadocDeps "org.conscrypt:conscrypt-android:${conscrypt}"
+    javadocDeps "com.nimbusds:nimbus-jose-jwt:${nimbus}"
 
     testImplementation 'org.mockito:mockito-core:2.22.0'
     testImplementation 'org.jmockit:jmockit:1.41' //WARNING: don't update to 1.42. Put this line before junit
@@ -173,7 +175,7 @@ task generateJavadocs(type: Javadoc) {
 
 afterEvaluate {
     generateJavadocs.classpath += files(android.libraryVariants.collect { variant ->
-        variant.javaCompiler.classpath.files
+        variant.javaCompileProvider.get().classpath.files
     })
 }
 
@@ -215,7 +217,7 @@ tasks.withType(Test) {
 }
 
 jacoco {
-    toolVersion = "0.8.2"
+    toolVersion = "0.8.3"
 }
 jacocoAndroidUnitTestReport {
     csv.enabled false

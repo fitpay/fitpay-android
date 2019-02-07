@@ -5,7 +5,7 @@ import android.os.Parcelable
 
 data class Link(val href: String, val templated: Boolean) : Parcelable {
     constructor(parcel: Parcel) : this(
-            parcel.readString(),
+            parcel.readString()!!,
             parcel.readByte() != 0.toByte())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
