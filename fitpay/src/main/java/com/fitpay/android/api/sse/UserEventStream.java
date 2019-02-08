@@ -133,6 +133,11 @@ public class UserEventStream {
                 public void onSuccess(User user) {
                     Link eventStreamUrl = user.getEventStreamLink();
 
+                    if(eventStreamUrl == null || StringUtils.isEmpty(eventStreamUrl.getHref())){
+                        FPLog.w(TAG, "EventStreamLink is empty");
+                        return;
+                    }
+
                     Request request = new Request.Builder().url(eventStreamUrl.getHref()).build();
                     OkSse okSse = new OkSse(BaseClient
                             .getOkHttpClient(false) // don't enable logging, that interceptor doesn't work with SSE streams
