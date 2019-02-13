@@ -82,6 +82,11 @@ class WvConfig {
             return this;
         }
 
+        public Builder setLanguage(String language){
+            data.put("language", language);
+            return this;
+        }
+
         public Builder addKeyValue(String key, Object value) {
             data.put(key, value);
             return this;
