@@ -2,10 +2,13 @@ package com.fitpay.android.configs;
 
 import android.util.Base64;
 
+import com.fitpay.android.utils.FPLog;
+import com.fitpay.android.utils.StringUtils;
 import com.google.gson.Gson;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * Encoded wv config
@@ -26,6 +29,10 @@ class WvConfig {
 
     public static class Builder{
         private HashMap<String, Object> data = new HashMap<>();
+
+        public Builder(){
+            data.put("language", Locale.getDefault().getLanguage()); //ISO 639
+        }
 
         public Builder accountExist(boolean value) {
             data.put("account", value);
@@ -83,7 +90,9 @@ class WvConfig {
         }
 
         public Builder setLanguage(String language){
-            data.put("language", language);
+            if(StringUtils.isEmpty(language)){
+                FPLog.w("Language can't be null. Using default");
+            }
             return this;
         }
 

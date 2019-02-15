@@ -208,32 +208,19 @@ public class FitpayWeb {
      * @param device               payment device
      */
     public void setupWebView(@Nullable String userEmail, boolean userHasFitpayAccount, @Nullable String accessToken, @NonNull Device device) {
-        this.setupWebView(userEmail, userHasFitpayAccount, accessToken, device, null);
-    }
-
-        /**
-         * Initial setup
-         *
-         * @param userEmail            user email
-         * @param userHasFitpayAccount user has Fitpay account
-         * @param accessToken          skips the pin screen if valid
-         * @param device               payment device
-         * @param language             language                            
-         */
-    public void setupWebView(@Nullable String userEmail, boolean userHasFitpayAccount, @Nullable String accessToken, @NonNull Device device, @Nullable String language) {
         mConfig = new WvConfig.Builder()
                 .email(userEmail)
                 .accountExist(userHasFitpayAccount)
                 .clientId(FitpayConfig.clientId)
                 .setCSSUrl(FitpayConfig.Web.cssURL)
                 .redirectUri(FitpayConfig.redirectURL)
+                .setLanguage(FitpayConfig.Web.language)
                 .setBaseLanguageUrl(FitpayConfig.Web.baseLanguageURL)
                 .setAccessToken(accessToken)
                 .demoMode(FitpayConfig.Web.demoMode)
                 .demoCardGroup(FitpayConfig.Web.demoCardGroup)
                 .useWebCardScanner(!FitpayConfig.Web.supportCardScanner)
                 .paymentDevice(new WvPaymentDeviceInfoSecure(device))
-                .setLanguage(language)
                 .build();
     }
 

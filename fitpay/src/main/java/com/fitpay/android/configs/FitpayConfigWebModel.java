@@ -7,6 +7,7 @@ class FitpayConfigWebModel {
     boolean demoMode = false;
     String demoCardGroup;
     String cssURL;
+    String language;
     String baseLanguageURL;
     boolean supportCardScanner = false;
     boolean automaticallySubscribeToUserEventStream = true;

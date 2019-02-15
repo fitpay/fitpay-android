@@ -87,7 +87,7 @@ public class FitpayWebTest extends TestActions {
         String accessToken = "aabbcc";
         Device device = getTestDevice();
 
-        fitpayWeb.setupWebView(email, userHasAccount, accessToken, device, "en-US");
+        fitpayWeb.setupWebView(email, userHasAccount, accessToken, device);
 
         String baseConfig = getConfig(email, userHasAccount, accessToken, device);
         String fpConfig = fitpayWeb.getConfig();
@@ -162,13 +162,13 @@ public class FitpayWebTest extends TestActions {
                 .clientId(FitpayConfig.clientId)
                 .setCSSUrl(FitpayConfig.Web.cssURL)
                 .redirectUri(FitpayConfig.redirectURL)
+                .setLanguage(FitpayConfig.Web.language)
                 .setBaseLanguageUrl(FitpayConfig.Web.baseLanguageURL)
                 .setAccessToken(token)
                 .demoMode(FitpayConfig.Web.demoMode)
                 .demoCardGroup(FitpayConfig.Web.demoCardGroup)
                 .useWebCardScanner(!FitpayConfig.Web.supportCardScanner)
                 .paymentDevice(new WvPaymentDeviceInfoSecure(device))
-                .setLanguage("en_US")
                 .build();
 
         Assert.assertNotNull(config);
