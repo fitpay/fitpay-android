@@ -162,6 +162,7 @@ public class FitpayWebTest extends TestActions {
                 .clientId(FitpayConfig.clientId)
                 .setCSSUrl(FitpayConfig.Web.cssURL)
                 .redirectUri(FitpayConfig.redirectURL)
+                .setLanguage(FitpayConfig.Web.language)
                 .setBaseLanguageUrl(FitpayConfig.Web.baseLanguageURL)
                 .setAccessToken(token)
                 .demoMode(FitpayConfig.Web.demoMode)

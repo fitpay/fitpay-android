@@ -6,11 +6,13 @@ import android.support.annotation.NonNull;
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.FPLog;
+import com.fitpay.android.utils.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Locale;
 
 /**
  * Main Configuration Object
@@ -90,6 +92,7 @@ public final class FitpayConfig {
         Web.demoMode = configModel.getWebConfig().demoMode;
         Web.demoCardGroup = configModel.getWebConfig().demoCardGroup;
         Web.cssURL = configModel.getWebConfig().cssURL;
+        Web.language = configModel.getWebConfig().language;
         Web.baseLanguageURL = configModel.getWebConfig().baseLanguageURL;
         Web.supportCardScanner = configModel.getWebConfig().supportCardScanner;
         Web.automaticallySubscribeToUserEventStream = configModel.getWebConfig().automaticallySubscribeToUserEventStream;
@@ -147,6 +150,11 @@ public final class FitpayConfig {
          * More info at [Getting Started with Translations]
          */
         public static String baseLanguageURL;
+
+        /**
+         * Base webapp language. {@link Locale#getDefault()} used by default
+         */
+        public static String language;
 
         /**
          * Turn on when you are ready to implement card scanning methods

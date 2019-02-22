@@ -10,6 +10,7 @@
     "demoCardGroup": "visa_only",
     "loadingPage" : "/",
     "cssURL": "https://fitpaycss.github.io/pagare.css",
-    "supportCardScanner": true
+    "supportCardScanner": true,
+    "language": "en"
   }
 }
