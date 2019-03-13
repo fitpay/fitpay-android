@@ -14,6 +14,7 @@ import java.util.List;
  */
 public class CreditCardCommit {
 
+    private static String maskedCvvValue = "###";
     protected String creditCardId;
     protected String userId;
 
@@ -123,8 +124,9 @@ public class CreditCardCommit {
         return creditCard != null ? creditCard.address : address;
     }
 
+    @Deprecated
     public String getCvv() {
-        return creditCard != null ? creditCard.cvv : cvv;
+        return maskedCvvValue;
     }
 
     public int getExpMonth() {
