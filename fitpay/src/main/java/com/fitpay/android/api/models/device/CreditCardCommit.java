@@ -123,8 +123,10 @@ public class CreditCardCommit {
         return creditCard != null ? creditCard.address : address;
     }
 
+    // CB - My first inclination was to remove this completely.  We should never be returning a CVV.  But, since it's in the sdk, a client might
+    // be using it, so just return null;
     public String getCvv() {
-        return creditCard != null ? creditCard.cvv : cvv;
+        return null;
     }
 
     public int getExpMonth() {
