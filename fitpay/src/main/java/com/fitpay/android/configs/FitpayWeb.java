@@ -214,6 +214,7 @@ public class FitpayWeb {
                 .clientId(FitpayConfig.clientId)
                 .setCSSUrl(FitpayConfig.Web.cssURL)
                 .redirectUri(FitpayConfig.redirectURL)
+                .setLanguage(FitpayConfig.Web.language)
                 .setBaseLanguageUrl(FitpayConfig.Web.baseLanguageURL)
                 .setAccessToken(accessToken)
                 .demoMode(FitpayConfig.Web.demoMode)
