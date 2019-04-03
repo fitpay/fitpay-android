@@ -12,6 +12,14 @@ public class PaymentDeviceOperationFailed {
         super();
     }
 
+    public String getReason() {
+        return reason;
+    }
+
+    public int getReasonCode() {
+        return reasonCode;
+    }
+
     public static class Builder {
 
         private String reason;
