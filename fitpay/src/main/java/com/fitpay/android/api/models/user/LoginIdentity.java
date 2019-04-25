@@ -1,6 +1,6 @@
 package com.fitpay.android.api.models.user;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.fitpay.android.utils.StringUtils;
 import com.fitpay.android.utils.ValidationException;

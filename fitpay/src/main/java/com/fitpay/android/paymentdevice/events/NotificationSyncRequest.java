@@ -1,6 +1,6 @@
 package com.fitpay.android.paymentdevice.events;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.fitpay.android.api.enums.SyncInitiator;
 import com.fitpay.android.paymentdevice.models.SyncInfo;

@@ -1,6 +1,6 @@
 package com.fitpay.android.webview.callbacks;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.fitpay.android.a2averification.A2AVerificationFailed;
 import com.fitpay.android.a2averification.A2AVerificationRequest;

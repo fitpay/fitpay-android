@@ -1,6 +1,6 @@
 package com.fitpay.android.utils;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.google.gson.internal.bind.util.ISO8601Utils;
 

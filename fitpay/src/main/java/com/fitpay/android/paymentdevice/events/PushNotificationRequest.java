@@ -1,7 +1,7 @@
 package com.fitpay.android.paymentdevice.events;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.fitpay.android.paymentdevice.enums.NotificationType;
 import com.fitpay.android.paymentdevice.models.NotificationDetail;

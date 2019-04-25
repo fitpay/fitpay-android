@@ -1,6 +1,6 @@
 package com.fitpay.android.configs;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.StringUtils;

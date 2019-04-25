@@ -1,6 +1,6 @@
 package com.fitpay.android.api.sse;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.api.callbacks.ApiCallbackExt;

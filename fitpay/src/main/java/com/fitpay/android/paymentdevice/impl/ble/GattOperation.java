@@ -1,7 +1,7 @@
 package com.fitpay.android.paymentdevice.impl.ble;
 
 import android.bluetooth.BluetoothGatt;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.util.UUID;
 

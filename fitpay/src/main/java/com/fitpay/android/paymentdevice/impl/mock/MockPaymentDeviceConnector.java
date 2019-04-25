@@ -2,7 +2,7 @@ package com.fitpay.android.paymentdevice.impl.mock;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.fitpay.android.api.enums.CommitTypes;
 import com.fitpay.android.api.enums.DeviceTypes;

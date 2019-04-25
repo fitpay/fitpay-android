@@ -1,6 +1,6 @@
 package com.fitpay.android.webview.events;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * API error detailed message. Used for RTM messages only.

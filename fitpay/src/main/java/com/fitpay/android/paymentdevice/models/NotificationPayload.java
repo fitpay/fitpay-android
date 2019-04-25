@@ -1,6 +1,6 @@
 package com.fitpay.android.paymentdevice.models;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.fitpay.android.api.models.BaseModel;
 import com.fitpay.android.paymentdevice.enums.NotificationType;

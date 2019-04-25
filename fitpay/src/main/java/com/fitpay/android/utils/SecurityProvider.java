@@ -1,6 +1,6 @@
 package com.fitpay.android.utils;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.conscrypt.Conscrypt;
 

@@ -1,6 +1,6 @@
 package com.fitpay.android.webview.callbacks;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.fitpay.android.utils.Listener;
 import com.fitpay.android.webview.events.IdVerificationRequest;

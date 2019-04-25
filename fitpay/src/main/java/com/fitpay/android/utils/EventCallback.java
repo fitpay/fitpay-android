@@ -1,6 +1,6 @@
 package com.fitpay.android.utils;
 
-import android.support.annotation.StringDef;
+import androidx.annotation.StringDef;
 
 import com.fitpay.android.api.enums.CommitTypes;
 import com.fitpay.android.api.models.device.Commit;
