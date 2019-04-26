@@ -123,20 +123,20 @@ dependencies {
     implementation "androidx.annotation:annotation:${android_x_lib}"
     implementation "androidx.appcompat:appcompat:${android_x_lib}"
 
-    implementation "com.squareup.retrofit2:retrofit:${retrofitLib}"
-    implementation "com.squareup.retrofit2:converter-gson:${retrofitLib}"
-    implementation "com.squareup.okhttp3:logging-interceptor:${okhttpLib}"
-    implementation "com.squareup.retrofit2:retrofit:${retrofitLib}"
+    api "com.squareup.retrofit2:retrofit:${retrofitLib}"
+    api "com.squareup.retrofit2:converter-gson:${retrofitLib}"
+    api "com.squareup.okhttp3:okhttp:${okhttpLib}"
+    api "com.squareup.okhttp3:logging-interceptor:${okhttpLib}"
 
-    implementation "io.reactivex.rxjava2:rxjava:${rxjavaLib}"
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    api "io.reactivex.rxjava2:rxjava:${rxjavaLib}"
+    api 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
-    implementation 'me.alexrs:prefs:1.1.0'
+    api 'me.alexrs:prefs:1.1.0'
 
     implementation "org.conscrypt:conscrypt-android:${conscrypt}"
     implementation "com.nimbusds:nimbus-jose-jwt:${nimbus}"
 
-    implementation 'com.github.heremaps:oksse:0.9.0'
+    api 'com.github.heremaps:oksse:0.9.0'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
