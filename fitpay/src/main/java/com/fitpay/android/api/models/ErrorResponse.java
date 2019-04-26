@@ -1,6 +1,6 @@
 package com.fitpay.android.api.models;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.fitpay.android.utils.StringUtils;
 

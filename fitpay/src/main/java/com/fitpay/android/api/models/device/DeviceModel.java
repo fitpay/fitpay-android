@@ -1,6 +1,6 @@
 package com.fitpay.android.api.models.device;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Device model

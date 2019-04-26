@@ -1,7 +1,7 @@
 package com.fitpay.android.webview.impl;
 
 import android.app.Activity;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 

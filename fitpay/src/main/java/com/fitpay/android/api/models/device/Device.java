@@ -3,8 +3,8 @@ package com.fitpay.android.api.models.device;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.DeviceTypes;

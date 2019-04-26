@@ -1,6 +1,6 @@
 package com.fitpay.android.api.callbacks;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.fitpay.android.api.enums.ResultCode;
 import com.fitpay.android.utils.StringUtils;

@@ -4,10 +4,13 @@ buildscript {
     }
 }
 
+plugins {
+    id 'digital.wup.android-maven-publish' version '3.6.2'
+}
+
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.jfrog.bintray'
-apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'maven'
 apply plugin: 'jacoco'
 apply plugin: 'jacoco-android'
@@ -16,35 +19,37 @@ group = 'com.fitpay.android'
 version = '1.6.1'
 archivesBaseName = "android_sdk"
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: 'file://' + new File(System.getProperty('user.home'), 'LocalRepository').absolutePath) {
-            }
+//required for ./gradlew publishToMavenLocal
+def pomConfig = {
+    licenses {
+        license {
+            name 'MIT License'
+            url 'https://github.com/fitpay/fitpay-android-sdk/blob/develop/LICENSE'
+        }
+    }
 
-            snapshotRepository(url: 'file://' + new File(System.getProperty('user.home'), 'LocalRepository/snapshots').absolutePath) {
-            }
+    developers {
+        developer {
+            id 'fitpay_developer'
+            name 'FitPay Developer'
+            email 'sdk@fit-pay.com'
+        }
+    }
+}
+publishing {
+    publications {
+        mavenAar(MavenPublication) {
+            from components.android
+            groupId = group
+            artifactId = archivesBaseName
+            version = version
 
-            pom.project {
-                name 'android_sdk'
-                packaging 'aar'
-                description 'FitPay Android SDK'
-                url 'https://github.com/fitpay/fitpay-android-sdk'
-
-                licenses {
-                    license {
-                        name 'MIT License'
-                        url 'https://github.com/fitpay/fitpay-android-sdk/blob/develop/LICENSE'
-                    }
-                }
-
-                developers {
-                    developer {
-                        id 'fitpay_developer'
-                        name 'FitPay Developer'
-                        email 'sdk@fit-pay.com'
-                    }
-                }
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'FitPay Android SDK')
+                root.appendNode('name', archivesBaseName)
+                root.appendNode('url', 'https://github.com/fitpay/fitpay-android-sdk')
+                root.children().last() + pomConfig
             }
         }
     }
@@ -100,12 +105,12 @@ android {
 }
 
 ext {
-    supportLib = "28.0.0"
+    android_x_lib = "1.0.2"
     retrofitLib = "2.5.0"
-    okhttpLib = "3.13.1"
-    rxjavaLib = "2.2.6"
-    conscrypt = "1.4.2"
-    nimbus = "7.0"
+    okhttpLib = "3.14.1"
+    rxjavaLib = "2.2.8"
+    conscrypt = "2.1.0"
+    nimbus = "7.1"
 }
 
 configurations {
@@ -115,27 +120,27 @@ configurations {
 dependencies {
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "com.android.support:support-annotations:${supportLib}"
-    implementation "com.android.support:appcompat-v7:${supportLib}"
+    implementation "androidx.annotation:annotation:${android_x_lib}"
+    implementation "androidx.appcompat:appcompat:${android_x_lib}"
 
-    implementation "com.squareup.retrofit2:retrofit:${retrofitLib}"
-    implementation "com.squareup.retrofit2:converter-gson:${retrofitLib}"
-    implementation "com.squareup.okhttp3:logging-interceptor:${okhttpLib}"
-    implementation "com.squareup.retrofit2:retrofit:${retrofitLib}"
+    api "com.squareup.retrofit2:retrofit:${retrofitLib}"
+    api "com.squareup.retrofit2:converter-gson:${retrofitLib}"
+    api "com.squareup.okhttp3:okhttp:${okhttpLib}"
+    api "com.squareup.okhttp3:logging-interceptor:${okhttpLib}"
 
-    implementation "io.reactivex.rxjava2:rxjava:${rxjavaLib}"
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    api "io.reactivex.rxjava2:rxjava:${rxjavaLib}"
+    api 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
-    implementation 'me.alexrs:prefs:1.1.0'
+    api 'me.alexrs:prefs:1.1.0'
 
     implementation "org.conscrypt:conscrypt-android:${conscrypt}"
     implementation "com.nimbusds:nimbus-jose-jwt:${nimbus}"
 
-    implementation 'com.github.heremaps:oksse:0.9.0'
+    api 'com.github.heremaps:oksse:0.9.0'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    javadocDeps "com.android.support:support-annotations:${supportLib}"
+    javadocDeps "androidx.annotation:annotation:${android_x_lib}"
     javadocDeps "com.squareup.retrofit2:retrofit:${retrofitLib}"
     javadocDeps "com.squareup.retrofit2:converter-gson:${retrofitLib}"
     javadocDeps "com.squareup.okhttp3:logging-interceptor:${okhttpLib}"
@@ -166,6 +171,7 @@ task generateJavadocs(type: Javadoc) {
     // exclude generated files
     exclude '**/BuildConfig.java'
     exclude '**/R.java'
+    exclude '**/*.kt' //TODO: Kotlin files causes Javadoc to crush. Don't add them for now
 }
 
 afterEvaluate {
@@ -179,6 +185,10 @@ task generateJavadocsJar(type: Jar) {
     classifier 'javadoc'
 }
 generateJavadocsJar.dependsOn generateJavadocs
+
+tasks.withType(Javadoc) {
+    options.addBooleanOption('Xdoclint:none', true)
+}
 
 artifacts {
     archives generateJavadocsJar

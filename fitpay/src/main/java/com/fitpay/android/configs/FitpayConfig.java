@@ -1,12 +1,11 @@
 package com.fitpay.android.configs;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.fitpay.android.api.ApiManager;
 import com.fitpay.android.utils.Constants;
 import com.fitpay.android.utils.FPLog;
-import com.fitpay.android.utils.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;

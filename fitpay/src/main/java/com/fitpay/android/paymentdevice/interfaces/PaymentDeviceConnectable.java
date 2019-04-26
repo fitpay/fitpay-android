@@ -1,7 +1,7 @@
 package com.fitpay.android.paymentdevice.interfaces;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.fitpay.android.api.models.apdu.ApduCommand;
 import com.fitpay.android.api.models.apdu.ApduExecutionResult;

@@ -1,6 +1,6 @@
 package com.fitpay.android.utils;
 
-import android.support.annotation.IntDef;
+import androidx.annotation.IntDef;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

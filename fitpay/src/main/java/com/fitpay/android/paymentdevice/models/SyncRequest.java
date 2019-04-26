@@ -1,6 +1,6 @@
 package com.fitpay.android.paymentdevice.models;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.api.models.user.User;

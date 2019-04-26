@@ -3,7 +3,7 @@ package com.fitpay.android.api.models.card;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.models.Links;

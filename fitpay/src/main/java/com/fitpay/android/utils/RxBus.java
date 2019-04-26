@@ -1,7 +1,7 @@
 package com.fitpay.android.utils;
 
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
