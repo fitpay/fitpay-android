@@ -1,8 +1,13 @@
 package com.fitpay.android.api.models.card;
 
+import androidx.annotation.Nullable;
+
 import com.fitpay.android.api.enums.CardInitiators;
+import com.fitpay.android.api.enums.OfflineSeActionTypes;
 import com.fitpay.android.api.models.AssetReference;
 import com.fitpay.android.api.models.BaseModel;
+import com.fitpay.android.api.models.apdu.ApduCommand;
+import com.fitpay.android.utils.Constants;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -186,8 +191,26 @@ abstract class CreditCardModel extends BaseModel {
         return creditCardInfo.address;
     }
 
+    /**
+     * @deprecated  As of release 1.7.0, replaced by {@link #getOfflineSeAction(String)} ()}
+     */
+    @Deprecated
+    @Nullable
     public TopOfWallet getTOW() {
-        return offlineSeActions != null ? offlineSeActions.getTopOfWallet() : null;
+        SeAction action = offlineSeActions != null ?
+                offlineSeActions.getAction(OfflineSeActionTypes.TOP_OF_WALLET) : null;
+        //fallback to old class
+        return Constants.getGson().fromJson(Constants.getGson().toJson(action), TopOfWallet.class);
+    }
+
+    /**
+     * Get offline SE action commands
+     * @param type action
+     * @return list of apdu commands or null
+     */
+    @Nullable
+    public List<ApduCommand> getOfflineSeAction(@OfflineSeActionTypes.Type String type){
+        return offlineSeActions != null ? offlineSeActions.getCommands(type) : null;
     }
 
     public String getTokenLastFour() {

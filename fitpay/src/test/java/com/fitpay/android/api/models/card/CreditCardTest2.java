@@ -6,7 +6,9 @@ import com.fitpay.android.TestActions;
 import com.fitpay.android.TestConstants;
 import com.fitpay.android.api.callbacks.ResultProvidingCallback;
 import com.fitpay.android.api.enums.CardInitiators;
+import com.fitpay.android.api.enums.OfflineSeActionTypes;
 import com.fitpay.android.api.models.Transaction;
+import com.fitpay.android.api.models.apdu.ApduCommand;
 import com.fitpay.android.api.models.collection.Collections;
 import com.fitpay.android.api.models.device.Device;
 import com.fitpay.android.utils.NamedResource;
@@ -17,6 +19,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -98,6 +101,12 @@ public class CreditCardTest2 extends TestActions {
         assertNotNull("card not successfully updated by accept terms", createdCard);
         assertEquals("card state", "PENDING_VERIFICATION", createdCard.getState());
 
+        assertNotNull("offlineSeActions is empty", createdCard.offlineSeActions);
+        List<ApduCommand> towCommands = createdCard.getOfflineSeAction(OfflineSeActionTypes.TOP_OF_WALLET);
+        assertNotNull("towCommands is empty", towCommands);
+
+        TopOfWallet tow = createdCard.getTOW();
+        assertNotNull("tow fallback is empty", tow);
     }
 
     @Test
