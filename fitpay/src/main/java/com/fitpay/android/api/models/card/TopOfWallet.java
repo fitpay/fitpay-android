@@ -1,16 +1,9 @@
 package com.fitpay.android.api.models.card;
 
-import com.fitpay.android.api.models.apdu.ApduCommand;
-
-import java.util.List;
-
 /**
+ * @deprecated Use {@link CreditCardModel#getOfflineSeAction(String)}
  * Top of Wallet APDUs
  */
-public class TopOfWallet {
-    private List<ApduCommand> apduCommands;
-
-    public List<ApduCommand> getApduCommands(){
-        return apduCommands;
-    }
+@Deprecated
+public class TopOfWallet extends SeAction {
 }

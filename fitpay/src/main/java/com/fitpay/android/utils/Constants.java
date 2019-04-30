@@ -5,6 +5,7 @@ import com.fitpay.android.api.models.Links;
 import com.fitpay.android.api.models.Payload;
 import com.fitpay.android.api.models.Transaction;
 import com.fitpay.android.api.models.card.CreditCardInfo;
+import com.fitpay.android.api.models.card.OfflineSeActions;
 import com.fitpay.android.api.models.collection.CountryCollection;
 import com.fitpay.android.api.models.security.ECCKeyPair;
 import com.fitpay.android.api.models.security.OAuthToken;
@@ -62,6 +63,7 @@ public final class Constants {
                     .registerTypeAdapter(OAuthToken.class, new ModelAdapter.OauthTokenDeserializer())
                     .registerTypeAdapter(ErrorResponse.ErrorMessage.class, new ModelAdapter.ErrorMessageDeserializer())
                     .registerTypeAdapter(CountryCollection.class, new ModelAdapter.CountryCollectionDeserializer())
+                    .registerTypeAdapter(OfflineSeActions.class, new ModelAdapter.OfflineSeActionsDeserializer())
                     .create();
         }
         return gson;

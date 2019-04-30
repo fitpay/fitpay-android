@@ -6,6 +6,8 @@ import com.fitpay.android.api.models.Link;
 import com.fitpay.android.api.models.Links;
 import com.fitpay.android.api.models.Payload;
 import com.fitpay.android.api.models.apdu.ApduPackage;
+import com.fitpay.android.api.models.card.OfflineSeActions;
+import com.fitpay.android.api.models.card.SeAction;
 import com.fitpay.android.api.models.collection.CountryCollection;
 import com.fitpay.android.api.models.device.CreditCardCommit;
 import com.fitpay.android.api.models.security.ECCKeyPair;
@@ -158,6 +160,25 @@ final class ModelAdapter {
                 }
 
                 return new CountryCollection(countriesData);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+    }
+
+    public static final class OfflineSeActionsDeserializer implements JsonDeserializer<OfflineSeActions> {
+
+        @Override
+        public OfflineSeActions deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            try {
+                Map<String, SeAction> actions = new HashMap<>();
+
+                Set<Map.Entry<String, JsonElement>> listsSet = json.getAsJsonObject().entrySet();
+                for (Map.Entry<String, JsonElement> entry : listsSet) {
+                    actions.put(entry.getKey(), Constants.getGson().fromJson(entry.getValue(), SeAction.class));
+                }
+
+                return new OfflineSeActions(actions);
             } catch (Exception e) {
                 return null;
             }
