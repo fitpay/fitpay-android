@@ -4,6 +4,10 @@
 [![Build Status](https://travis-ci.com/fitpay/fitpay-android-sdk.svg?branch=develop)](https://travis-ci.com/fitpay/fitpay-android-sdk)
 [![Bintray](https://api.bintray.com/packages/fit-pay/maven/com.fitpay/images/download.svg)](https://bintray.com/fit-pay/maven/com.fitpay)
 [![codecov](https://codecov.io/gh/fitpay/fitpay-android-sdk/branch/develop/graph/badge.svg)](https://codecov.io/gh/fitpay/fitpay-android-sdk)
+
+## Version Strategy
+Versioned releases follow the common major.minor.maintenance naming convention. Only major versions are allowed to introduce breaking changes (including removal of deprecated services). Minor versions typically introduce a new feature or functionality. Maintenance versions are commonly bug fixes and minor improvements like refactors and inline commenting.
+
 ## Building the library
 
 ### Building using Android Studio
@@ -19,7 +23,7 @@ Open an existing Android Studio project
 Click on Gradle (topright), select fitpay-android->Tasks->build, build - right click and select "Run fitpay-android[build]"
 ```
 
-### Building from the commandline
+### Building from the command line
 
 Ensure you have the Android SDK installed on your machine. http://developer.android.com/sdk/index.html
 
@@ -123,7 +127,7 @@ Open an existing Android Studio project
 Click on Gradle (topright), select fitpay-android->Tasks->verification, test - right click and select "Run fitpay-android[test]"
 ```
 
-### Running tests from the commandline
+### Running tests from the command line
 
 ```
 cd fitpay-android-sdk
@@ -132,7 +136,7 @@ cd fitpay-android-sdk
 
 ### Running code coverage
 
-You can run code coverage in the android SDK (to highlight individual file results) or manually. To run manually, run: 
+You can run code coverage in the android SDK (to highlight individual file results) or manually. To run manually, run:
 ```
 gradlew testDebugUnitTestCoverage
 ```
@@ -403,12 +407,16 @@ For those building your application using progaurd, FitPay has created the follo
 This code is licensed under the MIT license. More information can be found in the [LICENSE](LICENSE) file contained in this repository.
 
 ## Questions? Comments? Concerns?
-Please contact the team via a github issue, OR, feel free to email us: sdk@fit-pay.com
+Please contact the team via support@fit-pay.com
 
-
-# Fit Pay Internal Instructions 
+# Fit Pay Internal Instructions
 ## Release Steps
-Note: You must have bintray permissions set up to deploy. Once permissions are set, create a bintray.properties file with `bintray_user` and `bintray_key` properties.  [Fitpay bintray](https://bintray.com/fit-pay)
+Note: You must have bintray permissions set up to deploy. Once permissions are set, create a `bintray.properties` file in the root project folder with `bintray_user` and `bintray_key` properties.  [Fitpay bintray](https://bintray.com/fit-pay). 
+
+```
+bintray_user=USERNAME
+bintray_key=API_KEY
+```
 
 1. Run deploy script with old and new version numbers (maintain 3 digit semantic versioning)
 	* Example: `sh deploy.sh 1.2.0 1.2.1`
@@ -416,10 +424,11 @@ Note: You must have bintray permissions set up to deploy. Once permissions are s
 	* The script will exit early if you don't supply two arguments or have uncommitted changed
 * Release app in bintray
 	* Click into Maven section
-	* There will be a yellow banner asking if you would like to release the latest version
-* Create a release in Github 
+	* There will be a banner asking if you would like to publish the latest version
+	* If the upload failed, you can retry it with `./gradlew bintrayUpload` once the problem has been fixed.
+* Create a release in Github
 	* Use the following convention for name: `FitPay SDK for Android vX.X.X`
 	* Include notes using proper markdown about each major PR in the release.
 		* notes can be gathered from commit messages and from github releases page (commits since this release)
-
 * Confirm release was successful by updating the gradle file and syncing in Pagare
+* Don't forget to switch your local branch back
