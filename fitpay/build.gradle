@@ -6,6 +6,7 @@ buildscript {
 
 plugins {
     id 'digital.wup.android-maven-publish' version '3.6.2'
+    id "com.github.dcendents.android-maven" version "2.1"
 }
 
 apply plugin: 'com.android.library'
@@ -19,7 +20,6 @@ group = 'com.fitpay.android'
 version = '1.7.0'
 archivesBaseName = "android_sdk"
 
-//required for ./gradlew publishToMavenLocal
 def pomConfig = {
     licenses {
         license {
@@ -36,6 +36,8 @@ def pomConfig = {
         }
     }
 }
+
+//required for ./gradlew publishToMavenLocal
 publishing {
     publications {
         mavenAar(MavenPublication) {
@@ -48,6 +50,22 @@ publishing {
                 def root = asNode()
                 root.appendNode('description', 'FitPay Android SDK')
                 root.appendNode('name', archivesBaseName)
+                root.appendNode('url', 'https://github.com/fitpay/fitpay-android-sdk')
+                root.children().last() + pomConfig
+            }
+        }
+    }
+}
+
+//required for ./gradlew bintrayUpload
+install {
+    repositories {
+        mavenInstaller {
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'FitPay Android SDK')
+                root.appendNode('name', archivesBaseName)
+                root.appendNode('packaging', 'aar')
                 root.appendNode('url', 'https://github.com/fitpay/fitpay-android-sdk')
                 root.children().last() + pomConfig
             }
