@@ -39,3 +39,4 @@ tmp/
 *.swp
 
 bintray.properties
+bintray.properties~
