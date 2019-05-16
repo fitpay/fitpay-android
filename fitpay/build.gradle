@@ -17,7 +17,7 @@ apply plugin: 'jacoco'
 apply plugin: 'jacoco-android'
 
 group = 'com.fitpay.android'
-version = '1.72'
+version = '1.7.2'
 archivesBaseName = "android_sdk"
 
 def pomConfig = {
@@ -65,7 +65,6 @@ install {
                 def root = asNode()
                 root.appendNode('description', 'FitPay Android SDK')
                 root.appendNode('name', archivesBaseName)
-                root.appendNode('packaging', 'aar')
                 root.appendNode('url', 'https://github.com/fitpay/fitpay-android-sdk')
                 root.children().last() + pomConfig
             }
