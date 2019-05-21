@@ -1,5 +1,7 @@
 package com.fitpay.android.api.models.device;
 
+import androidx.annotation.Nullable;
+
 import com.fitpay.android.api.enums.CardInitiators;
 import com.fitpay.android.api.enums.ProvisioningFailedReasons;
 import com.fitpay.android.api.models.AssetReference;
@@ -80,11 +82,13 @@ public class CreditCardCommit {
         return defaultX;
     }
 
-    public long getCreatedTsEpoch() {
+    @Nullable
+    public Long getCreatedTsEpoch() {
         return createdTsEpoch;
     }
 
-    public long getLastModifiedTsEpoch() {
+    @Nullable
+    public Long getLastModifiedTsEpoch() {
         return lastModifiedTsEpoch;
     }
 
@@ -116,6 +120,7 @@ public class CreditCardCommit {
         return externalTokenReference;
     }
 
+    @Nullable
     public Long getEligibilityExpirationEpoch() {
         return eligibilityExpirationEpoch;
     }
