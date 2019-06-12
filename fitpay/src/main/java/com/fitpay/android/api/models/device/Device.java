@@ -3,6 +3,7 @@ package com.fitpay.android.api.models.device;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -33,6 +34,7 @@ public final class Device extends DeviceModel implements Parcelable {
     private static final String DEVICE_RESET_TASKS = "deviceResetTasks";
     private static final String DEFAULT_CREDIT_CARD = "defaultCreditCard";
     private static final String WEBAPP_ADD_CREDENTIAL = "webapp.addCredential";
+    private static final String MAKE_ACTIVE = "makeActive";
 
     /**
      * Get webappAddCredential url
@@ -90,6 +92,19 @@ public final class Device extends DeviceModel implements Parcelable {
 
     public boolean canDelete() {
         return hasLink(SELF);
+    }
+
+    /**
+     * Make device active
+     *
+     * @param callback result callback with current device
+     */
+    public void makeActive(@NonNull ApiCallback<Device> callback) {
+        makePostCall(MAKE_ACTIVE, null, Device.class, callback);
+    }
+
+    public boolean canMakeActive() {
+        return hasLink(MAKE_ACTIVE);
     }
 
     /**
@@ -348,10 +363,11 @@ public final class Device extends DeviceModel implements Parcelable {
         }
 
         /**
-         * Set device identifier 
-         * @deprecated as of v1.0.2 - Fitpay platform will provide deviceId when device is created
+         * Set device identifier
+         *
          * @param deviceIdentifier The device identifier parameter is used to read or write the identifier key of the device
          * @return a reference to this {@code Builder} object to fulfill the "Builder" pattern
+         * @deprecated as of v1.0.2 - Fitpay platform will provide deviceId when device is created
          */
         @Deprecated
         public Builder setDeviceIdentifier(@NonNull String deviceIdentifier) {
