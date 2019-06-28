@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.fitpay.android.utils.StringUtils;
 import com.fitpay.android.webview.models.IdVerification;
 
 import java.util.Calendar;
@@ -205,8 +206,10 @@ public final class CreditCardInfo implements Parcelable {
          * @return a reference to this {@code Builder} object to fulfill the "Builder" pattern
          */
         public Builder setCVV(@Nullable String cvv) {
-            if (cvv != null && cvv.equals("")) {
+            if (StringUtils.isEmpty(cvv)) {
                 cvv = null;
+            } else {
+                cvv = cvv.trim();
             }
 
             this.cvv = cvv;
