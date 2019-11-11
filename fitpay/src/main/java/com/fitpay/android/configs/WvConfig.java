@@ -92,6 +92,8 @@ class WvConfig {
         public Builder setLanguage(String language){
             if(StringUtils.isEmpty(language)){
                 FPLog.w("Language can't be null. Using default");
+            } else {
+                data.put("language", language);
             }
             return this;
         }
