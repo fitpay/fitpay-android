@@ -183,7 +183,7 @@ You can run the Gradle task and build the repository from Android Studio or from
 
     /home/yourname/fitpay/fitpay-android-sdk
 
-    Click on Gradle (topright), select fitpay-android->Tasks->upload, uploadArchives - right click and select "Run fitpay-android[uploadArchives]"
+    Click on Gradle (topright), select fitpay-android->Tasks->publishing, publishToMavenLocal - right click and select "Run fitpay-android"
     ```
 
 * Build from the commandline
