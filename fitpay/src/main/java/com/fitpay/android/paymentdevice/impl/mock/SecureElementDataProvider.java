@@ -12,8 +12,8 @@ import java.util.Random;
 public class SecureElementDataProvider {
     // See the Simulated Secure Element Flow doc in the FitPay wiki for a detailed explanation of the different
     // behaviors simulated SE's provide.
-    public static final String FULL_SIMULATED_SE_PREFIX = "70B1A5";
-    public static final String PARTIAL_SIMULATED_SE_PREFIX = "600DCA7";
+    public static final String FULL_SIMULATED_SE_PREFIX = "70B1A500";
+    public static final String PARTIAL_SIMULATED_SE_PREFIX = "600DCA700";
 
     private static Random r = new Random();
 
