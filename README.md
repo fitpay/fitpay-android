@@ -432,3 +432,5 @@ bintray_key=API_KEY
 		* notes can be gathered from commit messages and from github releases page (commits since this release)
 * Confirm release was successful by updating the gradle file and syncing in Pagare
 * Don't forget to switch your local branch back
+
+The test mocked responses for tests are in the resources/tests.zip file.  If you change any values in the tests, you will need to update that file.
