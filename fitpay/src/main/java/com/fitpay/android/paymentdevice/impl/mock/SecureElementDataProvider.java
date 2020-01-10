@@ -12,8 +12,8 @@ import java.util.Random;
 public class SecureElementDataProvider {
     // See the Simulated Secure Element Flow doc in the FitPay wiki for a detailed explanation of the different
     // behaviors simulated SE's provide.
-    public static final String FULL_SIMULATED_SE_PREFIX = "DEADBEEF";
-    public static final String PARTIAL_SIMULATED_SE_PREFIX = "BADC0FFEE";
+    public static final String FULL_SIMULATED_SE_PREFIX = "70B1A500";
+    public static final String PARTIAL_SIMULATED_SE_PREFIX = "600DCA700";
 
     private static Random r = new Random();
 
@@ -31,7 +31,7 @@ public class SecureElementDataProvider {
 
     public static String generateRandomSecureElementId(String prefix, String uniqueIdentifier) {
         if (StringUtils.isEmpty(prefix)) {
-            prefix = FULL_SIMULATED_SE_PREFIX + "0002";
+            prefix = FULL_SIMULATED_SE_PREFIX + "0000";
         } else if (prefix.length() < 12) {
             final int padCount = 12 - prefix.length();
             for (int i=0; i<padCount; i++) {
@@ -50,7 +50,7 @@ public class SecureElementDataProvider {
         buf.append(uniqueIdentifier);
         buf.append("B230"); // IC Module Fabricator
         buf.append("60A4"); // IC Module Packaging Date
-        buf.append("0823"); // IC Manufacturer - 0823 is ST
+        buf.append("0057"); // IC Manufacturer - 0057 is NXP
         buf.append("4272"); // IC EMbedding Date
         buf.append("0823"); // PrePerso Id
         buf.append("6250"); // PrePerso Date
