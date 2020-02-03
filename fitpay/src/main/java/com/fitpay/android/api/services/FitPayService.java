@@ -4,6 +4,7 @@ import com.fitpay.android.api.models.PlatformConfig;
 import com.fitpay.android.api.models.security.AccessDenied;
 import com.fitpay.android.api.models.security.OAuthToken;
 import com.fitpay.android.utils.Constants;
+import com.fitpay.android.utils.ExpiredTokenException;
 import com.fitpay.android.utils.FPLog;
 import com.fitpay.android.utils.KeysManager;
 import com.fitpay.android.utils.RxBus;
@@ -53,13 +54,23 @@ final public class FitPayService extends GenericClient<FitPayClient> {
                 }
 
                 if (mAuthToken != null) {
-                    if (!expiredNotificationSent && mAuthToken.isExpired()) {
-                        FPLog.w("current access token is expired, using anyways");
-                        RxBus.getInstance().post(AccessDenied.builder()
-                                .reason(AccessDenied.Reason.EXPIRED_TOKEN)
-                                .build());
-
-                        expiredNotificationSent = true;
+                    if (mAuthToken.isExpired()) {
+                        if (expiredNotificationSent) {
+                            // if the expired token was already used, reject it before making an API call
+                            FPLog.w("access token is expired, rejecting token usage until refreshed");
+                            RxBus.getInstance().post(AccessDenied.builder()
+                                    .reason(AccessDenied.Reason.EXPIRED_TOKEN)
+                                    .tokenRefreshRequired(true)
+                                    .build());
+                            throw new ExpiredTokenException("Token was expired and must be refreshed!");
+                        } else {
+                            // let the first expired token usage through to also trigger unauthorized message
+                            expiredNotificationSent = true;
+                            FPLog.w("current access token is expired, using anyways");
+                            RxBus.getInstance().post(AccessDenied.builder()
+                                    .reason(AccessDenied.Reason.EXPIRED_TOKEN)
+                                    .build());
+                        }
                     }
 
                     final String value = AUTHORIZATION_BEARER + " " + mAuthToken.getAccessToken();
