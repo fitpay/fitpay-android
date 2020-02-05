@@ -140,7 +140,7 @@ final public class FitPayService extends GenericClient<FitPayClient> {
     }
 
     public boolean isAuthorized() {
-        return mAuthToken != null && !mAuthToken.isExpired();
+        return mAuthToken != null;
     }
 
     public PlatformConfig getPlatformConfig() {
