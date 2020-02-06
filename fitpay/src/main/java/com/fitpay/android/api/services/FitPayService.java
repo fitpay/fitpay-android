@@ -57,7 +57,7 @@ final public class FitPayService extends GenericClient<FitPayClient> {
                     if (mAuthToken.isExpired()) {
                         if (expiredNotificationSent) {
                             // if the expired token was already used, reject it before making an API call
-                            FPLog.w("access token is expired, rejecting token usage until refreshed");
+                            FPLog.w("access token is expired, rejecting token usage until refreshed for request: " + chain.request().url());
                             RxBus.getInstance().post(AccessDenied.builder()
                                     .reason(AccessDenied.Reason.EXPIRED_TOKEN)
                                     .tokenRefreshRequired(true)
@@ -66,7 +66,7 @@ final public class FitPayService extends GenericClient<FitPayClient> {
                         } else {
                             // let the first expired token usage through to also trigger unauthorized message
                             expiredNotificationSent = true;
-                            FPLog.w("current access token is expired, using anyways");
+                            FPLog.w("current access token is expired, using anyways for request: " + chain.request().url());
                             RxBus.getInstance().post(AccessDenied.builder()
                                     .reason(AccessDenied.Reason.EXPIRED_TOKEN)
                                     .build());
