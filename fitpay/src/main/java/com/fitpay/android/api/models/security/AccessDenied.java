@@ -24,13 +24,25 @@ public class AccessDenied {
     @Reason
     private final int reason;
 
+    private final boolean tokenRefreshRequired;
+
     private AccessDenied(int reason) {
         this.reason = reason;
+        this.tokenRefreshRequired = false;
+    }
+
+    private AccessDenied(int reason, boolean tokenRefreshRequired) {
+        this.reason = reason;
+        this.tokenRefreshRequired = tokenRefreshRequired;
     }
 
     @Reason
     public int getReason() {
         return reason;
+    }
+
+    public boolean isTokenRefreshRequired() {
+        return tokenRefreshRequired;
     }
 
     public static AccessDenied.Builder builder() {
@@ -40,14 +52,20 @@ public class AccessDenied {
     public static class Builder {
         @Reason
         private int reason;
+        private boolean tokenRefreshRequired;
 
         public AccessDenied.Builder reason(@Reason int reason) {
             this.reason = reason;
             return this;
         }
 
+        public AccessDenied.Builder tokenRefreshRequired(boolean tokenRefreshRequired) {
+            this.tokenRefreshRequired = tokenRefreshRequired;
+            return this;
+        }
+
         public AccessDenied build() {
-            return new AccessDenied(reason);
+            return new AccessDenied(reason, tokenRefreshRequired);
         }
     }
 }
