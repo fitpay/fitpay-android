@@ -705,7 +705,7 @@ public class Steps extends BaseTestActions {
                 .setPairingTs(pairingTs)
                 .setSecureElement(new PaymentDevice.SecureElement(
                         SecureElementDataProvider.generateCasd(),
-                        "70B1A5000002000BA3035287D96A34D2E62CB23060A40057427208236250082462502041625008256250"))
+                        "70B1A5000002000BA3035287D96A34D2E62CB23060A40057427200516250082462502041625008256250"))
                 .build();
 
         final String[] errors = {""};

@@ -52,7 +52,7 @@ public class SecureElementDataProvider {
         buf.append("60A4"); // IC Module Packaging Date
         buf.append("0057"); // IC Manufacturer - 0057 is NXP
         buf.append("4272"); // IC EMbedding Date
-        buf.append("0823"); // PrePerso Id
+        buf.append("0051"); // PrePerso Id
         buf.append("6250"); // PrePerso Date
         buf.append("08246250"); // PrePerso Equipment
         buf.append("2041"); // Perso Id
