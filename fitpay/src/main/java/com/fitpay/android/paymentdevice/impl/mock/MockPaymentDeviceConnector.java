@@ -289,6 +289,19 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
         @Override
         public void processCommit(Commit commit) {
             Object payload = commit.getPayload();
+
+            // case where payload is null
+            if (payload == null) {
+                FPLog.e(TAG, "Mock Wallet received a commit with null payload data, Commit: " + commit);
+                postData(new CommitFailed.Builder()
+                        .commit(commit)
+                        .errorCode(99)
+                        .errorMessage("Commit commit payload is null")
+                        .build());
+
+                return;
+            }
+
             if (!(payload instanceof CreditCardCommit)) {
                 FPLog.e(TAG, "Mock Wallet received a commit to process that was not a credit card commit.  Commit: " + commit);
                 postData(new CommitFailed.Builder()
@@ -321,6 +334,19 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
         @Override
         public void processCommit(Commit commit) {
             Object payload = commit.getPayload();
+
+            // case where payload is null
+            if (payload == null) {
+                FPLog.e(TAG, "Mock Wallet received a commit with null payload data, Commit: " + commit);
+                postData(new CommitFailed.Builder()
+                        .commit(commit)
+                        .errorCode(99)
+                        .errorMessage("Commit commit payload is null")
+                        .build());
+
+                return;
+            }
+
             if (!(payload instanceof CreditCardCommit)) {
                 FPLog.e(TAG, "Mock Wallet received a commit to process that was not a credit card commit.  Commit: " + commit);
                 postData(new CommitFailed.Builder()

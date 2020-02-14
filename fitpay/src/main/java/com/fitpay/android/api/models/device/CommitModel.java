@@ -32,7 +32,10 @@ abstract class CommitModel extends BaseModel {
     }
 
     public Object getPayload() {
-        return payload.getData(commitType);
+        if (payload != null) {
+            return payload.getData(commitType);
+        }
+        return null;
     }
 
     @Override

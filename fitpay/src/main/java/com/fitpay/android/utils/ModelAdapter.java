@@ -86,6 +86,11 @@ final class ModelAdapter {
 
                     return payload;
                 }
+                else {
+                    FPLog.w(TAG, "deserialize: decryptedString is empty, can not deserialize payload data");
+                }
+            } else {
+                FPLog.w(TAG, "deserialize: json is empty, can not deserialize payload data");
             }
 
             return null;
