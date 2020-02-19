@@ -292,24 +292,12 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
 
             // case where payload is null
             if (payload == null) {
-                FPLog.e(TAG, "Mock Wallet received a commit with null payload data, Commit: " + commit);
-                postData(new CommitFailed.Builder()
-                        .commit(commit)
-                        .errorCode(99)
-                        .errorMessage("Commit commit payload is null")
-                        .build());
-
+                reportPayloadNull(commit);
                 return;
             }
 
             if (!(payload instanceof CreditCardCommit)) {
-                FPLog.e(TAG, "Mock Wallet received a commit to process that was not a credit card commit.  Commit: " + commit);
-                postData(new CommitFailed.Builder()
-                        .commit(commit)
-                        .errorCode(999)
-                        .errorMessage("Commit does not contain a credit card")
-                        .build());
-
+                reportInvalidPayload(commit);
                 return;
             }
             // process with a delay to mock device response time
@@ -337,23 +325,12 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
 
             // case where payload is null
             if (payload == null) {
-                FPLog.e(TAG, "Mock Wallet received a commit with null payload data, Commit: " + commit);
-                postData(new CommitFailed.Builder()
-                        .commit(commit)
-                        .errorCode(99)
-                        .errorMessage("Commit commit payload is null")
-                        .build());
-
+                reportPayloadNull(commit);
                 return;
             }
 
             if (!(payload instanceof CreditCardCommit)) {
-                FPLog.e(TAG, "Mock Wallet received a commit to process that was not a credit card commit.  Commit: " + commit);
-                postData(new CommitFailed.Builder()
-                        .commit(commit)
-                        .errorCode(999)
-                        .errorMessage("Commit does not contain a credit card")
-                        .build());
+                reportInvalidPayload(commit);
                 return;
             }
 
@@ -370,5 +347,23 @@ public class MockPaymentDeviceConnector extends PaymentDeviceConnector {
                                 postData(new CommitFailed.Builder().commit(commit).build());
                             });
         }
+    }
+
+    private void reportPayloadNull(Commit commit) {
+        FPLog.e(TAG, "Mock Wallet received a commit with null payload data, Commit: " + commit);
+        postData(new CommitFailed.Builder()
+                .commit(commit)
+                .errorCode(99)
+                .errorMessage("Commit commit payload is null")
+                .build());
+    }
+
+    private void reportInvalidPayload(Commit commit) {
+        FPLog.e(TAG, "Mock Wallet received a commit to process that was not a credit card commit.  Commit: " + commit);
+        postData(new CommitFailed.Builder()
+                .commit(commit)
+                .errorCode(999)
+                .errorMessage("Commit does not contain a credit card")
+                .build());
     }
 }
