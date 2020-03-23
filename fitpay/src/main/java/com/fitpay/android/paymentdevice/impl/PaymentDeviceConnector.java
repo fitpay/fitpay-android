@@ -8,6 +8,7 @@ import com.fitpay.android.api.callbacks.ApiCallback;
 import com.fitpay.android.api.enums.CommitTypes;
 import com.fitpay.android.api.enums.ResponseState;
 import com.fitpay.android.api.enums.ResultCode;
+import com.fitpay.android.api.models.Payload;
 import com.fitpay.android.api.models.apdu.ApduCommand;
 import com.fitpay.android.api.models.apdu.ApduCommandResult;
 import com.fitpay.android.api.models.apdu.ApduExecutionResult;
@@ -550,6 +551,12 @@ public abstract class PaymentDeviceConnector implements PaymentDeviceConnectable
         @Override
         public void processCommit(Commit commit) {
             Object payload = commit.getPayload();
+
+            if (payload == null) {
+                FPLog.e(TAG, "processCommit: payload is null, can not process commit...");
+                return;
+            }
+
             if (payload instanceof ApduPackage) {
                 ApduPackage pkg = (ApduPackage) payload;
 
