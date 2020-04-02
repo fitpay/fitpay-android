@@ -17,7 +17,7 @@ apply plugin: 'jacoco'
 apply plugin: 'jacoco-android'
 
 group = 'com.fitpay.android'
-version = '1.7.6'
+version = '1.7.7'
 archivesBaseName = "android_sdk"
 
 def pomConfig = {
