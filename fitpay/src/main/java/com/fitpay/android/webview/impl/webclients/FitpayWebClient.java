@@ -57,10 +57,14 @@ public class FitpayWebClient extends WebViewClient {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             view.getContext().startActivity(intent);
             return true;
-        }
-
-        // If host is NOT FitPay, show an Android action intent so the URL is loaded into an Android browser app.
-        else {
+        } else if (uriToString.startsWith("mailto:")) {
+            // Launch native mail app action.
+            Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            view.getContext().startActivity(intent);
+            return true;
+        } else {
+            // If host is NOT FitPay, show an Android action intent so the URL is loaded into an Android browser app.
             String host = uri.getHost();
             if (host != null) {
                 if (!host.contains("fit-pay.com")) {
