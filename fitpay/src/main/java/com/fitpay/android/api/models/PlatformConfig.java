@@ -5,7 +5,7 @@ package com.fitpay.android.api.models;
  * for dynamic SDK control of features/functionality.
  */
 public class PlatformConfig {
-    private boolean userEventStreamsEnabled;
+    private boolean userEventStreamsEnabled = true;
 
     /**
      * Can be used disable the user event stream from being initialized in the sdk
